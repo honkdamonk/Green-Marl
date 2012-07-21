@@ -1,3 +1,5 @@
+package frontend;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_id;
 import ast.ast_procdef;

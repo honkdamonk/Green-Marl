@@ -21,7 +21,7 @@ public class GlobalMembersGm_resolve_inf_size
 	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 	///#define GM_BLTIN_FLAG_TRUE true
 
-	public static boolean gm_resolve_size_of_inf_expr(ast_expr e, int dest_type)
+	public static boolean gm_resolve_size_of_inf_expr(ast_expr e, GMTYPE_T dest_type)
 	{
 		if (GlobalMembersGm_defs.gm_is_inf_type(e.get_type_summary()))
 		{
@@ -103,7 +103,7 @@ public class GlobalMembersGm_resolve_inf_size
 				for (I = ARGS.iterator(); I.hasNext(); I++, i++)
 				{
 					ast_expr e_arg = (I.next());
-					int arg_type = def.get_arg_type(i);
+					GMTYPE_T arg_type = def.get_arg_type(i);
 					GlobalMembersGm_resolve_inf_size.gm_resolve_size_of_inf_expr(e_arg, arg_type);
 				}
 				break;
@@ -112,13 +112,13 @@ public class GlobalMembersGm_resolve_inf_size
 			case GMEXPR_COMP:
 			{
 				// check left and right
-				int l_type = e.get_left_op().get_type_summary();
-				int r_type = e.get_right_op().get_type_summary();
+				GMTYPE_T l_type = e.get_left_op().get_type_summary();
+				GMTYPE_T r_type = e.get_right_op().get_type_summary();
 
 				if (GlobalMembersGm_defs.gm_is_inf_type(l_type) && GlobalMembersGm_defs.gm_is_inf_type(r_type))
 				{
-					l_type = GMTYPE_T.GMTYPE_INT.getValue();
-					r_type = GMTYPE_T.GMTYPE_INT.getValue();
+					l_type = GMTYPE_T.GMTYPE_INT;
+					r_type = GMTYPE_T.GMTYPE_INT;
 				}
 				else if (GlobalMembersGm_defs.gm_is_inf_type(l_type))
 				{

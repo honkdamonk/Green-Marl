@@ -527,7 +527,7 @@ public class ast_typedecl extends ast_node
 		return target_type;
 	}
 
-	public final int getTypeSummary() // same as get type id
+	public final GMTYPE_T getTypeSummary() // same as get type id
 	{
 		return type_id;
 	}
@@ -538,7 +538,7 @@ public class ast_typedecl extends ast_node
 		set_typeid(s);
 	}
 
-	public final int getTargetTypeSummary()
+	public final GMTYPE_T getTargetTypeSummary()
 	{
 		assert is_property() || is_collection_of_collection();
 		assert target_type != null;
@@ -599,7 +599,7 @@ public class ast_typedecl extends ast_node
 	}
 
 	// defined in gm_frontend_api.h
-	private int type_id;
+	private GMTYPE_T type_id;
 	private ast_typedecl target_type; // for property
 	private ast_id target_graph; // for property, node, edge, set
 	private ast_id target_collection; // for set-iterator set

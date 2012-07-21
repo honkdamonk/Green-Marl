@@ -223,7 +223,7 @@ public class GlobalMembersGm_typecheck_oprules
 		return;
 	}
 
-	public static boolean gm_is_compatible_type(int op, int t1, int t2, tangible.RefObject<Integer> op_result_type, tangible.RefObject<Integer> t1_new, tangible.RefObject<Integer> t2_new, tangible.RefObject<Boolean> t1_warn, tangible.RefObject<Boolean> t2_warn)
+	public static boolean gm_is_compatible_type(GM_OPS_T op, GMTYPE_T t1, GMTYPE_T t2, tangible.RefObject<Integer> op_result_type, tangible.RefObject<Integer> t1_new, tangible.RefObject<Integer> t2_new, tangible.RefObject<Boolean> t1_warn, tangible.RefObject<Boolean> t2_warn)
 	{
 		// special case 
 		if (GlobalMembersGm_defs.gm_is_foreign_expr_type(t1) && GlobalMembersGm_defs.gm_is_foreign_expr_type(t2))

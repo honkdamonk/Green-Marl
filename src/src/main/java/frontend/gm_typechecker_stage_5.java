@@ -1,4 +1,7 @@
+package frontend;
+
 import inc.GMTYPE_T;
+import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_defs;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
@@ -107,7 +110,7 @@ public class gm_typechecker_stage_5 extends gm_apply
 			case AST_RETURN:
 			{
 				ast_return r = (ast_return) s;
-				int summary_lhs = ret.getTypeSummary();
+				GMTYPE_T summary_lhs = ret.getTypeSummary();
 				if (GlobalMembersGm_defs.gm_is_void_type(summary_lhs))
 					break;
 
@@ -117,7 +120,7 @@ public class gm_typechecker_stage_5 extends gm_apply
 					break;
 				}
 
-				int summary_rhs = r.get_expr().get_type_summary();
+				GMTYPE_T summary_rhs = r.get_expr().get_type_summary();
 
 				boolean warn;
 				int coed;
@@ -152,8 +155,8 @@ public class gm_typechecker_stage_5 extends gm_apply
 
 	public final boolean check_assign_lhs_rhs(ast_node lhs, ast_expr rhs, int l, int c)
 	{
-		int summary_lhs;
-		int summary_rhs;
+		GMTYPE_T summary_lhs;
+		GMTYPE_T summary_rhs;
 		ast_typedecl lhs_typedecl = null;
 		gm_symtab_entry l_sym = null;
 
@@ -227,7 +230,7 @@ public class gm_typechecker_stage_5 extends gm_apply
 		boolean okay;
 		int l = a.get_line();
 		int c = a.get_col();
-		int summary_lhs;
+		GMTYPE_T summary_lhs;
 		if (a.is_target_scalar())
 		{
 			okay = check_assign_lhs_rhs(a.get_lhs_scala(), a.get_rhs(), l, c);
@@ -243,10 +246,10 @@ public class gm_typechecker_stage_5 extends gm_apply
 		if (a.is_reduce_assign())
 		{
 
-			int summary_rhs = a.get_rhs().get_type_summary();
+			GMTYPE_T summary_rhs = a.get_rhs().get_type_summary();
 			// SUM/MULT/MAX/MIN ==> numeirc
 			// AND/OR ==> boolean
-			int reduce_op = a.get_reduce_type();
+			GM_REDUCE_T reduce_op = a.get_reduce_type();
 			if (GlobalMembersGm_defs.gm_is_numeric_reduce_op(reduce_op))
 			{
 				if (!GlobalMembersGm_defs.gm_is_numeric_type(summary_lhs))
@@ -309,5 +312,5 @@ public class gm_typechecker_stage_5 extends gm_apply
 	private boolean _is_okay;
 	private ast_typedecl ret;
 
-	public java.util.HashMap<ast_expr, Integer> coercion_targets = new java.util.HashMap<ast_expr, Integer>();
+	public java.util.HashMap<ast_expr, GMTYPE_T> coercion_targets = new java.util.HashMap<ast_expr, GMTYPE_T>();
 }

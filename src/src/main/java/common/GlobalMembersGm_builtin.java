@@ -1,3 +1,5 @@
+import inc.GMTYPE_T;
+
 public class GlobalMembersGm_builtin
 {
 	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -31,7 +33,7 @@ public class GlobalMembersGm_builtin
 	//extern gm_builtin_manager BUILT_IN;
 
 
-	public static int gm_get_type_from_string(String s)
+	public static GMTYPE_T gm_get_type_from_string(String s)
 	{
 		assert s != null;
 		if (GlobalMembersGm_misc.gm_is_same_string(s, "Graph"))

@@ -1,3 +1,5 @@
+package frontend;
+
 import inc.GMTYPE_T;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
@@ -27,7 +29,7 @@ public class gm_typechecker_stage_4 extends gm_apply
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)
 		{
 			ast_assign a = (ast_assign) s;
-			int lhs_type;
+			GMTYPE_T lhs_type;
 			if (a.is_target_scalar())
 			{
 				lhs_type = a.get_lhs_scala().getTypeSummary();

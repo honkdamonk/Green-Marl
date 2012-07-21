@@ -1,3 +1,5 @@
+package common;
+
 import ast.ast_extra_info;
 import inc.GMTYPE_T;
 
@@ -60,7 +62,7 @@ public class gm_builtin_def
 				this.num_args = Integer.parseInt(p);
 			if (num_args > 0)
 			{
-				this.arg_types = new int[num_args];
+				this.arg_types = new GMTYPE_T[num_args];
 				for (int i = 0; i < num_args; i++)
 				{
 					p = tangible.StringFunctions.strTok(null, ":");
@@ -123,7 +125,7 @@ public class gm_builtin_def
 	{
 		return res_type;
 	}
-	public final int get_arg_type(int i)
+	public final GMTYPE_T get_arg_type(int i)
 	{
 		assert i < num_args;
 		return arg_types[i];
@@ -220,9 +222,7 @@ public class gm_builtin_def
 	private int src_type;
 	private int res_type;
 	private int num_args;
-//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
-//ORIGINAL LINE: int* arg_types;
-	private int arg_types;
+	private GMTYPE_T[] arg_types;
 	private String orgname;
 	private int method_id;
 	private boolean need_strict;

@@ -1,3 +1,5 @@
+package frontend;
+
 public enum nop_enum_for_frontend
 {
 	NOP_DUMMY_MARKER;

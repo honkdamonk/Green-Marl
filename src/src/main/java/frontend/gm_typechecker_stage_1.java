@@ -185,7 +185,7 @@ public class gm_typechecker_stage_1 extends gm_apply
 			case GMEXPR_REDUCE:
 			{
 				ast_expr_reduce r = (ast_expr_reduce) p;
-				int iter_type = r.get_iter_type();
+				GMTYPE_T iter_type = r.get_iter_type();
 				is_okay = gm_symbol_check_iter_header(r.get_iterator(), r.get_source(), iter_type, r.get_source2());
 				if (GlobalMembersGm_defs.gm_is_unknown_collection_iter_type(iter_type)) // resolve unknown iterator
 					r.set_iter_type(r.get_iterator().getTypeSummary());
@@ -199,7 +199,7 @@ public class gm_typechecker_stage_1 extends gm_apply
 					is_okay = find_symbol_id(i);
 				if (is_okay)
 				{
-					int source_type = (i == null) ? GMTYPE_T.GMTYPE_VOID : i.getTypeSummary();
+					GMTYPE_T source_type = (i == null) ? GMTYPE_T.GMTYPE_VOID : i.getTypeSummary();
 				}
 				break;
 			}
@@ -333,7 +333,7 @@ public class gm_typechecker_stage_1 extends gm_apply
 			case AST_FOREACH:
 			{
 				ast_foreach fe = (ast_foreach) s;
-				int iter_type = adjust_iter_type(fe);
+				GMTYPE_T iter_type = adjust_iter_type(fe);
 				is_okay = gm_symbol_check_iter_header(fe.get_iterator(), fe.get_source(), iter_type, fe.get_source2());
 				if (!is_okay)
 					break;
@@ -570,7 +570,7 @@ public class gm_typechecker_stage_1 extends gm_apply
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: boolean gm_symbol_check_iter_header(ast_id* it, ast_id* src, int iter_type, ast_id* src2 = null)
-	public final boolean gm_symbol_check_iter_header(ast_id it, ast_id src, int iter_type, ast_id src2)
+	public final boolean gm_symbol_check_iter_header(ast_id it, ast_id src, GMTYPE_T iter_type, ast_id src2)
 	{
 		boolean is_okay = true;
 		// GRAPH

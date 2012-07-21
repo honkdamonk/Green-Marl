@@ -1,5 +1,6 @@
 package ast;
 
+import inc.GMTYPE_T;
 import common.GlobalMembersGm_dumptree;
 
 import frontend.gm_symtab_entry;
@@ -62,7 +63,7 @@ public class ast_id extends ast_node
 		assert info != null;
 		return info.getType();
 	}
-	public int getTypeSummary()
+	public GMTYPE_T getTypeSummary()
 	{
 		assert info != null;
 		return info.getType().getTypeSummary();
@@ -75,7 +76,7 @@ public class ast_id extends ast_node
 		assert info != null;
 		return info.getType().get_target_type();
 	}
-	public int getTargetTypeSummary()
+	public GMTYPE_T getTargetTypeSummary()
 	{
 		assert info != null;
 		return info.getType().getTargetTypeSummary();

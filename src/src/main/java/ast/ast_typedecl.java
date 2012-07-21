@@ -165,7 +165,7 @@ public class ast_typedecl extends ast_node
 	public static ast_typedecl new_nodeprop(ast_typedecl type, ast_id tg)
 	{
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_NODEPROP.getValue();
+		t.type_id = GMTYPE_T.GMTYPE_NODEPROP;
 		t.target_type = type;
 		type.set_parent(t);
 		if (tg == null) //no graph defined for this property - we will handle this later (typecheck step 1)
@@ -178,7 +178,7 @@ public class ast_typedecl extends ast_node
 	public static ast_typedecl new_edgeprop(ast_typedecl type, ast_id tg)
 	{
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_EDGEPROP.getValue();
+		t.type_id = GMTYPE_T.GMTYPE_EDGEPROP;
 		t.target_type = type;
 		type.set_parent(t);
 		if (tg == null) //no graph defined for this property - we will handle this later (typecheck step 1)
@@ -200,16 +200,16 @@ public class ast_typedecl extends ast_node
 	public static ast_typedecl new_void()
 	{
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_VOID.getValue();
+		t.type_id = GMTYPE_T.GMTYPE_VOID;
 		return t;
 	}
 
-	public final int get_typeid()
+	public final GMTYPE_T get_typeid()
 	{
 		return type_id;
 	}
 
-	public final void set_typeid(int s)
+	public final void set_typeid(GMTYPE_T s)
 	{
 		type_id = s;
 	}

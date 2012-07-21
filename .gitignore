@@ -6,6 +6,7 @@ obj/*
 .project
 .settings
 *.aterm
+*.class
 
 test.gm
 test_main.cc

@@ -1,0 +1,329 @@
+public class GlobalMembersGm_main
+{
+	/***************************************
+	 * Main
+	 *   - Process command line arguments
+	 *   - Call functions in following order
+	 *      (1) (Frontend) Parser
+	 *      (2) (Frontend) Frontend Transform
+	 *      (3) (Frontend) Independent Optimizer
+	 *      (4) (Backend) Target Optimizer
+	 *      (5) (Backend) Library Transform
+	 *      (6) (Backend) Code Generation
+	 ***************************************/
+
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define TO_STR(X) #X
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define DEF_STRING(X) static const char *X = "X"
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define AUX_INFO(X,Y) "X"":""Y"
+	///#define GM_BLTIN_MUTATE_GROW 1
+	///#define GM_BLTIN_MUTATE_SHRINK 2
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define GM_BLTIN_FLAG_TRUE true
+
+
+	//const char* GM_version_info = "0.1"; // moved to common/gm_verion_string
+
+	public static gm_frontend FE = new gm_frontend();
+	public static gm_cpp_gen CPP_BE = new gm_cpp_gen(); // CPP Backend
+	public static gm_gps_gen GPS_BE = new gm_gps_gen(); // GPS Backend
+	public static gm_giraph_gen GIRAPH_BE = new gm_giraph_gen(); // Giraph Backend
+	public static gm_gps_gen PREGEL_BE; //TODO
+	public static gm_backend BACK_END;
+	public static gm_userargs OPTIONS = new gm_userargs();
+	public static gm_independent_optimize IND_OPT = new gm_independent_optimize(); // extern defined in gm_ind_opt.h
+	public static gm_builtin_manager BUILT_IN = new gm_builtin_manager();
+
+	public static java.util.LinkedList<Byte> GM_input_lists = new java.util.LinkedList<Byte>();
+
+	//-------------------------------------------------------------
+	// For debug
+	//  Stop at various points during compilation
+	//-------------------------------------------------------------
+	public static int gm_stop_major = 0;
+	public static int gm_stop_minor = 0;
+	public static int gm_stage_major = 0;
+	public static int gm_stage_minor = 0;
+	public static String gm_major_desc;
+	public static String gm_minor_desc;
+	public static void do_compiler_action_at_stop()
+	{
+		// okay, this is a hack for debug
+		// reconstruct here?
+		if (FE.is_vardecl_removed())
+			FE.restore_vardecl_all();
+
+		/*
+		 if (OPTIONS.get_arg_bool(GMARGFLAG_DUMPIR)) {
+		 printf("======================================================\n");
+		 FE.dump_tree();
+		 printf("======================================================\n");
+		 printf("\n");
+		 }
+		 */
+
+		if (OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_REPRODUCE))
+		{
+			System.out.print("======================================================\n");
+			FE.reproduce();
+			System.out.print("======================================================\n");
+			System.out.print("\n");
+
+		}
+
+		if (OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_PRINTRW))
+		{
+			System.out.print("======================================================\n");
+			FE.print_rwinfo();
+			System.out.print("======================================================\n");
+			System.out.print("\n");
+		}
+
+		if (OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_PRINTBB))
+		{
+			System.out.print("======================================================\n");
+			PREGEL_BE.print_basicblock();
+			System.out.print("======================================================\n");
+			System.out.print("\n");
+		}
+	}
+	public static void parse_stop_string()
+	{
+		String c = OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_STOP_STRING);
+		if (c == null)
+			return;
+
+//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
+//ORIGINAL LINE: sbyte* d = strdup(c);
+		byte d = c;
+//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
+//ORIGINAL LINE: sbyte* p = strtok(d, ".");
+		byte p = tangible.StringFunctions.strTok(d, ".");
+		if (p == null)
+		{
+//C++ TO JAVA CONVERTER TODO TASK: There are no gotos or labels in Java:
+			goto error_return;
+		}
+		gm_stop_major = Integer.parseInt(p);
+		p = tangible.StringFunctions.strTok(null, ".");
+		if (p != null)
+			gm_stop_minor = Integer.parseInt(p);
+
+		if (gm_stop_major == 0)
+		{
+//C++ TO JAVA CONVERTER TODO TASK: There are no gotos or labels in Java:
+			goto error_return;
+		}
+		if (gm_stop_minor == 0)
+		{
+			System.out.printf("stopping after stage %d\n", gm_stop_major);
+		}
+		else
+		{
+			System.out.printf("stopping at stage %d.%d\n", gm_stop_major, gm_stop_minor);
+		}
+//C++ TO JAVA CONVERTER TODO TASK: There are no gotos or labels in Java:
+		error_return:
+//C++ TO JAVA CONVERTER TODO TASK: The memory management function 'free' has no equivalent in Java:
+		free(d);
+	}
+
+	public static void gm_begin_major_compiler_stage(int major, String desc)
+	{
+		assert major > 0;
+		gm_stage_major = major;
+		gm_major_desc = desc;
+	}
+	public static void gm_end_major_compiler_stage()
+	{
+		if (gm_stop_major == gm_stage_major)
+		{
+			System.out.printf("...Stopping compiler after Stage %d:%s\n", gm_stop_major, gm_major_desc);
+			GlobalMembersGm_main.do_compiler_action_at_stop();
+			System.exit(0);
+		}
+	}
+	public static void gm_begin_minor_compiler_stage(int m, String desc)
+	{
+		assert m > 0;
+		gm_stage_minor = m;
+		gm_minor_desc = desc;
+		if (OPTIONS.get_arg_int(GlobalMembersGm_argopts.GMARGFLAG_VERB_LEV) > 0)
+		{
+			System.out.printf("...Stage %d.%d: %s.[%s]\n", gm_stage_major, gm_stage_minor, gm_major_desc, gm_minor_desc);
+			fflush(stdout);
+		}
+
+	}
+	public static void gm_end_minor_compiler_stage()
+	{
+		if (gm_stop_minor == 0)
+			return;
+
+		if ((gm_stop_major == gm_stage_major) && (gm_stop_minor == gm_stage_minor))
+		{
+			System.out.printf("...Stopping compiler after Stage %d.%d:%s.[%s]\n", gm_stage_major, gm_stage_minor, gm_major_desc, gm_minor_desc);
+			GlobalMembersGm_main.do_compiler_action_at_stop();
+			System.exit(0);
+		}
+	}
+	// gm_argopts.cc
+	//extern void process_args(int argc, tangible.RefObject<String[]> argv);
+
+	public static int Main(int argc, String[] args)
+	{
+		boolean ok = true;
+
+		//-------------------------------------
+		// parse arguments
+		//-------------------------------------
+	tangible.RefObject<String[]> tempRef_args = new tangible.RefObject<String[]>(args);
+		GlobalMembersGm_argopts.process_args(argc, tempRef_args);
+		args = tempRef_args.argvalue;
+
+		gm_path_parser Path = new gm_path_parser();
+//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
+//ORIGINAL LINE: sbyte* fname = GM_input_lists.front();
+		byte fname = GM_input_lists.getFirst();
+		Path.parsePath(fname);
+
+		String name = OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_TARGET);
+		if (GlobalMembersGm_misc.gm_is_same_string(name, "cpp_seq"))
+		{
+			CPP_BE.set_target_omp(false);
+			BACK_END = CPP_BE;
+		}
+		else if (GlobalMembersGm_misc.gm_is_same_string(name, "cpp_omp"))
+		{
+			CPP_BE.set_target_omp(true);
+			BACK_END = CPP_BE;
+		}
+		else if (GlobalMembersGm_misc.gm_is_same_string(name, "gps"))
+		{
+			BACK_END = GPS_BE;
+			PREGEL_BE = GPS_BE;
+			OPTIONS.set_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_PULL, true);
+		}
+		else if (GlobalMembersGm_misc.gm_is_same_string(name, "giraph"))
+		{
+			BACK_END = GIRAPH_BE;
+			PREGEL_BE = GIRAPH_BE;
+			OPTIONS.set_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_PULL, true);
+		}
+		else
+		{
+			System.out.printf("Unsupported target = %s\n", name);
+		}
+
+		//---------------------------------------
+		// parse compiler stop string
+		//---------------------------------------
+		GlobalMembersGm_main.parse_stop_string();
+
+		//--------------------------------------
+		// Do additional initalization
+		//--------------------------------------
+		FE.init();
+
+		//-------------------------------------
+		// Parse phase
+		//-------------------------------------
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_PARSE, "Parse");
+		{
+			// currently there should be only one file
+			assert GM_input_lists.size() == 1;
+//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
+//ORIGINAL LINE: sbyte* fname = GM_input_lists.front();
+			byte fname = GM_input_lists.getFirst();
+		tangible.RefObject<String> tempRef_fname = new tangible.RefObject<String>(fname);
+			GlobalMembersGm_error.gm_set_current_filename(tempRef_fname);
+			fname = tempRef_fname.argvalue;
+		tangible.RefObject<String> tempRef_fname2 = new tangible.RefObject<String>(fname);
+			FE.start_parse(tempRef_fname2);
+			fname = tempRef_fname2.argvalue;
+			if (GlobalMembersGm_error.GM_is_parse_error())
+				System.exit(1);
+		}
+		GlobalMembersGm_main.gm_end_major_compiler_stage();
+
+		//---------------------------------------------------------------
+		// Front-End Phase
+		//  [Local (intra-procedure)]
+		//   - syntax sugar resolve (phase 1)
+		//   - basic type check (phase 1)
+		//   - syntax sugar resolve (phase 2)
+		//   - rw analysis (phase 1)
+		//   - rw analysis (phase 2) 
+		//--------------------------------------------------------------
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_FRONTEND, "Frontend");
+		{
+			ok = FE.do_local_frontend_process();
+			if (!ok)
+				System.exit(1);
+		}
+		GlobalMembersGm_main.gm_end_major_compiler_stage();
+
+		//----------------------------------------------------------------
+		// Backend-Independnet Optimization
+		//   - Hoist up variable definitions
+		//   - Hoist up assignments
+		//   - Loop Merge
+		//   - (Push down assignments)
+		//   - (Push down var-defs)
+		//----------------------------------------------------------------
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_INDEPENDENT_OPT, "Indep-Opt");
+		{
+			ok = IND_OPT.do_local_optimize();
+			if (!ok)
+				System.exit(1);
+		}
+		GlobalMembersGm_main.gm_end_major_compiler_stage();
+
+		//-------------------------------------
+		// Backend-Specific Code Modification
+		//-------------------------------------
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_BACKEND_OPT, "Backend Transform");
+		{
+			ok = BACK_END.do_local_optimize();
+			if (!ok)
+				System.exit(1);
+		}
+		GlobalMembersGm_main.gm_end_major_compiler_stage();
+
+		//-------------------------------------
+		// Library specific Backend-Specific Code Modification
+		//-------------------------------------
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_LIBRARY_OPT, "Backend-Lib Transform");
+		{
+			ok = BACK_END.do_local_optimize_lib();
+			if (!ok)
+				System.exit(1);
+		}
+		GlobalMembersGm_main.gm_end_major_compiler_stage();
+
+		//-------------------------------------------------
+		// Final Code Generation
+		//-------------------------------------------------
+		if (OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_OUTDIR) == null)
+			BACK_END.setTargetDir(".");
+		else
+			BACK_END.setTargetDir(OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_OUTDIR));
+		BACK_END.setFileName(Path.getFilename());
+
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_CODEGEN, "Code Generation");
+		{
+			ok = BACK_END.do_generate();
+			if (!ok)
+				System.exit(1);
+		}
+		GlobalMembersGm_main.gm_end_major_compiler_stage();
+
+		return EXIT_SUCCESS;
+	}
+}

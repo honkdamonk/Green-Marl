@@ -1,0 +1,141 @@
+import inc.GlobalMembersGm_defs;
+
+public class GlobalMembersGm_typecheck
+{
+	public static final boolean GM_READ_AVAILABLE = true;
+	public static final boolean GM_READ_NOT_AVAILABLE = false;
+	public static final boolean GM_WRITE_AVAILABLE = true;
+	public static final boolean GM_WRITE_NOT_AVAILABLE = false;
+
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define TO_STR(X) #X
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define DEF_STRING(X) static const char *X = "X"
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define AUX_INFO(X,Y) "X"":""Y"
+	///#define GM_BLTIN_MUTATE_GROW 1
+	///#define GM_BLTIN_MUTATE_SHRINK 2
+	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
+	///#define GM_BLTIN_FLAG_TRUE true
+
+	//----------------------------------------------------------------------------------------------------------------
+	// Utility functions (Type summary)
+	//----------------------------------------------------------------------------------------------------------------
+	// check the byte size of two numeric type
+	public static int gm_compare_numeric_type_size(int t1, int t2)
+	{
+		// GMTYPE_... is defined as small to larger
+		return t1 - t2; // +:t1 > t2 , 0:t2==t2, -:t1 < t2
+	}
+	// check the size (in Bytes) of two numeric types 
+	public static int gm_get_larger_type(int t1, int t2)
+	{
+		if (GlobalMembersGm_typecheck.gm_compare_numeric_type_size(t1, t2) > 0)
+			return t1;
+		else
+			return t2;
+	}
+
+	// determine resulting type of numeric operation A (+,-,*,/) B 
+	public static int gm_determine_result_type(int t1, int t2)
+	{
+		// assumption. t1/t2 is compatible
+		if (t1 == t2)
+			return t1;
+		else if (GlobalMembersGm_defs.gm_is_inf_type(t1))
+			return t1;
+		else if (GlobalMembersGm_defs.gm_is_inf_type(t2))
+			return t2;
+		else if (GlobalMembersGm_defs.gm_is_numeric_type(t1))
+		{
+			if (GlobalMembersGm_defs.gm_is_float_type(t1) == GlobalMembersGm_defs.gm_is_float_type(t2))
+				return GlobalMembersGm_typecheck.gm_get_larger_type(t1, t2);
+			else if (GlobalMembersGm_defs.gm_is_float_type(t1))
+				return t1;
+			else
+				return t2;
+		}
+		else if (GlobalMembersGm_defs.gm_is_iter_type(t1))
+			return t2;
+		else if (GlobalMembersGm_defs.gm_is_iter_type(t1))
+			return t1;
+		else
+		{
+			assert false;
+			return 0;
+		}
+	}
+
+	public static boolean gm_check_compatible_types(int t1, int t2, int for_what)
+	{
+		if (t1 == t2)
+			return true;
+
+		//----------------------------------------------------------
+		// ASSUMTION
+		// let t1 be the 'smaller' type (ordering by GM_XXX_TYPE enumeration)
+		// GRAPH -> PROP -> NODE-EDGE/ITER -> NUMERIC -> BOOL -> INF  (see gm_frontend_api.h)
+		//----------------------------------------------------------
+		if (t2 < t1)
+		{
+			int t3;
+			t3 = t1;
+			t1 = t2;
+			t2 = t3;
+		}
+
+		if (GlobalMembersGm_defs.gm_is_node_compatible_type(t1))
+		{
+			if (for_what == gm_type_compatible_t.FOR_BOP.getValue())
+				return false;
+			else
+				return GlobalMembersGm_defs.gm_is_node_compatible_type(t2);
+		}
+
+		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(t1))
+		{
+			if (for_what == gm_type_compatible_t.FOR_BOP.getValue())
+				return false;
+			else
+				return GlobalMembersGm_defs.gm_is_edge_compatible_type(t2);
+		}
+
+		if (GlobalMembersGm_defs.gm_is_numeric_type(t1))
+		{
+			if (for_what == gm_type_compatible_t.FOR_BOP.getValue())
+				return GlobalMembersGm_defs.gm_is_numeric_type(t2);
+			else
+				return GlobalMembersGm_defs.gm_is_numeric_type(t2) || GlobalMembersGm_defs.gm_is_inf_type(t2); // it is possible to assign INF to numeric
+		}
+
+		if (GlobalMembersGm_defs.gm_is_boolean_type(t1))
+			return GlobalMembersGm_defs.gm_is_boolean_type(t2);
+		if (GlobalMembersGm_defs.gm_is_inf_type(t1))
+			return GlobalMembersGm_defs.gm_is_inf_type(t2);
+
+		//printf("unexpected type = %s\n", gm_get_type_string(t1));
+		//assert(false);
+		return false;
+	}
+
+	public static boolean gm_is_compatible_type_for_assign(int lhs, int rhs)
+	{
+		return GlobalMembersGm_typecheck.gm_check_compatible_types(lhs, rhs, gm_type_compatible_t.FOR_ASSIGN);
+	}
+	public static boolean gm_is_compatible_type_for_eq(int t1, int t2)
+	{
+		return GlobalMembersGm_typecheck.gm_check_compatible_types(t1, t2, gm_type_compatible_t.FOR_EQ);
+	}
+	public static boolean gm_is_compatible_type_for_less(int t1, int t2)
+	{
+		return GlobalMembersGm_typecheck.gm_check_compatible_types(t1, t2, gm_type_compatible_t.FOR_LESS);
+	}
+	public static boolean gm_is_compatible_type_for_biop(int t1, int t2)
+	{
+		return GlobalMembersGm_typecheck.gm_check_compatible_types(t1, t2, gm_type_compatible_t.FOR_BOP);
+	}
+}

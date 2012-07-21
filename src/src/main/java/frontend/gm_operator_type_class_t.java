@@ -1,3 +1,5 @@
+package frontend;
+
 public enum gm_operator_type_class_t
 {
 	T_INT,

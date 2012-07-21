@@ -21,11 +21,11 @@ public class ast_assign extends ast_sent
 			bound.dispose();
 	}
 
-	public static ast_assign new_assign_scala(ast_id id, ast_expr r, int assign_type, ast_id itor)
+	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type, ast_id itor)
 	{
 		return new_assign_scala(id, r, assign_type, itor, GM_REDUCE_T.GMREDUCE_NULL);
 	}
-	public static ast_assign new_assign_scala(ast_id id, ast_expr r, int assign_type)
+	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type)
 	{
 		return new_assign_scala(id, r, assign_type, null, GM_REDUCE_T.GMREDUCE_NULL);
 	}
@@ -35,7 +35,7 @@ public class ast_assign extends ast_sent
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: static ast_assign* new_assign_scala(ast_id* id, ast_expr* r, int assign_type = GMASSIGN_NORMAL, ast_id* itor = null, int reduce_type = GMREDUCE_NULL)
-	public static ast_assign new_assign_scala(ast_id id, ast_expr r, int assign_type, ast_id itor, int reduce_type)
+	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type, ast_id itor, GM_REDUCE_T reduce_type)
 	{
 		// assign to scala
 		ast_assign A = new ast_assign();
@@ -43,7 +43,7 @@ public class ast_assign extends ast_sent
 		A.rhs = r;
 		id.set_parent(A);
 		r.set_parent(A);
-		A.lhs_type = gm_assignment_location_t.GMASSIGN_LHS_SCALA.getValue();
+		A.lhs_type = gm_assignment_location_t.GMASSIGN_LHS_SCALA;
 		if (itor != null)
 		{
 			itor.set_parent(A);
@@ -53,11 +53,11 @@ public class ast_assign extends ast_sent
 		A.reduce_type = reduce_type; // reduce or defer type
 		return A;
 	}
-	public static ast_assign new_assign_field(ast_field id, ast_expr r, int assign_type, ast_id itor)
+	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment_t assign_type, ast_id itor)
 	{
 		return new_assign_field(id, r, assign_type, itor, GM_REDUCE_T.GMREDUCE_NULL);
 	}
-	public static ast_assign new_assign_field(ast_field id, ast_expr r, int assign_type)
+	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment_t assign_type)
 	{
 		return new_assign_field(id, r, assign_type, null, GM_REDUCE_T.GMREDUCE_NULL);
 	}
@@ -67,7 +67,7 @@ public class ast_assign extends ast_sent
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: static ast_assign* new_assign_field(ast_field* id, ast_expr* r, int assign_type = GMASSIGN_NORMAL, ast_id* itor = null, int reduce_type = GMREDUCE_NULL)
-	public static ast_assign new_assign_field(ast_field id, ast_expr r, int assign_type, ast_id itor, int reduce_type)
+	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment_t assign_type, ast_id itor, GM_REDUCE_T reduce_type)
 	{
 		// assign to property
 		ast_assign A = new ast_assign();
@@ -75,7 +75,7 @@ public class ast_assign extends ast_sent
 		A.rhs = r;
 		id.set_parent(A);
 		r.set_parent(A);
-		A.lhs_type = gm_assignment_location_t.GMASSIGN_LHS_FIELD.getValue();
+		A.lhs_type = gm_assignment_location_t.GMASSIGN_LHS_FIELD;
 		if (itor != null)
 		{
 			itor.set_parent(A);
@@ -433,23 +433,23 @@ public class ast_assign extends ast_sent
 		System.out.print("]");
 	}
 
-	public final int get_assign_type()
+	public final gm_assignment_t get_assign_type()
 	{
 		return assign_type;
 	}
-	public final int get_lhs_type()
+	public final gm_assignment_location_t get_lhs_type()
 	{
 		return lhs_type;
 	}
-	public final int get_reduce_type()
+	public final GM_REDUCE_T get_reduce_type()
 	{
 		return reduce_type;
 	}
-	public final void set_assign_type(int a)
+	public final void set_assign_type(gm_assignment_t a)
 	{
 		assign_type = a;
 	}
-	public final void set_reduce_type(int a)
+	public final void set_reduce_type(GM_REDUCE_T a)
 	{
 		reduce_type = a;
 	}
@@ -478,11 +478,11 @@ public class ast_assign extends ast_sent
 	}
 	public final boolean is_reduce_assign()
 	{
-		return assign_type == gm_assignment_t.GMASSIGN_REDUCE.getValue();
+		return assign_type == gm_assignment_t.GMASSIGN_REDUCE;
 	}
 	public final boolean is_defer_assign()
 	{
-		return assign_type == gm_assignment_t.GMASSIGN_DEFER.getValue();
+		return assign_type == gm_assignment_t.GMASSIGN_DEFER;
 	}
 	public final boolean is_target_scalar()
 	{
@@ -528,13 +528,13 @@ public class ast_assign extends ast_sent
 	{
 		lhs_scala = new_id;
 		if (new_id != null)
-			lhs_type = gm_assignment_location_t.GMASSIGN_LHS_SCALA.getValue();
+			lhs_type = gm_assignment_location_t.GMASSIGN_LHS_SCALA;
 	}
 	public final void set_lhs_field(ast_field new_id)
 	{
 		lhs_field = new_id;
 		if (new_id != null)
-			lhs_type = gm_assignment_location_t.GMASSIGN_LHS_FIELD.getValue();
+			lhs_type = gm_assignment_location_t.GMASSIGN_LHS_FIELD;
 	}
 
 	private ast_assign()
@@ -550,9 +550,9 @@ public class ast_assign extends ast_sent
 		this.reduce_type = 0;
 	}
 
-	private int assign_type; // normal, deferred, reduce
-	private int lhs_type; // scalar, field
-	private int reduce_type; // add, mult, min, max
+	private gm_assignment_t assign_type; // normal, deferred, reduce
+	private gm_assignment_location_t lhs_type; // scalar, field
+	private GM_REDUCE_T reduce_type; // add, mult, min, max
 	private ast_id lhs_scala;
 	private ast_field lhs_field;
 	private ast_expr rhs;

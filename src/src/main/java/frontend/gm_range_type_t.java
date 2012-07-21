@@ -1,3 +1,5 @@
+package frontend;
+
 //----------------------------------------------------------
 // Phase I : Analyze Read, Write, reDuce set
 // In this phase, parallel conflicts are 'not' examined yet. 

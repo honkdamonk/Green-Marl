@@ -1,7 +1,9 @@
-import ast.ast_id;
-import ast.ast_typedecl;
+package frontend;
+
 import inc.GMTYPE_T;
 import inc.GlobalMembersGm_defs;
+import ast.ast_id;
+import ast.ast_typedecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;

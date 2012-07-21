@@ -1,20 +1,22 @@
+package common;
+
 import ast.ast_id;
 import frontend.gm_symtab_entry;
 
 public class GlobalMembersGm_error
 {
-public static void gm_type_error(int errno, ast_id id, String str1)
+public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id, String str1)
 {
 	gm_type_error(errno, id, str1, "");
 }
-public static void gm_type_error(int errno, ast_id id)
+public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id)
 {
 	gm_type_error(errno, id, "", "");
 }
 
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: void gm_type_error(int errno, ast_id* id, String str1 = "", String str2 = "")
-	public static void gm_type_error(int errno, ast_id id, String str1, String str2)
+	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id, String str1, String str2)
 	{
 		GlobalMembersGm_error.gm_print_error_header();
 		if (curr_file != null)
@@ -73,7 +75,7 @@ public static void gm_type_error(int errno, ast_id id)
 				break;
 		}
 	}
-	public static void gm_type_error(int errno, ast_id id1, ast_id id2)
+	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id1, ast_id id2)
 	{
 		GlobalMembersGm_error.gm_print_error_header();
 		if (curr_file != null)
@@ -113,21 +115,21 @@ public static void gm_type_error(int errno, ast_id id)
 				break;
 		}
 	}
-public static void gm_type_error(int errno, int l, int c, String str1, String str2)
+public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1, String str2)
 {
 	gm_type_error(errno, l, c, str1, str2, "");
 }
-public static void gm_type_error(int errno, int l, int c, String str1)
+public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1)
 {
 	gm_type_error(errno, l, c, str1, "", "");
 }
-public static void gm_type_error(int errno, int l, int c)
+public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c)
 {
 	gm_type_error(errno, l, c, "", "", "");
 }
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: void gm_type_error(int errno, int l, int c, String str1 = "", String str2 = "", String str3 = "")
-	public static void gm_type_error(int errno, int l, int c, String str1, String str2, String str3)
+	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1, String str2, String str3)
 	{
 		GlobalMembersGm_error.gm_print_error_header();
 
@@ -232,7 +234,7 @@ public static void gm_type_error(int errno, int l, int c)
 	//extern void gm_type_error(int errnumber, String str);
 
 	//extern void gm_conf_error(int errnumber, gm_symtab_entry* target, ast_id* evidence1);
-	public static void gm_conf_error(int errno, gm_symtab_entry target, ast_id ev1, ast_id ev2, boolean is_warning)
+	public static void gm_conf_error(GM_ERRORS_AND_WARNINGS errno, gm_symtab_entry target, ast_id ev1, ast_id ev2, boolean is_warning)
 	{
 		GlobalMembersGm_error.gm_print_error_header();
 		if (curr_file != null)
@@ -244,9 +246,7 @@ public static void gm_type_error(int errno, int l, int c)
 			System.out.printf("%d: %d: error: ", ev1.get_line(), ev1.get_col());
 
 		ast_id target_id = target.getId();
-//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
-//ORIGINAL LINE: sbyte* name = target_id->get_orgname();
-		byte name = target_id.get_orgname();
+		String name = target_id.get_orgname();
 
 		switch (errno)
 		{
@@ -280,7 +280,7 @@ public static void gm_type_error(int errno, int l, int c)
 	}
 
 // todo: should be differend error routines for different back-ends
-public static void gm_backend_error(int errno, String str1)
+public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, String str1)
 {
 	gm_backend_error(errno, str1, "");
 }
@@ -288,7 +288,7 @@ public static void gm_backend_error(int errno, String str1)
 
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: void gm_backend_error(int errno, String str1, String str2 = "")
-	public static void gm_backend_error(int errno, String str1, String str2)
+	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, String str1, String str2)
 	{
 		GlobalMembersGm_error.gm_print_error_header();
 		if (curr_file != null)
@@ -310,13 +310,13 @@ public static void gm_backend_error(int errno, String str1)
 				break;
 		}
 	}
-public static void gm_backend_error(int errno, int l, int c)
+public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, int l, int c)
 {
 	gm_backend_error(errno, l, c, "");
 }
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: void gm_backend_error(int errno, int l, int c, String str1 = "")
-	public static void gm_backend_error(int errno, int l, int c, String str1)
+	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1)
 	{
 		GlobalMembersGm_error.gm_print_error_header();
 		if (curr_file != null)

@@ -1,9 +1,11 @@
+package frontend;
+
+import inc.GMTYPE_T;
+import inc.GlobalMembersGm_defs;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
-import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
 
 import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_new_sents_after_tc;

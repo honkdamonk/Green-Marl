@@ -1,12 +1,14 @@
-import ast.ast_id;
+package frontend;
+
 import inc.GM_REDUCE_T;
+import ast.ast_id;
 
 import common.GlobalMembersGm_misc;
 
 public class gm_rwinfo
 {
 	// RANGE_LINEAR, RANGE_RANDOM, RANGE_SINGLE
-	public int access_range;
+	public gm_range_type_t access_range;
 	public gm_symtab_entry driver; // N.F --> N is the driver
 
 	// if this destination always accessed
@@ -16,7 +18,7 @@ public class gm_rwinfo
 
 	// for reduce/defer access
 	// GMREDUCE_* (defined in gm_frontend_api.h)
-	public int reduce_op;
+	public GM_REDUCE_T reduce_op;
 	public gm_symtab_entry bound_symbol;
 
 	public boolean is_supplement; // is-supplement LHS
@@ -34,22 +36,22 @@ public class gm_rwinfo
 		bound_symbol = null;
 		location = null;
 		always = true;
-		reduce_op = GM_REDUCE_T.GMREDUCE_NULL.getValue();
-		access_range = gm_range_type_t.GM_RANGE_SINGLE.getValue(); // default is single access
+		reduce_op = GM_REDUCE_T.GMREDUCE_NULL;
+		access_range = gm_range_type_t.GM_RANGE_SINGLE; // default is single access
 		mutate_direction = -1;
 		org_lhs = null;
 		is_supplement = false;
 	}
 
-	public static gm_rwinfo new_scala_inst(ast_id loc, int reduce_op, gm_symtab_entry bound_symbol, boolean supple)
+	public static gm_rwinfo new_scala_inst(ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple)
 	{
 		return new_scala_inst(loc, reduce_op, bound_symbol, supple, null);
 	}
-	public static gm_rwinfo new_scala_inst(ast_id loc, int reduce_op, gm_symtab_entry bound_symbol)
+	public static gm_rwinfo new_scala_inst(ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol)
 	{
 		return new_scala_inst(loc, reduce_op, bound_symbol, false, null);
 	}
-	public static gm_rwinfo new_scala_inst(ast_id loc, int reduce_op)
+	public static gm_rwinfo new_scala_inst(ast_id loc, GM_REDUCE_T reduce_op)
 	{
 		return new_scala_inst(loc, reduce_op, null, false, null);
 	}
@@ -59,7 +61,7 @@ public class gm_rwinfo
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: static gm_rwinfo* new_scala_inst(ast_id* loc, int reduce_op = GMREDUCE_NULL, gm_symtab_entry* bound_symbol = null, boolean supple = false, gm_symtab_entry* org = null)
-	public static gm_rwinfo new_scala_inst(ast_id loc, int reduce_op, gm_symtab_entry bound_symbol, boolean supple, gm_symtab_entry org)
+	public static gm_rwinfo new_scala_inst(ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple, gm_symtab_entry org)
 	{
 		gm_rwinfo g = new gm_rwinfo();
 		g.location = loc;
@@ -78,15 +80,15 @@ public class gm_rwinfo
 		return g;
 	}
 
-	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, int reduce_op, gm_symtab_entry bound_symbol, boolean supple)
+	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple)
 	{
 		return new_field_inst(driver, loc, reduce_op, bound_symbol, supple, null);
 	}
-	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, int reduce_op, gm_symtab_entry bound_symbol)
+	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol)
 	{
 		return new_field_inst(driver, loc, reduce_op, bound_symbol, false, null);
 	}
-	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, int reduce_op)
+	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, GM_REDUCE_T reduce_op)
 	{
 		return new_field_inst(driver, loc, reduce_op, null, false, null);
 	}
@@ -96,7 +98,7 @@ public class gm_rwinfo
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: static gm_rwinfo* new_field_inst(gm_symtab_entry* driver, ast_id* loc, int reduce_op = GMREDUCE_NULL, gm_symtab_entry* bound_symbol = null, boolean supple = false, gm_symtab_entry* org = null)
-	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, int reduce_op, gm_symtab_entry bound_symbol, boolean supple, gm_symtab_entry org)
+	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple, gm_symtab_entry org)
 	{
 		gm_rwinfo g = new gm_rwinfo();
 		g.location = loc;
@@ -107,7 +109,7 @@ public class gm_rwinfo
 		g.org_lhs = org;
 		return g;
 	}
-	public static gm_rwinfo new_range_inst(int range, boolean always, ast_id loc)
+	public static gm_rwinfo new_range_inst(gm_range_type_t range, boolean always, ast_id loc)
 	{
 		gm_rwinfo g = new gm_rwinfo();
 		g.always = always;
@@ -131,7 +133,7 @@ public class gm_rwinfo
 	// print each debug info
 	public final void print()
 	{
-		if (access_range == gm_range_type_t.GM_RANGE_SINGLE.getValue())
+		if (access_range == gm_range_type_t.GM_RANGE_SINGLE)
 		{
 			if (driver == null)
 				System.out.print("(SCALAR, ");

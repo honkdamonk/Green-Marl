@@ -1,7 +1,7 @@
 package frontend;
 
-import ast.ast_procdef;
 import inc.gm_compile_step;
+import ast.ast_procdef;
 
 public class gm_fe_rw_analysis_check2 extends gm_compile_step
 {

@@ -1,8 +1,8 @@
 package frontend;
 
-import ast.ast_procdef;
 import inc.GM_PROP_USAGE_T;
 import inc.gm_compile_step;
+import ast.ast_procdef;
 
 public class gm_fe_check_property_argument_usage extends gm_compile_step
 {

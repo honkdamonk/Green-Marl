@@ -1,5 +1,6 @@
 package ast;
 
+import inc.GMTYPE_T;
 import inc.GlobalMembersGm_defs;
 import common.GlobalMembersGm_dumptree;
 import common.GlobalMembersGm_misc;
@@ -37,13 +38,13 @@ public class ast_foreach extends ast_sent
 	}
 
 	// iterate on a graph
-	public static ast_foreach new_foreach(ast_id it, ast_id src, ast_sent b, int iter_type)
+	public static ast_foreach new_foreach(ast_id it, ast_id src, ast_sent b, GMTYPE_T iter_type)
 	{
 		return new_foreach(it, src, b, iter_type, null);
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: static ast_foreach* new_foreach(ast_id* it, ast_id* src, ast_sent* b, int iter_type, ast_expr* cond = null)
-	public static ast_foreach new_foreach(ast_id it, ast_id src, ast_sent b, int iter_type, ast_expr cond)
+	public static ast_foreach new_foreach(ast_id it, ast_id src, ast_sent b, GMTYPE_T iter_type, ast_expr cond)
 	{
 		ast_foreach d = new ast_foreach();
 		d.iterator = it;
@@ -224,12 +225,12 @@ public class ast_foreach extends ast_sent
 	{
 		return cond;
 	}
-	public final int get_iter_type()
+	public final GMTYPE_T get_iter_type()
 	{
 		return iter_type;
 	} // GM_ITERATORS
 
-	public final void set_iter_type(int i)
+	public final void set_iter_type(GMTYPE_T i)
 	{
 		iter_type = i;
 	} // GM_ITERATORS
@@ -313,7 +314,7 @@ public class ast_foreach extends ast_sent
 	private ast_id iterator;
 	private ast_id source; // graph
 	private ast_id source2; // common nbr
-	private int iter_type; // GM_ITERATORS
+	private GMTYPE_T iter_type; // GM_ITERATORS
 	private ast_expr cond;
 	private boolean seq_exe;
 	private boolean use_reverse;

@@ -85,9 +85,9 @@ public class GlobalMembersGm_defs
 		return GlobalMembersGm_defs.gm_is_any_nbr_edge_iter_type(i) || GlobalMembersGm_defs.gm_is_any_nbr_node_iter_type(i);
 	}
 
-	public static boolean gm_is_common_nbr_iter_type(int i)
+	public static boolean gm_is_common_nbr_iter_type(GMTYPE_T i)
 	{
-		return (i == GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS.getValue());
+		return (i == GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS);
 	}
 
 	public static boolean gm_is_node_iter_type(int i)

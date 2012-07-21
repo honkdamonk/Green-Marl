@@ -1,3 +1,5 @@
+package frontend;
+
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:

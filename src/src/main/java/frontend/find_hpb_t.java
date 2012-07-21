@@ -1,3 +1,18 @@
+package frontend;
+
+import ast.AST_NODE_TYPE;
+import ast.ast_assign;
+import ast.ast_bfs;
+import ast.ast_foreach;
+import ast.ast_id;
+import ast.ast_node;
+import ast.ast_sent;
+
+import common.GM_ERRORS_AND_WARNINGS;
+import common.GlobalMembersGm_error;
+import common.GlobalMembersGm_transform_helper;
+import common.gm_apply;
+
 public class find_hpb_t extends gm_apply
 {
 	private java.util.LinkedList<find_bound_t> scope = new java.util.LinkedList<find_bound_t>();

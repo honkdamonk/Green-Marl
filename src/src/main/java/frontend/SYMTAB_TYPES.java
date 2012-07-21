@@ -1,3 +1,5 @@
+package frontend;
+
 public enum SYMTAB_TYPES
 {
 	GM_SYMTAB_ARG, // argument

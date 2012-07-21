@@ -101,6 +101,9 @@ public class gm_code_writer
 			push(s.charAt(i));
 		}
 	}
+	public final void push(char c) {
+		//TODO stub!
+	}
 	public final void push_to_upper(String s)
 	{
 		int l = s.length();

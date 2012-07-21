@@ -56,7 +56,7 @@ public class gm_giraphlib extends gm_gpslib
 
 //	virtual void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block b);
 
-	public void generate_broadcast_reduce_initialize_master(ast_id id, gm_code_writer Body, int reduce_op_type, String base_value)
+	public void generate_broadcast_reduce_initialize_master(ast_id id, gm_code_writer Body, GM_REDUCE_T reduce_op_type, String base_value)
 	{
 		String temp = new String(new char[1024]);
 		Body.push("((");
@@ -76,7 +76,7 @@ public class gm_giraphlib extends gm_gpslib
 		String.format(temp, "((BooleanOverwriteAggregator) getAggregator(\"%s\")).setAggregatedValue(%s);", is_first_var, is_first_var);
 		Body.pushln(temp);
 	}
-	public void generate_broadcast_variable_type(int type_id, gm_code_writer Body, int reduce_op)
+	public void generate_broadcast_variable_type(int type_id, gm_code_writer Body, GM_REDUCE_T reduce_op)
     
 	{
 		//--------------------------------------
@@ -170,7 +170,7 @@ public class gm_giraphlib extends gm_gpslib
 		get_main().generate_rhs_id(id);
 		Body.pushln(");");
 	}
-	public void generate_broadcast_receive_master(ast_id id, gm_code_writer Body, int reduce_op_type)
+	public void generate_broadcast_receive_master(ast_id id, gm_code_writer Body, GM_REDUCE_T reduce_op_type)
 	{
 		String temp = new String(new char[1024]);
 		generate_broadcast_variable_type(id.getTypeSummary(), Body, reduce_op_type);
@@ -185,16 +185,16 @@ public class gm_giraphlib extends gm_gpslib
 		Body.push(" = ");
 		boolean need_paren = false;
     
-		if (reduce_op_type != GM_REDUCE_T.GMREDUCE_NULL.getValue())
+		if (reduce_op_type != GM_REDUCE_T.GMREDUCE_NULL)
 		{
-			if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MIN.getValue())
+			if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MIN)
 			{
 				need_paren = true;
 				Body.push("Math.min(");
 				get_main().generate_rhs_id(id);
 				Body.push(",");
 			}
-			else if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MAX.getValue())
+			else if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MAX)
 			{
 				need_paren = true;
 				Body.push("Math.max(");
@@ -258,7 +258,7 @@ public class gm_giraphlib extends gm_gpslib
 		Body.pushln("import org.apache.log4j.Logger;");
 		Body.pushln("import com.google.common.collect.Maps;");
 	}
-	public void generate_reduce_assign_vertex(ast_assign a, gm_code_writer Body, int reduce_op_type)
+	public void generate_reduce_assign_vertex(ast_assign a, gm_code_writer Body, GM_REDUCE_T reduce_op_type)
 	{
 		assert a.is_target_scalar();
 		ast_id id = a.get_lhs_scala();

@@ -1,12 +1,14 @@
 package backend_gps;
 
+import inc.GM_REDUCE_T;
+
 
 public class GlobalMembersGm_gps_gen_master
 {
 
 	//extern void gm_redirect_reproduce(FILE f);
 	//extern void gm_baseindent_reproduce(int i);
-	public static String get_reduce_base_value(int reduce_type, int gm_type)
+	public static String get_reduce_base_value(GM_REDUCE_T reduce_type, int gm_type)
 	{
 		switch (reduce_type)
 		{

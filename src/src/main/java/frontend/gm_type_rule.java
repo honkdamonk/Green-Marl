@@ -1,3 +1,5 @@
+package frontend;
+
 public class gm_type_rule
 {
 	public gm_type_rule(int O, int T1, int T2, int R, int C)

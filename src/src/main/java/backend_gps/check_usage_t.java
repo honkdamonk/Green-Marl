@@ -78,7 +78,7 @@ public class check_usage_t extends gps_apply_bb_ast
 
 	//----------------------------------------------------------
 
-	public final boolean check_symbol_write_in_par2(gm_symtab_entry e, int rtype)
+	public final boolean check_symbol_write_in_par2(gm_symtab_entry e, GM_REDUCE_T gmreduceInvalid)
 	{
 		// read in SEQ1? --> not okay
 		if (read_usage.containsKey(e)) // read in SEQ1
@@ -89,8 +89,8 @@ public class check_usage_t extends gps_apply_bb_ast
 		// reduced in SEQ1/PAR1? --> okay, only if same reduction
 		if (usage.containsKey(e))
 		{
-			int reduce_type = usage.get(e);
-			if ((reduce_type != GM_REDUCE_T.GMREDUCE_INVALID.getValue()) && (reduce_type == rtype))
+			GM_REDUCE_T reduce_type = usage.get(e);
+			if ((reduce_type != GM_REDUCE_T.GMREDUCE_INVALID) && (reduce_type == gmreduceInvalid))
 				return true;
 			_okay_to_merge = false;
 			return false;
@@ -202,13 +202,13 @@ public class check_usage_t extends gps_apply_bb_ast
 	{
 		if (e.is_id())
 		{
-			read_usage.put(e.get_id().getSymInfo(), 1);
+			read_usage.put(e.get_id().getSymInfo(), GM_REDUCE_T.GMREDUCE_PLUS); //TODO changed 1 to GMREDUCE_PLUS, is this ok?
 		}
 		return true;
 	}
 
-	private java.util.HashMap<gm_symtab_entry, Integer> usage = new java.util.HashMap<gm_symtab_entry, Integer>();
-	private java.util.HashMap<gm_symtab_entry, Integer> read_usage = new java.util.HashMap<gm_symtab_entry, Integer>();
+	private java.util.HashMap<gm_symtab_entry, GM_REDUCE_T> usage = new java.util.HashMap<gm_symtab_entry, GM_REDUCE_T>();
+	private java.util.HashMap<gm_symtab_entry, GM_REDUCE_T> read_usage = new java.util.HashMap<gm_symtab_entry, GM_REDUCE_T>();
 	private boolean _okay_to_merge;
 	private int _state;
 }

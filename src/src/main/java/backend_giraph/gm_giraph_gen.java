@@ -1,5 +1,6 @@
 package backend_giraph;
 
+import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_backend_gps;
 import inc.gm_compile_step;
 import ast.AST_NODE_TYPE;
@@ -569,7 +570,7 @@ public class gm_giraph_gen extends gm_gps_gen
 				continue;
 			if (local_info.is_used_as_reduce())
 			{
-				int reduce_type = local_info.get_reduce_type();
+				GM_REDUCE_T reduce_type = local_info.get_reduce_type();
     
 				//printf("being used as reduce :%s\n", I->first->getId()->get_genname());
 				get_lib().generate_broadcast_reduce_initialize_master(I.next().getKey().getId(), Body, reduce_type, GlobalMembersGm_giraph_gen_master.get_reduce_base_value(reduce_type, I.next().getKey().getType().getTypeSummary()));

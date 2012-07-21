@@ -427,10 +427,8 @@ public class ast_expr extends ast_node
 			case GMEXPR_BUILTIN:
 				//e= ast_expr::new_builtin_expr(id1->copy(b), builtin_orgname); break;
 				return ((ast_expr_builtin) this).copy(b);
-				break;
 			case GMEXPR_REDUCE:
 				return ((ast_expr_reduce) this).copy(b);
-				break;
 			default:
 				assert false;
 				break;
@@ -470,7 +468,7 @@ public class ast_expr extends ast_node
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_IVAL;
-		E.type_of_expression = GMTYPE_T.GMTYPE_INT.getValue(); // LONG?
+		E.type_of_expression = GMTYPE_T.GMTYPE_INT; // LONG?
 		E.ival = ival;
 		return E;
 	}
@@ -478,7 +476,7 @@ public class ast_expr extends ast_node
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_FVAL;
-		E.type_of_expression = GMTYPE_T.GMTYPE_FLOAT.getValue(); // DOUBLE?
+		E.type_of_expression = GMTYPE_T.GMTYPE_FLOAT; // DOUBLE?
 		E.fval = fval;
 		return E;
 	}
@@ -486,7 +484,7 @@ public class ast_expr extends ast_node
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_BVAL;
-		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL.getValue();
+		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL;
 		E.bval = bval;
 		return E;
 	}
@@ -494,40 +492,40 @@ public class ast_expr extends ast_node
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_NIL;
-		E.type_of_expression = GMTYPE_T.GMTYPE_NIL_UNKNOWN.getValue();
+		E.type_of_expression = GMTYPE_T.GMTYPE_NIL_UNKNOWN;
 		return E;
 	}
 	public static ast_expr new_inf_expr(boolean is_p)
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_INF;
-		E.type_of_expression = GMTYPE_T.GMTYPE_INF.getValue();
+		E.type_of_expression = GMTYPE_T.GMTYPE_INF;
 		E.plus_inf = is_p;
 		return E;
 	}
-	public static ast_expr new_typeconv_expr(int target_type, ast_expr l)
+	public static ast_expr new_typeconv_expr(GMTYPE_T target_type, ast_expr l)
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_UOP;
-		E.op_type = GM_OPS_T.GMOP_TYPEC.getValue();
+		E.op_type = GM_OPS_T.GMOP_TYPEC;
 		E.type_of_expression = target_type; // GMTYPE_xxx
 		E.left = l;
 		l.up = E;
 		l.parent = E;
 		return E;
 	}
-	public static ast_expr new_uop_expr(int op_type, ast_expr l)
+	public static ast_expr new_uop_expr(GM_OPS_T op_type, ast_expr l)
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_UOP;
 		E.op_type = op_type;
-		E.type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC.getValue();
+		E.type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC;
 		E.left = l;
 		l.up = E;
 		l.parent = E;
 		return E;
 	}
-	public static ast_expr new_biop_expr(int op_type, ast_expr l, ast_expr r)
+	public static ast_expr new_biop_expr(GM_OPS_T op_type, ast_expr l, ast_expr r)
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_BIOP;
@@ -537,22 +535,22 @@ public class ast_expr extends ast_node
 		l.up = E;
 		r.up = E;
 		r.is_right = true;
-		E.type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC.getValue();
+		E.type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC;
 		l.parent = r.parent = E;
 		return E;
 	}
-	public static ast_expr new_luop_expr(int op_type, ast_expr l)
+	public static ast_expr new_luop_expr(GM_OPS_T op_type, ast_expr l)
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_LUOP;
 		E.op_type = op_type;
-		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL.getValue();
+		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL;
 		E.left = l;
 		l.up = E;
 		l.parent = E;
 		return E;
 	}
-	public static ast_expr new_lbiop_expr(int op_type, ast_expr l, ast_expr r)
+	public static ast_expr new_lbiop_expr(GM_OPS_T op_type, ast_expr l, ast_expr r)
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_LBIOP;
@@ -562,11 +560,11 @@ public class ast_expr extends ast_node
 		l.up = E;
 		r.up = E;
 		r.is_right = true;
-		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL.getValue();
+		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL;
 		l.parent = r.parent = E;
 		return E;
 	}
-	public static ast_expr new_comp_expr(int op_type, ast_expr l, ast_expr r)
+	public static ast_expr new_comp_expr(GM_OPS_T op_type, ast_expr l, ast_expr r)
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_COMP;
@@ -576,7 +574,7 @@ public class ast_expr extends ast_node
 		l.up = E;
 		r.up = E;
 		r.is_right = true;
-		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL.getValue();
+		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL;
 		l.parent = r.parent = E;
 		return E;
 	}
@@ -585,7 +583,7 @@ public class ast_expr extends ast_node
 	{
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_TER;
-		E.op_type = GM_OPS_T.GMOP_TER.getValue();
+		E.op_type = GM_OPS_T.GMOP_TER;
 		E.left = left;
 		E.right = right;
 		E.cond = cond;
@@ -609,11 +607,11 @@ public class ast_expr extends ast_node
 		this.fval = 0;
 		this.bval = false;
 		this.plus_inf = false;
-		this.op_type = GM_OPS_T.GMOP_END.getValue();
+		this.op_type = GM_OPS_T.GMOP_END;
 		this.is_right = false;
 		this.is_cond = false;
-		this.type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN.getValue();
-		this.alternative_type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN.getValue();
+		this.type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
+		this.alternative_type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
 		this.bound_graph_sym = null;
 	}
 
@@ -628,12 +626,12 @@ public class ast_expr extends ast_node
 	protected double fval;
 	protected boolean bval;
 	protected boolean plus_inf;
-	protected int op_type;
+	protected GM_OPS_T op_type;
 	protected boolean is_right; // am I a right-operand?
 	protected boolean is_cond; // am I a conditional-operand?
 
-	protected int type_of_expression; // set after local typecheck
-	protected int alternative_type_of_expression; // used for group-assignment only. (during type checking)
+	protected GMTYPE_T type_of_expression; // set after local typecheck
+	protected GMTYPE_T alternative_type_of_expression; // used for group-assignment only. (during type checking)
 
 	public final boolean is_biop()
 	{
@@ -699,11 +697,11 @@ public class ast_expr extends ast_node
 	//-----------------------------------------------
 	// type is set after type-checker execution
 	//-----------------------------------------------
-	public final int get_type_summary()
+	public final GMTYPE_T get_type_summary()
 	{
 		return type_of_expression;
 	}
-	public final void set_type_summary(int t)
+	public final void set_type_summary(GMTYPE_T t)
 	{
 		type_of_expression = t;
 	} // set by type checker
@@ -754,7 +752,7 @@ public class ast_expr extends ast_node
 		return expr_class;
 	}
 
-	public final int get_optype()
+	public final GM_OPS_T get_optype()
 	{
 		return op_type;
 	}
@@ -791,7 +789,7 @@ public class ast_expr extends ast_node
 
 	public final boolean is_type_conv()
 	{
-		return op_type == GM_OPS_T.GMOP_TYPEC.getValue();
+		return op_type == GM_OPS_T.GMOP_TYPEC;
 	}
 
 	public final ast_expr get_left_op()
@@ -848,12 +846,12 @@ public class ast_expr extends ast_node
 		}
 	}
 
-	public final void set_alternative_type(int i)
+	public final void set_alternative_type(GMTYPE_T i)
 	{
 		alternative_type_of_expression = i;
 	}
 
-	public final int get_alternative_type()
+	public final GMTYPE_T get_alternative_type()
 	{
 		return alternative_type_of_expression;
 	}

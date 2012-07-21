@@ -282,7 +282,7 @@ public class ast_expr_reduce extends ast_expr
 		this.src2 = null;
 		this.body = null;
 		this.filter = null;
-		this.reduce_type = GM_REDUCE_T.GMREDUCE_NULL.getValue();
+		this.reduce_type = GM_REDUCE_T.GMREDUCE_NULL;
 		this.iter_type = 0;
 		set_nodetype(AST_NODE_TYPE.AST_EXPR_RDC);
 		create_symtabs();
@@ -292,6 +292,6 @@ public class ast_expr_reduce extends ast_expr
 	private ast_id src2;
 	private ast_expr body;
 	private ast_expr filter;
-	private int reduce_type;
+	private GM_REDUCE_T reduce_type;
 	private int iter_type;
 }

@@ -1,3 +1,5 @@
+package frontend;
+
 import ast.ast_extra_info;
 
 public class gm_rwinfo_sets extends ast_extra_info

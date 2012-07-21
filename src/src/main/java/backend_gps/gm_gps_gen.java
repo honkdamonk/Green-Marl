@@ -684,7 +684,7 @@ public class gm_gps_gen extends gm_backend, gm_code_generator
 				continue;
 			if (local_info.is_used_as_reduce())
 			{
-				int reduce_type = local_info.get_reduce_type();
+				GM_REDUCE_T reduce_type = local_info.get_reduce_type();
     
 				//printf("being used as reduce :%s\n", I->first->getId()->get_genname());
 				get_lib().generate_broadcast_reduce_initialize_master(I.next().getKey().getId(), Body, reduce_type, GlobalMembersGm_giraph_gen_master.get_reduce_base_value(reduce_type, I.next().getKey().getType().getTypeSummary()));

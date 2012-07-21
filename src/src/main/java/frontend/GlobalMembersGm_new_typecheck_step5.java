@@ -1,3 +1,5 @@
+package frontend;
+
 public class GlobalMembersGm_new_typecheck_step5
 {
 

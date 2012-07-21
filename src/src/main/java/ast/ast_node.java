@@ -1,5 +1,9 @@
 package ast;
 
+import inc.gm_code_writer;
+
+import java.io.PrintStream;
+
 import common.GlobalMembersGm_traverse;
 import common.gm_apply;
 
@@ -9,6 +13,8 @@ import frontend.gm_symtab;
 
 public abstract class ast_node
 {
+	gm_code_writer Out; //TODO stub!
+
 //C++ TO JAVA CONVERTER TODO TASK: Java has no concept of a 'friend' class:
 //	friend class gm_apply;
 	protected ast_node(AST_NODE_TYPE nt)

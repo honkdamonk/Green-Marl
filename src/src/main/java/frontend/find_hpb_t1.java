@@ -1,4 +1,6 @@
-import inc.AST_NODE_TYPE;
+package frontend;
+
+import ast.AST_NODE_TYPE;
 
 //-----------------------------------------------------------------
 // Find highest parallel bound

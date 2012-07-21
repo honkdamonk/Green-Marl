@@ -1,3 +1,7 @@
+package frontend;
+
+import inc.GMTYPE_T;
+import inc.GlobalMembersGm_defs;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -7,8 +11,6 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_nop;
 import ast.ast_sent;
-import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
 
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;

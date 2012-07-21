@@ -1,3 +1,7 @@
+package frontend;
+
+import inc.GM_OPS_T;
+import inc.GM_REDUCE_T;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -6,8 +10,6 @@ import ast.ast_id;
 import ast.ast_if;
 import ast.ast_node;
 import ast.ast_sentblock;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
 
 import common.GlobalMembersGm_transform_helper;
 

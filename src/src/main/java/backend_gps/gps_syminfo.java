@@ -17,7 +17,7 @@ public class gps_syminfo extends ast_extra_info
 		this.used_in_vertex = false;
 		this.used_in_master = false;
 		this.used_in_receiver = false;
-		this.reduce_op_type = GM_REDUCE_T.GMREDUCE_NULL.getValue();
+		this.reduce_op_type = GM_REDUCE_T.GMREDUCE_NULL;
 		this.start_byte = 0;
 		this.scope = gm_gps_scope_t.GPS_SCOPE_GLOBAL.getValue();
 	}
@@ -43,7 +43,7 @@ public class gps_syminfo extends ast_extra_info
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: void add_usage_in_BB(int bb_no, int usage, int context, int reduce_type = GMREDUCE_NULL)
-	public final void add_usage_in_BB(int bb_no, int usage, int context, int reduce_type)
+	public final void add_usage_in_BB(int bb_no, int usage, int context, GM_REDUCE_T reduce_type)
 	{
 		// if not already in
 		for (int i = 0; i < (int) used_BB.size(); i++)
@@ -133,7 +133,7 @@ public class gps_syminfo extends ast_extra_info
 		return used_in_receiver;
 	}
 
-	public final int get_reduce_type()
+	public final GM_REDUCE_T get_reduce_type()
 	{
 		return reduce_op_type;
 	}
@@ -189,6 +189,6 @@ public class gps_syminfo extends ast_extra_info
 	//bool used_in_sender;
 	private boolean used_in_receiver;
 
-	private int reduce_op_type;
+	private GM_REDUCE_T reduce_op_type;
 	private int start_byte;
 }

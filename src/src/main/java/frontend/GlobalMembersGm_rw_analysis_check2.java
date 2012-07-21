@@ -1,6 +1,8 @@
+package frontend;
+
+import inc.GM_REDUCE_T;
 import ast.AST_NODE_TYPE;
 import ast.ast_sent;
-import inc.GM_REDUCE_T;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;

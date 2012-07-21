@@ -1,3 +1,5 @@
+import inc.GMTYPE_T;
+import inc.GlobalMembersGm_defs;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -11,8 +13,6 @@ import ast.ast_return;
 import ast.ast_sent;
 import ast.ast_typedecl;
 import ast.ast_while;
-import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;

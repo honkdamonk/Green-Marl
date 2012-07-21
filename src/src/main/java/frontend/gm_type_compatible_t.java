@@ -1,3 +1,5 @@
+package frontend;
+
 //-----------------------------------------------------------
 // t1:lhs type summary, t2:rhs type summary (GMTYPE_ ...), t1!=t2
 // return true, if assignment is possible

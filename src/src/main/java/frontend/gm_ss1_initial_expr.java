@@ -1,3 +1,7 @@
+package frontend;
+
+import inc.GM_REDUCE_T;
+import inc.gm_assignment_t;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -5,7 +9,6 @@ import ast.ast_id;
 import ast.ast_idlist;
 import ast.ast_sent;
 import ast.ast_vardecl;
-import inc.GM_REDUCE_T;
 
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;

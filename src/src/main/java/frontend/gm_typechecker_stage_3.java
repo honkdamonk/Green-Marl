@@ -1,11 +1,11 @@
-import ast.ast_expr;
-import ast.ast_expr_builtin;
-import ast.ast_expr_reduce;
-import ast.ast_typedecl;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_defs;
+import ast.ast_expr;
+import ast.ast_expr_builtin;
+import ast.ast_expr_reduce;
+import ast.ast_typedecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;

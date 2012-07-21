@@ -76,7 +76,7 @@ public class gm_gpslib extends gm_graph_library
 
 //	virtual void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block b);
 
-	public void generate_broadcast_reduce_initialize_master(ast_id id, gm_code_writer Body, int reduce_type, String base_value)
+	public void generate_broadcast_reduce_initialize_master(ast_id id, gm_code_writer Body, GM_REDUCE_T reduce_type, String base_value)
 	{
 		Body.push("getGlobalObjectsMap().putOrUpdateGlobalObject(");
 		Body.push(create_key_string(id));

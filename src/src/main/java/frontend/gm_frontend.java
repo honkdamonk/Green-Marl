@@ -1,11 +1,11 @@
 package frontend;
 
-import ast.ast_idlist;
-import ast.ast_procdef;
-import ast.ast_sentblock;
 import inc.gm_backend_info;
 import inc.gm_compile_step;
 import inc.gm_procinfo;
+import ast.ast_idlist;
+import ast.ast_procdef;
+import ast.ast_sentblock;
 
 import common.GlobalMembersGm_apply_compiler_stage;
 import common.GlobalMembersGm_error;

@@ -1,3 +1,5 @@
+package frontend;
+
 public class GlobalMembersGm_new_typecheck_step4
 {
 	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:

@@ -1,3 +1,6 @@
+package common;
+
+import ast.AST_NODE_TYPE;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
@@ -21,7 +24,7 @@ public class GlobalMembersGm_misc
 		z = c;
 		return z;
 	}
-	public static String gm_get_nodetype_string(int t)
+	public static String gm_get_nodetype_string(AST_NODE_TYPE t)
 	{
 		switch (t)
 		{
@@ -69,7 +72,7 @@ public class GlobalMembersGm_misc
 	}
 
 // for debug-print only
-	public static String gm_get_type_string(int t)
+	public static String gm_get_type_string(GMTYPE_T t)
 	{
 		switch (t)
 		{
@@ -152,7 +155,7 @@ public class GlobalMembersGm_misc
 				return "Unknown";
 		}
 	}
-	public static String gm_get_iter_type_string(int t)
+	public static String gm_get_iter_type_string(GMTYPE_T t)
 	{
 		switch (t)
 		{
@@ -187,14 +190,14 @@ public class GlobalMembersGm_misc
 				return "Unknown";
 		}
 	}
-	public static String gm_get_op_string(int op_type)
+	public static String gm_get_op_string(GM_OPS_T op_type)
 	{
-		String opstr = (op_type == GM_OPS_T.GMOP_MULT.getValue()) ? "*" : (op_type == GM_OPS_T.GMOP_DIV.getValue()) ? "/" : (op_type == GM_OPS_T.GMOP_SUB.getValue()) ? "-" : (op_type == GM_OPS_T.GMOP_MOD.getValue()) ? "%" : (op_type == GM_OPS_T.GMOP_ADD.getValue()) ? "+" : (op_type == GM_OPS_T.GMOP_NEG.getValue()) ? "-" : (op_type == GM_OPS_T.GMOP_AND.getValue()) ? "&&" : (op_type == GM_OPS_T.GMOP_OR.getValue()) ? "||" : (op_type == GM_OPS_T.GMOP_NOT.getValue()) ? "!" : (op_type == GM_OPS_T.GMOP_EQ.getValue()) ? "==" : (op_type == GM_OPS_T.GMOP_NEQ.getValue()) ? "!=" : (op_type == GM_OPS_T.GMOP_GT.getValue()) ? ">" : (op_type == GM_OPS_T.GMOP_LT.getValue()) ? "<" : (op_type == GM_OPS_T.GMOP_GE.getValue()) ? ">=" : (op_type == GM_OPS_T.GMOP_LE.getValue()) ? "<=" : (op_type == GM_OPS_T.GMOP_ABS.getValue()) ? "|" : (op_type == GM_OPS_T.GMOP_TYPEC.getValue()) ? "(type_conversion)" : "??";
+		String opstr = (op_type == GM_OPS_T.GMOP_MULT) ? "*" : (op_type == GM_OPS_T.GMOP_DIV) ? "/" : (op_type == GM_OPS_T.GMOP_SUB) ? "-" : (op_type == GM_OPS_T.GMOP_MOD) ? "%" : (op_type == GM_OPS_T.GMOP_ADD) ? "+" : (op_type == GM_OPS_T.GMOP_NEG) ? "-" : (op_type == GM_OPS_T.GMOP_AND) ? "&&" : (op_type == GM_OPS_T.GMOP_OR) ? "||" : (op_type == GM_OPS_T.GMOP_NOT) ? "!" : (op_type == GM_OPS_T.GMOP_EQ) ? "==" : (op_type == GM_OPS_T.GMOP_NEQ) ? "!=" : (op_type == GM_OPS_T.GMOP_GT) ? ">" : (op_type == GM_OPS_T.GMOP_LT) ? "<" : (op_type == GM_OPS_T.GMOP_GE) ? ">=" : (op_type == GM_OPS_T.GMOP_LE) ? "<=" : (op_type == GM_OPS_T.GMOP_ABS) ? "|" : (op_type == GM_OPS_T.GMOP_TYPEC) ? "(type_conversion)" : "??";
 		return opstr;
 	}
-	public static String gm_get_reduce_string(int rop_type)
+	public static String gm_get_reduce_string(GM_REDUCE_T rop_type)
 	{
-		String opstr = (rop_type == GM_REDUCE_T.GMREDUCE_PLUS.getValue()) ? "+=" : (rop_type == GM_REDUCE_T.GMREDUCE_MULT.getValue()) ? "*=" : (rop_type == GM_REDUCE_T.GMREDUCE_MIN.getValue()) ? "min=" : (rop_type == GM_REDUCE_T.GMREDUCE_MAX.getValue()) ? "max=" : (rop_type == GM_REDUCE_T.GMREDUCE_AND.getValue()) ? "&=" : (rop_type == GM_REDUCE_T.GMREDUCE_OR.getValue()) ? "|=" : (rop_type == GM_REDUCE_T.GMREDUCE_DEFER.getValue()) ? "<=" : "??";
+		String opstr = (rop_type == GM_REDUCE_T.GMREDUCE_PLUS) ? "+=" : (rop_type == GM_REDUCE_T.GMREDUCE_MULT) ? "*=" : (rop_type == GM_REDUCE_T.GMREDUCE_MIN) ? "min=" : (rop_type == GM_REDUCE_T.GMREDUCE_MAX) ? "max=" : (rop_type == GM_REDUCE_T.GMREDUCE_AND) ? "&=" : (rop_type == GM_REDUCE_T.GMREDUCE_OR) ? "|=" : (rop_type == GM_REDUCE_T.GMREDUCE_DEFER) ? "<=" : "??";
 		return opstr;
 	}
 	public static String gm_get_reduce_expr_string(int rop_type)
@@ -202,17 +205,17 @@ public class GlobalMembersGm_misc
 		String opstr = (rop_type == GM_REDUCE_T.GMREDUCE_PLUS.getValue()) ? "Sum" : (rop_type == GM_REDUCE_T.GMREDUCE_MULT.getValue()) ? "Product" : (rop_type == GM_REDUCE_T.GMREDUCE_MIN.getValue()) ? "Min" : (rop_type == GM_REDUCE_T.GMREDUCE_MAX.getValue()) ? "Max" : (rop_type == GM_REDUCE_T.GMREDUCE_AND.getValue()) ? "All" : (rop_type == GM_REDUCE_T.GMREDUCE_OR.getValue()) ? "Exist" : "??";
 		return opstr;
 	}
-	public static int gm_get_op_pred(int op_type)
+	public static int gm_get_op_pred(GM_OPS_T op_type)
 	{
 		return GlobalMembersGm_defs.GM_OPPRED_LEVEL[op_type];
 	}
-	public static boolean gm_need_paranthesis(int this_op, int up_op, boolean is_right)
+	public static boolean gm_need_paranthesis(GM_OPS_T this_op, GM_OPS_T up_op, boolean is_right)
 	{
-		if (up_op == GM_OPS_T.GMOP_TER.getValue())
+		if (up_op == GM_OPS_T.GMOP_TER)
 		{
 			// for clarity I prefer adding ()s, except chained ternary-ops.
 			// example (A+B>C) ? (D+1) : (A+C>D) ? (E+1) : (F+1)
-			if ((this_op == GM_OPS_T.GMOP_TER.getValue()) && is_right)
+			if ((this_op == GM_OPS_T.GMOP_TER) && is_right)
 				return false;
 			else
 				return true;
@@ -231,12 +234,12 @@ public class GlobalMembersGm_misc
 	}
 	public static boolean gm_is_same_string(String s1, String s2)
 	{
-		return (strcmp(s1, s2) == 0);
+		return s1.equals(s2);
 	}
 
 	//extern const char* gm_get_builtin_string(int t);
 	//extern int gm_get_output_type_summary_builtin(int btype); 
-	public static int gm_get_iter_type_from_set_type(int set_type)
+	public static GMTYPE_T gm_get_iter_type_from_set_type(GMTYPE_T set_type)
 	{
 		switch (set_type)
 		{

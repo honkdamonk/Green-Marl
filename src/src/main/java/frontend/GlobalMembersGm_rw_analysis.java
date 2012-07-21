@@ -1,7 +1,30 @@
+package frontend;
+
+import inc.GMTYPE_T;
+import inc.GM_REDUCE_T;
+import inc.GlobalMembersGm_defs;
+import ast.AST_NODE_TYPE;
+import ast.ast_bfs;
+import ast.ast_expr;
+import ast.ast_expr_builtin;
+import ast.ast_expr_foreign;
+import ast.ast_expr_reduce;
+import ast.ast_field;
+import ast.ast_foreach;
+import ast.ast_id;
+import ast.ast_node;
+import ast.ast_sent;
+import ast.ast_sentblock;
+
+import common.GM_ERRORS_AND_WARNINGS;
+import common.GlobalMembersGm_error;
+import common.GlobalMembersGm_misc;
+import common.GlobalMembersGm_traverse;
+
 public class GlobalMembersGm_rw_analysis
 {
 
-	public static int gm_get_range_from_itertype(int itype)
+	public static gm_range_type_t gm_get_range_from_itertype(GMTYPE_T itype)
 	{
 		switch (itype)
 		{
@@ -359,9 +382,9 @@ public static boolean gm_add_rwinfo_to_set(java.util.HashMap<gm_symtab_entry, ja
 
 		return is_okay; // returns is_okay
 	}
-	public static String gm_get_range_string(int access_range)
+	public static String gm_get_range_string(gm_range_type_t access_range)
 	{
-		return (access_range == gm_range_type_t.GM_RANGE_LINEAR.getValue()) ? "LINEAR" : (access_range == gm_range_type_t.GM_RANGE_RANDOM.getValue()) ? "RANDOM" : (access_range == gm_range_type_t.GM_RANGE_LEVEL.getValue()) ? "LEVEL" : (access_range == gm_range_type_t.GM_RANGE_LEVEL_UP.getValue()) ? "LEVEL_UP" : (access_range == gm_range_type_t.GM_RANGE_LEVEL_DOWN.getValue()) ? "LEVEL_DOWN" : "???";
+		return (access_range == gm_range_type_t.GM_RANGE_LINEAR) ? "LINEAR" : (access_range == gm_range_type_t.GM_RANGE_RANDOM) ? "RANDOM" : (access_range == gm_range_type_t.GM_RANGE_LEVEL) ? "LEVEL" : (access_range == gm_range_type_t.GM_RANGE_LEVEL_UP) ? "LEVEL_UP" : (access_range == gm_range_type_t.GM_RANGE_LEVEL_DOWN) ? "LEVEL_DOWN" : "???";
 	}
 
 	//------------------------------------------------------------

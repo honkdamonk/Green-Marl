@@ -309,7 +309,7 @@ public static void gm_insert_sent_body_end(ast_foreach fe, ast_sent target)
 	//ast_expr_reduce gm_new_expr_reduce_after_tc(ast_id it, ast_id src, ast_expr body, ast_expr filter, int iter_type);
 
 	// 'bottom' symbol for reduction
-	//ast_expr gm_new_bottom_symbol(int reduce_type, int lhs_type);
+	//ast_expr gm_new_bottom_symbol(GM_REDUCE_T reduce_type, int lhs_type);
 
 	//------------------------------------------------------------
 	// Ohter helpers

@@ -1,3 +1,5 @@
+package common;
+
 import ast.ast_expr;
 import ast.ast_expr_reduce;
 import ast.ast_foreach;
@@ -8,6 +10,7 @@ import frontend.GlobalMembersGm_new_typecheck_step1;
 import frontend.gm_scope;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
+import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_defs;
 
 public class GlobalMembersGm_new_sents_after_tc
@@ -159,7 +162,7 @@ public class GlobalMembersGm_new_sents_after_tc
 	//--------------------------------------------------------------
 	// Create bottom symbol for reduction
 	//--------------------------------------------------------------
-	public static ast_expr gm_new_bottom_symbol(int reduce_type, int lhs_type)
+	public static ast_expr gm_new_bottom_symbol(GM_REDUCE_T reduce_type, int lhs_type)
 	{
 		ast_expr init_val;
 		switch (reduce_type)

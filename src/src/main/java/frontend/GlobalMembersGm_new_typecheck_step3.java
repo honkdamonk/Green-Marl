@@ -1,6 +1,8 @@
+package frontend;
+
+import inc.GlobalMembersGm_defs;
 import ast.ast_expr;
 import ast.ast_id;
-import inc.GlobalMembersGm_defs;
 
 public class GlobalMembersGm_new_typecheck_step3
 {

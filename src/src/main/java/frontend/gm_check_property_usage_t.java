@@ -1,3 +1,5 @@
+import inc.GMTYPE_T;
+import inc.GM_PROP_USAGE_T;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -5,8 +7,6 @@ import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_node;
 import ast.ast_sent;
-import inc.GMTYPE_T;
-import inc.GM_PROP_USAGE_T;
 
 import common.gm_apply;
 

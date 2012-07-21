@@ -1,3 +1,4 @@
+import inc.GMTYPE_T;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -9,7 +10,6 @@ import ast.ast_return;
 import ast.ast_sent;
 import ast.ast_typedecl;
 import ast.ast_while;
-import inc.GMTYPE_T;
 
 import common.GlobalMembersGm_resolve_inf_size;
 import common.gm_apply;

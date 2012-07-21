@@ -1,3 +1,7 @@
+package frontend;
+
+import inc.GMTYPE_T;
+import inc.GlobalMembersGm_defs;
 import ast.AST_NODE_TYPE;
 import ast.ast_argdecl;
 import ast.ast_assign;
@@ -17,8 +21,6 @@ import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_typedecl;
 import ast.ast_vardecl;
-import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
@@ -728,14 +730,14 @@ public class gm_typechecker_stage_1 extends gm_apply
 	private boolean _is_okay;
 
 	//if sourceId is defined as a field variable (= is a property) the iter type should be a property iterator
-	private int adjust_iter_type(ast_foreach fe)
+	private GMTYPE_T adjust_iter_type(ast_foreach fe)
 	{
 		if (curr_field.find_symbol(fe.get_source()) != null)
 		{
 			ast_id source = fe.get_source();
 			gm_symtab_entry tabEntry = curr_field.find_symbol(source);
-			int targetType = tabEntry.getType().getTargetTypeSummary();
-			int newIterType = mapTargetToIterType(targetType);
+			GMTYPE_T targetType = tabEntry.getType().getTargetTypeSummary();
+			GMTYPE_T newIterType = mapTargetToIterType(targetType);
 			fe.set_iter_type(newIterType);
 			return newIterType;
 		}
@@ -745,7 +747,7 @@ public class gm_typechecker_stage_1 extends gm_apply
 		}
 	}
 
-	private static int mapTargetToIterType(int targetType)
+	private static GMTYPE_T mapTargetToIterType(GMTYPE_T targetType)
 	{
 		switch (targetType)
 		{

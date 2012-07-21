@@ -138,7 +138,7 @@ public class opt_scalar_reduction_t extends gm_apply
 			if (e.getType().is_property())
 				continue;
 
-			int reduce_type = I.next().getValue().getFirst().reduce_op;
+			GM_REDUCE_T reduce_type = I.next().getValue().getFirst().reduce_op;
 			int e_type = e.getType().getTypeSummary();
 			boolean is_supple = I.next().getValue().getFirst().is_supplement;
 			gm_symtab_entry org_target = I.next().getValue().getFirst().org_lhs;

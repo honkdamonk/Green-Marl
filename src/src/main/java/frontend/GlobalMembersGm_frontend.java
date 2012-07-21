@@ -1,3 +1,9 @@
+package frontend;
+
+import inc.GM_REDUCE_T;
+import inc.GlobalMembersGm_defs;
+import inc.expr_list;
+import inc.lhs_list;
 import ast.AST_NODE_TYPE;
 import ast.ast_argdecl;
 import ast.ast_assign;
@@ -16,10 +22,6 @@ import ast.ast_return;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
-import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
-import inc.expr_list;
-import inc.lhs_list;
 
 import common.GlobalMembersGm_main;
 

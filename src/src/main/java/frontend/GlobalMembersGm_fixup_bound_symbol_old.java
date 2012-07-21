@@ -1,8 +1,10 @@
+package frontend;
+
+import inc.GM_OPS_T;
+import inc.GM_REDUCE_T;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
 
 public class GlobalMembersGm_fixup_bound_symbol_old
 {

@@ -1,3 +1,5 @@
+package frontend;
+
 import ast.ast_id;
 import ast.ast_procdef;
 

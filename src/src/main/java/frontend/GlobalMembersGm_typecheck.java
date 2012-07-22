@@ -1,3 +1,4 @@
+import inc.GMTYPE_T;
 import inc.GlobalMembersGm_defs;
 
 public class GlobalMembersGm_typecheck
@@ -26,13 +27,13 @@ public class GlobalMembersGm_typecheck
 	// Utility functions (Type summary)
 	//----------------------------------------------------------------------------------------------------------------
 	// check the byte size of two numeric type
-	public static int gm_compare_numeric_type_size(int t1, int t2)
+	public static int gm_compare_numeric_type_size(GMTYPE_T t1, GMTYPE_T t2)
 	{
 		// GMTYPE_... is defined as small to larger
 		return t1 - t2; // +:t1 > t2 , 0:t2==t2, -:t1 < t2
 	}
 	// check the size (in Bytes) of two numeric types 
-	public static int gm_get_larger_type(int t1, int t2)
+	public static GMTYPE_T gm_get_larger_type(GMTYPE_T t1, GMTYPE_T t2)
 	{
 		if (GlobalMembersGm_typecheck.gm_compare_numeric_type_size(t1, t2) > 0)
 			return t1;
@@ -41,7 +42,7 @@ public class GlobalMembersGm_typecheck
 	}
 
 	// determine resulting type of numeric operation A (+,-,*,/) B 
-	public static int gm_determine_result_type(int t1, int t2)
+	public static GMTYPE_T gm_determine_result_type(GMTYPE_T t1, GMTYPE_T t2)
 	{
 		// assumption. t1/t2 is compatible
 		if (t1 == t2)
@@ -70,7 +71,7 @@ public class GlobalMembersGm_typecheck
 		}
 	}
 
-	public static boolean gm_check_compatible_types(int t1, int t2, int for_what)
+	public static boolean gm_check_compatible_types(GMTYPE_T t1, GMTYPE_T t2, gm_type_compatible_t for_what)
 	{
 		if (t1 == t2)
 			return true;
@@ -90,7 +91,7 @@ public class GlobalMembersGm_typecheck
 
 		if (GlobalMembersGm_defs.gm_is_node_compatible_type(t1))
 		{
-			if (for_what == gm_type_compatible_t.FOR_BOP.getValue())
+			if (for_what == gm_type_compatible_t.FOR_BOP)
 				return false;
 			else
 				return GlobalMembersGm_defs.gm_is_node_compatible_type(t2);
@@ -98,7 +99,7 @@ public class GlobalMembersGm_typecheck
 
 		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(t1))
 		{
-			if (for_what == gm_type_compatible_t.FOR_BOP.getValue())
+			if (for_what == gm_type_compatible_t.FOR_BOP)
 				return false;
 			else
 				return GlobalMembersGm_defs.gm_is_edge_compatible_type(t2);
@@ -106,7 +107,7 @@ public class GlobalMembersGm_typecheck
 
 		if (GlobalMembersGm_defs.gm_is_numeric_type(t1))
 		{
-			if (for_what == gm_type_compatible_t.FOR_BOP.getValue())
+			if (for_what == gm_type_compatible_t.FOR_BOP)
 				return GlobalMembersGm_defs.gm_is_numeric_type(t2);
 			else
 				return GlobalMembersGm_defs.gm_is_numeric_type(t2) || GlobalMembersGm_defs.gm_is_inf_type(t2); // it is possible to assign INF to numeric
@@ -122,19 +123,19 @@ public class GlobalMembersGm_typecheck
 		return false;
 	}
 
-	public static boolean gm_is_compatible_type_for_assign(int lhs, int rhs)
+	public static boolean gm_is_compatible_type_for_assign(GMTYPE_T lhs, GMTYPE_T rhs)
 	{
 		return GlobalMembersGm_typecheck.gm_check_compatible_types(lhs, rhs, gm_type_compatible_t.FOR_ASSIGN);
 	}
-	public static boolean gm_is_compatible_type_for_eq(int t1, int t2)
+	public static boolean gm_is_compatible_type_for_eq(GMTYPE_T t1, GMTYPE_T t2)
 	{
 		return GlobalMembersGm_typecheck.gm_check_compatible_types(t1, t2, gm_type_compatible_t.FOR_EQ);
 	}
-	public static boolean gm_is_compatible_type_for_less(int t1, int t2)
+	public static boolean gm_is_compatible_type_for_less(GMTYPE_T t1, GMTYPE_T t2)
 	{
 		return GlobalMembersGm_typecheck.gm_check_compatible_types(t1, t2, gm_type_compatible_t.FOR_LESS);
 	}
-	public static boolean gm_is_compatible_type_for_biop(int t1, int t2)
+	public static boolean gm_is_compatible_type_for_biop(GMTYPE_T t1, GMTYPE_T t2)
 	{
 		return GlobalMembersGm_typecheck.gm_check_compatible_types(t1, t2, gm_type_compatible_t.FOR_BOP);
 	}

@@ -1,6 +1,7 @@
 package ast;
 
 import inc.GMEXPR_CLASS;
+import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_defs;
 import common.GlobalMembersGm_dumptree;
@@ -24,13 +25,13 @@ public class ast_expr_reduce extends ast_expr
 			src2.dispose();
 		delete_symtabs();
 	}
-	public static ast_expr_reduce new_reduce_expr(int optype, ast_id iter, ast_id src, int iter_op, ast_expr body)
+	public static ast_expr_reduce new_reduce_expr(GM_REDUCE_T optype, ast_id iter, ast_id src, GMTYPE_T iter_op, ast_expr body)
 	{
 		return new_reduce_expr(optype, iter, src, iter_op, body, null);
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: static ast_expr_reduce* new_reduce_expr(int optype, ast_id* iter, ast_id* src, int iter_op, ast_expr* body, ast_expr* filter = null)
-	public static ast_expr_reduce new_reduce_expr(int optype, ast_id iter, ast_id src, int iter_op, ast_expr body, ast_expr filter)
+	public static ast_expr_reduce new_reduce_expr(GM_REDUCE_T optype, ast_id iter, ast_id src, GMTYPE_T iter_op, ast_expr body, ast_expr filter)
 	{
 		ast_expr_reduce e = new ast_expr_reduce();
 		e.iter = iter;
@@ -211,15 +212,15 @@ public class ast_expr_reduce extends ast_expr
 		return true;
 	}
 
-	public final int get_iter_type()
+	public final GMTYPE_T get_iter_type()
 	{
 		return iter_type;
 	}
-	public final void set_iter_type(int i)
+	public final void set_iter_type(GMTYPE_T i)
 	{
 		iter_type = i;
 	}
-	public final int get_reduce_type()
+	public final GM_REDUCE_T get_reduce_type()
 	{
 		return reduce_type;
 	}
@@ -293,5 +294,5 @@ public class ast_expr_reduce extends ast_expr
 	private ast_expr body;
 	private ast_expr filter;
 	private GM_REDUCE_T reduce_type;
-	private int iter_type;
+	private GMTYPE_T iter_type;
 }

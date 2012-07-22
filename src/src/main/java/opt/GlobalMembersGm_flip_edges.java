@@ -60,7 +60,6 @@ public class GlobalMembersGm_flip_edges
 				return null;
 			s = sb.get_sents().getFirst();
 		}
-		return null;
 	}
 
 	// return true if  sym is used inside e
@@ -98,8 +97,8 @@ public class GlobalMembersGm_flip_edges
 			return false;
 		in = (ast_foreach) body1;
 
-		int iter2 = in.get_iter_type();
-		if ((iter2 != GMTYPE_T.GMTYPE_NODEITER_NBRS.getValue()) && (iter2 != GMTYPE_T.GMTYPE_NODEITER_IN_NBRS.getValue()))
+		GMTYPE_T iter2 = in.get_iter_type();
+		if ((iter2 != GMTYPE_T.GMTYPE_NODEITER_NBRS) && (iter2 != GMTYPE_T.GMTYPE_NODEITER_IN_NBRS))
 			return false;
 
 		if (in.get_source().getSymInfo() != out.get_iterator().getSymInfo())

@@ -200,9 +200,9 @@ public class GlobalMembersGm_misc
 		String opstr = (rop_type == GM_REDUCE_T.GMREDUCE_PLUS) ? "+=" : (rop_type == GM_REDUCE_T.GMREDUCE_MULT) ? "*=" : (rop_type == GM_REDUCE_T.GMREDUCE_MIN) ? "min=" : (rop_type == GM_REDUCE_T.GMREDUCE_MAX) ? "max=" : (rop_type == GM_REDUCE_T.GMREDUCE_AND) ? "&=" : (rop_type == GM_REDUCE_T.GMREDUCE_OR) ? "|=" : (rop_type == GM_REDUCE_T.GMREDUCE_DEFER) ? "<=" : "??";
 		return opstr;
 	}
-	public static String gm_get_reduce_expr_string(int rop_type)
+	public static String gm_get_reduce_expr_string(GM_REDUCE_T rop_type)
 	{
-		String opstr = (rop_type == GM_REDUCE_T.GMREDUCE_PLUS.getValue()) ? "Sum" : (rop_type == GM_REDUCE_T.GMREDUCE_MULT.getValue()) ? "Product" : (rop_type == GM_REDUCE_T.GMREDUCE_MIN.getValue()) ? "Min" : (rop_type == GM_REDUCE_T.GMREDUCE_MAX.getValue()) ? "Max" : (rop_type == GM_REDUCE_T.GMREDUCE_AND.getValue()) ? "All" : (rop_type == GM_REDUCE_T.GMREDUCE_OR.getValue()) ? "Exist" : "??";
+		String opstr = (rop_type == GM_REDUCE_T.GMREDUCE_PLUS) ? "Sum" : (rop_type == GM_REDUCE_T.GMREDUCE_MULT) ? "Product" : (rop_type == GM_REDUCE_T.GMREDUCE_MIN) ? "Min" : (rop_type == GM_REDUCE_T.GMREDUCE_MAX) ? "Max" : (rop_type == GM_REDUCE_T.GMREDUCE_AND) ? "All" : (rop_type == GM_REDUCE_T.GMREDUCE_OR) ? "Exist" : "??";
 		return opstr;
 	}
 	public static int gm_get_op_pred(GM_OPS_T op_type)

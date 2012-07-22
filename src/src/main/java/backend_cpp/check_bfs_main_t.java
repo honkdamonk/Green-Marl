@@ -1,5 +1,6 @@
 package backend_cpp;
 
+import inc.GlobalMembersGm_backend_cpp;
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -8,12 +9,14 @@ import ast.ast_extra_info_set;
 import ast.ast_id;
 import ast.ast_procdef;
 import ast.ast_sent;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import inc.*;
-import opt.*;
-import tangible.*;
+
+import common.GlobalMembersGm_main;
+import common.gm_apply;
+
+import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rwinfo;
+import frontend.gm_rwinfo_sets;
+import frontend.gm_symtab_entry;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X

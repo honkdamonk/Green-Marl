@@ -116,6 +116,7 @@ public class gm_builtin_def
 	{
 		return num_args;
 	}
+
 	public final GMTYPE_T get_source_type_summary()
 	{
 		return src_type;

@@ -374,8 +374,8 @@ public class ast_expr extends ast_node
     
 		if (for_expr && is_post)
 		{
-			boolean b = a.has_separate_post_apply();
-			if (b)
+			boolean b2 = a.has_separate_post_apply();
+			if (b2)
 				a.apply2(this);
 			else
 				a.apply(this);
@@ -431,6 +431,7 @@ public class ast_expr extends ast_node
 				return ((ast_expr_reduce) this).copy(b);
 			default:
 				assert false;
+				e = null;
 				break;
 		}
     

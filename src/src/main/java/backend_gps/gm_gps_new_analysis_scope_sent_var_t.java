@@ -108,5 +108,5 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply
 
 	private ast_foreach outer_loop;
 	private ast_foreach inner_loop;
-	private int current_scope;
+	private gm_gps_new_scope_analysis_t current_scope;
 }

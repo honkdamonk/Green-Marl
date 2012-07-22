@@ -1,3 +1,5 @@
+package common;
+
 import ast.ast_bfs;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -6,6 +8,7 @@ import ast.ast_id;
 import ast.ast_node;
 import ast.ast_procdef;
 import ast.ast_sent;
+import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
@@ -33,14 +36,10 @@ public class gm_apply
 	{
 	}
 
-	public boolean apply(gm_symtab e, int symtab_type)
+	public boolean apply(gm_symtab_entry gm_symtab_entry, SYMTAB_TYPES symtab_type)
 	{
 		return true;
 	} // SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
-	public boolean apply(gm_symtab_entry e, int symtab_type)
-	{
-		return true;
-	}
 	public boolean apply(ast_id e)
 	{
 		return true;
@@ -87,7 +86,7 @@ public class gm_apply
 		return true;
 	}
 
-	public boolean apply2(gm_symtab e, int symtab_type)
+	public boolean apply2(gm_symtab_entry gm_symtab_entry, SYMTAB_TYPES symtab_type)
 	{
 		return true;
 	} // SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC

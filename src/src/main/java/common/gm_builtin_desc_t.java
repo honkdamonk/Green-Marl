@@ -1,3 +1,5 @@
+package common;
+
 //-----------------------------------------------------
 // for easy extension of compiler
 // [TODO] can be improved.

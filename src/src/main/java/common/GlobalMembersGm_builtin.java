@@ -1,3 +1,5 @@
+package common;
+
 import inc.GMTYPE_T;
 
 public class GlobalMembersGm_builtin

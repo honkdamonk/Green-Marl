@@ -1,3 +1,5 @@
+package common;
+
 import ast.ast_node;
 import frontend.gm_symtab_entry;
 

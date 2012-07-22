@@ -1,3 +1,5 @@
+package common;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_foreach;

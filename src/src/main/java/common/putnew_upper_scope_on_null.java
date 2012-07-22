@@ -1,3 +1,5 @@
+package common;
+
 import frontend.gm_scope;
 
 // (NULL -> scope)

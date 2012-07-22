@@ -42,14 +42,14 @@ public class GlobalMembersGm_gps_new_analysis_scope_rhs_lhs
 	//      }
 	//  }
 	//-----------------------------------------------------------------------------------------------------------------------
-	public static int get_more_restricted_scope(int i, int j)
+	public static gm_gps_new_scope_analysis_t get_more_restricted_scope(gm_gps_new_scope_analysis_t t, gm_gps_new_scope_analysis_t j)
 	{
 		//GPS_NEW_SCOPE_GLOBAL = 0,
 		//GPS_NEW_SCOPE_OUT ,
 		//GPS_NEW_SCOPE_EDGE,
 		//GPS_NEW_SCOPE_IN ,
 		//GPS_NEW_SCOPE_RANDOM,  <-- most restricted
-		return Math.max(i, j);
+		return Math.max(t, j);
 	}
 
 	public static void gm_gps_do_new_analysis_rhs_lhs(ast_procdef proc)

@@ -1,3 +1,5 @@
+package common;
+
 public class GlobalMembersGm_dumptree
 {
 	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:

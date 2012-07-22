@@ -104,7 +104,7 @@ public class GlobalMembersGm_new_sents_after_tc
 	}
 
 	// almost identical to new_foreach_after_tc
-	public static ast_expr_reduce gm_new_expr_reduce_after_tc(ast_id it, ast_id src, ast_expr body, ast_expr filter, int iter_type, int op_type)
+	public static ast_expr_reduce gm_new_expr_reduce_after_tc(ast_id it, ast_id src, ast_expr body, ast_expr filter, GMTYPE_T iter_type, GM_REDUCE_T op_type)
 	{
 		assert it.getSymInfo() == null;
 		assert src.getSymInfo() != null;

@@ -1,3 +1,5 @@
+package common;
+
 public class GlobalMembersGm_argopts
 {
 	public static final int GMARG_NULL = 0;

@@ -1,3 +1,5 @@
+package common;
+
 import ast.ast_id;
 import inc.gm_procinfo;
 import frontend.gm_symtab_entry;

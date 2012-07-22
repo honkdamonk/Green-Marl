@@ -1,3 +1,5 @@
+package common;
+
 import inc.gm_code_writer;
 
 public class GlobalMembersGm_reproduce

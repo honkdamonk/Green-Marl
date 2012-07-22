@@ -1,3 +1,5 @@
+package common;
+
 public class GlobalMembersGm_code_generator
 {
 

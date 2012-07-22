@@ -123,6 +123,7 @@ public class GlobalMembersGm_defs {
 				|| GlobalMembersGm_defs.gm_is_collection_of_seq_iter_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_collection_iter_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_node_collection_iter_type(i) || GlobalMembersGm_defs.gm_is_edge_collection_iter_type(i)
 				|| GlobalMembersGm_defs.gm_is_unknown_collection_iter_type(i) || GlobalMembersGm_defs.gm_is_collection_of_collection_iter_type(i);

@@ -83,7 +83,7 @@ public enum GMTYPE_T {
 
 	public boolean is_iter_type() {
 		return GlobalMembersGm_defs.gm_is_node_iter_type(this) || GlobalMembersGm_defs.gm_is_edge_iter_type(this)
-				|| GlobalMembersGm_defs.gm_is_collection_iter_type(this);
+				|| this.is_collection_iter_type();
 	}
 
 	public boolean is_node_type() {
@@ -137,7 +137,7 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_iteration_on_collection() {
-		return GlobalMembersGm_defs.gm_is_collection_iter_type(this);
+		return this.is_collection_iter_type();
 	}
 
 	public boolean is_common_nbr_iter_type() {
@@ -300,6 +300,11 @@ public enum GMTYPE_T {
 
 	public boolean is_iteration_on_updown_levels() {
 		return this.is_iteration_on_up_neighbors() || this.is_iteration_on_down_neighbors();
+	}
+	
+	public boolean is_collection_iter_type() {
+		return GlobalMembersGm_defs.gm_is_node_collection_iter_type(this) || GlobalMembersGm_defs.gm_is_edge_collection_iter_type(this)
+				|| GlobalMembersGm_defs.gm_is_unknown_collection_iter_type(this) || GlobalMembersGm_defs.gm_is_collection_of_collection_iter_type(this);
 	}
 
 }

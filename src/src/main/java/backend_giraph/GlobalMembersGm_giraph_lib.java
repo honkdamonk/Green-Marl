@@ -1,30 +1,33 @@
 package backend_giraph;
 
+import frontend.gm_symtab_entry;
+import inc.GMTYPE_T;
+import inc.GlobalMembersGm_backend_gps;
+import inc.GlobalMembersGm_defs;
+import inc.gm_code_writer;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_sent;
 import ast.ast_sentblock;
-import backend_cpp.*;
-import backend_giraph.*;
-import backend_gps.gm_gps_basic_block;
 import backend_gps.gm_gps_bbtype_t;
+import backend_gps.gm_gps_beinfo;
 import backend_gps.gm_gps_comm_t;
 import backend_gps.gm_gps_comm_unit;
 import backend_gps.gm_gps_communication_size_info;
 import backend_gps.gm_gps_communication_symbol_info;
 import backend_gps.gm_gps_congruent_msg_class;
 import backend_gps.gm_gps_edge_access_t;
-import common.*;
-import frontend.*;
-import inc.*;
-import opt.*;
-import tangible.*;
+import backend_gps.gps_syminfo;
+
+import common.GlobalMembersGm_main;
+import common.GlobalMembersGm_misc;
+import common.gm_builtin_def;
 
 public class GlobalMembersGm_giraph_lib
 {
 
-    public static int get_java_type_size(int gm_type)
+    public static int get_java_type_size(GMTYPE_T gm_type)
     {
         switch (gm_type)
         {
@@ -45,12 +48,12 @@ public class GlobalMembersGm_giraph_lib
         }
     }
 
-    public static void genPutIOB(String name, int gm_type, gm_code_writer Body, gm_giraphlib lib)
+    public static void genPutIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_giraphlib lib)
     {
         if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type))
-            gm_type = GMTYPE_T.GMTYPE_NODE.getValue();
+            gm_type = GMTYPE_T.GMTYPE_NODE; //TODO setting input var?
         if (GlobalMembersGm_defs.gm_is_edge_compatible_type(gm_type))
-            gm_type = GMTYPE_T.GMTYPE_EDGE.getValue();
+            gm_type = GMTYPE_T.GMTYPE_EDGE; //TODO setting input var?
 
         Body.push("out.");
         switch (gm_type)
@@ -629,19 +632,3 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
 
 // scalar variable broadcast
 // master --> vertex
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

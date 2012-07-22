@@ -23,7 +23,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply
 		set_separate_post_apply(true);
 		set_for_sent(true);
 		set_for_symtab(true);
-		current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_GLOBAL.getValue();
+		current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_GLOBAL;
 	}
 
 	public final boolean apply(gm_symtab_entry e, int symtab_type)
@@ -33,7 +33,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply
 		//---------------------------------------------------------------------------
 		// This information is redundant at this moment. Need to be clear up 
 		//---------------------------------------------------------------------------
-		GlobalMembersGm_gps_new_analysis_scope_sent_var.add_syminfo_struct(e, (symtab_type != SYMTAB_TYPES.GM_SYMTAB_FIELD.getValue()), (current_scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_GLOBAL.getValue()) ? gm_gps_scope_t.GPS_SCOPE_GLOBAL : (current_scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue()) ? gm_gps_scope_t.GPS_SCOPE_INNER : gm_gps_scope_t.GPS_SCOPE_OUTER);
+		GlobalMembersGm_gps_new_analysis_scope_sent_var.add_syminfo_struct(e, (symtab_type != SYMTAB_TYPES.GM_SYMTAB_FIELD), (current_scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_GLOBAL) ? gm_gps_scope_t.GPS_SCOPE_GLOBAL : (current_scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN) ? gm_gps_scope_t.GPS_SCOPE_INNER : gm_gps_scope_t.GPS_SCOPE_OUTER);
 
 		return true;
 	}
@@ -52,7 +52,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply
 				outer_loop.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_OUTER_LOOP, true);
 				outer_loop.get_iterator().getSymInfo().add_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYMBOL_SCOPE, gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT);
 				outer_loop.get_iterator().getSymInfo().add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_OUTER_LOOP, true);
-				current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue();
+				current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT;
 			}
 			else if (inner_loop == null)
 			{
@@ -61,7 +61,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply
 				inner_loop.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP, true);
 				inner_loop.get_iterator().getSymInfo().add_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYMBOL_SCOPE, gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN);
 				inner_loop.get_iterator().getSymInfo().add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP, true);
-				current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue();
+				current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN;
 			}
 			else
 			{
@@ -73,7 +73,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply
 			ast_assign a = (ast_assign) s;
 			if (a.is_target_scalar() && a.get_lhs_scala().getTypeInfo().is_edge_compatible())
 			{
-				if (current_scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue())
+				if (current_scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN)
 				{
 					// check rhs
 					ast_expr rhs = a.get_rhs();
@@ -95,12 +95,12 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply
 	{
 		if (s == outer_loop)
 		{
-			current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_GLOBAL.getValue();
+			current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_GLOBAL;
 			outer_loop = null;
 		}
 		else if (s == inner_loop)
 		{
-			current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue();
+			current_scope = gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT;
 			inner_loop = null;
 		}
 		return true;

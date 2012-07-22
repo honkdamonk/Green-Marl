@@ -18,7 +18,7 @@ import tangible.*;
 
 public class gm_stage_create_pre_process_t extends gm_apply
 {
-	public gm_stage_create_pre_process_t(java.util.HashMap<ast_sent, Integer> mk)
+	public gm_stage_create_pre_process_t(java.util.HashMap<ast_sent, gps_gps_sentence_t> mk)
 	{
 		s_mark = mk;
 		master_context = true;
@@ -75,26 +75,26 @@ public class gm_stage_create_pre_process_t extends gm_apply
 		{
 			ast_if i = (ast_if) s;
 			ast_sent thenp = i.get_then();
-			(assert(s_mark.containsKey(thenp)));
+			assert(s_mark.containsKey(thenp));
 			ast_sent elsep = i.get_else();
 			if (elsep != null)
 			{
-				(assert(s_mark.containsKey(elsep)));
+				assert(s_mark.containsKey(elsep));
 			}
 			boolean seq1 = (s_mark.get(thenp) == gps_gps_sentence_t.GPS_TYPE_SEQ);
 			boolean seq2 = (elsep == null) ? true : (s_mark.get(elsep) == gps_gps_sentence_t.GPS_TYPE_SEQ);
 			boolean seq = seq1 && seq2;
 
-			(s_mark.put(s, (seq) ? gps_gps_sentence_t.GPS_TYPE_SEQ : gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX));
+			s_mark.put(s, (seq) ? gps_gps_sentence_t.GPS_TYPE_SEQ : gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX);
 		}
 		else if (s.get_nodetype() == AST_NODE_TYPE.AST_WHILE)
 		{
 			ast_while w = (ast_while) s;
 			ast_sent body = w.get_body();
-			(assert(s_mark.containsKey(body)));
+			assert(s_mark.containsKey(body));
 			boolean seq = (s_mark.get(body) == gps_gps_sentence_t.GPS_TYPE_SEQ);
 
-			(s_mark.put(s, (seq) ? gps_gps_sentence_t.GPS_TYPE_SEQ : gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX));
+			s_mark.put(s, (seq) ? gps_gps_sentence_t.GPS_TYPE_SEQ : gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX);
 		}
 		else if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK)
 		{
@@ -105,14 +105,14 @@ public class gm_stage_create_pre_process_t extends gm_apply
 			for (I = L.iterator(); I.hasNext();)
 			{
 				ast_sent s = I.next();
-				(assert(s_mark.containsKey(s)));
+				assert(s_mark.containsKey(s));
 				seq = (s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_SEQ) && seq;
 			}
-			(s_mark.put(s, (seq) ? gps_gps_sentence_t.GPS_TYPE_SEQ : gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX));
+			s_mark.put(s, (seq) ? gps_gps_sentence_t.GPS_TYPE_SEQ : gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX);
 		}
 		else
 		{
-			(s_mark.put(s, (true) ? gps_gps_sentence_t.GPS_TYPE_SEQ : gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX));
+			s_mark.put(s, (true) ? gps_gps_sentence_t.GPS_TYPE_SEQ : gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX);
 		}
 	}
 
@@ -123,5 +123,5 @@ public class gm_stage_create_pre_process_t extends gm_apply
 
 	private boolean master_context;
 	private java.util.LinkedList<Boolean> master_context_stack = new java.util.LinkedList<Boolean>();
-	private java.util.HashMap<ast_sent, Integer> s_mark;
+	private java.util.HashMap<ast_sent, gps_gps_sentence_t> s_mark;
 }

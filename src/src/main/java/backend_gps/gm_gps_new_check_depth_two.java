@@ -18,7 +18,7 @@ public class gm_gps_new_check_depth_two extends gm_compile_step
 		// Check number of procedure name is same to the filename
 		String fname = GlobalMembersGm_main.PREGEL_BE.getFileName();
 		assert fname != null;
-		if (strcmp(proc.get_procname().get_genname(), fname) != 0)
+		if (!proc.get_procname().get_genname().equals(fname))
 		{
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
 			set_okay(false);

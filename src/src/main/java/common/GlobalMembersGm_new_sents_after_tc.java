@@ -1,17 +1,19 @@
 package common;
 
+import frontend.GlobalMembersGm_new_typecheck_step1;
+import frontend.gm_scope;
+import frontend.gm_symtab;
+import frontend.gm_symtab_entry;
+import inc.GMTYPE_T;
+import inc.GM_REDUCE_T;
+import inc.GlobalMembersGm_defs;
 import ast.ast_expr;
 import ast.ast_expr_reduce;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_sent;
+import ast.ast_sentblock;
 import ast.ast_typedecl;
-import frontend.GlobalMembersGm_new_typecheck_step1;
-import frontend.gm_scope;
-import frontend.gm_symtab;
-import frontend.gm_symtab_entry;
-import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
 
 public class GlobalMembersGm_new_sents_after_tc
 {
@@ -44,7 +46,7 @@ public class GlobalMembersGm_new_sents_after_tc
 	//  *  Iterator ids in body still do not contain valid symtab entry, after this function.
 	//  *  They should be adjusted after this function.
 	//------------------------------------------------------------
-	public static ast_foreach gm_new_foreach_after_tc(ast_id it, ast_id src, ast_sent body, int iter_type)
+	public static ast_foreach gm_new_foreach_after_tc(ast_id it, ast_id src, ast_sent body, GMTYPE_T iter_type)
 	{
 		assert it.getSymInfo() == null;
 		assert src.getSymInfo() != null;
@@ -162,7 +164,7 @@ public class GlobalMembersGm_new_sents_after_tc
 	//--------------------------------------------------------------
 	// Create bottom symbol for reduction
 	//--------------------------------------------------------------
-	public static ast_expr gm_new_bottom_symbol(GM_REDUCE_T reduce_type, int lhs_type)
+	public static ast_expr gm_new_bottom_symbol(GM_REDUCE_T reduce_type, GMTYPE_T lhs_type)
 	{
 		ast_expr init_val;
 		switch (reduce_type)

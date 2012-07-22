@@ -2,6 +2,7 @@ import ast.ast_expr;
 import ast.ast_node;
 import ast.ast_procdef;
 import ast.ast_sent;
+import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
@@ -162,7 +163,7 @@ public static void gm_traverse_exprs(ast_expr top, gm_apply a)
 
 	public static final boolean POST_APPLY = true;
 	public static final boolean PRE_APPLY = false;
-	public static void apply_symtab_each(gm_apply a, gm_symtab s, int symtab_type, boolean is_post)
+	public static void apply_symtab_each(gm_apply a, gm_symtab s, SYMTAB_TYPES symtab_type, boolean is_post)
 	{
 		java.util.HashSet<gm_symtab_entry> v = s.get_entries();
 		java.util.Iterator<gm_symtab_entry> I;

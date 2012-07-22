@@ -136,8 +136,8 @@ public class gps_check_edge_value_t extends gm_apply
 						{
 							ast_expr_builtin b_rhs = (ast_expr_builtin) rhs;
 							gm_symtab_entry drv = b_rhs.get_driver().getSymInfo();
-							int f_id = b_rhs.get_builtin_def().get_method_id();
-							if (f_id == gm_method_id_t.GM_BLTIN_NODE_TO_EDGE.getValue())
+							gm_method_id_t f_id = b_rhs.get_builtin_def().get_method_id();
+							if (f_id == gm_method_id_t.GM_BLTIN_NODE_TO_EDGE)
 							{
 								a.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINING_WRITE, true);
 							}

@@ -8,6 +8,7 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_sent;
 import frontend.gm_symtab_entry;
+import inc.GMTYPE_T;
 import inc.GlobalMembersGm_backend_cpp;
 import inc.GlobalMembersGm_defs;
 
@@ -102,7 +103,7 @@ public class cpp_check_reverse_edge_t extends gm_apply
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
 		{
 			ast_foreach fe = (ast_foreach) s;
-			int iter_type = fe.get_iter_type();
+			GMTYPE_T iter_type = fe.get_iter_type();
 			if (GlobalMembersGm_defs.gm_is_iteration_use_reverse(iter_type))
 			{
 				ast_id G = fe.get_source().getTypeInfo().get_target_graph_id();

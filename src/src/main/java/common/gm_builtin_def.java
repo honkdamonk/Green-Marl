@@ -47,7 +47,7 @@ public class gm_builtin_def
 			String p;
 			p = tangible.StringFunctions.strTok(temp, ":");
 			if (p.charAt(0) == '_')
-				src_type = GMTYPE_T.GMTYPE_VOID.getValue(); // top-level
+				src_type = GMTYPE_T.GMTYPE_VOID; // top-level
 			else
 				this.src_type = GlobalMembersGm_builtin.gm_get_type_from_string(p);
 
@@ -116,12 +116,12 @@ public class gm_builtin_def
 	{
 		return num_args;
 	}
-	   // returns GMTYPE_
+
 	public final GMTYPE_T get_source_type_summary()
 	{
 		return src_type;
 	}
-	public final int get_result_type_summary()
+	public final GMTYPE_T get_result_type_summary()
 	{
 		return res_type;
 	}
@@ -220,7 +220,7 @@ public class gm_builtin_def
 		this.synonym = false;
 	} // not allow random creation
 	private GMTYPE_T src_type;
-	private int res_type;
+	private GMTYPE_T res_type;
 	private int num_args;
 	private GMTYPE_T[] arg_types;
 	private String orgname;

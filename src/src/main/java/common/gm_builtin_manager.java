@@ -1,3 +1,8 @@
+package common;
+
+import inc.GMTYPE_T;
+import inc.GlobalMembersGm_defs;
+
 // should-be a singleton 
 public class gm_builtin_manager
 {
@@ -27,13 +32,13 @@ public class gm_builtin_manager
 			i.next() = null;
 	}
 
-	public final gm_builtin_def find_builtin_def(int source_type, String orgname)
+	public final gm_builtin_def find_builtin_def(GMTYPE_T source_type, String orgname)
 	{
 		java.util.Iterator<gm_builtin_def> i;
 		for (i = defs.iterator(); i.hasNext();)
 		{
 			gm_builtin_def d = i.next();
-			int def_src = d.get_source_type_summary();
+			GMTYPE_T def_src = d.get_source_type_summary();
 			if (GlobalMembersGm_misc.gm_is_same_string(orgname, d.get_orgname()))
 			{
 				if (def_src == source_type)
@@ -46,9 +51,9 @@ public class gm_builtin_manager
 				boolean is_strict = d.need_strict_source_type();
 				if (is_strict)
 					continue;
-				if (def_src == GMTYPE_T.GMTYPE_VOID.getValue())
+				if (def_src == GMTYPE_T.GMTYPE_VOID)
 					continue;
-				assert!GlobalMembersGm_defs.gm_is_prim_type(def_src);
+				assert (!GlobalMembersGm_defs.gm_is_prim_type(def_src));
 
 				if (GlobalMembersGm_defs.gm_is_same_node_or_edge_compatible_type(def_src, source_type) || GlobalMembersGm_defs.gm_collection_of_collection_compatible_type(def_src, source_type))
 				{
@@ -61,7 +66,7 @@ public class gm_builtin_manager
 		}
 		return null;
 	}
-	public final gm_builtin_def find_builtin_def(int source_type, int id)
+	public final gm_builtin_def find_builtin_def(GMTYPE_T source_type, gm_method_id_t id)
 	{
 		boolean is_strict;
 
@@ -72,7 +77,7 @@ public class gm_builtin_manager
 			if (d.get_method_id() != id)
 				continue;
 
-			int def_src = d.get_source_type_summary();
+			GMTYPE_T def_src = d.get_source_type_summary();
 			if (def_src == source_type)
 //C++ TO JAVA CONVERTER TODO TASK: There are no gotos or labels in Java:
 				goto found;
@@ -81,7 +86,7 @@ public class gm_builtin_manager
 
 			if (is_strict)
 				continue;
-			if (source_type == GMTYPE_T.GMTYPE_VOID.getValue())
+			if (source_type == GMTYPE_T.GMTYPE_VOID)
 				continue;
 			if (GlobalMembersGm_defs.gm_is_prim_type(def_src))
 				continue;

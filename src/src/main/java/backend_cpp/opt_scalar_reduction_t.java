@@ -139,7 +139,7 @@ public class opt_scalar_reduction_t extends gm_apply
 				continue;
 
 			GM_REDUCE_T reduce_type = I.next().getValue().getFirst().reduce_op;
-			int e_type = e.getType().getTypeSummary();
+			GMTYPE_T e_type = e.getType().getTypeSummary();
 			boolean is_supple = I.next().getValue().getFirst().is_supplement;
 			gm_symtab_entry org_target = I.next().getValue().getFirst().org_lhs;
 
@@ -194,9 +194,9 @@ public class opt_scalar_reduction_t extends gm_apply
 			// add intializer
 			if (!is_supple)
 			{
-				int expr_type = e.getType().getTypeSummary();
+				GMTYPE_T expr_type = e.getType().getTypeSummary();
 				ast_expr init_val;
-				if ((reduce_type == GM_REDUCE_T.GMREDUCE_MIN.getValue()) || (reduce_type == GM_REDUCE_T.GMREDUCE_MAX.getValue()))
+				if ((reduce_type == GM_REDUCE_T.GMREDUCE_MIN) || (reduce_type == GM_REDUCE_T.GMREDUCE_MAX))
 				{
 					init_val = ast_expr.new_id_expr(e.getId().copy(true));
 				}

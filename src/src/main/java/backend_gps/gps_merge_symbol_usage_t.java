@@ -56,7 +56,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast
 
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)
 		{
-			int context = get_current_context(); // GPS_CONTEXT_ (MASTER, VERTEX, RECEIVER)
+			gm_gps_symbol_usage_location_t context = get_current_context(); // GPS_CONTEXT_ (MASTER, VERTEX, RECEIVER)
 			int scope = s.find_info_bool(GlobalMembersGm_backend_gps.GPS_INT_SYNTAX_CONTEXT); // GPS_NEW_SCOPE_GLOBAL/OUT/IN
 
 			ast_assign a = (ast_assign) s;
@@ -80,14 +80,14 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast
 			 }
 			 */
 			ast_id target = (a.is_target_scalar()) ? a.get_lhs_scala() : a.get_lhs_field().get_second();
-			int is_scalar = (a.is_target_scalar()) ? IS_SCALAR : IS_FIELD;
-			int lhs_reduce = a.is_reduce_assign() ? gm_gps_symbol_usage_t.GPS_SYM_USED_AS_REDUCE : gm_gps_symbol_usage_t.GPS_SYM_USED_AS_LHS;
-			int r_type = a.is_reduce_assign() ? a.get_reduce_type() : GM_REDUCE_T.GMREDUCE_NULL;
+			boolean is_scalar = (a.is_target_scalar()) ? IS_SCALAR : IS_FIELD;
+			gm_gps_symbol_usage_t lhs_reduce = a.is_reduce_assign() ? gm_gps_symbol_usage_t.GPS_SYM_USED_AS_REDUCE : gm_gps_symbol_usage_t.GPS_SYM_USED_AS_LHS;
+			GM_REDUCE_T r_type = a.is_reduce_assign() ? a.get_reduce_type() : GM_REDUCE_T.GMREDUCE_NULL;
 
-			if (is_scalar == 0 && a.get_lhs_field().get_first().getSymInfo().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINED_INNER))
+			if (is_scalar == false && a.get_lhs_field().get_first().getSymInfo().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINED_INNER))
 				is_edge_prop_write_target = true;
 
-			if (context == gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER.getValue())
+			if (context == gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER)
 			{
 				if (is_message_write_target || is_edge_prop_write_target || is_random_write_target)
 					return true;
@@ -130,16 +130,16 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast
 
 		//int syntax_scope = get_current_sent()->find_info_int(GPS_INT_SYNTAX_CONTEXT);
 		int expr_scope = e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE);
-		int context = get_current_context();
-		int used_type = gm_gps_symbol_usage_t.GPS_SYM_USED_AS_RHS.getValue();
+		gm_gps_symbol_usage_location_t context = get_current_context();
+		gm_gps_symbol_usage_t used_type = gm_gps_symbol_usage_t.GPS_SYM_USED_AS_RHS;
 		boolean is_id = e.is_id();
-		int sc_type = is_id ? IS_SCALAR : IS_FIELD;
+		boolean sc_type = is_id ? IS_SCALAR : IS_FIELD;
 		ast_id tg = is_id ? e.get_id() : e.get_field().get_second();
 		gm_symtab_entry drv = is_id ? null : e.get_field().get_first().getSymInfo();
 
 		boolean comm_symbol = false; // is this symbol used in communication?
 
-		if (context == gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER.getValue())
+		if (context == gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER)
 		{
 			// sender context only
 			if (is_message_write_target || is_edge_prop_write_target || is_random_write_target)
@@ -186,33 +186,33 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast
 	}
 
 
-	protected final int get_current_context()
+	protected final gm_gps_symbol_usage_location_t get_current_context()
 	{
-		int context;
+		gm_gps_symbol_usage_location_t context;
 		if (!get_curr_BB().is_vertex())
 		{
 			// master context
-			context = gm_gps_symbol_usage_location_t.GPS_CONTEXT_MASTER.getValue();
+			context = gm_gps_symbol_usage_location_t.GPS_CONTEXT_MASTER;
 		}
 		else
 		{
 			// sender/recevier
 			if (is_under_receiver_traverse())
-				context = gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER.getValue();
+				context = gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER;
 			else
-				context = gm_gps_symbol_usage_location_t.GPS_CONTEXT_VERTEX.getValue();
+				context = gm_gps_symbol_usage_location_t.GPS_CONTEXT_VERTEX;
 		}
 
 		return context;
 	}
 
-	protected final void update_access_information(ast_id i, boolean is_scalar, int usage, int context)
+	protected final void update_access_information(ast_id i, boolean is_scalar, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context)
 	{
 		update_access_information(i, is_scalar, usage, context, GM_REDUCE_T.GMREDUCE_NULL);
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: void update_access_information(ast_id *i, boolean is_scalar, int usage, int context, int r_type = GMREDUCE_NULL)
-	protected final void update_access_information(ast_id i, boolean is_scalar, int usage, int context, int r_type)
+	protected final void update_access_information(ast_id i, boolean is_scalar, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context, GM_REDUCE_T r_type)
 	{
 		// update global information
 		gps_syminfo syminfo = get_or_create_global_syminfo(i, is_scalar);

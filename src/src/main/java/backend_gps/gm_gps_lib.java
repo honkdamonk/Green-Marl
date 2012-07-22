@@ -192,7 +192,8 @@ public class GlobalMembersGm_gps_lib
         Body.pushln(str_buf);
     }
 
-    public static void get_java_parse_string(gm_gpslib L, int gm_type, String name1, String name2)
+    //TODO set output vars?
+    public static void get_java_parse_string(gm_gpslib L, GMTYPE_T gm_type, String name1, String name2)
     {
         switch (gm_type)
         {

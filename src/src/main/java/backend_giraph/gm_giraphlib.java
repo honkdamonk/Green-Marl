@@ -13,6 +13,7 @@ import backend_cpp.*;
 import backend_giraph.*;
 import backend_gps.gm_gps_gen;
 import backend_gps.gm_gpslib;
+import backend_gps.gps_syminfo;
 import common.*;
 import frontend.*;
 import opt.*;
@@ -76,7 +77,7 @@ public class gm_giraphlib extends gm_gpslib
 		String.format(temp, "((BooleanOverwriteAggregator) getAggregator(\"%s\")).setAggregatedValue(%s);", is_first_var, is_first_var);
 		Body.pushln(temp);
 	}
-	public void generate_broadcast_variable_type(int type_id, gm_code_writer Body, GM_REDUCE_T reduce_op)
+	public void generate_broadcast_variable_type(GMTYPE_T type_id, gm_code_writer Body, GM_REDUCE_T reduce_op)
     
 	{
 		//--------------------------------------
@@ -89,9 +90,9 @@ public class gm_giraphlib extends gm_gpslib
 		// Type:  Long, Int, Double, Float, Bool, NODE,EDGE
 		//---------------------------------------------------
 		if (GlobalMembersGm_defs.gm_is_node_compatible_type(type_id))
-			type_id = GMTYPE_T.GMTYPE_NODE.getValue();
+			type_id = GMTYPE_T.GMTYPE_NODE; //TODO setting argument?
 		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(type_id))
-			type_id = GMTYPE_T.GMTYPE_EDGE.getValue();
+			type_id = GMTYPE_T.GMTYPE_EDGE; //TODO setting argument?
     
 		switch (type_id)
 		{

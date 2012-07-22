@@ -74,7 +74,7 @@ public class GlobalMembersGm_cpp_opt_defer
 			// [todo] check name conflict
 			//---------------------------------------
 			boolean is_nodeprop = type.is_node_property();
-			int target_type = type.getTargetTypeSummary();
+			GMTYPE_T target_type = type.getTargetTypeSummary();
 			assert GlobalMembersGm_defs.gm_is_prim_type(target_type);
 			ast_sentblock scope = GlobalMembersGm_add_symbol.gm_find_upscope(fe);
 			gm_symtab_entry target_graph = type.get_target_graph_sym();
@@ -109,7 +109,7 @@ public class GlobalMembersGm_cpp_opt_defer
 				for (I = L.iterator(); I.hasNext();)
 				{
 					gm_rwinfo info = I.next();
-					if ((info.access_range == gm_range_type_t.GM_RANGE_LINEAR.getValue()) && (info.always))
+					if ((info.access_range == gm_range_type_t.GM_RANGE_LINEAR) && (info.always))
 					{
 						need_initializer = false;
 						break;
@@ -285,7 +285,7 @@ public class GlobalMembersGm_cpp_opt_defer
 		//------------------------------
 		String iter_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("i");
 		ast_id itor = ast_id.new_id(iter_name, 0, 0);
-		int iter_type = is_nodeprop ? GMTYPE_T.GMTYPE_NODEITER_ALL : GMTYPE_T.GMTYPE_EDGEITER_ALL;
+		GMTYPE_T iter_type = is_nodeprop ? GMTYPE_T.GMTYPE_NODEITER_ALL : GMTYPE_T.GMTYPE_EDGEITER_ALL;
 		ast_foreach fe = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(itor, src, a, iter_type);
 		assert itor.getSymInfo() != null;
 		iter_name = null;

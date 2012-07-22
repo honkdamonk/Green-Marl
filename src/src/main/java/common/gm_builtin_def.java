@@ -117,7 +117,7 @@ public class gm_builtin_def
 		return num_args;
 	}
 	   // returns GMTYPE_
-	public final int get_source_type_summary()
+	public final GMTYPE_T get_source_type_summary()
 	{
 		return src_type;
 	}
@@ -130,7 +130,7 @@ public class gm_builtin_def
 		assert i < num_args;
 		return arg_types[i];
 	}
-	public final int get_method_id()
+	public final gm_method_id_t get_method_id()
 	{
 		return method_id;
 	}
@@ -219,12 +219,12 @@ public class gm_builtin_def
 		this.org_def = null;
 		this.synonym = false;
 	} // not allow random creation
-	private int src_type;
+	private GMTYPE_T src_type;
 	private int res_type;
 	private int num_args;
 	private GMTYPE_T[] arg_types;
 	private String orgname;
-	private int method_id;
+	private gm_method_id_t method_id;
 	private boolean need_strict;
 	private java.util.HashMap<String, ast_extra_info> extra_info = new java.util.HashMap<String, ast_extra_info>();
 

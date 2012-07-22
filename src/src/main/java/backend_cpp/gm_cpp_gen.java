@@ -393,6 +393,7 @@ public class gm_cpp_gen extends gm_backend, gm_code_generator
 			get_lib().generate_expr_builtin((ast_expr_builtin) e, Body);
 		}
 	}
+	
 	public void generate_expr_minmax(ast_expr e)
 	{
 		if (e.get_optype() == GM_OPS_T.GMOP_MIN)
@@ -408,17 +409,19 @@ public class gm_cpp_gen extends gm_backend, gm_code_generator
 		generate_expr(e.get_right_op());
 		Body.push(") ");
 	}
+	
 	public void generate_expr_abs(ast_expr e)
 	{
 		Body.push(" std::abs(");
 		generate_expr(e.get_left_op());
 		Body.push(") ");
 	}
+	
 	public void generate_expr_inf(ast_expr e)
 	{
 		String temp = temp_str;
 		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
-		int t = e.get_type_summary();
+		GMTYPE_T t = e.get_type_summary().getValue();
 		switch (t)
 		{
 			case GMTYPE_INF:
@@ -448,10 +451,10 @@ public class gm_cpp_gen extends gm_backend, gm_code_generator
 		get_lib().generate_expr_nil(ee, Body);
 	}
 
-	public String get_type_string(int type_id)
+	public String get_type_string(GMTYPE_T type_id)
 	{
     
-		if (GlobalMembersGm_defs.gm_is_prim_type(type_id))
+		if (type_id.is_prim_type())
 		{
 			switch (type_id)
 			{

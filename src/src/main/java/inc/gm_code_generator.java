@@ -47,7 +47,7 @@ public abstract class gm_code_generator {
 		Iterator<ast_node> I = N.iterator();
 		Iterator<String> J = T.iterator();
 		while (I.hasNext()) {
-			_Body.push(J.c_str());
+			_Body.push(J.next().toString());
 			ast_node n = I.next();
 			if (n == null)
 				continue;
@@ -67,6 +67,9 @@ public abstract class gm_code_generator {
 	public abstract void generate_expr_abs(ast_expr e);
 
 	public abstract void generate_expr_nil(ast_expr e);
+	
+	final static String LP = "(";
+	final static String RP = ")";
 
 	public void generate_expr_type_conversion(ast_expr e) {
 		boolean no_lp1 = (e.get_up_op() == null);
@@ -85,7 +88,7 @@ public abstract class gm_code_generator {
 			_Body.push(RP);
 	}
 
-	public abstract String get_type_string(int prim_t); // returned string
+	public abstract String get_type_string(GMTYPE_T gmtype_T); // returned string
 														// should be copied
 														// before usage.
 

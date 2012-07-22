@@ -205,19 +205,19 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	public final boolean is_graph() {
-		return GlobalMembersGm_defs.gm_is_graph_type(type_id);
+		return type_id.is_graph_type();
 	}
 
 	public final boolean is_node_property() {
-		return GlobalMembersGm_defs.gm_is_node_property_type(type_id);
+		return type_id.is_node_property_type();
 	}
 
 	public final boolean is_edge_property() {
-		return GlobalMembersGm_defs.gm_is_edge_property_type(type_id);
+		return type_id.is_edge_property_type();
 	}
 
 	public final boolean is_property() {
-		return GlobalMembersGm_defs.gm_is_property_type(type_id);
+		return type_id.is_property_type();
 	}
 
 	public final boolean is_node() {
@@ -269,27 +269,27 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	public final boolean is_property_iterator() {
-		return GlobalMembersGm_defs.gm_is_property_iter_type(type_id);
+		return type_id.is_property_iter_type();
 	}
 
 	public final boolean is_numeric() {
-		return GlobalMembersGm_defs.gm_is_numeric_type(type_id);
+		return type_id.is_numeric_type();
 	}
 
 	public final boolean is_node_compatible() {
-		return GlobalMembersGm_defs.gm_is_node_compatible_type(type_id);
+		return type_id.is_node_compatible_type();
 	}
 
 	public final boolean is_edge_compatible() {
-		return GlobalMembersGm_defs.gm_is_edge_compatible_type(type_id);
+		return type_id.is_edge_compatible_type();
 	}
 
 	public final boolean is_node_edge_compatible() {
-		return GlobalMembersGm_defs.gm_is_node_edge_compatible_type(type_id);
+		return type_id.is_node_edge_compatible_type();
 	}
 
 	public final boolean is_boolean() {
-		return GlobalMembersGm_defs.gm_is_boolean_type(type_id);
+		return type_id.is_boolean_type();
 	}
 
 	public final boolean is_reverse_iterator() {
@@ -301,7 +301,7 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	public final boolean is_void() {
-		return GlobalMembersGm_defs.gm_is_void_type(type_id);
+		return type_id.is_void_type();
 	}
 
 	public final boolean is_all_graph_iterator() {

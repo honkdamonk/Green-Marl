@@ -82,8 +82,7 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_iter_type() {
-		return GlobalMembersGm_defs.gm_is_node_iter_type(this) || GlobalMembersGm_defs.gm_is_edge_iter_type(this)
-				|| this.is_collection_iter_type();
+		return GlobalMembersGm_defs.gm_is_node_iter_type(this) || GlobalMembersGm_defs.gm_is_edge_iter_type(this) || this.is_collection_iter_type();
 	}
 
 	public boolean is_node_type() {
@@ -133,7 +132,27 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_prim_type() {
-		return GlobalMembersGm_defs.gm_is_numeric_type(this) || GlobalMembersGm_defs.gm_is_boolean_type(this);
+		return this.is_numeric_type() || this.is_boolean_type();
+	}
+
+	public boolean is_numeric_type() {
+		return this.is_integer_type() || this.is_float_type();
+	}
+
+	public boolean is_foreign_expr_type() {
+		return (this == GMTYPE_T.GMTYPE_FOREIGN_EXPR);
+	}
+
+	public boolean is_integer_type() {
+		return (this == GMTYPE_T.GMTYPE_INT) || (this == GMTYPE_T.GMTYPE_LONG) || (this == GMTYPE_T.GMTYPE_BYTE) || (this == GMTYPE_T.GMTYPE_SHORT);
+	}
+
+	public boolean is_float_type() {
+		return (this == GMTYPE_T.GMTYPE_FLOAT) || (this == GMTYPE_T.GMTYPE_DOUBLE);
+	}
+
+	public boolean is_unknown_type() {
+		return (this == GMTYPE_T.GMTYPE_UNKNOWN) || (this == GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC);
 	}
 
 	public boolean is_iteration_on_collection() {
@@ -247,7 +266,7 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_iteration_on_property() {
-		return GlobalMembersGm_defs.gm_is_property_iter_type(this);
+		return this.is_property_iter_type();
 	}
 
 	public boolean is_iteration_on_set() {
@@ -301,10 +320,78 @@ public enum GMTYPE_T {
 	public boolean is_iteration_on_updown_levels() {
 		return this.is_iteration_on_up_neighbors() || this.is_iteration_on_down_neighbors();
 	}
-	
+
 	public boolean is_collection_iter_type() {
 		return GlobalMembersGm_defs.gm_is_node_collection_iter_type(this) || GlobalMembersGm_defs.gm_is_edge_collection_iter_type(this)
 				|| GlobalMembersGm_defs.gm_is_unknown_collection_iter_type(this) || GlobalMembersGm_defs.gm_is_collection_of_collection_iter_type(this);
+	}
+
+	public boolean is_property_iter_set_type() {
+		return this == GMTYPE_T.GMTYPE_PROPERTYITER_SET;
+	}
+
+	public boolean is_property_iter_seq_type() {
+		return this == GMTYPE_T.GMTYPE_PROPERTYITER_SEQ;
+	}
+
+	public boolean is_property_iter_order_type() {
+		return this == GMTYPE_T.GMTYPE_PROPERTYITER_ORDER;
+	}
+
+	public boolean is_property_iter_type() {
+		return this.is_property_iter_order_type() || this.is_property_iter_seq_type() || this.is_property_iter_set_type();
+	}
+
+	public boolean is_boolean_type() {
+		return this == GMTYPE_T.GMTYPE_BOOL;
+	}
+
+	public boolean is_unknonwn_type() {
+		return (this == GMTYPE_T.GMTYPE_UNKNOWN) || (this == GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC);
+	}
+
+	public boolean is_void_type() {
+		return (this == GMTYPE_T.GMTYPE_VOID);
+	}
+
+	public boolean is_node_property_type() {
+		return (this == GMTYPE_T.GMTYPE_NODEPROP);
+	}
+
+	public boolean is_edge_property_type() {
+		return (this == GMTYPE_T.GMTYPE_EDGEPROP);
+	}
+
+	public boolean is_property_type() {
+		return this.is_node_property_type() || this.is_edge_property_type();
+	}
+
+	public boolean is_inf_type() {
+		return (this == GMTYPE_T.GMTYPE_INF) || (this == GMTYPE_T.GMTYPE_INF_INT) || (this == GMTYPE_T.GMTYPE_INF_LONG) || (this == GMTYPE_T.GMTYPE_INF_FLOAT)
+				|| (this == GMTYPE_T.GMTYPE_INF_FLOAT);
+	}
+
+	public boolean is_inf_type_unsized() {
+		return (this == GMTYPE_T.GMTYPE_INF);
+	}
+
+	public boolean is_inf_type_sized() {
+		return this.is_inf_type() && !this.is_inf_type_unsized();
+	}
+
+	public GMTYPE_T get_sized_inf_type() {
+		if (this == GMTYPE_T.GMTYPE_INT)
+			return GMTYPE_T.GMTYPE_INF_INT;
+		else if (this == GMTYPE_T.GMTYPE_LONG)
+			return GMTYPE_T.GMTYPE_INF_LONG;
+		else if (this == GMTYPE_T.GMTYPE_FLOAT)
+			return GMTYPE_T.GMTYPE_INF_FLOAT;
+		else if (this == GMTYPE_T.GMTYPE_DOUBLE)
+			return GMTYPE_T.GMTYPE_INF_DOUBLE;
+		else {
+			assert false;
+			return GMTYPE_T.GMTYPE_INVALID;
+		}
 	}
 
 }

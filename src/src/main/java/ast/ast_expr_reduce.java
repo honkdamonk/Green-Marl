@@ -3,9 +3,10 @@ package ast;
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
+
 import common.GlobalMembersGm_dumptree;
 import common.GlobalMembersGm_misc;
+import common.GlobalMembersGm_traverse;
 import common.gm_apply;
 
 // Reduction expression
@@ -66,7 +67,7 @@ public class ast_expr_reduce extends ast_expr
 		src.reproduce(0);
 		Out.push(".");
 		Out.push(GlobalMembersGm_misc.gm_get_iter_type_string(iter_type));
-		if (GlobalMembersGm_defs.gm_is_common_nbr_iter_type(iter_type))
+		if (iter_type.is_common_nbr_iter_type())
 		{
 			Out.push('(');
 			src2.reproduce(0);
@@ -121,7 +122,7 @@ public class ast_expr_reduce extends ast_expr
 		{
 			if (for_symtab)
 			{
-				apply_symtabs(a, PRE_APPLY);
+				apply_symtabs(a, GlobalMembersGm_traverse.PRE_APPLY);
 			}
 			ast_id src = get_source();
 			ast_id it = get_iterator();
@@ -156,7 +157,7 @@ public class ast_expr_reduce extends ast_expr
 			boolean b = a.has_separate_post_apply();
 			if (for_symtab)
 			{
-				apply_symtabs(a, POST_APPLY);
+				apply_symtabs(a, GlobalMembersGm_traverse.POST_APPLY);
 			}
 			ast_id src = get_source();
 			ast_id it = get_iterator();
@@ -284,7 +285,7 @@ public class ast_expr_reduce extends ast_expr
 		this.body = null;
 		this.filter = null;
 		this.reduce_type = GM_REDUCE_T.GMREDUCE_NULL;
-		this.iter_type = 0;
+		this.iter_type = GMTYPE_T.GMTYPE_INVALID;
 		set_nodetype(AST_NODE_TYPE.AST_EXPR_RDC);
 		create_symtabs();
 	}

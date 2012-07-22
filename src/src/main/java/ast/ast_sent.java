@@ -1,5 +1,6 @@
 package ast;
 
+import common.GlobalMembersGm_traverse;
 import common.gm_apply;
 
 //==========================================================================
@@ -35,7 +36,7 @@ public abstract class ast_sent extends ast_node
 			if (for_sent)
 				a.apply(this);
 			if (has_symtab() && for_symtab)
-				apply_symtabs(a, PRE_APPLY);
+				apply_symtabs(a, GlobalMembersGm_traverse.PRE_APPLY);
 		}
     
 		traverse_sent(a, is_post, is_pre);
@@ -46,7 +47,7 @@ public abstract class ast_sent extends ast_node
 		{
 			if (has_symtab() && for_symtab)
 			{
-				apply_symtabs(a, POST_APPLY);
+				apply_symtabs(a, GlobalMembersGm_traverse.POST_APPLY);
 			}
 			if (for_sent)
 			{

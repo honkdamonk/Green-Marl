@@ -4,22 +4,27 @@ import frontend.GlobalMembersGm_typecheck_oprules;
 
 public class GlobalMembersGm_defs {
 
+	@Deprecated
 	public static boolean gm_is_foreign_expr_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_FOREIGN_EXPR);
 	}
 
+	@Deprecated
 	public static boolean gm_is_integer_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_INT) || (i == GMTYPE_T.GMTYPE_LONG) || (i == GMTYPE_T.GMTYPE_BYTE) || (i == GMTYPE_T.GMTYPE_SHORT);
 	}
 
+	@Deprecated
 	public static boolean gm_is_float_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_FLOAT) || (i == GMTYPE_T.GMTYPE_DOUBLE);
 	}
 
+	@Deprecated
 	public static boolean gm_is_unknown_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_UNKNOWN) || (i == GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC);
 	}
 
+	@Deprecated
 	public static boolean gm_is_numeric_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_integer_type(i) || GlobalMembersGm_defs.gm_is_float_type(i);
 	}
@@ -129,50 +134,61 @@ public class GlobalMembersGm_defs {
 				|| GlobalMembersGm_defs.gm_is_unknown_collection_iter_type(i) || GlobalMembersGm_defs.gm_is_collection_of_collection_iter_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_property_iter_set_type(GMTYPE_T i) {
 		return i == GMTYPE_T.GMTYPE_PROPERTYITER_SET;
 	}
 
+	@Deprecated
 	public static boolean gm_is_property_iter_seq_type(GMTYPE_T i) {
 		return i == GMTYPE_T.GMTYPE_PROPERTYITER_SEQ;
 	}
 
+	@Deprecated
 	public static boolean gm_is_property_iter_order_type(GMTYPE_T i) {
 		return i == GMTYPE_T.GMTYPE_PROPERTYITER_ORDER;
 	}
 
+	@Deprecated
 	public static boolean gm_is_property_iter_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_property_iter_order_type(i) || GlobalMembersGm_defs.gm_is_property_iter_seq_type(i)
 				|| GlobalMembersGm_defs.gm_is_property_iter_set_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_node_compatible_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_node_type(i) || GlobalMembersGm_defs.gm_is_node_iter_type(i)
 				|| GlobalMembersGm_defs.gm_is_node_collection_iter_type(i) || GlobalMembersGm_defs.gm_is_nil_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_edge_compatible_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_edge_type(i) || GlobalMembersGm_defs.gm_is_edge_iter_type(i)
 				|| GlobalMembersGm_defs.gm_is_edge_collection_iter_type(i) || GlobalMembersGm_defs.gm_is_nil_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_node_edge_compatible_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_node_compatible_type(i) || GlobalMembersGm_defs.gm_is_edge_compatible_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_iter_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_node_iter_type(i) || GlobalMembersGm_defs.gm_is_edge_iter_type(i)
 				|| GlobalMembersGm_defs.gm_is_collection_iter_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_boolean_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_BOOL);
 	}
 
+	@Deprecated
 	public static boolean gm_is_unknonwn_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_UNKNOWN) || (i == GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC);
 	}
 
+	@Deprecated
 	public static boolean gm_is_void_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_VOID);
 	}
@@ -182,35 +198,43 @@ public class GlobalMembersGm_defs {
 		return GlobalMembersGm_defs.gm_is_numeric_type(i) || GlobalMembersGm_defs.gm_is_boolean_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_graph_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_GRAPH);
 	}
 
+	@Deprecated
 	public static boolean gm_is_node_property_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_NODEPROP);
 	}
 
+	@Deprecated
 	public static boolean gm_is_edge_property_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_EDGEPROP);
 	}
 
+	@Deprecated
 	public static boolean gm_is_property_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_node_property_type(i) || GlobalMembersGm_defs.gm_is_edge_property_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_inf_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_INF) || (i == GMTYPE_T.GMTYPE_INF_INT) || (i == GMTYPE_T.GMTYPE_INF_LONG) || (i == GMTYPE_T.GMTYPE_INF_FLOAT)
 				|| (i == GMTYPE_T.GMTYPE_INF_FLOAT);
 	}
 
+	@Deprecated
 	public static boolean gm_is_inf_type_unsized(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_INF);
 	}
 
+	@Deprecated
 	public static boolean gm_is_inf_type_sized(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_inf_type(i) && !GlobalMembersGm_defs.gm_is_inf_type_unsized(i);
 	}
 
+	@Deprecated
 	public static GMTYPE_T gm_get_sized_inf_type(GMTYPE_T i) {
 		if (i == GMTYPE_T.GMTYPE_INT)
 			return GMTYPE_T.GMTYPE_INF_INT;

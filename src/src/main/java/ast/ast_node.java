@@ -1,15 +1,12 @@
 package ast;
 
-import inc.gm_code_writer;
-
-import java.io.PrintStream;
-
-import common.GlobalMembersGm_traverse;
-import common.gm_apply;
-
 import frontend.SYMTAB_TYPES;
 import frontend.gm_scope;
 import frontend.gm_symtab;
+import inc.gm_code_writer;
+
+import common.GlobalMembersGm_traverse;
+import common.gm_apply;
 
 public abstract class ast_node
 {
@@ -199,11 +196,11 @@ public abstract class ast_node
 		sym_procs = new gm_symtab(SYMTAB_TYPES.GM_SYMTAB_PROC, this);
 	}
 
-	public final int get_line()
+	public int get_line()
 	{
 		return line;
 	}
-	public final int get_col()
+	public int get_col()
 	{
 		return col;
 	}

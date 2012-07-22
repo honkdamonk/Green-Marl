@@ -1,21 +1,19 @@
 package ast;
 
 import common.GlobalMembersGm_dumptree;
+import common.GlobalMembersGm_traverse;
 import common.gm_apply;
 
-public class ast_vardecl extends ast_sent
-{
-	public void dispose()
-	{
+public class ast_vardecl extends ast_sent {
+	public void dispose() {
 		if (idlist != null)
 			idlist.dispose();
 		if (type != null)
 			type.dispose();
-		//assert(init_expr == NULL);
+		// assert(init_expr == NULL);
 	}
 
-	private ast_vardecl()
-	{
+	private ast_vardecl() {
 		super(AST_NODE_TYPE.AST_VARDECL);
 		this.idlist = null;
 		this.type = null;
@@ -23,13 +21,11 @@ public class ast_vardecl extends ast_sent
 		this.tc_finished = false;
 	}
 
-	public final void set_typechecked(boolean b)
-	{
+	public final void set_typechecked(boolean b) {
 		tc_finished = b;
 	}
 
-	public static ast_vardecl new_vardecl(ast_typedecl type, ast_idlist id)
-	{
+	public static ast_vardecl new_vardecl(ast_typedecl type, ast_idlist id) {
 		ast_vardecl d = new ast_vardecl();
 		d.idlist = id;
 		d.type = type;
@@ -38,8 +34,7 @@ public class ast_vardecl extends ast_sent
 		return d;
 	}
 
-	public static ast_vardecl new_vardecl(ast_typedecl type, ast_id id)
-	{
+	public static ast_vardecl new_vardecl(ast_typedecl type, ast_id id) {
 		ast_vardecl d = new ast_vardecl();
 		ast_idlist idl = new ast_idlist();
 		idl.add_id(id);
@@ -50,8 +45,7 @@ public class ast_vardecl extends ast_sent
 		return d;
 	}
 
-	public static ast_vardecl new_vardecl_init(ast_typedecl type, ast_id id, ast_expr init)
-	{
+	public static ast_vardecl new_vardecl_init(ast_typedecl type, ast_id id, ast_expr init) {
 		ast_vardecl d = new ast_vardecl();
 		ast_idlist idl = new ast_idlist();
 		idl.add_id(id);
@@ -66,29 +60,27 @@ public class ast_vardecl extends ast_sent
 		return d;
 	}
 
-	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre)
-	{
+	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre) {
 		boolean for_id = a.is_for_id();
-		if (for_id)
-		{
+		if (for_id) {
 			ast_idlist idl = get_idlist();
-    
+
 			if (is_pre)
-				idl.apply_id(a, PRE_APPLY);
-    
+				idl.apply_id(a, GlobalMembersGm_traverse.PRE_APPLY);
+
 			if (is_post)
-				idl.apply_id(a, POST_APPLY);
+				idl.apply_id(a, GlobalMembersGm_traverse.POST_APPLY);
 		}
 	}
-	public void reproduce(int ind_level)
-	{
+
+	public void reproduce(int ind_level) {
 		type.reproduce(0);
 		Out.SPC();
 		idlist.reproduce(0);
 		Out.pushln(";");
 	}
-	public void dump_tree(int ind_level)
-	{
+
+	public void dump_tree(int ind_level) {
 		GlobalMembersGm_dumptree.IND(ind_level);
 		assert parent != null;
 		System.out.print("[DECL ");
@@ -96,44 +88,39 @@ public class ast_vardecl extends ast_sent
 		type.dump_tree(ind_level + 1);
 		System.out.print("\n");
 		idlist.dump_tree(ind_level + 1);
-    
+
 		System.out.print("\n");
 		GlobalMembersGm_dumptree.IND(ind_level);
 		System.out.print("]");
 	}
 
-	public final ast_idlist get_idlist()
-	{
+	public final ast_idlist get_idlist() {
 		return idlist;
 	}
 
-	public final ast_typedecl get_type()
-	{
+	public final ast_typedecl get_type() {
 		if (!tc_finished)
 			return type; // obtain type from syntax
 		else
-			return idlist.get_item(0).getTypeInfo(); // obtain type from symbol table
+			return idlist.get_item(0).getTypeInfo(); // obtain type from symbol
+														// table
 	}
 
-	public final ast_expr get_init()
-	{
+	public final ast_expr get_init() {
 		return init_expr;
 	}
 
-	public final void set_init(ast_expr v)
-	{
+	public final void set_init(ast_expr v) {
 		init_expr = v;
 		if (v != null)
 			v.set_parent(this);
 	}
 
-	public final boolean is_tc_finished()
-	{
+	public final boolean is_tc_finished() {
 		return tc_finished;
 	}
 
-	public final void set_tc_finished(boolean b)
-	{
+	public final void set_tc_finished(boolean b) {
 		tc_finished = b;
 	} // who calls it?
 
@@ -142,8 +129,7 @@ public class ast_vardecl extends ast_sent
 	private ast_expr init_expr; // for syntax sugar.
 	private boolean tc_finished;
 
-	private static boolean check_instant_assignment(ast_typedecl type, ast_expr init)
-	{
+	private static boolean check_instant_assignment(ast_typedecl type, ast_expr init) {
 
 		if (init == null || type == null)
 			return false;

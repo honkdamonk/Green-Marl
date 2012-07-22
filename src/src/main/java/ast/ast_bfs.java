@@ -296,11 +296,11 @@ public class ast_bfs extends ast_sent
 			}
 		}
 	}
-	public final int get_iter_type()
+	public final GMTYPE_T get_iter_type()
 	{
 		return GMTYPE_T.GMTYPE_NODEITER_BFS;
 	}
-	public final int get_iter_type2()
+	public final GMTYPE_T get_iter_type2()
 	{
 		return is_transpose() ? GMTYPE_T.GMTYPE_NODEITER_IN_NBRS : GMTYPE_T.GMTYPE_NODEITER_NBRS;
 	}

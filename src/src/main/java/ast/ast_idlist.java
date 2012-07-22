@@ -58,7 +58,7 @@ public class ast_idlist extends ast_node
 	{
 		for (int i = 0; i < (int) lst.size(); i++)
 		{
-			ast_id id = lst[i];
+			ast_id id = lst.get(i);
 			id.reproduce(0);
 			if (i != (int)(lst.size() - 1))
 				Out.push(", ");
@@ -71,7 +71,7 @@ public class ast_idlist extends ast_node
 		System.out.print("[");
 		for (int i = 0; i < (int) lst.size(); i++)
 		{
-			ast_id id = lst[i];
+			ast_id id = lst.get(i);
 			id.dump_tree(0);
 			System.out.print(" ");
 		}
@@ -80,7 +80,7 @@ public class ast_idlist extends ast_node
 	public final boolean contains(tangible.RefObject<String> id)
 	{
 		for (int i = 0; i < (int) lst.size(); i++)
-			if (!strcmp(id.argvalue, lst.get(i).get_orgname()))
+			if (id.argvalue.equals(lst.get(i).get_orgname()))
 				return true;
 		return false;
 	}

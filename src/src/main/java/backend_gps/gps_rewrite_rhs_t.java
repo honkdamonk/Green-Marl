@@ -202,7 +202,7 @@ public class gps_rewrite_rhs_t extends gm_apply
 	private java.util.HashMap<ast_foreach, java.util.HashSet<ast_expr>> sub_exprs = new java.util.HashMap<ast_foreach, java.util.HashSet<ast_expr>>();
 	private ast_foreach current_fe;
 
-	private gm_symtab_entry define_temp(int type, ast_sentblock sb, gm_symtab_entry graph)
+	private gm_symtab_entry define_temp(GMTYPE_T type, ast_sentblock sb, gm_symtab_entry graph)
 	{
 		String temp_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_m");
 		gm_symtab_entry target;
@@ -214,11 +214,11 @@ public class gps_rewrite_rhs_t extends gm_apply
 		{
 			if (GlobalMembersGm_defs.gm_is_node_compatible_type(type))
 			{
-				type = GMTYPE_T.GMTYPE_NODE.getValue();
+				type = GMTYPE_T.GMTYPE_NODE;
 			}
 			else if (GlobalMembersGm_defs.gm_is_edge_compatible_type(type))
 			{
-				type = GMTYPE_T.GMTYPE_EDGE.getValue();
+				type = GMTYPE_T.GMTYPE_EDGE;
 			}
 			target = GlobalMembersGm_add_symbol.gm_add_new_symbol_nodeedge_type(sb, type, graph, (String) temp_name);
 		}

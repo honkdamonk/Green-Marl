@@ -111,7 +111,7 @@ public class gm_gpslib extends gm_graph_library
 		Body.push(is_first_var);
 		Body.pushln("));");
 	}
-	public void generate_broadcast_variable_type(int type_id, gm_code_writer Body, int reduce_op)
+	public void generate_broadcast_variable_type(GMTYPE_T type_id, gm_code_writer Body, GM_REDUCE_T reduce_op)
     
 	{
 		//--------------------------------------
@@ -124,9 +124,9 @@ public class gm_gpslib extends gm_graph_library
 		// Type:  Long, Int, Double, Float, Bool, NODE,EDGE
 		//---------------------------------------------------
 		if (GlobalMembersGm_defs.gm_is_node_compatible_type(type_id))
-			type_id = GMTYPE_T.GMTYPE_NODE.getValue();
+			type_id = GMTYPE_T.GMTYPE_NODE;
 		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(type_id))
-			type_id = GMTYPE_T.GMTYPE_EDGE.getValue();
+			type_id = GMTYPE_T.GMTYPE_EDGE;
     
 		switch (type_id)
 		{
@@ -207,23 +207,23 @@ public class gm_gpslib extends gm_graph_library
 		Body.push(")");
 		Body.pushln(");");
 	}
-	public void generate_broadcast_receive_master(ast_id id, gm_code_writer Body, int reduce_op_type)
+	public void generate_broadcast_receive_master(ast_id id, gm_code_writer Body, GM_REDUCE_T reduce_op_type)
 	{
 		// Read from BV to local value
 		get_main().generate_lhs_id(id);
 		Body.push(" = ");
 		boolean need_paren = false;
     
-		if (reduce_op_type != GM_REDUCE_T.GMREDUCE_NULL.getValue())
+		if (reduce_op_type != GM_REDUCE_T.GMREDUCE_NULL)
 		{
-			if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MIN.getValue())
+			if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MIN)
 			{
 				need_paren = true;
 				Body.push("Math.min(");
 				get_main().generate_rhs_id(id);
 				Body.push(",");
 			}
-			else if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MAX.getValue())
+			else if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MAX)
 			{
 				need_paren = true;
 				Body.push("Math.max(");
@@ -279,7 +279,7 @@ public class gm_gpslib extends gm_graph_library
 		Body.pushln("import java.util.Random;");
 		Body.pushln("import java.lang.Math;");
 	}
-	public void generate_reduce_assign_vertex(ast_assign a, gm_code_writer Body, int reduce_op_type)
+	public void generate_reduce_assign_vertex(ast_assign a, gm_code_writer Body, GM_REDUCE_T reduce_op_type)
 	{
 		assert a.is_target_scalar();
 		ast_id id = a.get_lhs_scala();
@@ -535,16 +535,16 @@ public class gm_gpslib extends gm_graph_library
 	{
 		return get_type_size(t.getTypeSummary());
 	}
-	public int get_type_size(int gm_type)
+	public int get_type_size(GMTYPE_T gm_type)
 	{
-		if (gm_type == GMTYPE_T.GMTYPE_NODE.getValue())
+		if (gm_type == GMTYPE_T.GMTYPE_NODE)
 		{
 			if (this.is_node_type_int())
 				return 4;
 			else
 				return 8;
 		}
-		else if (gm_type == GMTYPE_T.GMTYPE_EDGE.getValue())
+		else if (gm_type == GMTYPE_T.GMTYPE_EDGE)
 		{
 			assert false;
 			return 0;

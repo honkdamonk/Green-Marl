@@ -1,3 +1,5 @@
+package common;
+
 public enum gm_method_id_t
 {
 	GM_BLTIN_GRAPH_NUM_NODES, // number of nodes in graph

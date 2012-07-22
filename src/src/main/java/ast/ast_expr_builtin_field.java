@@ -1,6 +1,7 @@
 package ast;
 
 import inc.GMEXPR_CLASS;
+import inc.GMTYPE_T;
 import inc.expr_list;
 import common.GlobalMembersGm_misc;
 
@@ -35,7 +36,7 @@ public class ast_expr_builtin_field extends ast_expr_builtin
 		return field_driver;
 	}
 
-	public final int get_source_type()
+	public final GMTYPE_T get_source_type()
 	{
 		assert field_driver != null;
 		return field_driver.get_second().getTargetTypeInfo().getTypeSummary();

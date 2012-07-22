@@ -58,8 +58,8 @@ public class gps_opt_find_updown_foreach_t extends gm_apply
 			ast_sent body = fe.get_body();
 			GlobalMembersGm_transform_helper.gm_ripoff_sent(body);
 
-			int new_iter_type = (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS) ? GMTYPE_T.GMTYPE_NODEITER_IN_NBRS : GMTYPE_T.GMTYPE_NODEITER_NBRS;
-			int op_for_check = (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS) ? GM_OPS_T.GMOP_SUB : GM_OPS_T.GMOP_ADD;
+			GMTYPE_T new_iter_type = (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS) ? GMTYPE_T.GMTYPE_NODEITER_IN_NBRS : GMTYPE_T.GMTYPE_NODEITER_NBRS;
+			GM_OPS_T op_for_check = (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS) ? GM_OPS_T.GMOP_SUB : GM_OPS_T.GMOP_ADD;
 
 			// chechge iter type
 			fe.set_iter_type(new_iter_type);

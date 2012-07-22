@@ -4,6 +4,7 @@ import ast.AST_NODE_TYPE;
 import ast.ast_procdef;
 import ast.ast_sent;
 import frontend.gm_symtab_entry;
+import inc.GMTYPE_T;
 import inc.GlobalMembersGm_backend_gps;
 import inc.GlobalMembersGm_defs;
 
@@ -100,7 +101,7 @@ public class gps_check_synth_t extends gm_apply
 	@Override
 	public boolean apply(gm_symtab_entry e, int symtab_type)
 	{
-		int type_id = e.getType().get_typeid();
+		GMTYPE_T type_id = e.getType().get_typeid();
 		if (GlobalMembersGm_defs.gm_is_collection_type(type_id))
 		{
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_COLLECTION, e.getId().get_line(), e.getId().get_col(), e.getId().get_orgname());

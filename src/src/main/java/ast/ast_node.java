@@ -111,7 +111,7 @@ public abstract class ast_node
 	{
 		assert has_scope();
 		boolean post_apply = is_post && a.has_separate_post_apply();
-		int t = get_nodetype() == (AST_NODE_TYPE.AST_PROCDEF.getValue()) != 0 ? SYMTAB_TYPES.GM_SYMTAB_ARG : SYMTAB_TYPES.GM_SYMTAB_VAR;
+		int t = get_nodetype() == (AST_NODE_TYPE.AST_PROCDEF) != 0 ? SYMTAB_TYPES.GM_SYMTAB_ARG : SYMTAB_TYPES.GM_SYMTAB_VAR;
 		if (post_apply)
 		{
 			a.apply2(get_symtab_var(), t);
@@ -124,21 +124,21 @@ public abstract class ast_node
     
 		if (post_apply)
 		{
-			a.apply2(get_symtab_field(), SYMTAB_TYPES.GM_SYMTAB_FIELD.getValue());
+			a.apply2(get_symtab_field(), SYMTAB_TYPES.GM_SYMTAB_FIELD);
 		}
 		else
 		{
-			a.apply(get_symtab_field(), SYMTAB_TYPES.GM_SYMTAB_FIELD.getValue());
+			a.apply(get_symtab_field(), SYMTAB_TYPES.GM_SYMTAB_FIELD);
 		}
 		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_field(), SYMTAB_TYPES.GM_SYMTAB_FIELD, is_post);
     
 		if (post_apply)
 		{
-			a.apply2(get_symtab_proc(), SYMTAB_TYPES.GM_SYMTAB_PROC.getValue());
+			a.apply2(get_symtab_proc(), SYMTAB_TYPES.GM_SYMTAB_PROC);
 		}
 		else
 		{
-			a.apply(get_symtab_proc(), SYMTAB_TYPES.GM_SYMTAB_PROC.getValue());
+			a.apply(get_symtab_proc(), SYMTAB_TYPES.GM_SYMTAB_PROC);
 		}
 		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_proc(), SYMTAB_TYPES.GM_SYMTAB_PROC, is_post);
 	}

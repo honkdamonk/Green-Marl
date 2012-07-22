@@ -418,7 +418,7 @@ public class gm_cpp_gen extends gm_backend, gm_code_generator
 	{
 		String temp = temp_str;
 		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
-		int t = e.get_type_summary();
+		GMTYPE_T t = e.get_type_summary();
 		switch (t)
 		{
 			case GMTYPE_INF:
@@ -448,7 +448,7 @@ public class gm_cpp_gen extends gm_backend, gm_code_generator
 		get_lib().generate_expr_nil(ee, Body);
 	}
 
-	public String get_type_string(int type_id)
+	public String get_type_string(GMTYPE_T type_id)
 	{
     
 		if (GlobalMembersGm_defs.gm_is_prim_type(type_id))
@@ -616,7 +616,7 @@ public class gm_cpp_gen extends gm_backend, gm_code_generator
     
 		String temp_var_base = (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) ? a.get_lhs_scala().get_orgname() : a.get_lhs_field().get_second().get_orgname();
     
-		int r_type = a.get_reduce_type();
+		GM_REDUCE_T r_type = a.get_reduce_type();
     
 		String temp_var_old;
 		String temp_var_new;
@@ -640,32 +640,32 @@ public class gm_cpp_gen extends gm_backend, gm_code_generator
 			generate_rhs_field(a.get_lhs_field());
     
 		Body.pushln(";");
-		if (r_type == GM_REDUCE_T.GMREDUCE_PLUS.getValue())
+		if (r_type == GM_REDUCE_T.GMREDUCE_PLUS)
 		{
 			String.format(temp, "%s = %s + (", temp_var_new, temp_var_old);
 			Body.push(temp);
 		}
-		else if (r_type == GM_REDUCE_T.GMREDUCE_MULT.getValue())
+		else if (r_type == GM_REDUCE_T.GMREDUCE_MULT)
 		{
 			String.format(temp, "%s = %s * (", temp_var_new, temp_var_old);
 			Body.push(temp);
 		}
-		else if (r_type == GM_REDUCE_T.GMREDUCE_MAX.getValue())
+		else if (r_type == GM_REDUCE_T.GMREDUCE_MAX)
 		{
 			String.format(temp, "%s = std::max (%s, ", temp_var_new, temp_var_old);
 			Body.push(temp);
 		}
-		else if (r_type == GM_REDUCE_T.GMREDUCE_OR.getValue())
+		else if (r_type == GM_REDUCE_T.GMREDUCE_OR)
 		{
 			String.format(temp, "%s = %s || (", temp_var_new, temp_var_old);
 			Body.push(temp);
 		}
-		else if (r_type == GM_REDUCE_T.GMREDUCE_AND.getValue())
+		else if (r_type == GM_REDUCE_T.GMREDUCE_AND)
 		{
 			String.format(temp, "%s = %s && (", temp_var_new, temp_var_old);
 			Body.push(temp);
 		}
-		else if (r_type == GM_REDUCE_T.GMREDUCE_MIN.getValue())
+		else if (r_type == GM_REDUCE_T.GMREDUCE_MIN)
 		{
 			String.format(temp, "%s = std::min (%s, ", temp_var_new, temp_var_old);
 			Body.push(temp);
@@ -677,7 +677,7 @@ public class gm_cpp_gen extends gm_backend, gm_code_generator
     
 		generate_expr(a.get_rhs());
 		Body.pushln(");");
-		if ((r_type == GM_REDUCE_T.GMREDUCE_MAX.getValue()) || (r_type == GM_REDUCE_T.GMREDUCE_MIN.getValue()))
+		if ((r_type == GM_REDUCE_T.GMREDUCE_MAX) || (r_type == GM_REDUCE_T.GMREDUCE_MIN))
 		{
 			String.format(temp, "if (%s == %s) break;", temp_var_old, temp_var_new);
 			Body.pushln(temp);

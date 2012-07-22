@@ -37,13 +37,13 @@ public class gps_syminfo extends ast_extra_info
 	{
 		return _scalar;
 	}
-	public final void add_usage_in_BB(int bb_no, int usage, int context)
+	public final void add_usage_in_BB(int bb_no, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context)
 	{
 		add_usage_in_BB(bb_no, usage, context, GM_REDUCE_T.GMREDUCE_NULL);
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: void add_usage_in_BB(int bb_no, int usage, int context, int reduce_type = GMREDUCE_NULL)
-	public final void add_usage_in_BB(int bb_no, int usage, int context, GM_REDUCE_T reduce_type)
+	public final void add_usage_in_BB(int bb_no, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context, GM_REDUCE_T reduce_type)
 	{
 		// if not already in
 		for (int i = 0; i < (int) used_BB.size(); i++)
@@ -62,15 +62,15 @@ public class gps_syminfo extends ast_extra_info
 		used_type.add(usage);
 		used_context.add(context);
 
-		if (usage == gm_gps_symbol_usage_t.GPS_SYM_USED_AS_RHS.getValue())
+		if (usage == gm_gps_symbol_usage_t.GPS_SYM_USED_AS_RHS)
 		{
 			used_as_rhs = true;
 		}
-		else if (usage == gm_gps_symbol_usage_t.GPS_SYM_USED_AS_LHS.getValue())
+		else if (usage == gm_gps_symbol_usage_t.GPS_SYM_USED_AS_LHS)
 		{
 			used_as_lhs = true;
 		}
-		else if (usage == gm_gps_symbol_usage_t.GPS_SYM_USED_AS_REDUCE.getValue())
+		else if (usage == gm_gps_symbol_usage_t.GPS_SYM_USED_AS_REDUCE)
 		{
 			used_as_reduce = true;
 			reduce_op_type = reduce_type;
@@ -176,8 +176,8 @@ public class gps_syminfo extends ast_extra_info
 	private boolean _scalar;
 	private boolean _is_arg;
 	private java.util.ArrayList<Integer> used_BB = new java.util.ArrayList<Integer>();
-	private java.util.ArrayList<Integer> used_type = new java.util.ArrayList<Integer>();
-	private java.util.ArrayList<Integer> used_context = new java.util.ArrayList<Integer>();
+	private java.util.ArrayList<gm_gps_symbol_usage_t> used_type = new java.util.ArrayList<gm_gps_symbol_usage_t>();
+	private java.util.ArrayList<gm_gps_symbol_usage_location_t> used_context = new java.util.ArrayList<gm_gps_symbol_usage_location_t>();
 	private int scope; // GPS_SCOPE_XX
 
 	private boolean used_as_rhs;

@@ -159,7 +159,7 @@ public class ast_expr_builtin extends ast_expr
 		return false;
 	}
 
-	public int get_source_type()
+	public GMTYPE_T get_source_type()
 	{
 		return (driver == null) ? GMTYPE_T.GMTYPE_VOID : driver.getTypeSummary();
 	}

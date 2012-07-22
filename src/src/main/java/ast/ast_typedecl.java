@@ -52,14 +52,14 @@ public class ast_typedecl extends ast_node
 			target_nbr.dispose();
 	}
 
-	public static ast_typedecl new_primtype(int ptype_id)
+	public static ast_typedecl new_primtype(GMTYPE_T ptype_id)
 	{
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = ptype_id;
 		return t;
 	}
 
-	public static ast_typedecl new_graphtype(int gtype_id)
+	public static ast_typedecl new_graphtype(GMTYPE_T gtype_id)
 	{
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = gtype_id;
@@ -69,7 +69,7 @@ public class ast_typedecl extends ast_node
 	public static ast_typedecl new_nodetype(ast_id tg)
 	{
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_NODE.getValue();
+		t.type_id = GMTYPE_T.GMTYPE_NODE;
 		if (tg == null) //no graph defined for this node - we will handle this later (typecheck step 1)
 			return t;
 		t.target_graph = tg;
@@ -80,7 +80,7 @@ public class ast_typedecl extends ast_node
 	public static ast_typedecl new_edgetype(ast_id tg)
 	{
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_EDGE.getValue();
+		t.type_id = GMTYPE_T.GMTYPE_EDGE;
 		if (tg == null) //no graph defined for this edge - we will handle this later (typecheck step 1)
 			return t;
 		t.target_graph = tg;
@@ -88,7 +88,7 @@ public class ast_typedecl extends ast_node
 		return t;
 	}
 
-	public static ast_typedecl new_nodeedge_iterator(ast_id tg, int iter_type)
+	public static ast_typedecl new_nodeedge_iterator(ast_id tg, GMTYPE_T iter_type)
 	{
 		assert GlobalMembersGm_defs.gm_is_all_graph_iter_type(iter_type);
 		ast_typedecl t = new ast_typedecl();
@@ -98,7 +98,7 @@ public class ast_typedecl extends ast_node
 		return t;
 	}
 
-	public static ast_typedecl new_nbr_iterator(ast_id tg, int iter_type)
+	public static ast_typedecl new_nbr_iterator(ast_id tg, GMTYPE_T iter_type)
 	{
 		assert GlobalMembersGm_defs.gm_is_any_nbr_iter_type(iter_type);
 		ast_typedecl t = new ast_typedecl();
@@ -108,7 +108,7 @@ public class ast_typedecl extends ast_node
 		return t;
 	}
 
-	public static ast_typedecl new_common_nbr_iterator(ast_id tg, ast_id tg2, int iter_type)
+	public static ast_typedecl new_common_nbr_iterator(ast_id tg, ast_id tg2, GMTYPE_T iter_type)
 	{
 		assert GlobalMembersGm_defs.gm_is_any_nbr_iter_type(iter_type);
 		ast_typedecl t = new ast_typedecl();
@@ -120,7 +120,7 @@ public class ast_typedecl extends ast_node
 		return t;
 	}
 
-	public static ast_typedecl new_set(ast_id tg, int set_type)
+	public static ast_typedecl new_set(ast_id tg, GMTYPE_T set_type)
 	{
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = set_type;
@@ -134,7 +134,7 @@ public class ast_typedecl extends ast_node
 	public static ast_typedecl new_queue(ast_id targetGraph, ast_typedecl collectionType)
 	{
 		ast_typedecl typeDecl = new ast_typedecl();
-		typeDecl.type_id = GMTYPE_T.GMTYPE_COLLECTION.getValue();
+		typeDecl.type_id = GMTYPE_T.GMTYPE_COLLECTION;
 		typeDecl.target_type = collectionType;
 		if (targetGraph == null) //no graph defined for this queue - we will handle this later (typecheck step 1)
 			return typeDecl;
@@ -143,7 +143,7 @@ public class ast_typedecl extends ast_node
 		return typeDecl;
 	}
 
-	public static ast_typedecl new_set_iterator(ast_id set, int iter_type)
+	public static ast_typedecl new_set_iterator(ast_id set, GMTYPE_T iter_type)
 	{
 		// deprecated
 		ast_typedecl t = new ast_typedecl();
@@ -153,7 +153,7 @@ public class ast_typedecl extends ast_node
 		return t;
 	}
 
-	public static ast_typedecl new_collection_iterator(ast_id set, int iter_type)
+	public static ast_typedecl new_collection_iterator(ast_id set, GMTYPE_T iter_type)
 	{
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = iter_type;
@@ -188,7 +188,7 @@ public class ast_typedecl extends ast_node
 		return t;
 	}
 
-	public static ast_typedecl new_property_iterator(ast_id property, int iter_type)
+	public static ast_typedecl new_property_iterator(ast_id property, GMTYPE_T iter_type)
 	{
 		ast_typedecl typeDecl = new ast_typedecl();
 		typeDecl.type_id = iter_type;
@@ -532,7 +532,7 @@ public class ast_typedecl extends ast_node
 		return type_id;
 	}
 
-	public final void setTypeSummary(int s)
+	public final void setTypeSummary(GMTYPE_T s)
 	{
 		// type id might be overriden during type-checking
 		set_typeid(s);

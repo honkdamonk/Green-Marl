@@ -26,7 +26,7 @@ public class ast_expr_foreign extends ast_expr
 		ast_expr_foreign aef = new ast_expr_foreign();
 		aef.expr_class = GMEXPR_CLASS.GMEXPR_FOREIGN;
 		aef.orig_text = GlobalMembersGm_misc.gm_strdup(text.argvalue);
-		aef.type_of_expression = GMTYPE_T.GMTYPE_FOREIGN_EXPR.getValue();
+		aef.type_of_expression = GMTYPE_T.GMTYPE_FOREIGN_EXPR;
 		return aef;
 	}
 	public void traverse(gm_apply a, boolean is_post, boolean is_pre)

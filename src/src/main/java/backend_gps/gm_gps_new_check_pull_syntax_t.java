@@ -44,7 +44,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply
 		{
 			ast_assign a = (ast_assign) s;
 			int context = s.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYNTAX_CONTEXT);
-			int scope;
+			gm_gps_new_scope_analysis_t scope;
 			if (a.is_target_scalar())
 			{
 				scope = get_scope_from_id(a.get_lhs_scala().getSymInfo());
@@ -60,7 +60,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply
 				for (I = a.get_lhs_list().iterator(); I.hasNext();)
 				{
 					ast_node n = I.next();
-					int scope2;
+					gm_gps_new_scope_analysis_t scope2;
 					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID)
 					{
 						scope2 = get_scope_from_id(((ast_id) n).getSymInfo());
@@ -75,7 +75,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply
 			}
 
 			// writing to out-scope inside inner-loop.
-			if ((context == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue()) && (scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue()))
+			if ((context == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue()) && (scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT))
 			{
 				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PULL_SYNTAX, s.get_line(), s.get_col());
 				_error = true;
@@ -99,18 +99,18 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply
 
 	private boolean _error;
 
-	private int get_scope_from_id(gm_symtab_entry e)
+	private gm_gps_new_scope_analysis_t get_scope_from_id(gm_symtab_entry e)
 	{
 		return e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYMBOL_SCOPE);
 	}
 
-	private int get_scope_from_driver(gm_symtab_entry e)
+	private gm_gps_new_scope_analysis_t get_scope_from_driver(gm_symtab_entry e)
 	{
 		return get_scope_from_driver(e, false);
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: int get_scope_from_driver(gm_symtab_entry* e, boolean is_rarrow = false)
-	private int get_scope_from_driver(gm_symtab_entry e, boolean is_rarrow)
+	private gm_gps_new_scope_analysis_t get_scope_from_driver(gm_symtab_entry e, boolean is_rarrow)
 	{
 		if (e.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP))
 			return gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN;

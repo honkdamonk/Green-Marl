@@ -5,6 +5,7 @@ import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_node;
 import ast.ast_sent;
+import inc.GMTYPE_T;
 import inc.GlobalMembersGm_backend_gps;
 import inc.GlobalMembersGm_defs;
 
@@ -60,7 +61,7 @@ public class gps_opt_find_bfs_t extends gm_apply
 			ast_foreach fe = (ast_foreach) s;
 			if (in_bfs)
 			{
-				int itt = fe.get_iter_type();
+				GMTYPE_T itt = fe.get_iter_type();
 				if (GlobalMembersGm_defs.gm_is_iteration_on_down_neighbors(itt))
 				{
 				// check if this is forward bfs

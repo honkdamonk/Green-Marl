@@ -43,7 +43,7 @@ public class GlobalMembersGm_add_symbol
 	// add a new symbol of primitive type into given sentence block
 	// assumption: newname does not have any name-conflicts
 	//--------------------------------------------------------
-	public static gm_symtab_entry gm_add_new_symbol_primtype(ast_sentblock sb, int primtype, tangible.RefObject<String> newname)
+	public static gm_symtab_entry gm_add_new_symbol_primtype(ast_sentblock sb, GMTYPE_T primtype, tangible.RefObject<String> newname)
 	{
 		assert sb != null;
 
@@ -75,7 +75,7 @@ public class GlobalMembersGm_add_symbol
 		return e;
 	}
 
-	public static gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, int nodeedge_type, gm_symtab_entry graph_sym, tangible.RefObject<String> newname)
+	public static gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, GMTYPE_T nodeedge_type, gm_symtab_entry graph_sym, tangible.RefObject<String> newname)
 	{
 		assert sb != null;
 
@@ -119,7 +119,7 @@ public class GlobalMembersGm_add_symbol
 	// add a new symbol of node(edge) property type into given sentence block
 	// assumption: newname does not have any name-conflicts
 	//--------------------------------------------------------
-	public static gm_symtab_entry gm_add_new_symbol_property(ast_sentblock sb, int primtype, boolean is_nodeprop, gm_symtab_entry target_graph, tangible.RefObject<String> newname) // assumtpion: no name-conflict.
+	public static gm_symtab_entry gm_add_new_symbol_property(ast_sentblock sb, GMTYPE_T primtype, boolean is_nodeprop, gm_symtab_entry target_graph, tangible.RefObject<String> newname) // assumtpion: no name-conflict.
 	{
 		ast_id target_graph_id = target_graph.getId().copy();
 		ast_typedecl target_type = ast_typedecl.new_primtype(primtype);

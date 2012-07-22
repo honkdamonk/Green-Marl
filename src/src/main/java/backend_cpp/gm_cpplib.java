@@ -19,6 +19,7 @@ import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_misc;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_builtin_def;
+import common.gm_method_id_t;
 import common.gm_vocabulary;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -56,7 +57,7 @@ public class gm_cpplib extends gm_graph_library
 	{
 		return "gm.h";
 	}
-	public String get_type_string(int type)
+	public String get_type_string(GMTYPE_T type)
 	{
 		if (GlobalMembersGm_defs.gm_is_graph_type(type))
 		{
@@ -197,8 +198,8 @@ public class gm_cpplib extends gm_graph_library
 		ast_sent s = GlobalMembersGm_transform_helper.gm_find_parent_sentence(e);
 		assert def != null;
 		assert s != null;
-		int src_type = def.get_source_type_summary();
-		int method_id = def.get_method_id();
+		GMTYPE_T src_type = def.get_source_type_summary();
+		gm_method_id_t method_id = def.get_method_id();
 		boolean under_parallel = s.is_under_parallel_execution();
 		boolean add_thread_id = false;
     
@@ -384,7 +385,7 @@ public class gm_cpplib extends gm_graph_library
 
 	public boolean need_up_initializer(ast_foreach f)
 	{
-		int iter_type = f.get_iter_type();
+		GMTYPE_T iter_type = f.get_iter_type();
 		if (GlobalMembersGm_defs.gm_is_iteration_on_collection(iter_type))
 			return true;
 		else if (GlobalMembersGm_defs.gm_is_common_nbr_iter_type(iter_type))
@@ -393,7 +394,7 @@ public class gm_cpplib extends gm_graph_library
 	}
 	public boolean need_down_initializer(ast_foreach f)
 	{
-		int iter_type = f.get_iter_type();
+		GMTYPE_T iter_type = f.get_iter_type();
     
 		if (GlobalMembersGm_defs.gm_is_iteration_on_collection(iter_type))
 		{
@@ -413,7 +414,7 @@ public class gm_cpplib extends gm_graph_library
 	}
 	public void generate_up_initializer(ast_foreach f, gm_code_writer Body)
 	{
-		int iter_type = f.get_iter_type();
+		GMTYPE_T iter_type = f.get_iter_type();
 		ast_id source = f.get_source();
 		if (GlobalMembersGm_defs.gm_is_iteration_on_collection(iter_type))
 		{
@@ -454,7 +455,7 @@ public class gm_cpplib extends gm_graph_library
 	}
 	public void generate_down_initializer(ast_foreach f, gm_code_writer Body)
 	{
-		int iter_type = f.get_iter_type();
+		GMTYPE_T iter_type = f.get_iter_type();
 		ast_id iter = f.get_iterator();
 		ast_id source = f.get_source();
     
@@ -512,7 +513,7 @@ public class gm_cpplib extends gm_graph_library
 	{
 		ast_id source = fe.get_source();
 		ast_id iter = fe.get_iterator();
-		int type = fe.get_iter_type();
+		GMTYPE_T type = fe.get_iter_type();
     
 		if (GlobalMembersGm_defs.gm_is_iteration_on_all_graph(type))
 		{
@@ -598,8 +599,8 @@ public class gm_cpplib extends gm_graph_library
 		assert definition != null;
 		assert sent != null;
     
-		int sourceType = definition.get_source_type_summary();
-		int methodId = definition.get_method_id();
+		GMTYPE_T sourceType = definition.get_source_type_summary();
+		gm_method_id_t methodId = definition.get_method_id();
     
 		boolean parallelExecution = sent.is_under_parallel_execution();
 		boolean addThreadId = false;
@@ -626,7 +627,7 @@ public class gm_cpplib extends gm_graph_library
 		add_arguments_and_thread(body, builtinExpr, addThreadId);
     
 	}
-	public String get_function_name_graph(int methodId)
+	public String get_function_name_graph(gm_method_id_t methodId)
 	{
 		switch (methodId)
 		{
@@ -641,7 +642,7 @@ public class gm_cpplib extends gm_graph_library
 				return "ERROR";
 		}
 	}
-	public String get_function_name_nset(int methodId, boolean in_parallel)
+	public String get_function_name_nset(gm_method_id_t methodId, boolean in_parallel)
 	{
 		switch (methodId)
 		{
@@ -666,7 +667,7 @@ public class gm_cpplib extends gm_graph_library
 				return "ERROR";
 		}
 	}
-	public String get_function_name_nseq(int methodId)
+	public String get_function_name_nseq(gm_method_id_t methodId)
 	{
 		switch (methodId)
 		{
@@ -685,7 +686,7 @@ public class gm_cpplib extends gm_graph_library
 				return "ERROR";
 		}
 	}
-	public String get_function_name_norder(int methodId)
+	public String get_function_name_norder(gm_method_id_t methodId)
 	{
 		switch (methodId)
 		{

@@ -7,14 +7,14 @@ import ast.ast_typedecl;
 // symbol table
 public class gm_symtab
 {
-	public gm_symtab(int _symtab_type, ast_node _ast)
+	public gm_symtab(SYMTAB_TYPES _symtab_type, ast_node _ast)
 	{
 		this.parent = null;
 		this.symtab_type = _symtab_type;
 		this.ast = _ast;
 		this.default_graph_used = false;
 	}
-	public final int get_symtab_type()
+	public final SYMTAB_TYPES get_symtab_type()
 	{
 		return symtab_type;
 	}
@@ -98,7 +98,7 @@ public class gm_symtab
 			//gm_symtab_entry* e = entries[i];
 			String c = e.id.get_orgname();
 			String c2 = id.get_orgname();
-			if (!strcmp(c, c2))
+			if (c.equals(c2))
 				return e;
 		}
 		if (parent == null)
@@ -216,7 +216,7 @@ public class gm_symtab
 
 	private java.util.HashSet<gm_symtab_entry> entries = new java.util.HashSet<gm_symtab_entry>();
 	private gm_symtab parent;
-	private int symtab_type;
+	private SYMTAB_TYPES symtab_type;
 	private ast_node ast; // where this belongs to
 	private boolean default_graph_used;
 

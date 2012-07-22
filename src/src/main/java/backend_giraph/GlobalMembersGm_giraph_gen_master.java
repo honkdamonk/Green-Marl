@@ -1,5 +1,6 @@
 package backend_giraph;
 
+import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
 
@@ -8,7 +9,7 @@ public class GlobalMembersGm_giraph_gen_master
 
 	//extern void gm_redirect_reproduce(FILE f);
 	//extern void gm_baseindent_reproduce(int i);
-	public static String get_reduce_base_value(GM_REDUCE_T reduce_type, int gm_type)
+	public static String get_reduce_base_value(GM_REDUCE_T reduce_type, GMTYPE_T gm_type)
 	{
 		switch (reduce_type)
 		{
@@ -35,7 +36,6 @@ public class GlobalMembersGm_giraph_gen_master
 						assert false;
 						return "0";
 				}
-				break;
 			case GMREDUCE_MAX:
 				switch (gm_type)
 				{
@@ -51,7 +51,6 @@ public class GlobalMembersGm_giraph_gen_master
 						assert false;
 						return "0";
 				}
-				break;
 			default:
 				assert false;
 				break;
@@ -67,12 +66,3 @@ public class GlobalMembersGm_giraph_gen_master
 ///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-
-
-
-
-
-
-
-
-

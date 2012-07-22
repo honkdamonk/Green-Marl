@@ -57,7 +57,7 @@ public class check_bfs_main_t extends gm_apply
 			SET.add(e);
 
 			java.util.LinkedList<gm_rwinfo> use = I.next().getValue();
-			(assert(use != null));
+			assert(use != null);
 			java.util.Iterator<gm_rwinfo> K;
 			for (K = use.iterator(); K.hasNext();)
 			{

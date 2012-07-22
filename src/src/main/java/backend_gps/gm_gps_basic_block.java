@@ -21,7 +21,7 @@ public class gm_gps_basic_block
 	}
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: gm_gps_basic_block(int _id, int _type = GM_GPS_BBTYPE_SEQ) : id(_id), type(_type), after_vertex(false)
-	public gm_gps_basic_block(int _id, int _type) // ,_has_sender(false)
+	public gm_gps_basic_block(int _id, gm_gps_bbtype_t _type) // ,_has_sender(false)
 	{
 		this.id = _id;
 		this.type = _type;
@@ -78,7 +78,7 @@ public class gm_gps_basic_block
 	{
 		return id;
 	}
-	public final int get_type()
+	public final gm_gps_bbtype_t get_type()
 	{
 		return type;
 	}
@@ -86,7 +86,7 @@ public class gm_gps_basic_block
 	{
 		return after_vertex;
 	}
-	public final void set_type(int t)
+	public final void set_type(gm_gps_bbtype_t t)
 	{
 		type = t;
 	}
@@ -329,7 +329,7 @@ public class gm_gps_basic_block
 	private java.util.ArrayList<gm_gps_basic_block> exits = new java.util.ArrayList<gm_gps_basic_block>();
 	private java.util.ArrayList<gm_gps_basic_block> entries = new java.util.ArrayList<gm_gps_basic_block>();
 	private int id;
-	private int type; // GM_GPS_BBTYPE_...
+	private gm_gps_bbtype_t type;
 	private boolean after_vertex;
 	//bool _has_sender;
 

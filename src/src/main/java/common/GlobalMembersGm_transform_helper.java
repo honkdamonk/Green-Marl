@@ -1,3 +1,5 @@
+package common;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -648,7 +650,7 @@ public static void gm_add_sent(ast_sent current, ast_sent target, int location)
 	// (i.e. the top-most symtab in the target subtree has no predecessor.)
 //C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
 //ORIGINAL LINE: static void gm_add_sent(ast_sent* current, ast_sent* target, int location, boolean need_fix_symtab = true)
-	public static void gm_add_sent(ast_sent current, ast_sent target, int location, boolean need_fix_symtab)
+	public static void gm_add_sent(ast_sent current, ast_sent target, gm_insert_location_t gmInsertBegin, boolean need_fix_symtab)
 	{
 		// make sure that current belongs to a sent block
 		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(current, need_fix_symtab);
@@ -669,7 +671,7 @@ public static void gm_add_sent(ast_sent current, ast_sent target, int location)
 		java.util.Iterator<ast_sent> i;
 		;
 		target.set_parent(sb);
-		switch (location)
+		switch (gmInsertBegin)
 		{
 			case GM_INSERT_BEGIN:
 				sents.addFirst(target);
@@ -685,14 +687,14 @@ public static void gm_add_sent(ast_sent current, ast_sent target, int location)
 						break;
 				}
 				assert i.hasNext();
-				if (location == gm_insert_location_t.GM_INSERT_AFTER.getValue())
+				if (gmInsertBegin == gm_insert_location_t.GM_INSERT_AFTER)
 //C++ TO JAVA CONVERTER TODO TASK: There is no direct equivalent to the STL list 'insert' method in Java:
 				sents.insert(i, target);
 				break;
 		}
 	}
 
-	public static void gm_insert_sent_in_sb(ast_sentblock sb, ast_sent target, int location, boolean need_fix_symtab)
+	public static void gm_insert_sent_in_sb(ast_sentblock sb, ast_sent target, gm_insert_location_t gmInsertBegin, boolean need_fix_symtab)
 	{
 		// assumption: target has NULL enclosing scope
 		if (need_fix_symtab)
@@ -705,7 +707,7 @@ public static void gm_add_sent(ast_sent current, ast_sent target, int location)
 
 		java.util.LinkedList<ast_sent> sents = sb.get_sents();
 		target.set_parent(sb);
-		switch (location)
+		switch (gmInsertBegin)
 		{
 			case GM_INSERT_BEGIN:
 				sents.addFirst(target);

@@ -1,3 +1,5 @@
+package common;
+
 //----------------------------------------
 // A class that stores command line arguments 
 //----------------------------------------

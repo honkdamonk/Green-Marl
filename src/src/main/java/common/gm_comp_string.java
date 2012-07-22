@@ -1,3 +1,5 @@
+package common;
+
 public class gm_comp_string
 {
 //C++ TO JAVA CONVERTER TODO TASK: The following operator cannot be converted to Java:

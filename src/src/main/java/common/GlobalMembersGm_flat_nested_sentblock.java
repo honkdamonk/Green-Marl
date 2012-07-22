@@ -1,3 +1,5 @@
+package common;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_node;
 import ast.ast_procdef;

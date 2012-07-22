@@ -1,3 +1,5 @@
+package common;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_id;
 import ast.ast_node;
@@ -85,9 +87,9 @@ public class GlobalMembersGm_add_symbol
 
 		// create type object and check
 		ast_typedecl type;
-		if (nodeedge_type == GMTYPE_T.GMTYPE_NODE.getValue())
+		if (nodeedge_type == GMTYPE_T.GMTYPE_NODE)
 			type = ast_typedecl.new_nodetype(graph_sym.getId().copy(true));
-		else if (nodeedge_type == GMTYPE_T.GMTYPE_EDGE.getValue())
+		else if (nodeedge_type == GMTYPE_T.GMTYPE_EDGE)
 			type = ast_typedecl.new_edgetype(graph_sym.getId().copy(true));
 		else
 		{

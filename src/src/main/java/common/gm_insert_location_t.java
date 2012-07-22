@@ -1,3 +1,5 @@
+package common;
+
 public enum gm_insert_location_t
 {
 	GM_INSERT_BEGIN,

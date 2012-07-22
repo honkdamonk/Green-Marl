@@ -1,3 +1,6 @@
+package common;
+
+import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
@@ -13,7 +16,7 @@ public class gm_remove_symbols_t extends gm_apply
 	}
 
 	@Override
-	public boolean apply(gm_symtab e, int symtab_sype)
+	public boolean apply(gm_symtab e, SYMTAB_TYPES symtab_sype)
 	{
 		java.util.Iterator<gm_symtab_entry> T;
 		for (T = TARGETS.iterator(); T.hasNext();)

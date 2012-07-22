@@ -1,3 +1,5 @@
+package common;
+
 public enum GM_ERRORS_AND_WARNINGS
 {
 	GM_ERROR_UNKNOWN(0),

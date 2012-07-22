@@ -1,3 +1,5 @@
+package common;
+
 import frontend.gm_symtab_entry;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:

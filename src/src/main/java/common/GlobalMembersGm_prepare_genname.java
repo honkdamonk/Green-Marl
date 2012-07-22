@@ -1,3 +1,5 @@
+package common;
+
 import ast.ast_procdef;
 import inc.gm_procinfo;
 

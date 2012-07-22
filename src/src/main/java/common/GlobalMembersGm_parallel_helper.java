@@ -1,3 +1,5 @@
+package common;
+
 import ast.ast_sent;
 
 public class GlobalMembersGm_parallel_helper

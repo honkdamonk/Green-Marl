@@ -1,3 +1,12 @@
+package common;
+
+import inc.gm_backend;
+import opt.gm_independent_optimize;
+import backend_cpp.gm_cpp_gen;
+import backend_giraph.gm_giraph_gen;
+import backend_gps.gm_gps_gen;
+import frontend.gm_frontend;
+
 public class GlobalMembersGm_main
 {
 	/***************************************

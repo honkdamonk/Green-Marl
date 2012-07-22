@@ -1,3 +1,5 @@
+package common;
+
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_call;

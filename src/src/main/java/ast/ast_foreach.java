@@ -33,7 +33,7 @@ public class ast_foreach extends ast_sent
 		this.cond = null;
 		this.seq_exe = false;
 		this.use_reverse = false;
-		this.iter_type = 0;
+		this.iter_type = GMTYPE_T.GMTYPE_GRAPH;
 		create_symtabs();
 	}
 
@@ -75,7 +75,7 @@ public class ast_foreach extends ast_sent
 		source.reproduce(0);
 		Out.push(".");
 		Out.push(GlobalMembersGm_misc.gm_get_iter_type_string(iter_type));
-		if (GlobalMembersGm_defs.gm_is_common_nbr_iter_type(iter_type))
+		if (iter_type.is_common_nbr_iter_type())
 		{
 			Out.push('(');
 			source2.reproduce(0);

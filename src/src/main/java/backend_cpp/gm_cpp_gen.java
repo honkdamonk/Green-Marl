@@ -962,11 +962,11 @@ public class gm_cpp_gen extends gm_backend, gm_code_generator
 			generate_lhs_field(a.get_lhs_field());
 		}
     
-		_Body.push(" = ");
+		Body.push(" = ");
     
 		generate_expr(a.get_rhs());
     
-		_Body.pushln(" ;");
+		Body.pushln(" ;");
 	}
 
 	public void generate_sent_block_enter(ast_sentblock sb)

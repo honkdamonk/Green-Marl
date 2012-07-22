@@ -1422,10 +1422,10 @@ public class gm_gps_gen extends gm_backend, gm_code_generator
 	public void generate_expr_minmax(ast_expr e)
 	{
 		if (e.get_optype() == GM_OPS_T.GMOP_MIN)
-			_Body.push("java.math.min(");
+			Body.push("java.math.min(");
 		else if (e.get_optype() == GM_OPS_T.GMOP_MAX)
 		{
-			_Body.push("java.math.max(");
+			Body.push("java.math.max(");
 		}
 		else
 		{
@@ -1433,9 +1433,9 @@ public class gm_gps_gen extends gm_backend, gm_code_generator
 		}
     
 		generate_expr(e.get_left_op());
-		_Body.push(",");
+		Body.push(",");
 		generate_expr(e.get_right_op());
-		_Body.push(")");
+		Body.push(")");
 	}
 	public void generate_expr_abs(ast_expr e)
 	{
@@ -1445,13 +1445,13 @@ public class gm_gps_gen extends gm_backend, gm_code_generator
 	}
 	public void generate_lhs_id(ast_id i)
 	{
-		_Body.push(i.get_genname());
+		Body.push(i.get_genname());
 	}
 	public void generate_expr_inf(ast_expr e)
 	{
 		String temp = new String(new char[256]);
 		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
-		int t = e.get_type_summary();
+		GMTYPE_T t = e.get_type_summary();
 		switch (t)
 		{
 			case GMTYPE_INF:
@@ -1471,7 +1471,7 @@ public class gm_gps_gen extends gm_backend, gm_code_generator
 				String.format(temp, "%s", e.is_plus_inf() ? "Integer.MAX_VALUE" : "Integer.MIN_VALUE"); // temporary
 				break;
 		}
-		_Body.push(temp);
+		Body.push(temp);
 		return;
 	}
 	public void generate_expr_nil(ast_expr e)
@@ -1689,10 +1689,10 @@ public class gm_gps_gen extends gm_backend, gm_code_generator
 	{
 		if (r.get_expr() != null)
 		{
-			_Body.push(GlobalMembersGm_backend_gps.GPS_RET_VALUE);
-			_Body.push(" = ");
+			Body.push(GlobalMembersGm_backend_gps.GPS_RET_VALUE);
+			Body.push(" = ");
 			generate_expr(r.get_expr());
-			_Body.pushln(";");
+			Body.pushln(";");
 		}
 	}
 	public void generate_sent_assign(ast_assign a)
@@ -1770,7 +1770,7 @@ public class gm_gps_gen extends gm_backend, gm_code_generator
     
 		java.util.Iterator<ast_sent> i;
 		if (need_brace)
-			_Body.pushln("{");
+			Body.pushln("{");
 		if (sb.has_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB))
 		{
 			java.util.HashSet<Object > S = sb.get_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB);
@@ -1803,7 +1803,7 @@ public class gm_gps_gen extends gm_backend, gm_code_generator
 		}
     
 		if (need_brace)
-			_Body.pushln("}");
+			Body.pushln("}");
     
 	}
 

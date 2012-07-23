@@ -137,7 +137,7 @@ public class gm_gps_beinfo extends gm_backend_info
 		java.util.Iterator<gm_gps_communication_symbol_info> I;
 		gm_gps_communication_size_info size_info = comm_size_info.get(C);
 
-		int target_type;
+		GMTYPE_T target_type;
 		if (sym.getType().is_property())
 		{
 			target_type = sym.getType().getTargetTypeSummary();
@@ -149,9 +149,9 @@ public class gm_gps_beinfo extends gm_backend_info
 		else if (sym.getType().is_node_compatible())
 		{
 			if (GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int())
-				target_type = GMTYPE_T.GMTYPE_INT.getValue();
+				target_type = GMTYPE_T.GMTYPE_INT;
 			else
-				target_type = GMTYPE_T.GMTYPE_LONG.getValue();
+				target_type = GMTYPE_T.GMTYPE_LONG;
 		}
 		else
 		{
@@ -176,15 +176,15 @@ public class gm_gps_beinfo extends gm_backend_info
 		sym_info.addLast(II); // add by copy
 
 		// update size-info
-		if (target_type == GMTYPE_T.GMTYPE_INT.getValue())
+		if (target_type == GMTYPE_T.GMTYPE_INT)
 			size_info.num_int = (idx + 1);
-		else if (target_type == GMTYPE_T.GMTYPE_BOOL.getValue())
+		else if (target_type == GMTYPE_T.GMTYPE_BOOL)
 			size_info.num_bool = (idx + 1);
-		else if (target_type == GMTYPE_T.GMTYPE_LONG.getValue())
+		else if (target_type == GMTYPE_T.GMTYPE_LONG)
 			size_info.num_long = (idx + 1);
-		else if (target_type == GMTYPE_T.GMTYPE_FLOAT.getValue())
+		else if (target_type == GMTYPE_T.GMTYPE_FLOAT)
 			size_info.num_float = (idx + 1);
-		else if (target_type == GMTYPE_T.GMTYPE_DOUBLE.getValue())
+		else if (target_type == GMTYPE_T.GMTYPE_DOUBLE)
 			size_info.num_double = (idx + 1);
 		else
 		{

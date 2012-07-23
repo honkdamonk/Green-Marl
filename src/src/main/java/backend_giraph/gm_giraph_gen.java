@@ -1,5 +1,7 @@
 package backend_giraph;
 
+import frontend.gm_symtab;
+import frontend.gm_symtab_entry;
 import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_backend_gps;
 import inc.gm_compile_step;
@@ -11,10 +13,10 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_while;
-import backend_cpp.*;
-import backend_giraph.*;
+import backend_gps.GlobalMembersGps_syminfo;
 import backend_gps.gm_gps_basic_block;
 import backend_gps.gm_gps_bbtype_t;
+import backend_gps.gm_gps_beinfo;
 import backend_gps.gm_gps_comm_t;
 import backend_gps.gm_gps_comm_unit;
 import backend_gps.gm_gps_gen;
@@ -33,10 +35,10 @@ import backend_gps.gm_gps_opt_find_reachable;
 import backend_gps.gm_gps_opt_merge_ebb_again;
 import backend_gps.gm_gps_opt_merge_ebb_intra_loop;
 import backend_gps.gm_gps_opt_split_comm_ebb;
-import common.*;
-import frontend.*;
-import opt.*;
-import tangible.*;
+import backend_gps.gps_syminfo;
+
+import common.GlobalMembersGm_main;
+import common.GlobalMembersGm_reproduce;
 
 //-----------------------------------------------------------------
 // interface for graph library Layer

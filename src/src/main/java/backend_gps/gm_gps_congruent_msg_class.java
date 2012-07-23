@@ -13,6 +13,6 @@ public class gm_gps_congruent_msg_class
 	}
 	public final boolean find_basic_block_in_receiving_list(gm_gps_basic_block b)
 	{
-		return (recv_bb.find(b).hasNext());
+		return (recv_bb.contains(b));
 	}
 }

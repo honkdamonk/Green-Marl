@@ -235,14 +235,14 @@ public class gm_gps_basic_block
 				for (I = L.iterator(); I.hasNext();)
 				{
 					gm_gps_comm_unit U = I.next();
-					if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_NESTED.getValue())
+					if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_NESTED)
 					{
 						GlobalMembersGm_reproduce.gm_push_reproduce((String) "//Receive Nested Loop");
 						GlobalMembersGm_reproduce.gm_newline_reproduce();
 						ast_foreach fe = U.fe;
 						fe.reproduce(0);
 					}
-					else if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_RANDOM_WRITE.getValue())
+					else if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_RANDOM_WRITE)
 					{
 						GlobalMembersGm_reproduce.gm_push_reproduce((String) "//Receive Random Write Sent");
 						GlobalMembersGm_reproduce.gm_newline_reproduce();

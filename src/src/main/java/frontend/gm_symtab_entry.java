@@ -7,8 +7,6 @@ import ast.ast_typedecl;
 
 // symbol table entry
 public class gm_symtab_entry {
-	// C++ TO JAVA CONVERTER TODO TASK: Java has no concept of a 'friend' class:
-	// friend class gm_symtab;
 
 	private gm_symtab_entry() {
 		this.id = null;
@@ -27,11 +25,6 @@ public class gm_symtab_entry {
 		this(_id, _type, true, true);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: gm_symtab_entry(ast_id* _id, ast_typedecl* _type, boolean
-	// _isRA = true, boolean _isWA = true) : id(_id), type(_type), isRA(_isRA),
-	// isWA(_isWA), isArg(false)
 	public gm_symtab_entry(ast_id _id, ast_typedecl _type, boolean _isRA, boolean _isWA) {
 		this.id = _id;
 		this.type = _type;
@@ -48,10 +41,10 @@ public class gm_symtab_entry {
 			id.dispose();
 		if (type != null)
 			type.dispose();
-		java.util.Iterator<String, ast_extra_info> i;
-		for (i = extra.iterator(); i.hasNext();) {
-			if (i.next().getValue() != null)
-				i.next().getValue().dispose();
+		//TODO not tested!
+		for (String s : extra.keySet()) {
+			if (extra.get(s) != null)
+				extra.get(s).dispose();
 		}
 	}
 
@@ -81,12 +74,11 @@ public class gm_symtab_entry {
 	}
 
 	public ast_extra_info find_info(String id) {
-		String s = id;
-		java.util.Iterator<String, ast_extra_info> i = extra.find(s);
-		if (i == extra.end())
+		if (has_info(id)) {
+			return extra.get(id);
+		} else {
 			return null;
-		else
-			return i.next().getValue();
+		}
 	}
 
 	public boolean find_info_bool(String id) {

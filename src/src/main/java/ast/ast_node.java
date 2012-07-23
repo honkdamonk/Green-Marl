@@ -102,7 +102,7 @@ public abstract class ast_node {
 	public void apply_symtabs(gm_apply a, boolean is_post) {
 		assert has_scope();
 		boolean post_apply = is_post && a.has_separate_post_apply();
-		int t = get_nodetype() == (AST_NODE_TYPE.AST_PROCDEF) != 0 ? SYMTAB_TYPES.GM_SYMTAB_ARG : SYMTAB_TYPES.GM_SYMTAB_VAR;
+		SYMTAB_TYPES t = get_nodetype() == (AST_NODE_TYPE.AST_PROCDEF) != 0 ? SYMTAB_TYPES.GM_SYMTAB_ARG : SYMTAB_TYPES.GM_SYMTAB_VAR;
 		if (post_apply) {
 			a.apply2(get_symtab_var(), t);
 		} else {
@@ -209,12 +209,11 @@ public abstract class ast_node {
 	}
 
 	public ast_extra_info find_info(String id) {
-		String s = id;
-		java.util.Iterator<String, ast_extra_info> i = extra.find(s);
-		if (i == extra.end())
+		if (has_info(id)) {
+			return extra.get(id);
+		} else {
 			return null;
-		else
-			return i.next().getValue();
+		}
 	}
 
 	public boolean find_info_bool(String id) {
@@ -384,10 +383,9 @@ public abstract class ast_node {
 	}
 
 	public void copy_info_from(ast_node n) {
-		java.util.Iterator<String, ast_extra_info> I;
-		for (I = n.extra.begin(); I.hasNext();) {
-			String s = I.next().getKey();
-			ast_extra_info e = I.next().getValue();
+		//TODO not tested!
+		for (String s : n.extra.keySet()) {
+			ast_extra_info e = n.extra.get(s);
 			if (!this.extra.containsKey(s)) {
 				this.extra.put(s, e.copy());
 			}

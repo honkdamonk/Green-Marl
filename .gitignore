@@ -3,7 +3,6 @@
 bin/*
 obj/*
 .cproject
-.project
 .settings
 *.aterm
 *.class

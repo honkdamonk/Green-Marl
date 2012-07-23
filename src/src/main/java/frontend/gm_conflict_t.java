@@ -1,21 +1,20 @@
+package frontend;
+
 // Type of conflicts
-public enum gm_conflict_t
-{
-	RW_CONFLICT, // Read-Write conflict   (warning)
-	WW_CONFLICT, // Write-Write conflict  (warning)
+public enum gm_conflict_t {
+	RW_CONFLICT, // Read-Write conflict (warning)
+	WW_CONFLICT, // Write-Write conflict (warning)
 	RD_CONFLICT, // Read-Reduce
 	WD_CONFLICT, // Write-Reduce
-	RM_CONFLICT, // Read-Mutate           (warning)
+	RM_CONFLICT, // Read-Mutate (warning)
 	WM_CONFLICT, // Write-Mutate
-	MM_CONFLICT; // Mutate-Mutate         (warning)
+	MM_CONFLICT; // Mutate-Mutate (warning)
 
-	public int getValue()
-	{
+	public int getValue() {
 		return this.ordinal();
 	}
 
-	public static gm_conflict_t forValue(int value)
-	{
+	public static gm_conflict_t forValue(int value) {
 		return values()[value];
 	}
 }

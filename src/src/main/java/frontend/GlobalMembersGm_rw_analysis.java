@@ -69,7 +69,7 @@ public class GlobalMembersGm_rw_analysis
 			default:
 				System.out.printf("type = %d\n", itype);
 				assert false;
-				return 0;
+				throw new AssertionError();
 		}
 	}
 

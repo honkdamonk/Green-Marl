@@ -9,7 +9,6 @@ import ast.ast_node;
 import ast.ast_procdef;
 import ast.ast_sent;
 import frontend.SYMTAB_TYPES;
-import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
 // codes for traverse

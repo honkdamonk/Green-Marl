@@ -59,7 +59,19 @@ public enum GMTYPE_T {
 		}
 		return mappings;
 	}
-
+	
+	public boolean isSmallerThan(GMTYPE_T other) {
+		return this.getValue() < other.getValue();
+	}
+	
+	public boolean isGreaterThan(GMTYPE_T other) {
+		return this.getValue() > other.getValue();
+	}
+	
+	public int subtract(GMTYPE_T other) {
+		return this.getValue() - other.getValue();
+	}
+	
 	private GMTYPE_T(int value) {
 		intValue = value;
 		GMTYPE_T.getMappings().put(value, this);
@@ -90,11 +102,11 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_node_iter_type() {
-		return GlobalMembersGm_defs.gm_is_all_graph_node_iter_type(this) || GlobalMembersGm_defs.gm_is_any_nbr_node_iter_type(this);
+		return GlobalMembersGm_defs.gm_is_all_graph_node_iter_type(this) || this.is_any_nbr_node_iter_type();
 	}
 
 	public boolean is_edge_iter_type() {
-		return GlobalMembersGm_defs.gm_is_all_graph_edge_iter_type(this) || GlobalMembersGm_defs.gm_is_any_nbr_edge_iter_type(this);
+		return GlobalMembersGm_defs.gm_is_all_graph_edge_iter_type(this) || this.is_any_nbr_edge_iter_type();
 	}
 
 	public boolean is_node_compatible_type() {
@@ -164,7 +176,7 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_iteration_on_neighbors_compatible() {
-		return GlobalMembersGm_defs.gm_is_any_nbr_node_iter_type(this);
+		return this.is_any_nbr_node_iter_type();
 	}
 
 	public boolean is_node_set_type() {
@@ -222,7 +234,7 @@ public enum GMTYPE_T {
 		}
 	}
 
-	public GMTYPE_T specified_collection_iterator() {
+	public GMTYPE_T get_specified_collection_iterator() {
 		switch (this) {
 		case GMTYPE_NSET:
 		case GMTYPE_ESET:
@@ -238,15 +250,13 @@ public enum GMTYPE_T {
 			return GMTYPE_T.GMTYPE_INVALID;
 		}
 	}
+	
+	
 
 	// return true if this type has a target graph
 	public boolean has_target_graph_type() {
-		return this.is_node_edge_compatible_type() || this.is_collection_type() || this.is_collection_of_collection_type(); // any
-																															// node-edge
-																															// iterator
-																															// (including
-																															// collection
-																															// iterator)
+		return this.is_node_edge_compatible_type() || this.is_collection_type() || this.is_collection_of_collection_type();
+		// any || node-edge || iterator || (including collection iterator)
 	}
 
 	public boolean is_node_edge_compatible_type() {
@@ -380,18 +390,36 @@ public enum GMTYPE_T {
 	}
 
 	public GMTYPE_T get_sized_inf_type() {
-		if (this == GMTYPE_T.GMTYPE_INT)
-			return GMTYPE_T.GMTYPE_INF_INT;
-		else if (this == GMTYPE_T.GMTYPE_LONG)
-			return GMTYPE_T.GMTYPE_INF_LONG;
-		else if (this == GMTYPE_T.GMTYPE_FLOAT)
-			return GMTYPE_T.GMTYPE_INF_FLOAT;
-		else if (this == GMTYPE_T.GMTYPE_DOUBLE)
-			return GMTYPE_T.GMTYPE_INF_DOUBLE;
-		else {
+		switch (this) {
+		case GMTYPE_INT:
+			return GMTYPE_INF_INT;
+		case GMTYPE_LONG:
+			return GMTYPE_INF_LONG;
+		case GMTYPE_FLOAT:
+			return GMTYPE_INF_FLOAT;
+		case GMTYPE_DOUBLE:
+			return GMTYPE_INF_DOUBLE;
+		default:
 			assert false;
-			return GMTYPE_T.GMTYPE_INVALID;
+			return GMTYPE_INVALID;
 		}
 	}
 
+	public boolean is_inout_nbr_node_iter_type() {
+		return (this == GMTYPE_T.GMTYPE_NODEITER_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS);
+	}
+
+	public boolean is_any_nbr_node_iter_type() {
+		return (this == GMTYPE_T.GMTYPE_NODEITER_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS)
+				|| (this == GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS);
+	}
+
+	public boolean is_any_nbr_edge_iter_type() {
+		return (this == GMTYPE_T.GMTYPE_EDGEITER_NBRS) || (this == GMTYPE_T.GMTYPE_EDGEITER_IN_NBRS) || (this == GMTYPE_T.GMTYPE_EDGEITER_UP_NBRS)
+				|| (this == GMTYPE_T.GMTYPE_EDGEITER_DOWN_NBRS);
+	}
+
+	public boolean is_any_nbr_iter_type() {
+		return this.is_any_nbr_edge_iter_type() || this.is_any_nbr_node_iter_type();
+	}
 }

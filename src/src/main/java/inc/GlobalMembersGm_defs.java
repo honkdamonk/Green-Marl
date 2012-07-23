@@ -29,6 +29,7 @@ public class GlobalMembersGm_defs {
 		return GlobalMembersGm_defs.gm_is_integer_type(i) || GlobalMembersGm_defs.gm_is_float_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_nodeedge_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_NODE) || (i == GMTYPE_T.GMTYPE_EDGE);
 	}
@@ -68,20 +69,24 @@ public class GlobalMembersGm_defs {
 		return GlobalMembersGm_defs.gm_is_all_graph_node_iter_type(i) || GlobalMembersGm_defs.gm_is_all_graph_edge_iter_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_inout_nbr_node_iter_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_NODEITER_NBRS) || (i == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS);
 	}
 
+	@Deprecated
 	public static boolean gm_is_any_nbr_node_iter_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_NODEITER_NBRS) || (i == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS) || (i == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS)
 				|| (i == GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS) || (i == GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS);
 	}
 
+	@Deprecated
 	public static boolean gm_is_any_nbr_edge_iter_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_EDGEITER_NBRS) || (i == GMTYPE_T.GMTYPE_EDGEITER_IN_NBRS) || (i == GMTYPE_T.GMTYPE_EDGEITER_UP_NBRS)
 				|| (i == GMTYPE_T.GMTYPE_EDGEITER_DOWN_NBRS);
 	}
 
+	@Deprecated
 	public static boolean gm_is_any_nbr_iter_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_any_nbr_edge_iter_type(i) || GlobalMembersGm_defs.gm_is_any_nbr_node_iter_type(i);
 	}

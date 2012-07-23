@@ -1,5 +1,11 @@
+package frontend;
+
 import inc.GMTYPE_T;
 import inc.GM_PROP_USAGE_T;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -120,10 +126,10 @@ public class gm_check_property_usage_t extends gm_apply
 					for (I = under_current_linear_update.iterator(); I.hasNext();)
 					{
 						gm_symtab_entry prop = I.next();
-						if (prop.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INVALID)
+						if (prop.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INVALID.getValue())
 							continue;
 
-						prop.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_OUT);
+						prop.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_OUT.getValue());
 					}
 
 					under_current_linear_update.clear();
@@ -149,7 +155,7 @@ public class gm_check_property_usage_t extends gm_apply
 
 	public final void property_is_written(gm_symtab_entry prop, gm_symtab_entry driver)
 	{
-		if (prop.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INVALID)
+		if (prop.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INVALID.getValue())
 			return;
 
 		if (!is_under_condition() && !is_under_random_iterator() && (driver == topmost_iterator))
@@ -160,37 +166,37 @@ public class gm_check_property_usage_t extends gm_apply
 
 	public final void property_is_read(gm_symtab_entry prop, gm_symtab_entry driver, boolean is_reduce)
 	{
-		if (prop.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INVALID)
+		if (prop.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INVALID.getValue())
 			return;
 
 		if (is_reduce)
 		{
-			prop.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_INOUT);
+			prop.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue());
 		}
 
 		if (driver == topmost_iterator)
 		{
 			if (is_under_random_iterator())
 			{
-				prop.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_INOUT);
+				prop.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue());
 			}
 		}
 	}
 
 	public final boolean is_under_condition()
 	{
-		return ((int) condition_stack.size() > 0);
+		return condition_stack.size() > 0;
 	}
 
 	public final boolean is_under_random_iterator()
 	{
-		return ((int) random_iter_stack.size() > 0);
+		return random_iter_stack.size() > 0;
 	}
 
-	private java.util.HashSet<gm_symtab_entry> under_current_linear_update = new java.util.HashSet<gm_symtab_entry>();
+	private HashSet<gm_symtab_entry> under_current_linear_update = new HashSet<gm_symtab_entry>();
 	private gm_symtab_entry topmost_iterator;
-	private java.util.LinkedList<ast_sent> condition_stack = new java.util.LinkedList<ast_sent>();
-	private java.util.LinkedList<ast_sent> random_iter_stack = new java.util.LinkedList<ast_sent>();
+	private LinkedList<ast_sent> condition_stack = new LinkedList<ast_sent>();
+	private LinkedList<ast_sent> random_iter_stack = new LinkedList<ast_sent>();
 
 }
 //----------------------------------------------------------

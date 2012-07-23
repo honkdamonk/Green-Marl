@@ -1,11 +1,5 @@
 package inc;
 
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import opt.*;
-import tangible.*;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X
@@ -15,6 +9,7 @@ import tangible.*;
 public class gm_code_writer
 {
 	public static final int MAX_COL = 1024;
+	
 	public gm_code_writer()
 	{
 		indent = 0;

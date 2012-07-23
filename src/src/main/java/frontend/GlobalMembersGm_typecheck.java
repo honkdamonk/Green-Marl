@@ -1,5 +1,6 @@
+package frontend;
+
 import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
 
 public class GlobalMembersGm_typecheck
 {
@@ -30,7 +31,7 @@ public class GlobalMembersGm_typecheck
 	public static int gm_compare_numeric_type_size(GMTYPE_T t1, GMTYPE_T t2)
 	{
 		// GMTYPE_... is defined as small to larger
-		return t1 - t2; // +:t1 > t2 , 0:t2==t2, -:t1 < t2
+		return t1.subtract(t2); // +:t1 > t2 , 0:t2==t2, -:t1 < t2
 	}
 	// check the size (in Bytes) of two numeric types 
 	public static GMTYPE_T gm_get_larger_type(GMTYPE_T t1, GMTYPE_T t2)
@@ -47,27 +48,27 @@ public class GlobalMembersGm_typecheck
 		// assumption. t1/t2 is compatible
 		if (t1 == t2)
 			return t1;
-		else if (GlobalMembersGm_defs.gm_is_inf_type(t1))
+		else if (t1.is_inf_type())
 			return t1;
-		else if (GlobalMembersGm_defs.gm_is_inf_type(t2))
+		else if (t2.is_inf_type())
 			return t2;
-		else if (GlobalMembersGm_defs.gm_is_numeric_type(t1))
+		else if (t1.is_numeric_type())
 		{
-			if (GlobalMembersGm_defs.gm_is_float_type(t1) == GlobalMembersGm_defs.gm_is_float_type(t2))
+			if (t1.is_float_type() == t2.is_float_type())
 				return GlobalMembersGm_typecheck.gm_get_larger_type(t1, t2);
-			else if (GlobalMembersGm_defs.gm_is_float_type(t1))
+			else if (t1.is_float_type())
 				return t1;
 			else
 				return t2;
 		}
-		else if (GlobalMembersGm_defs.gm_is_iter_type(t1))
+		else if (t1.is_iter_type())
 			return t2;
-		else if (GlobalMembersGm_defs.gm_is_iter_type(t1))
+		else if (t1.is_iter_type())
 			return t1;
 		else
 		{
 			assert false;
-			return 0;
+			return GMTYPE_T.GMTYPE_INVALID;
 		}
 	}
 
@@ -81,42 +82,42 @@ public class GlobalMembersGm_typecheck
 		// let t1 be the 'smaller' type (ordering by GM_XXX_TYPE enumeration)
 		// GRAPH -> PROP -> NODE-EDGE/ITER -> NUMERIC -> BOOL -> INF  (see gm_frontend_api.h)
 		//----------------------------------------------------------
-		if (t2 < t1)
+		if (t2.isSmallerThan(t1))
 		{
-			int t3;
+			GMTYPE_T t3;
 			t3 = t1;
 			t1 = t2;
 			t2 = t3;
 		}
 
-		if (GlobalMembersGm_defs.gm_is_node_compatible_type(t1))
+		if (t1.is_node_compatible_type())
 		{
 			if (for_what == gm_type_compatible_t.FOR_BOP)
 				return false;
 			else
-				return GlobalMembersGm_defs.gm_is_node_compatible_type(t2);
+				return t2.is_node_compatible_type();
 		}
 
-		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(t1))
+		if (t1.is_edge_compatible_type())
 		{
 			if (for_what == gm_type_compatible_t.FOR_BOP)
 				return false;
 			else
-				return GlobalMembersGm_defs.gm_is_edge_compatible_type(t2);
+				return t2.is_edge_compatible_type();
 		}
 
-		if (GlobalMembersGm_defs.gm_is_numeric_type(t1))
+		if (t1.is_numeric_type())
 		{
 			if (for_what == gm_type_compatible_t.FOR_BOP)
-				return GlobalMembersGm_defs.gm_is_numeric_type(t2);
+				return t2.is_numeric_type();
 			else
-				return GlobalMembersGm_defs.gm_is_numeric_type(t2) || GlobalMembersGm_defs.gm_is_inf_type(t2); // it is possible to assign INF to numeric
+				return t2.is_numeric_type() || t2.is_inf_type(); // it is possible to assign INF to numeric
 		}
 
-		if (GlobalMembersGm_defs.gm_is_boolean_type(t1))
-			return GlobalMembersGm_defs.gm_is_boolean_type(t2);
-		if (GlobalMembersGm_defs.gm_is_inf_type(t1))
-			return GlobalMembersGm_defs.gm_is_inf_type(t2);
+		if (t1.is_boolean_type())
+			return (t2.is_boolean_type());
+		if (t1.is_inf_type())
+			return t2.is_inf_type();
 
 		//printf("unexpected type = %s\n", gm_get_type_string(t1));
 		//assert(false);

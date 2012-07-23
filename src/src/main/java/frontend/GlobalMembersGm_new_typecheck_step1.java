@@ -206,7 +206,7 @@ public static boolean gm_check_target_is_defined(ast_id target, gm_symtab vars)
 		return GlobalMembersGm_new_typecheck_step1.gm_check_type_is_well_defined(type, SYM_V, GMTYPE_T.GMTYPE_INVALID);
 	}
 
-	public static boolean gm_check_type_is_well_defined(ast_typedecl type, gm_symtab SYM_V, int targetType)
+	public static boolean gm_check_type_is_well_defined(ast_typedecl type, gm_symtab SYM_V, GMTYPE_T targetType)
 	{
 		if (type.is_primitive() || type.is_void())
 		{
@@ -257,11 +257,11 @@ public static boolean gm_check_target_is_defined(ast_id target, gm_symtab vars)
 			// update collection iter type
 			if (type.is_unknown_collection_iterator())
 			{
-				int iterType = GMTYPE_T.forValue(GlobalMembersGm_defs.gm_get_natural_collection_iterator(col.getTypeSummary()));
+				GMTYPE_T iterType = col.getTypeSummary().get_natural_collection_iterator();
 
-				if (iterType == GMTYPE_T.GMTYPE_ITER_UNDERSPECIFIED.getValue() && targetType != GMTYPE_T.GMTYPE_INVALID.getValue())
+				if (iterType == GMTYPE_T.GMTYPE_ITER_UNDERSPECIFIED && targetType != GMTYPE_T.GMTYPE_INVALID)
 				{
-					iterType = GlobalMembersGm_defs.gm_get_specified_collection_iterator(targetType);
+					iterType = targetType.get_specified_collection_iterator();
 				}
 
 				type.setTypeSummary(iterType);
@@ -311,7 +311,7 @@ public static boolean gm_check_target_is_defined(ast_id target, gm_symtab vars)
 	//
 	// The name is added to the current procedure vocaburary 
 	//---------------------
-	public static boolean gm_declare_symbol(gm_symtab SYM, ast_id id, ast_typedecl type, boolean is_readable, boolean is_writeable, gm_symtab SYM_ALT, int targetType)
+	public static boolean gm_declare_symbol(gm_symtab SYM, ast_id id, ast_typedecl type, boolean is_readable, boolean is_writeable, gm_symtab SYM_ALT, GMTYPE_T targetType)
 	{
 
 		if (!type.is_well_defined())

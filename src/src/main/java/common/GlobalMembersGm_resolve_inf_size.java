@@ -1,10 +1,13 @@
 package common;
 
+import inc.GMTYPE_T;
+import inc.GlobalMembersGm_defs;
+
+import java.util.LinkedList;
+
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_reduce;
-import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
 
 public class GlobalMembersGm_resolve_inf_size
 {
@@ -25,9 +28,9 @@ public class GlobalMembersGm_resolve_inf_size
 
 	public static boolean gm_resolve_size_of_inf_expr(ast_expr e, GMTYPE_T dest_type)
 	{
-		if (GlobalMembersGm_defs.gm_is_inf_type(e.get_type_summary()))
+		if (e.get_type_summary().is_inf_type())
 		{
-			e.set_type_summary(GlobalMembersGm_defs.gm_get_sized_inf_type(dest_type));
+			e.set_type_summary(dest_type.get_sized_inf_type());
 		}
 		else if (GlobalMembersGm_defs.gm_is_nil_type(e.get_type_summary()))
 		{
@@ -58,7 +61,7 @@ public class GlobalMembersGm_resolve_inf_size
 
 			case GMEXPR_UOP:
 			case GMEXPR_LUOP:
-				if (GlobalMembersGm_defs.gm_is_inf_type(e.get_type_summary()))
+				if (e.get_type_summary().is_inf_type())
 				{
 					GlobalMembersGm_resolve_inf_size.gm_resolve_size_of_inf_expr(e.get_left_op(), dest_type);
 				} // type conversion
@@ -99,14 +102,12 @@ public class GlobalMembersGm_resolve_inf_size
 				ast_expr_builtin r = (ast_expr_builtin) e;
 				gm_builtin_def def = r.get_builtin_def();
 
-				java.util.LinkedList<ast_expr> ARGS = r.get_args();
-				java.util.Iterator<ast_expr> I;
+				LinkedList<ast_expr> ARGS = r.get_args();
 				int i = 0;
-				for (I = ARGS.iterator(); I.hasNext(); I++, i++)
-				{
-					ast_expr e_arg = (I.next());
+				for(ast_expr e_arg : ARGS) {
 					GMTYPE_T arg_type = def.get_arg_type(i);
 					GlobalMembersGm_resolve_inf_size.gm_resolve_size_of_inf_expr(e_arg, arg_type);
+					i++;
 				}
 				break;
 			}
@@ -117,16 +118,16 @@ public class GlobalMembersGm_resolve_inf_size
 				GMTYPE_T l_type = e.get_left_op().get_type_summary();
 				GMTYPE_T r_type = e.get_right_op().get_type_summary();
 
-				if (GlobalMembersGm_defs.gm_is_inf_type(l_type) && GlobalMembersGm_defs.gm_is_inf_type(r_type))
+				if (l_type.is_inf_type() && r_type.is_inf_type())
 				{
 					l_type = GMTYPE_T.GMTYPE_INT;
 					r_type = GMTYPE_T.GMTYPE_INT;
 				}
-				else if (GlobalMembersGm_defs.gm_is_inf_type(l_type))
+				else if (l_type.is_inf_type())
 				{
 					l_type = r_type;
 				}
-				else if (GlobalMembersGm_defs.gm_is_inf_type(r_type))
+				else if (r_type.is_inf_type())
 				{
 					r_type = l_type;
 				}

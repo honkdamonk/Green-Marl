@@ -3,10 +3,8 @@ package common;
 import frontend.GlobalMembersGm_new_typecheck_step1;
 import frontend.gm_scope;
 import frontend.gm_symtab;
-import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
 import ast.ast_expr;
 import ast.ast_expr_reduce;
 import ast.ast_foreach;
@@ -50,7 +48,7 @@ public class GlobalMembersGm_new_sents_after_tc
 	{
 		assert it.getSymInfo() == null;
 		assert src.getSymInfo() != null;
-		assert GlobalMembersGm_defs.gm_is_iteration_on_all_graph(iter_type) || GlobalMembersGm_defs.gm_is_iteration_on_neighbors_compatible(iter_type);
+		assert iter_type.is_iteration_on_all_graph() || iter_type.is_iteration_on_neighbors_compatible();
 
 		//-----------------------------------------------------
 		// create foreach node
@@ -63,19 +61,20 @@ public class GlobalMembersGm_new_sents_after_tc
 		// create iterator type
 		//--------------------------------------------------
 		ast_typedecl type;
-		if (GlobalMembersGm_defs.gm_is_iteration_on_all_graph(iter_type))
+		if (iter_type.is_iteration_on_all_graph())
 		{
-			assert GlobalMembersGm_defs.gm_is_graph_type(src.getTypeSummary());
+			assert src.getTypeSummary().is_graph_type();
 			type = ast_typedecl.new_nodeedge_iterator(src.copy(true), iter_type);
 		}
-		else if (GlobalMembersGm_defs.gm_is_iteration_on_neighbors_compatible(iter_type))
+		else if (iter_type.is_iteration_on_neighbors_compatible())
 		{
-			assert GlobalMembersGm_defs.gm_is_node_compatible_type(src.getTypeSummary());
+			assert src.getTypeSummary().is_node_compatible_type();
 			type = ast_typedecl.new_nbr_iterator(src.copy(true), iter_type);
 		}
 		else
 		{
 			assert false;
+			throw new AssertionError();
 		}
 		type.enforce_well_defined();
 
@@ -83,7 +82,6 @@ public class GlobalMembersGm_new_sents_after_tc
 		// Add iterator definition to the 'this' scope
 		//----------------------------------------------
 		gm_symtab vars = fe.get_symtab_var();
-		gm_symtab_entry dummy;
 		boolean success;
 		// enforce type well defined ness (upscope of this foreach is not available yet)
 
@@ -108,7 +106,7 @@ public class GlobalMembersGm_new_sents_after_tc
 	{
 		assert it.getSymInfo() == null;
 		assert src.getSymInfo() != null;
-		assert GlobalMembersGm_defs.gm_is_iteration_on_all_graph(iter_type) || GlobalMembersGm_defs.gm_is_iteration_on_neighbors_compatible(iter_type);
+		assert iter_type.is_iteration_on_all_graph() || iter_type.is_iteration_on_neighbors_compatible();
 
 		//-----------------------------------------------------
 		// create expression node
@@ -119,19 +117,20 @@ public class GlobalMembersGm_new_sents_after_tc
 		// create iterator type
 		//--------------------------------------------------
 		ast_typedecl type;
-		if (GlobalMembersGm_defs.gm_is_iteration_on_all_graph(iter_type))
+		if (iter_type.is_iteration_on_all_graph())
 		{
-			assert GlobalMembersGm_defs.gm_is_graph_type(src.getTypeSummary());
+			assert src.getTypeSummary().is_graph_type();
 			type = ast_typedecl.new_nodeedge_iterator(src.copy(true), iter_type);
 		}
-		else if (GlobalMembersGm_defs.gm_is_iteration_on_neighbors_compatible(iter_type))
+		else if (iter_type.is_iteration_on_neighbors_compatible())
 		{
-			assert GlobalMembersGm_defs.gm_is_node_compatible_type(src.getTypeSummary());
+			assert src.getTypeSummary().is_node_compatible_type();
 			type = ast_typedecl.new_nbr_iterator(src.copy(true), iter_type);
 		}
 		else
 		{
 			assert false;
+			throw new AssertionError();
 		}
 		type.enforce_well_defined();
 
@@ -139,7 +138,6 @@ public class GlobalMembersGm_new_sents_after_tc
 		// Add iterator definition to the 'this' scope
 		//----------------------------------------------
 		gm_symtab vars = R.get_symtab_var();
-		gm_symtab_entry dummy;
 		boolean success;
 		// enforce type well defined ness (upscope of this foreach is not available yet)
 		success = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(vars, it, type, true, false);
@@ -170,24 +168,24 @@ public class GlobalMembersGm_new_sents_after_tc
 		switch (reduce_type)
 		{
 			case GMREDUCE_PLUS: // Sum
-				if (GlobalMembersGm_defs.gm_is_integer_type(lhs_type))
+				if (lhs_type.is_integer_type())
 					init_val = ast_expr.new_ival_expr(0);
 				else
 					init_val = ast_expr.new_fval_expr(0.0);
 				break;
 			case GMREDUCE_MULT: // Product
-				if (GlobalMembersGm_defs.gm_is_integer_type(lhs_type))
+				if (lhs_type.is_integer_type())
 					init_val = ast_expr.new_ival_expr(1);
 				else
 					init_val = ast_expr.new_fval_expr(1.0);
 				break;
 			case GMREDUCE_MIN:
 				init_val = ast_expr.new_inf_expr(true);
-				init_val.set_type_summary(GlobalMembersGm_defs.gm_get_sized_inf_type(lhs_type));
+				init_val.set_type_summary(lhs_type.get_sized_inf_type());
 				break;
 			case GMREDUCE_MAX:
 				init_val = ast_expr.new_inf_expr(false);
-				init_val.set_type_summary(GlobalMembersGm_defs.gm_get_sized_inf_type(lhs_type));
+				init_val.set_type_summary(lhs_type.get_sized_inf_type());
 				break;
 			case GMREDUCE_AND:
 				init_val = ast_expr.new_bval_expr(true);
@@ -198,7 +196,7 @@ public class GlobalMembersGm_new_sents_after_tc
 			default:
 				System.out.printf("%d %s \n", reduce_type, GlobalMembersGm_misc.gm_get_reduce_string(reduce_type));
 				assert false;
-				break;
+				throw new AssertionError();
 		}
 
 		return init_val;

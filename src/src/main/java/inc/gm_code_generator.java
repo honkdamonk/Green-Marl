@@ -27,6 +27,7 @@ import common.GlobalMembersGm_reproduce;
 
 // default code generator
 public abstract class gm_code_generator {
+
 	public gm_code_generator(gm_code_writer W) {
 		this._Body = new gm_code_writer(W);
 	}
@@ -67,7 +68,7 @@ public abstract class gm_code_generator {
 	public abstract void generate_expr_abs(ast_expr e);
 
 	public abstract void generate_expr_nil(ast_expr e);
-	
+
 	final static String LP = "(";
 	final static String RP = ")";
 
@@ -88,18 +89,19 @@ public abstract class gm_code_generator {
 			_Body.push(RP);
 	}
 
-	public abstract String get_type_string(GMTYPE_T gmtype_T); // returned string
-														// should be copied
-														// before usage.
+	public abstract String get_type_string(GMTYPE_T gmtype_T); // returned
+																// string
+	// should be copied
+	// before usage.
 
-	public void generate_expr_list(java.util.LinkedList<ast_expr> L) {
-		java.util.Iterator<ast_expr> I;
+	public void generate_expr_list(LinkedList<ast_expr> L) {
 		int i = 0;
 		int size = L.size();
-		for (I = L.iterator(); I.hasNext(); I++, i++) {
-			generate_expr(I.next());
+		for(ast_expr expr : L) {
+			generate_expr(expr);
 			if (i != (size - 1))
 				_Body.push(", ");
+			i++;
 		}
 	}
 
@@ -117,8 +119,7 @@ public abstract class gm_code_generator {
 		else if (e.is_uop())
 			generate_expr_uop(e);
 		else if (e.is_biop()) {
-			if ((e.get_optype() == GM_OPS_T.GMOP_MIN)
-					|| (e.get_optype() == GM_OPS_T.GMOP_MAX))
+			if ((e.get_optype() == GM_OPS_T.GMOP_MIN) || (e.get_optype() == GM_OPS_T.GMOP_MAX))
 				generate_expr_minmax(e);
 			else
 				generate_expr_bin(e);
@@ -170,15 +171,14 @@ public abstract class gm_code_generator {
 	public void generate_expr_inf(ast_expr e) {
 		String temp = temp_str;
 		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
-		int t = e.get_type_summary();
+		GMTYPE_T t = e.get_type_summary();
 		switch (t) {
 		case GMTYPE_INF:
 		case GMTYPE_INF_INT:
 			String.format(temp, "%s", e.is_plus_inf() ? "INT_MAX" : "INT_MIN"); // temporary
 			break;
 		case GMTYPE_INF_LONG:
-			String.format(temp, "%s", e.is_plus_inf() ? "LLONG_MAX"
-					: "LLONG_MIN"); // temporary
+			String.format(temp, "%s", e.is_plus_inf() ? "LLONG_MAX" : "LLONG_MIN"); // temporary
 			break;
 		case GMTYPE_INF_FLOAT:
 			String.format(temp, "%s", e.is_plus_inf() ? "FLT_MAX" : "FLT_MIN"); // temporary
@@ -224,8 +224,7 @@ public abstract class gm_code_generator {
 
 	public void generate_expr_ter(ast_expr e) {
 
-		boolean need_para = (e.get_up_op() == null) ? false : check_need_para(
-				e.get_optype(), e.get_up_op().get_optype(), e.is_right_op());
+		boolean need_para = (e.get_up_op() == null) ? false : check_need_para(e.get_optype(), e.get_up_op().get_optype(), e.is_right_op());
 
 		if (need_para)
 			_Body.push("(");
@@ -246,8 +245,7 @@ public abstract class gm_code_generator {
 		if (up == null)
 			need_para = false;
 		else if (up.is_biop() || up.is_comp()) {
-			need_para = check_need_para(e.get_optype(), up.get_optype(),
-					e.is_right_op());
+			need_para = check_need_para(e.get_optype(), up.get_optype(), e.is_right_op());
 		} else {
 			need_para = true;
 		}
@@ -283,9 +281,8 @@ public abstract class gm_code_generator {
 			_Body.push(")");
 	}
 
-	public boolean check_need_para(int optype, int up_optype, boolean is_right) {
-		return GlobalMembersGm_misc.gm_need_paranthesis(optype, up_optype,
-				is_right);
+	public boolean check_need_para(GM_OPS_T optype, GM_OPS_T up_optype, boolean is_right) {
+		return GlobalMembersGm_misc.gm_need_paranthesis(optype, up_optype, is_right);
 	}
 
 	public abstract void generate_lhs_id(ast_id i);
@@ -424,7 +421,7 @@ public abstract class gm_code_generator {
 	}
 
 	public void generate_sent_block(ast_sentblock sb, boolean need_brace) {
-		java.util.LinkedList<ast_sent> sents = sb.get_sents();
+		LinkedList<ast_sent> sents = sb.get_sents();
 
 		java.util.Iterator<ast_sent> i;
 		if (need_brace)

@@ -1,25 +1,26 @@
 package inc;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;
 import ast.ast_nop;
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import opt.*;
-import tangible.*;
+import backend_cpp.gm_cpp_gen;
+import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rwinfo;
+import frontend.gm_rwinfo_sets;
+import frontend.gm_symtab_entry;
 
-public class nop_reduce_scalar extends ast_nop
-{
-	public nop_reduce_scalar()
-	{
-		super(nop_enum_cpp.NOP_REDUCE_SCALAR);
+public class nop_reduce_scalar extends ast_nop {
+	public nop_reduce_scalar() {
+		super(nop_enum_cpp.NOP_REDUCE_SCALAR.getValue());
 	}
-	public void set_symbols(java.util.LinkedList<gm_symtab_entry> O, java.util.LinkedList<gm_symtab_entry> N, java.util.LinkedList<Integer> R, java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>> O_S, java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>> N_S)
-	{
-		// shallow copy the whole list 
+
+	public void set_symbols(LinkedList<gm_symtab_entry> O, LinkedList<gm_symtab_entry> N, LinkedList<Integer> R, LinkedList<LinkedList<gm_symtab_entry>> O_S,
+			LinkedList<LinkedList<gm_symtab_entry>> N_S) {
+		// shallow copy the whole list
 		old_s = O;
 		new_s = N;
 		reduce_op = R;
@@ -27,62 +28,58 @@ public class nop_reduce_scalar extends ast_nop
 		new_supple = N_S;
 	}
 
-	public boolean do_rw_analysis()
-	{
-    
+	public boolean do_rw_analysis() {
+
 		gm_rwinfo_sets sets = GlobalMembersGm_rw_analysis.get_rwinfo_sets(this);
-	//C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy constructor call - this should be verified and a copy constructor should be created if it does not yet exist:
-	//ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*, java.util.LinkedList<gm_rwinfo*>*>& R = sets->read_set;
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> R = new java.util.HashMap(sets.read_set);
-	//C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy constructor call - this should be verified and a copy constructor should be created if it does not yet exist:
-	//ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*, java.util.LinkedList<gm_rwinfo*>*>& W = sets->write_set;
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> W = new java.util.HashMap(sets.write_set);
-    
+		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
+		// be a copy constructor call - this should be verified and a copy
+		// constructor should be created if it does not yet exist:
+		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& R
+		// = sets->read_set;
+		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets.read_set);
+		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
+		// be a copy constructor call - this should be verified and a copy
+		// constructor should be created if it does not yet exist:
+		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& W
+		// = sets->write_set;
+		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets.write_set);
+
 		// read all old symbols
-		java.util.Iterator<gm_symtab_entry> I;
-		for (I = old_s.begin(); I.hasNext();)
-		{
-			gm_rwinfo r = gm_rwinfo.new_scala_inst((I.next()).getId());
-			GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(R, I.next(), r);
+		for (gm_symtab_entry entry : old_s) {
+			gm_rwinfo r = gm_rwinfo.new_scala_inst(entry.getId());
+			GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(R, entry, r);
 		}
-    
+
 		// write all new symbols
-		for (I = new_s.begin(); I.hasNext();)
-		{
-			gm_rwinfo w = gm_rwinfo.new_scala_inst((I.next()).getId());
-			GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(W, I.next(), w);
+		for (gm_symtab_entry entry : old_s) {
+			gm_rwinfo w = gm_rwinfo.new_scala_inst(entry.getId());
+			GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(W, entry, w);
 		}
-    
+
 		// read all old supple lhs symbols
-		java.util.Iterator<java.util.LinkedList<gm_symtab_entry>> II;
-		for (II = old_supple.begin(); II.hasNext();)
-		{
-			java.util.LinkedList<gm_symtab_entry> L = II.next();
-			for (I = L.iterator(); I.hasNext();)
-			{
-				gm_rwinfo r = gm_rwinfo.new_scala_inst((I.next()).getId());
-				GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(R, I.next(), r);
+		for (LinkedList<gm_symtab_entry> L : old_supple) {
+			for (gm_symtab_entry entry : L) {
+				gm_rwinfo r = gm_rwinfo.new_scala_inst(entry.getId());
+				GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(R, entry, r);
 			}
 		}
-		for (II = new_supple.begin(); II.hasNext();)
-		{
-			java.util.LinkedList<gm_symtab_entry> L = II.next();
-			for (I = L.iterator(); I.hasNext();)
-			{
-				gm_rwinfo w = gm_rwinfo.new_scala_inst((I.next()).getId());
-				GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(W, I.next(), w);
+		for (LinkedList<gm_symtab_entry> L : new_supple) {
+			for (gm_symtab_entry entry : L) {
+				gm_rwinfo w = gm_rwinfo.new_scala_inst(entry.getId());
+				GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(W, entry, w);
 			}
 		}
-    
+
 		return true;
 	}
+
 	public void generate(gm_cpp_gen gen)
 	{
 		java.util.Iterator<gm_symtab_entry> I1;
 		java.util.Iterator<gm_symtab_entry> I2;
 		java.util.Iterator<Integer> I3;
-		java.util.Iterator<java.util.LinkedList<gm_symtab_entry>> I4; // supple old
-		java.util.Iterator<java.util.LinkedList<gm_symtab_entry>> I5; // supple new
+		java.util.Iterator<LinkedList<gm_symtab_entry>> I4; // supple old
+		java.util.Iterator<LinkedList<gm_symtab_entry>> I5; // supple new
 		I1 = old_s.begin();
 		I2 = new_s.begin();
 		I3 = reduce_op.begin();
@@ -93,8 +90,8 @@ public class nop_reduce_scalar extends ast_nop
 			gm_symtab_entry old_sym = I1.next();
 			gm_symtab_entry new_sym = I2.next();
 			int r_type = I3.next();
-			java.util.LinkedList<gm_symtab_entry> OLD_LIST = I4.next();
-			java.util.LinkedList<gm_symtab_entry> NEW_LIST = I5.next();
+			LinkedList<gm_symtab_entry> OLD_LIST = I4.next();
+			LinkedList<gm_symtab_entry> NEW_LIST = I5.next();
     
 			ast_id lhs = old_sym.getId().copy(true);
 			ast_id rhs_s = new_sym.getId().copy(true);
@@ -132,9 +129,12 @@ public class nop_reduce_scalar extends ast_nop
 		}
 	}
 
-	public java.util.LinkedList<gm_symtab_entry> old_s = new java.util.LinkedList<gm_symtab_entry>();
-	public java.util.LinkedList<gm_symtab_entry> new_s = new java.util.LinkedList<gm_symtab_entry>();
-	public java.util.LinkedList<Integer> reduce_op = new java.util.LinkedList<Integer>();
-	public java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>> old_supple = new java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>>(); // supplimental lhs for argmin/argmax
-	public java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>> new_supple = new java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>>();
+	public LinkedList<gm_symtab_entry> old_s = new LinkedList<gm_symtab_entry>();
+	public LinkedList<gm_symtab_entry> new_s = new LinkedList<gm_symtab_entry>();
+	public LinkedList<Integer> reduce_op = new LinkedList<Integer>();
+	public LinkedList<LinkedList<gm_symtab_entry>> old_supple = new LinkedList<LinkedList<gm_symtab_entry>>(); // supplimental
+																												// lhs
+																												// for
+																												// argmin/argmax
+	public LinkedList<LinkedList<gm_symtab_entry>> new_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
 }

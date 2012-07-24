@@ -1,16 +1,16 @@
 package backend_gps;
 
+import inc.GMTYPE_T;
+import inc.GlobalMembersGm_backend_gps;
 import ast.AST_NODE_TYPE;
 import ast.ast_procdef;
 import ast.ast_sent;
-import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
-import inc.GlobalMembersGm_backend_gps;
-import inc.GlobalMembersGm_defs;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
 import common.gm_apply;
+
+import frontend.gm_symtab_entry;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X

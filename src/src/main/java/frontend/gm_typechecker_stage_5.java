@@ -2,7 +2,6 @@ package frontend;
 
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -222,12 +221,12 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			// SUM/MULT/MAX/MIN ==> numeirc
 			// AND/OR ==> boolean
 			GM_REDUCE_T reduce_op = a.get_reduce_type();
-			if (GlobalMembersGm_defs.gm_is_numeric_reduce_op(reduce_op)) {
+			if (reduce_op.is_numeric_reduce_op()) {
 				if (!summary_lhs.is_numeric_type()) {
 					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_NUMERIC_REDUCE, l, c);
 					return false;
 				}
-			} else if (GlobalMembersGm_defs.gm_is_boolean_reduce_op(reduce_op)) {
+			} else if (reduce_op.is_boolean_reduce_op()) {
 				if (!summary_lhs.is_boolean_type()) {
 					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_BOOLEAN_REDUCE, l, c);
 					return false;

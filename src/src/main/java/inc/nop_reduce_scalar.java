@@ -14,8 +14,9 @@ import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
 
 public class nop_reduce_scalar extends ast_nop {
+	
 	public nop_reduce_scalar() {
-		super(nop_enum_cpp.NOP_REDUCE_SCALAR.getValue());
+		super(nop_enum_cpp.NOP_REDUCE_SCALAR);
 	}
 
 	public void set_symbols(LinkedList<gm_symtab_entry> O, LinkedList<gm_symtab_entry> N, LinkedList<Integer> R, LinkedList<LinkedList<gm_symtab_entry>> O_S,

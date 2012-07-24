@@ -1,7 +1,6 @@
 package frontend;
 
 import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
 import ast.AST_NODE_TYPE;
 import ast.ast_argdecl;
 import ast.ast_assign;
@@ -168,9 +167,8 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			ast_expr_reduce r = (ast_expr_reduce) p;
 			GMTYPE_T iter_type = r.get_iter_type();
 			is_okay = gm_symbol_check_iter_header(r.get_iterator(), r.get_source(), iter_type, r.get_source2());
-			if (GlobalMembersGm_defs.gm_is_unknown_collection_iter_type(iter_type)) // resolve
-																					// unknown
-																					// iterator
+			if (iter_type.is_unknown_collection_iter_type()) // resolve unknown
+																// iterator
 				r.set_iter_type(r.get_iterator().getTypeSummary());
 			break;
 		}
@@ -295,9 +293,8 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			is_okay = gm_symbol_check_iter_header(fe.get_iterator(), fe.get_source(), iter_type, fe.get_source2());
 			if (!is_okay)
 				break;
-			if (GlobalMembersGm_defs.gm_is_unknown_collection_iter_type(iter_type)) // resolve
-																					// unknown
-																					// iterator
+			if (iter_type.is_unknown_collection_iter_type()) // resolve unknown
+																// iterator
 			{
 				fe.set_iter_type(fe.get_iterator().getTypeSummary());
 			}

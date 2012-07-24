@@ -1,5 +1,10 @@
 package backend_cpp;
 
+import inc.GMTYPE_T;
+import inc.GM_REDUCE_T;
+import inc.GlobalMembersGm_backend_cpp;
+import inc.gm_assignment_t;
+import inc.nop_reduce_scalar;
 import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
@@ -8,15 +13,6 @@ import ast.ast_extra_info;
 import ast.ast_foreach;
 import ast.ast_sent;
 import ast.ast_sentblock;
-import frontend.GlobalMembersGm_rw_analysis;
-import frontend.gm_rwinfo;
-import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
-import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_backend_cpp;
-import inc.GlobalMembersGm_defs;
-import inc.gm_assignment_t;
-import inc.nop_reduce_scalar;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_main;
@@ -24,6 +20,10 @@ import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_transform_helper;
 import common.GlobalMembersGm_traverse;
 import common.gm_apply;
+
+import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rwinfo;
+import frontend.gm_symtab_entry;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X

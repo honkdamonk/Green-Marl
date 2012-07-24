@@ -200,6 +200,11 @@ public class gm_gps_basic_block
     
 		System.out.print("--------------------]\n");
 	}
+	
+	public void reproduce_sents() {
+		reproduce_sents(true);
+	}
+	
 	public void reproduce_sents(boolean reproduce_receiver)
 	{
 		if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_IF_COND)

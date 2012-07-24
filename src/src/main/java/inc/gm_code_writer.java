@@ -1,5 +1,7 @@
 package inc;
 
+import backend_cpp.FILE;
+
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X
@@ -114,6 +116,10 @@ public class gm_code_writer
 	{
 		push(s);
 		NL();
+	}
+	
+	public final void push_spc(char c) {
+		push_spc("" + c);
 	}
 
 	public final void push_spc(String s)

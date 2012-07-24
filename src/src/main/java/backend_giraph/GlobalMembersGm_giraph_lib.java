@@ -3,7 +3,6 @@ package backend_giraph;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GlobalMembersGm_backend_gps;
-import inc.GlobalMembersGm_defs;
 import inc.gm_code_writer;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;

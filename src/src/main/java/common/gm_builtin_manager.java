@@ -1,7 +1,6 @@
 package common;
 
 import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
 
 // should-be a singleton 
 public class gm_builtin_manager {

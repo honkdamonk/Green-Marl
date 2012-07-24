@@ -19,8 +19,8 @@ public class gm_code_writer
 		col = 0;
 		max_col = MAX_COL;
 		file_ptr = 0;
-		_buf = new byte[MAX_COL * 2]; // one line buffer
-		file_buf = new byte[32 * 1024 * 1024]; // 32MB. should be enough for a file
+//		_buf = new byte[MAX_COL * 2]; // one line buffer
+//		file_buf = new byte[32 * 1024 * 1024]; // 32MB. should be enough for a file
 	}
 	public void dispose()
 	{

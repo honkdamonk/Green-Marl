@@ -1,7 +1,6 @@
 package frontend;
 
 import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
 import ast.ast_id;
 import ast.ast_typedecl;
 

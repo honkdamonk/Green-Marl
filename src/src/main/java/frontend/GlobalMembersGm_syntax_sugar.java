@@ -1,5 +1,8 @@
 package frontend;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import ast.ast_argdecl;
 import ast.ast_id;
 import ast.ast_idlist;
@@ -8,10 +11,10 @@ import ast.ast_typedecl;
 public class GlobalMembersGm_syntax_sugar
 {
 
-	public static void gm_expand_argument_list(java.util.LinkedList<ast_argdecl> A)
+	public static void gm_expand_argument_list(LinkedList<ast_argdecl> A)
 	{
-		java.util.LinkedList<ast_argdecl> s = new java.util.LinkedList<ast_argdecl>(); // temp;
-		java.util.Iterator<ast_argdecl> I;
+		LinkedList<ast_argdecl> s = new LinkedList<ast_argdecl>(); // temp;
+		Iterator<ast_argdecl> I;
 
 		// expand  x,y : INT -> x:INT, y:INT
 		for (I = A.iterator(); I.hasNext();)
@@ -31,7 +34,7 @@ public class GlobalMembersGm_syntax_sugar
 					ast_idlist IDL = new ast_idlist();
 //C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy constructor call - this should be verified and a copy constructor should be created if it does not yet exist:
 //ORIGINAL LINE: IDL->add_id(I);
-					IDL.add_id(new java.util.Iterator(I));
+					IDL.add_id(new Iterator(I));
 					ast_typedecl T = t.copy();
 
 					ast_argdecl aa = ast_argdecl.new_argdecl(IDL, T);

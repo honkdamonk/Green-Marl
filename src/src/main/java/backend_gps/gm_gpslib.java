@@ -1,10 +1,11 @@
 package backend_gps;
 
+import frontend.GlobalMembersGm_frontend;
+import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_PROP_USAGE_T;
 import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_backend_gps;
-import inc.GlobalMembersGm_defs;
 import inc.gm_code_writer;
 import inc.gm_graph_library;
 import ast.ast_assign;
@@ -16,9 +17,6 @@ import backend_giraph.GlobalMembersGm_giraph_lib;
 
 import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_misc;
-
-import frontend.GlobalMembersGm_frontend;
-import frontend.gm_symtab_entry;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X

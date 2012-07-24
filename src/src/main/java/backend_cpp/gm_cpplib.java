@@ -2,7 +2,6 @@ package backend_cpp;
 
 import inc.GMTYPE_T;
 import inc.GlobalMembersGm_backend_cpp;
-import inc.GlobalMembersGm_defs;
 import inc.gm_code_writer;
 import inc.gm_graph_library;
 import ast.ast_expr;

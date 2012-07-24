@@ -1,13 +1,12 @@
 package frontend;
 
-import tangible.RefObject;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
 import inc.expr_list;
 import inc.gm_assignment_t;
 import inc.lhs_list;
+import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_argdecl;
 import ast.ast_assign;
@@ -220,7 +219,7 @@ public class GlobalMembersGm_frontend {
 	}
 
 	public static ast_node GM_expr_comp(ast_node left, ast_node right, GM_OPS_T op, int l, int c) {
-		assert GlobalMembersGm_defs.gm_is_eq_or_less_op(op);
+		assert op.is_eq_or_less_op();
 		ast_node n = ast_expr.new_comp_expr(op, (ast_expr) left, (ast_expr) right);
 		n.set_line(l);
 		n.set_col(c);

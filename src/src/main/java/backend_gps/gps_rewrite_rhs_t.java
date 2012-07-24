@@ -1,5 +1,8 @@
 package backend_gps;
 
+import frontend.gm_symtab_entry;
+import inc.GMTYPE_T;
+import inc.GlobalMembersGm_backend_gps;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -8,10 +11,6 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_sent;
 import ast.ast_sentblock;
-import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
-import inc.GlobalMembersGm_backend_gps;
-import inc.GlobalMembersGm_defs;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_main;

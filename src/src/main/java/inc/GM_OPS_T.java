@@ -57,4 +57,12 @@ public enum GM_OPS_T { // list of operators
 	public boolean is_ternary_op() {
 		return (this == GMOP_TER);
 	}
+
+	// see http://cppreference.com/wiki/language/operator_precedence
+	// ABS (not in cpp)
+	private static int[] GM_OPPRED_LEVEL = { 2, 3, 5, 5, 5, 2, 2, 6, 6, 13, 13, 3, 9, 9, 8, 8, 8, 8, 2, 15, 99 };
+
+	public int get_op_pred() {
+		return GM_OPPRED_LEVEL[this.getValue()];
+	}
 }

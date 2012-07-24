@@ -1,15 +1,12 @@
 package frontend;
 
-import inc.GMTYPE_T;
-
-import inc.GM_OPS_T;
-import inc.GlobalMembersGm_defs;
-import tangible.RefObject;
-
-import static frontend.gm_operator_result_t.RESULT_LEFT;
-import static frontend.gm_operator_coercion_t.COERCION_RIGHT;
 import static frontend.gm_operator_coercion_t.COERCION_ALL;
 import static frontend.gm_operator_coercion_t.COERCION_NO;
+import static frontend.gm_operator_coercion_t.COERCION_RIGHT;
+import static frontend.gm_operator_result_t.RESULT_LEFT;
+import inc.GMTYPE_T;
+import inc.GM_OPS_T;
+import tangible.RefObject;
 
 public class GlobalMembersGm_typecheck_oprules {
 
@@ -153,14 +150,6 @@ public class GlobalMembersGm_typecheck_oprules {
 		return false;
 	}
 
-	public static boolean gm_is_t2_larger_than_t1(GMTYPE_T t1, GMTYPE_T t2) {
-		if ((t1 == GMTYPE_T.GMTYPE_INT) && (t2 == GMTYPE_T.GMTYPE_LONG))
-			return true;
-		if ((t1 == GMTYPE_T.GMTYPE_FLOAT) && (t2 == GMTYPE_T.GMTYPE_DOUBLE))
-			return true;
-		return false;
-	}
-
 	// return false if coercion cannot be done.
 	// (lose of precision should be checked separately)
 	public static void apply_coercion(int c_type, GMTYPE_T t1, GMTYPE_T t2, RefObject<GMTYPE_T> t1_new, RefObject<GMTYPE_T> t2_new, RefObject<Boolean> t1_warn,
@@ -187,11 +176,11 @@ public class GlobalMembersGm_typecheck_oprules {
 			}
 
 			// type-up. (i.e. INT -> LONG)
-			if (GlobalMembersGm_typecheck_oprules.gm_is_t2_larger_than_t1(t1, t2)) {
+			if (GMTYPE_T.is_t2_larger_than_t1(t1, t2)) {
 				t1_new.argvalue = t2;
 				return;
 			}
-			if (GlobalMembersGm_typecheck_oprules.gm_is_t2_larger_than_t1(t2, t1)) {
+			if (GMTYPE_T.is_t2_larger_than_t1(t2, t1)) {
 				t2_new.argvalue = t1;
 				return;
 			}
@@ -219,7 +208,7 @@ public class GlobalMembersGm_typecheck_oprules {
 
 			t2_new.argvalue = t1;
 
-			if ((t1 != t2) && (!GlobalMembersGm_typecheck_oprules.gm_is_t2_larger_than_t1(t2, t1))) {
+			if ((t1 != t2) && (!GMTYPE_T.is_t2_larger_than_t1(t2, t1))) {
 				t2_warn.argvalue = true;
 			}
 			return;

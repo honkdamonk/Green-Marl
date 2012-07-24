@@ -1,0 +1,7 @@
+Procedure benchmark_map(G: Graph) 
+{
+    N_P<Int> prop;
+    Int x;	
+
+    x = Min(n: G.Nodes) {n.prop};
+}

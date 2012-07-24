@@ -67,19 +67,19 @@ public class gm_check_conf_t extends gm_apply {
 			gm_symtab_entry it = bfs.get_source().getSymInfo();
 			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R_filter = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>();
 			if (bfs.get_navigator() != null) {
-				range_cond_t R = new range_cond_t(gm_range_type_t.GM_RANGE_LEVEL_DOWN.getValue(), true);
+				range_cond_t R = new range_cond_t(gm_range_type_t.GM_RANGE_LEVEL_DOWN, true);
 				GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
 				GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(bfs.get_navigator(), R_filter);
 				GlobalMembersGm_rw_analysis.Default_DriverMap.remove(it);
 			}
 			if (bfs.get_f_filter() != null) {
-				range_cond_t R = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type).getValue(), true);
+				range_cond_t R = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
 				GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
 				GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(bfs.get_f_filter(), R_filter);
 				GlobalMembersGm_rw_analysis.Default_DriverMap.remove(it);
 			}
 			if (bfs.get_b_filter() != null) {
-				range_cond_t R = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type).getValue(), true);
+				range_cond_t R = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
 				GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
 				GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(bfs.get_b_filter(), R_filter);
 				GlobalMembersGm_rw_analysis.Default_DriverMap.remove(it);

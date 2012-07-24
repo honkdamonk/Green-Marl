@@ -13,28 +13,29 @@ import frontend.gm_symtab_entry;
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
 
-public class gm_prepare_genname_T extends gm_apply
-{
-	public gm_prepare_genname_T(gm_procinfo pi, gm_vocabulary v)
-	{
+public class gm_prepare_genname_T extends gm_apply {
+	public gm_prepare_genname_T(gm_procinfo pi, gm_vocabulary v) {
 		lang_voca = v;
 		proc_info = pi;
 		set_for_symtab(true);
 	}
 
 	@Override
-	public boolean apply(gm_symtab_entry e, int symtab_type)
-	{
+	public boolean apply(gm_symtab_entry e, int symtab_type) {
 		ast_id ID = e.getId();
-//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
-//ORIGINAL LINE: sbyte* org_name = ID->get_orgname();
-		byte org_name = ID.get_orgname();
+		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
+		// pointers to value types:
+		// ORIGINAL LINE: sbyte* org_name = ID->get_orgname();
+		String org_name = ID.get_orgname();
 
 		final boolean TRY_ORG_NAME_FIRST = true;
 
-//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
-//ORIGINAL LINE: sbyte* gen_name = proc_info->generate_temp_name(org_name, lang_voca, TRY_ORG_NAME_FIRST);
-		byte gen_name = proc_info.generate_temp_name(org_name, lang_voca, TRY_ORG_NAME_FIRST);
+		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
+		// pointers to value types:
+		// ORIGINAL LINE: sbyte* gen_name =
+		// proc_info->generate_temp_name(org_name, lang_voca,
+		// TRY_ORG_NAME_FIRST);
+		String gen_name = proc_info.generate_temp_name(org_name, lang_voca, TRY_ORG_NAME_FIRST);
 
 		// add gen_name into proc_voca
 		tangible.RefObject<String> tempRef_gen_name = new tangible.RefObject<String>(gen_name);

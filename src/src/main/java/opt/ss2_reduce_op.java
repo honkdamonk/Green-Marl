@@ -1,5 +1,11 @@
 package opt;
 
+import frontend.gm_symtab_entry;
+import inc.GMTYPE_T;
+import inc.GM_OPS_T;
+import inc.GM_REDUCE_T;
+import inc.gm_assignment_t;
+import tangible.RefObject;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -10,12 +16,6 @@ import ast.ast_if;
 import ast.ast_node;
 import ast.ast_sent;
 import ast.ast_sentblock;
-import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
-import inc.gm_assignment_t;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_main;
@@ -35,18 +35,15 @@ import common.gm_method_id_t;
 //       _t += t.A + t.B @ t;
 //     X = Y + _t;
 //---------------------------------------------------
-public class ss2_reduce_op extends gm_apply
-{
-	public ss2_reduce_op()
-	{
+public class ss2_reduce_op extends gm_apply {
+	public ss2_reduce_op() {
 		set_for_expr(true);
 	}
 
-	// Pre visit.  
+	// Pre visit.
 	// Resolve nested 'reductions' from outside
 	@Override
-	public boolean apply(ast_expr s)
-	{
+	public boolean apply(ast_expr s) {
 		if (!s.is_reduction())
 			return true;
 
@@ -55,25 +52,28 @@ public class ss2_reduce_op extends gm_apply
 		return true;
 	}
 
-	public final void post_process()
-	{
+	public final void post_process() {
 		java.util.Iterator<ast_expr_reduce> i;
-		for (i = targets.iterator(); i.hasNext();)
-		{
+		for (i = targets.iterator(); i.hasNext();) {
 			post_process_body(i.next());
 		}
 	}
 
-	protected java.util.LinkedList<ast_expr_reduce> targets = new java.util.LinkedList<ast_expr_reduce>(); // ReduceOps that should be replaced
+	protected java.util.LinkedList<ast_expr_reduce> targets = new java.util.LinkedList<ast_expr_reduce>(); // ReduceOps
+																											// that
+																											// should
+																											// be
+																											// replaced
 
 	// replace selected expressions.
-	protected final void post_process_body(ast_expr_reduce target)
-	{
+	protected final void post_process_body(ast_expr_reduce target) {
 
-		int expr_type = target.get_body().get_type_summary();
-		boolean is_nested = target.find_info_bool(GlobalMembersGm_syntax_sugar2.OPT_FLAG_NESTED_REDUCTION); // true if nested
-		int rtype = target.get_reduce_type();
-		boolean is_avg = (rtype == GM_REDUCE_T.GMREDUCE_AVG.getValue());
+		GMTYPE_T expr_type = target.get_body().get_type_summary();
+		boolean is_nested = target.find_info_bool(GlobalMembersGm_syntax_sugar2.OPT_FLAG_NESTED_REDUCTION); // true
+																											// if
+																											// nested
+		GM_REDUCE_T rtype = target.get_reduce_type();
+		boolean is_avg = (rtype == GM_REDUCE_T.GMREDUCE_AVG);
 
 		ast_expr_reduce left_nested = null;
 		ast_expr_reduce right_nested = null;
@@ -85,16 +85,12 @@ public class ss2_reduce_op extends gm_apply
 		ast_sent holder = null;
 		ast_sentblock nested_up_sentblock = null;
 
-		if (is_nested)
-		{
+		if (is_nested) {
 			nested_up_sentblock = (ast_sentblock) target.find_info_ptr(GlobalMembersGm_syntax_sugar2.OPT_SB_NESTED_REDUCTION_SCOPE);
 			assert nested_up_sentblock != null;
-		}
-		else
-		{
+		} else {
 			ast_node up = target.get_parent();
-			while (true)
-			{
+			while (true) {
 				assert up != null;
 				if (up.is_sentence())
 					break;
@@ -103,14 +99,14 @@ public class ss2_reduce_op extends gm_apply
 			holder = (ast_sent) up; // sentence that holds this rhs expression
 		}
 
-		//-------------------------------------------------
+		// -------------------------------------------------
 		// 1. add lhs_var decleation
 		// 2. create reduce_assign
 		// 3. create foreach
 		// 4. fixup symtab entries
 		// 5. replace target expr in the holder
 		// 6. (for average) insert final computation
-		//-------------------------------------------------
+		// -------------------------------------------------
 
 		gm_symtab_entry lhs_symbol = null;
 		; // target temp variable;
@@ -119,58 +115,52 @@ public class ss2_reduce_op extends gm_apply
 		gm_symtab_entry avg_val_symbol = null;
 
 		boolean need_count_for_avg = false;
-		if (is_nested)
-		{
-			//------------------------------------------------
+		if (is_nested) {
+			// ------------------------------------------------
 			// If nested, no need to create initializer or lhs symbol
-			//------------------------------------------------
+			// ------------------------------------------------
 			lhs_symbol = (gm_symtab_entry) target.find_info_ptr(GlobalMembersGm_syntax_sugar2.OPT_SYM_NESTED_REDUCTION_TARGET);
 			assert lhs_symbol != null;
-		}
-		else
-		{
-			//-------------------------------------------------
+		} else {
+			// -------------------------------------------------
 			// Need to create initialization
-			//-------------------------------------------------
+			// -------------------------------------------------
 
 			// 1.1 variable name
 			String t_name_base = "";
-			switch (rtype)
-			{
-				case GMREDUCE_AVG: // go through
-				case GMREDUCE_PLUS:
-					t_name_base = "_S";
-					break; // Sum
-				case GMREDUCE_MULT:
-					t_name_base = "_P";
-					break; // Product
-				case GMREDUCE_MIN:
-					t_name_base = "_Mn";
-					break; // Min
-				case GMREDUCE_MAX:
-					t_name_base = "_Mx";
-					break; // Max
-				case GMREDUCE_AND:
-					t_name_base = "_A";
-					break;
-				case GMREDUCE_OR:
-					t_name_base = "_E";
-					break;
-				default:
-					assert false;
-					break;
+			switch (rtype) {
+			case GMREDUCE_AVG: // go through
+			case GMREDUCE_PLUS:
+				t_name_base = "_S";
+				break; // Sum
+			case GMREDUCE_MULT:
+				t_name_base = "_P";
+				break; // Product
+			case GMREDUCE_MIN:
+				t_name_base = "_Mn";
+				break; // Min
+			case GMREDUCE_MAX:
+				t_name_base = "_Mx";
+				break; // Max
+			case GMREDUCE_AND:
+				t_name_base = "_A";
+				break;
+			case GMREDUCE_OR:
+				t_name_base = "_E";
+				break;
+			default:
+				assert false;
+				break;
 			}
 
 			boolean need_count_for_avg = false;
-			if (is_avg)
-			{
-				rtype = GM_REDUCE_T.GMREDUCE_PLUS.getValue(); // Need sum
+			if (is_avg) {
+				rtype = GM_REDUCE_T.GMREDUCE_PLUS; // Need sum
 
 				need_count_for_avg = true;
-				if (target.get_filter() == null)
-				{
-					int iter_type = target.get_iter_type();
-					int src_type = target.get_source().getTypeInfo().getTypeSummary();
+				if (target.get_filter() == null) {
+					GMTYPE_T iter_type = target.get_iter_type();
+					GMTYPE_T src_type = target.get_source().getTypeInfo().getTypeSummary();
 					if (GlobalMembersGm_syntax_sugar2.find_count_function(src_type, iter_type) == gm_method_id_t.GM_BLTIN_END)
 						need_count_for_avg = true;
 					else
@@ -179,7 +169,7 @@ public class ss2_reduce_op extends gm_apply
 			}
 
 			// 1.2 initial value
-			assert GlobalMembersGm_defs.gm_is_prim_type(expr_type);
+			assert expr_type.is_prim_type();
 			ast_expr init_val = GlobalMembersGm_new_sents_after_tc.gm_new_bottom_symbol(rtype, expr_type);
 
 			// 1.3 add init
@@ -187,21 +177,21 @@ public class ss2_reduce_op extends gm_apply
 			assert holder != null;
 			lhs_symbol = GlobalMembersGm_syntax_sugar2.insert_def_and_init_before(temp_name, expr_type, holder, init_val);
 
-			if (is_avg)
-			{
+			if (is_avg) {
 				String temp_cnt = GlobalMembersGm_main.FE.voca_temp_name("_cnt");
 				String temp_avg = GlobalMembersGm_main.FE.voca_temp_name("_avg");
 				ast_sentblock sb = (ast_sentblock) holder.get_parent();
 
 				cnt_symbol = GlobalMembersGm_syntax_sugar2.insert_def_and_init_before(temp_cnt, GMTYPE_T.GMTYPE_LONG, holder, ast_expr.new_ival_expr(0));
 
-				avg_val_symbol = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, (expr_type == GMTYPE_T.GMTYPE_FLOAT.getValue()) ? GMTYPE_T.GMTYPE_FLOAT : GMTYPE_T.GMTYPE_DOUBLE, (String) temp_avg);
+				avg_val_symbol = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, (expr_type == GMTYPE_T.GMTYPE_FLOAT) ? GMTYPE_T.GMTYPE_FLOAT
+						: GMTYPE_T.GMTYPE_DOUBLE, new RefObject<String>(temp_avg));
 			}
 		}
 
-		//----------------------------------------------------
+		// ----------------------------------------------------
 		// 2. Filter & Body of Reduciton ==> reduce assign + if
-		//----------------------------------------------------
+		// ----------------------------------------------------
 		// 2.1. rip-off body
 		ast_expr body = target.get_body();
 		target.set_body(null);
@@ -219,29 +209,27 @@ public class ss2_reduce_op extends gm_apply
 		ast_id bound_id2 = null;
 
 		lhs_id = lhs_symbol.getId().copy(true);
-		if (is_nested)
-		{
+		if (is_nested) {
 			bound_sym = (gm_symtab_entry) target.find_info_ptr(GlobalMembersGm_syntax_sugar2.OPT_SYM_NESTED_REDUCTION_BOUND);
 			assert bound_sym != null;
 			bound_id = bound_sym.getId().copy(true);
-		}
-		else
-		{
+		} else {
 			bound_sym = null; // will set later
 			bound_id = old_iter.copy(false); // dummy value;
 		}
 
-		if (!has_nested)
-		{
+		if (!has_nested) {
 			r_assign = ast_assign.new_assign_scala(lhs_id, body, gm_assignment_t.GMASSIGN_REDUCE, bound_id, rtype);
 			foreach_body = r_assign;
 
-			if (need_count_for_avg)
-			{
+			if (need_count_for_avg) {
 				ast_sentblock sb = ast_sentblock.new_sentblock();
-				ast_id lhs_id = cnt_symbol.getId().copy(true); // symInfo is correct for LHS
+				ast_id lhs_id = cnt_symbol.getId().copy(true); // symInfo is
+																// correct for
+																// LHS
 				bound_id2 = old_iter.copy(false); // symInfo not available yet
-				ast_assign r_assign2 = ast_assign.new_assign_scala(lhs_id, ast_expr.new_ival_expr(1), gm_assignment_t.GMASSIGN_REDUCE, bound_id2, GM_REDUCE_T.GMREDUCE_PLUS);
+				ast_assign r_assign2 = ast_assign.new_assign_scala(lhs_id, ast_expr.new_ival_expr(1), gm_assignment_t.GMASSIGN_REDUCE, bound_id2,
+						GM_REDUCE_T.GMREDUCE_PLUS);
 
 				GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(sb, r_assign);
 				GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(sb, r_assign2);
@@ -249,12 +237,10 @@ public class ss2_reduce_op extends gm_apply
 				foreach_body = sb;
 			}
 		} // has_nested
-		else
-		{
+		else {
 			nested_sentblock = ast_sentblock.new_sentblock();
 			foreach_body = nested_sentblock;
-			if (has_other_rhs)
-			{
+			if (has_other_rhs) {
 				ast_expr left = body.get_left_op();
 				ast_expr right = body.get_right_op();
 				ast_expr r_assign_body = (left_nested == left) ? right : left;
@@ -265,8 +251,7 @@ public class ss2_reduce_op extends gm_apply
 		}
 
 		ast_expr filter = target.get_filter();
-		if (filter != null)
-		{
+		if (filter != null) {
 			target.set_filter(null);
 			GlobalMembersGm_transform_helper.gm_ripoff_upper_scope(filter);
 
@@ -275,66 +260,62 @@ public class ss2_reduce_op extends gm_apply
 			assert filter.get_parent() != null;
 		}
 
-		//-------------------------------------------------
+		// -------------------------------------------------
 		// 3. Create foreach
-		//-------------------------------------------------
+		// -------------------------------------------------
 		// 3.1 create foreach
 		ast_id foreach_it = old_iter.copy();
-		ast_id foreach_src = target.get_source().copy(true); // copy SymInfo as well
+		ast_id foreach_src = target.get_source().copy(true); // copy SymInfo as
+																// well
 		ast_id foreach_src2 = target.get_source2();
 		if (foreach_src2 != null)
 			foreach_src2 = foreach_src2.copy(true);
 
-		int iter_type = target.get_iter_type();
+		GMTYPE_T iter_type = target.get_iter_type();
 
 		// see common/new_sent_after_tc.cc
 		ast_foreach fe_new = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(foreach_it, foreach_src, foreach_body, iter_type);
 		fe_new.set_source2(foreach_src2); // xxx: what was this again?
 
 		// 3.2 add foreach
-		if (!is_nested)
-		{
+		if (!is_nested) {
 			GlobalMembersGm_transform_helper.gm_add_sent_before(holder, fe_new);
-		}
-		else
-		{
+		} else {
 			assert nested_up_sentblock != null;
 			GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(nested_up_sentblock, fe_new);
 		}
 
-		//-------------------------------------------------
+		// -------------------------------------------------
 		// 4. Fix-up symtabs entries in the assign
-		//-------------------------------------------------
+		// -------------------------------------------------
 		// 4.1 bound symbols
 		assert foreach_it.getSymInfo() != null;
-		if (!is_nested)
-		{
+		if (!is_nested) {
 			bound_id.setSymInfo(foreach_it.getSymInfo());
 			if (bound_id2 != null) // for average
 				bound_id2.setSymInfo(foreach_it.getSymInfo());
 			bound_sym = foreach_it.getSymInfo();
 		}
 
-		// 4.2 replace every iterator (symbol) in the body_expression with the new foreach iterator
+		// 4.2 replace every iterator (symbol) in the body_expression with the
+		// new foreach iterator
 		GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(old_iter.getSymInfo(), foreach_it.getSymInfo(), foreach_body);
 		if (has_nested)
 			GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(old_iter.getSymInfo(), foreach_it.getSymInfo(), body);
 
-		//----------------------------------------------
+		// ----------------------------------------------
 		// 5. replace <Sum(..){}> with <lhs_var>
-		//----------------------------------------------
-		if (!is_nested)
-		{
+		// ----------------------------------------------
+		if (!is_nested) {
 			GlobalMembersGm_syntax_sugar2.replace_avg_to_varaible(holder, target, (is_avg) ? avg_val_symbol : lhs_symbol);
 		}
 
-		//----------------------------------------------
+		// ----------------------------------------------
 		// 6. For average
-		//----------------------------------------------
-		if (is_avg)
-		{
+		// ----------------------------------------------
+		if (is_avg) {
 
-			int result_type = (expr_type == GMTYPE_T.GMTYPE_FLOAT.getValue()) ? GMTYPE_T.GMTYPE_FLOAT : GMTYPE_T.GMTYPE_DOUBLE;
+			GMTYPE_T result_type = (expr_type == GMTYPE_T.GMTYPE_FLOAT) ? GMTYPE_T.GMTYPE_FLOAT : GMTYPE_T.GMTYPE_DOUBLE;
 			// (cnt_symbol == 0)? 0 : sum_val / (float) cnt_symbol
 			ast_expr zero1 = ast_expr.new_ival_expr(0);
 			ast_expr zero2 = ast_expr.new_fval_expr(0);
@@ -351,12 +332,11 @@ public class ss2_reduce_op extends gm_apply
 
 			GlobalMembersGm_transform_helper.gm_add_sent_after(fe_new, a);
 
-			if (!need_count_for_avg)
-			{
-				int iter_type = target.get_iter_type();
-				int src_type = target.get_source().getTypeSummary();
-				int method_id = GlobalMembersGm_syntax_sugar2.find_count_function(src_type, iter_type);
-				assert method_id != gm_method_id_t.GM_BLTIN_END.getValue();
+			if (!need_count_for_avg) {
+				GMTYPE_T iter_type = target.get_iter_type();
+				GMTYPE_T src_type = target.get_source().getTypeSummary();
+				gm_method_id_t method_id = GlobalMembersGm_syntax_sugar2.find_count_function(src_type, iter_type);
+				assert method_id != gm_method_id_t.GM_BLTIN_END;
 
 				// make a call to built-in funciton
 				gm_builtin_def def = GlobalMembersGm_main.BUILT_IN.find_builtin_def(src_type, method_id);
@@ -369,33 +349,37 @@ public class ss2_reduce_op extends gm_apply
 			}
 		}
 
-		//-----------------------------------
+		// -----------------------------------
 		// propagate information for nested
-		//-----------------------------------
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define PROPAGATE_INFORMATION(expr, scope, target, bound) { (expr)->add_info_bool(OPT_FLAG_NESTED_REDUCTION, true); (expr)->add_info_ptr (OPT_SB_NESTED_REDUCTION_SCOPE, scope); (expr)->add_info_ptr (OPT_SYM_NESTED_REDUCTION_TARGET, target); (expr)->add_info_ptr (OPT_SYM_NESTED_REDUCTION_BOUND, bound); }
-		if (has_nested)
-		{
+		// -----------------------------------
+		// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
+		// in-line:
+		// /#define PROPAGATE_INFORMATION(expr, scope, target, bound) {
+		// (expr)->add_info_bool(OPT_FLAG_NESTED_REDUCTION, true);
+		// (expr)->add_info_ptr (OPT_SB_NESTED_REDUCTION_SCOPE, scope);
+		// (expr)->add_info_ptr (OPT_SYM_NESTED_REDUCTION_TARGET, target);
+		// (expr)->add_info_ptr (OPT_SYM_NESTED_REDUCTION_BOUND, bound); }
+		if (has_nested) {
 			assert nested_sentblock != null;
 			assert lhs_symbol != null;
 			assert bound_sym != null;
-			if (left_nested != null)
-			{
-			{
+			if (left_nested != null) {
+				{
 					(left_nested).add_info_bool(GlobalMembersGm_syntax_sugar2.OPT_FLAG_NESTED_REDUCTION, true);
 					(left_nested).add_info_ptr(GlobalMembersGm_syntax_sugar2.OPT_SB_NESTED_REDUCTION_SCOPE, nested_sentblock);
 					(left_nested).add_info_ptr(GlobalMembersGm_syntax_sugar2.OPT_SYM_NESTED_REDUCTION_TARGET, lhs_symbol);
 					(left_nested).add_info_ptr(GlobalMembersGm_syntax_sugar2.OPT_SYM_NESTED_REDUCTION_BOUND, bound_sym);
-				};
+				}
+				;
 			}
-			if (right_nested != null)
-			{
-			{
+			if (right_nested != null) {
+				{
 					(right_nested).add_info_bool(GlobalMembersGm_syntax_sugar2.OPT_FLAG_NESTED_REDUCTION, true);
 					(right_nested).add_info_ptr(GlobalMembersGm_syntax_sugar2.OPT_SB_NESTED_REDUCTION_SCOPE, nested_sentblock);
 					(right_nested).add_info_ptr(GlobalMembersGm_syntax_sugar2.OPT_SYM_NESTED_REDUCTION_TARGET, lhs_symbol);
 					(right_nested).add_info_ptr(GlobalMembersGm_syntax_sugar2.OPT_SYM_NESTED_REDUCTION_BOUND, bound_sym);
-				};
+				}
+				;
 			}
 		}
 

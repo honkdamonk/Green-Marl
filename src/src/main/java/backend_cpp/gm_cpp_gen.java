@@ -1,11 +1,14 @@
 package backend_cpp;
 
+import frontend.gm_fe_fixup_bound_symbol;
+import frontend.gm_fe_restore_vardecl;
+import frontend.gm_symtab;
+import frontend.gm_symtab_entry;
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_backend_cpp;
-import inc.GlobalMembersGm_defs;
 import inc.gm_assignment_location_t;
 import inc.gm_backend;
 import inc.gm_code_writer;
@@ -35,12 +38,15 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_vardecl;
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import opt.*;
-import tangible.*;
+
+import common.GM_ERRORS_AND_WARNINGS;
+import common.GlobalMembersGm_apply_compiler_stage;
+import common.GlobalMembersGm_error;
+import common.GlobalMembersGm_main;
+import common.GlobalMembersGm_misc;
+import common.GlobalMembersGm_transform_helper;
+import common.gm_builtin_def;
+import common.gm_vocabulary;
 
 //-----------------------------------------------------------------
 // interface for graph library Layer

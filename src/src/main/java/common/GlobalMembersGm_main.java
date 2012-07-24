@@ -106,45 +106,35 @@ public class GlobalMembersGm_main {
 		}
 	}
 
-	public static void parse_stop_string()
-	{
+	public static void parse_stop_string() {
 		String c = OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_STOP_STRING);
 		if (c == null)
 			return;
 
-//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
-//ORIGINAL LINE: sbyte* d = strdup(c);
-		byte d = c;
-//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
-//ORIGINAL LINE: sbyte* p = strtok(d, ".");
-		byte p = tangible.StringFunctions.strTok(d, ".");
-		if (p == null)
-		{
-//C++ TO JAVA CONVERTER TODO TASK: There are no gotos or labels in Java:
-			goto error_return;
+		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
+		// pointers to value types:
+		// ORIGINAL LINE: sbyte* d = strdup(c);
+		String d = c;
+		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
+		// pointers to value types:
+		// ORIGINAL LINE: sbyte* p = strtok(d, ".");
+		String p = tangible.StringFunctions.strTok(d, ".");
+		if (p == null) {
+			return;
 		}
 		gm_stop_major = Integer.parseInt(p);
 		p = tangible.StringFunctions.strTok(null, ".");
 		if (p != null)
 			gm_stop_minor = Integer.parseInt(p);
 
-		if (gm_stop_major == 0)
-		{
-//C++ TO JAVA CONVERTER TODO TASK: There are no gotos or labels in Java:
-			goto error_return;
+		if (gm_stop_major == 0) {
+			return;
 		}
-		if (gm_stop_minor == 0)
-		{
+		if (gm_stop_minor == 0) {
 			System.out.printf("stopping after stage %d\n", gm_stop_major);
-		}
-		else
-		{
+		} else {
 			System.out.printf("stopping at stage %d.%d\n", gm_stop_major, gm_stop_minor);
 		}
-//C++ TO JAVA CONVERTER TODO TASK: There are no gotos or labels in Java:
-		error_return:
-//C++ TO JAVA CONVERTER TODO TASK: The memory management function 'free' has no equivalent in Java:
-		free(d);
 	}
 
 	public static void gm_begin_major_compiler_stage(int major, String desc) {
@@ -167,7 +157,6 @@ public class GlobalMembersGm_main {
 		gm_minor_desc = desc;
 		if (OPTIONS.get_arg_int(GlobalMembersGm_argopts.GMARGFLAG_VERB_LEV) > 0) {
 			System.out.printf("...Stage %d.%d: %s.[%s]\n", gm_stage_major, gm_stage_minor, gm_major_desc, gm_minor_desc);
-			fflush(stdout);
 		}
 
 	}
@@ -193,7 +182,7 @@ public class GlobalMembersGm_main {
 		// parse arguments
 		// -------------------------------------
 		tangible.RefObject<String[]> tempRef_args = new tangible.RefObject<String[]>(args);
-		GlobalMembersGm_argopts.process_args(argc, tempRef_args);
+		GlobalMembersGm_argopts.process_args(args.length, tempRef_args);
 		args = tempRef_args.argvalue;
 
 		gm_path_parser Path = new gm_path_parser();

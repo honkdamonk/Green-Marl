@@ -5,67 +5,63 @@ import ast.ast_node;
 import ast.ast_typedecl;
 
 // symbol table
-public class gm_symtab
-{
-	public gm_symtab(SYMTAB_TYPES _symtab_type, ast_node _ast)
-	{
+public class gm_symtab {
+	public gm_symtab(SYMTAB_TYPES _symtab_type, ast_node _ast) {
 		this.parent = null;
 		this.symtab_type = _symtab_type;
 		this.ast = _ast;
 		this.default_graph_used = false;
 	}
-	public final SYMTAB_TYPES get_symtab_type()
-	{
+
+	public final SYMTAB_TYPES get_symtab_type() {
 		return symtab_type;
 	}
 
-	public void dispose()
-	{
+	public void dispose() {
 		/*
-		 for(int i=0;i<entries.size(); i++) {
-		 gm_symtab_entry* e = entries[i];
-		 delete e;
-		 }
+		 * for(int i=0;i<entries.size(); i++) { gm_symtab_entry* e = entries[i];
+		 * delete e; }
 		 */
 		java.util.Iterator<gm_symtab_entry> I;
-		for (I = entries.iterator(); I.hasNext();)
-		{
+		for (I = entries.iterator(); I.hasNext();) {
 			gm_symtab_entry e = I.next();
 			if (e != null)
 				e.dispose();
 		}
-		//printf("delete:%p\n", this);
+		// printf("delete:%p\n", this);
 	}
 
-	public final void set_parent(gm_symtab p)
-	{
+	public final void set_parent(gm_symtab p) {
 		parent = p;
 		assert this != parent;
 	}
-	public final gm_symtab get_parent()
-	{
+
+	public final gm_symtab get_parent() {
 		return parent;
 	}
-	public final ast_node get_ast()
-	{
+
+	public final ast_node get_ast() {
 		return ast;
 	}
 
-	// if old entry is not found, copy of id and copy of typedecl is added into the table
-	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA)
-	{
+	// if old entry is not found, copy of id and copy of typedecl is added into
+	// the table
+	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA) {
 		return check_duplicate_and_add_symbol(id, type, old_def, isRA, true);
 	}
-	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def)
-	{
+
+	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def) {
 		return check_duplicate_and_add_symbol(id, type, old_def, true, true);
 	}
-//C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
-//ORIGINAL LINE: boolean check_duplicate_and_add_symbol(ast_id* id, ast_typedecl* type, gm_symtab_entry*& old_def, boolean isRA = true, boolean isWA = true)
-	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA, boolean isWA)
-	{
+
+	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
+	// parameters. Overloaded methods are inserted above.
+	// ORIGINAL LINE: boolean check_duplicate_and_add_symbol(ast_id* id,
+	// ast_typedecl* type, gm_symtab_entry*& old_def, boolean isRA = true,
+	// boolean isWA = true)
+	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA, boolean isWA) {
 		assert id.getSymInfo() == null;
-		//printf("check duplicate for %s\n", id->get_orgname());
+		// printf("check duplicate for %s\n", id->get_orgname());
 		old_def = find_symbol(id);
 		if (old_def != null)
 			return false;
@@ -73,30 +69,30 @@ public class gm_symtab
 		return true;
 	}
 
-	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA)
-	{
+	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA) {
 		return check_and_add_symbol(id, type, old_def, isRA, true);
 	}
-	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def)
-	{
+
+	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def) {
 		return check_and_add_symbol(id, type, old_def, true, true);
 	}
-//C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
-//ORIGINAL LINE: boolean check_and_add_symbol(ast_id* id, ast_typedecl* type, gm_symtab_entry*& old_def, boolean isRA = true, boolean isWA = true)
-	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA, boolean isWA)
-	{
+
+	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
+	// parameters. Overloaded methods are inserted above.
+	// ORIGINAL LINE: boolean check_and_add_symbol(ast_id* id, ast_typedecl*
+	// type, gm_symtab_entry*& old_def, boolean isRA = true, boolean isWA =
+	// true)
+	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA, boolean isWA) {
 		return check_duplicate_and_add_symbol(id, type, old_def, isRA, isWA);
 	}
 
-	public final gm_symtab_entry find_symbol(ast_id id)
-	{
-		//for(int i=0;i<entries.size(); i++) {
+	public final gm_symtab_entry find_symbol(ast_id id) {
+		// for(int i=0;i<entries.size(); i++) {
 		java.util.Iterator<gm_symtab_entry> I;
-		for (I = entries.iterator(); I.hasNext();)
-		{
+		for (I = entries.iterator(); I.hasNext();) {
 			gm_symtab_entry e = I.next();
-			//gm_symtab_entry* e = entries[i];
-			String c = e.id.get_orgname();
+			// gm_symtab_entry* e = entries[i];
+			String c = e.getId().get_orgname();
 			String c2 = id.get_orgname();
 			if (c.equals(c2))
 				return e;
@@ -106,48 +102,40 @@ public class gm_symtab
 		return parent.find_symbol(id);
 	}
 
-	public final int get_num_symbols()
-	{
+	public final int get_num_symbols() {
 		return entries.size();
 	}
 
-	//std::vector<gm_symtab_entry*>& get_entries() {return entries;}
-	public final java.util.HashSet<gm_symtab_entry> get_entries()
-	{
+	// std::vector<gm_symtab_entry*>& get_entries() {return entries;}
+	public final java.util.HashSet<gm_symtab_entry> get_entries() {
 		return entries;
 	}
+
 	// return true if entry is in the table
-	public final boolean is_entry_in_the_tab(gm_symtab_entry e)
-	{
+	public final boolean is_entry_in_the_tab(gm_symtab_entry e) {
 		/*
-		 std::vector<gm_symtab_entry*>::iterator i;
-		 for(i=entries.begin(); i!=entries.end();i++)
-		 if (*i == e) return true;
-		 return false;
+		 * std::vector<gm_symtab_entry*>::iterator i; for(i=entries.begin();
+		 * i!=entries.end();i++) if (*i == e) return true; return false;
 		 */
-		return entries.find(e).hasNext();
+		return entries.contains(e);
 	}
-	public final void remove_entry_in_the_tab(gm_symtab_entry e)
-	{
+
+	public final void remove_entry_in_the_tab(gm_symtab_entry e) {
 		/*
-		 std::vector<gm_symtab_entry*>::iterator i;
-		 for(i=entries.begin(); i!=entries.end();i++)
-		 if (*i == e) break;
-		 if (i!=entries.end())
-		 entries.erase(i);
+		 * std::vector<gm_symtab_entry*>::iterator i; for(i=entries.begin();
+		 * i!=entries.end();i++) if (*i == e) break; if (i!=entries.end())
+		 * entries.erase(i);
 		 */
-		entries.erase(e);
+		entries.remove(e);
 	}
 
 	// merge table A into this. table A is emptied.
 	// (assertion: name conflict has been resolved before calling this function)
-	public final void merge(gm_symtab A)
-	{
+	public final void merge(gm_symtab A) {
 		assert A != null;
 		java.util.Iterator<gm_symtab_entry> i;
-		for (i = A.entries.iterator(); i.hasNext();)
-		{
-			//entries.push_back(*i);
+		for (i = A.entries.iterator(); i.hasNext();) {
+			// entries.push_back(*i);
 			entries.add(i.next());
 		}
 		A.entries.clear();
@@ -155,18 +143,15 @@ public class gm_symtab
 
 	// add symbol entry
 	// (assertion: name conflict has been resolved)
-	public final void add_symbol(gm_symtab_entry e)
-	{
+	public final void add_symbol(gm_symtab_entry e) {
 		entries.add(e);
 	}
 
-	public final void set_default_graph_used()
-	{
+	public final void set_default_graph_used() {
 		default_graph_used = true;
 	}
 
-	public final boolean is_default_graph_used()
-	{
+	public final boolean is_default_graph_used() {
 		if (default_graph_used)
 			return true;
 		else if (parent == null)
@@ -175,14 +160,11 @@ public class gm_symtab
 			return parent.is_default_graph_used();
 	}
 
-	public final int get_graph_declaration_count()
-	{
+	public final int get_graph_declaration_count() {
 		int count = 0;
-		for (java.util.Iterator<gm_symtab_entry> II = entries.iterator(); II.hasNext();)
-		{
+		for (java.util.Iterator<gm_symtab_entry> II = entries.iterator(); II.hasNext();) {
 			ast_typedecl entryType = (II.next()).getType();
-			if (entryType.is_graph())
-			{
+			if (entryType.is_graph()) {
 				count++;
 			}
 		}
@@ -193,24 +175,25 @@ public class gm_symtab
 	}
 
 	// copy of (id) and copy of (type) is added into a new symbol entry
-	private void add_entry(ast_id id, ast_typedecl type, boolean isRA)
-	{
+	private void add_entry(ast_id id, ast_typedecl type, boolean isRA) {
 		add_entry(id, type, isRA, true);
 	}
-	private void add_entry(ast_id id, ast_typedecl type)
-	{
+
+	private void add_entry(ast_id id, ast_typedecl type) {
 		add_entry(id, type, true, true);
 	}
-//C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
-//ORIGINAL LINE: void add_entry(ast_id* id, ast_typedecl* type, boolean isRA = true, boolean isWA = true)
-	private void add_entry(ast_id id, ast_typedecl type, boolean isRA, boolean isWA)
-	{
+
+	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
+	// parameters. Overloaded methods are inserted above.
+	// ORIGINAL LINE: void add_entry(ast_id* id, ast_typedecl* type, boolean
+	// isRA = true, boolean isWA = true)
+	private void add_entry(ast_id id, ast_typedecl type, boolean isRA, boolean isWA) {
 		ast_id id_copy = id.copy();
 		ast_typedecl type_copy = type.copy();
 		gm_symtab_entry e = new gm_symtab_entry(id_copy, type_copy, isRA, isWA);
 
 		id.setSymInfo(e);
-		//entries.push_back(e);
+		// entries.push_back(e);
 		entries.add(e);
 	}
 

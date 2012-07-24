@@ -1,5 +1,6 @@
 package frontend;
 
+import tangible.RefObject;
 import ast.ast_id;
 import ast.ast_procdef;
 
@@ -22,7 +23,7 @@ public class rename_all_t extends gm_apply {
 		String name = id.get_orgname();
 
 		// printf("checking :%s\n",name);
-		if (GlobalMembersGm_main.FE.voca_isin((String) name)) {
+		if (GlobalMembersGm_main.FE.voca_isin(new RefObject<String>(name))) {
 			// should use a new name
 			String new_name = GlobalMembersGm_main.FE.voca_temp_name(name);
 			id.set_orgname(new_name); // new name is copied & old name is
@@ -32,7 +33,7 @@ public class rename_all_t extends gm_apply {
 
 		// printf("adding :%s\n",id->get_orgname());
 		// add to vocabulary
-		GlobalMembersGm_main.FE.voca_add(id.get_orgname());
+		GlobalMembersGm_main.FE.voca_add(new RefObject<String>(id.get_orgname()));
 		// assert(FE.voca_isin(id->get_orgname()));
 		return true;
 	}

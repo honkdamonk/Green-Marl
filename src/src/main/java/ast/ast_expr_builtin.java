@@ -3,12 +3,11 @@ package ast;
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.expr_list;
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import opt.*;
-import tangible.*;
+
+import common.GlobalMembersGm_dumptree;
+import common.GlobalMembersGm_misc;
+import common.gm_apply;
+import common.gm_builtin_def;
 
 public class ast_expr_builtin extends ast_expr {
 

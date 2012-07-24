@@ -1,5 +1,6 @@
 package frontend;
 
+import tangible.RefObject;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
@@ -259,7 +260,7 @@ public class GlobalMembersGm_frontend {
 	}
 
 	public static ast_node GM_expr_foreign(String text, int l, int c) {
-		ast_expr_foreign expr = ast_expr_foreign.new_expr_foreign((String) text);
+		ast_expr_foreign expr = ast_expr_foreign.new_expr_foreign(new RefObject<String>(text));
 		expr.set_line(l);
 		expr.set_col(c);
 		expr.parse_foreign_syntax(); // parse again!

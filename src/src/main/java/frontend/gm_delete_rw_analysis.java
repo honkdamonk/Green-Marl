@@ -1,3 +1,5 @@
+package frontend;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_foreach;
@@ -13,27 +15,22 @@ import common.gm_apply;
 
 //===========================================================================
 
-public class gm_delete_rw_analysis extends gm_apply
-{
+public class gm_delete_rw_analysis extends gm_apply {
+	
 	@Override
-	public boolean apply(ast_sent n)
-	{
+	public boolean apply(ast_sent n) {
 		gm_rwinfo_sets rwi = (gm_rwinfo_sets) n.find_info(GlobalMembersGm_rw_analysis.GM_INFOKEY_RW);
-		if (rwi != null)
-		{
+		if (rwi != null) {
 			if (rwi != null)
 				rwi.dispose();
 			n.add_info(GlobalMembersGm_rw_analysis.GM_INFOKEY_RW, null);
 		}
-		if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
-		{
+		if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			gm_bound_set_info bsi = GlobalMembersGm_rw_analysis.gm_get_bound_set_info((ast_foreach) n);
 			if (bsi != null)
 				bsi.dispose();
 			n.add_info(GlobalMembersGm_rw_analysis.GM_INFOKEY_BOUND, null);
-		}
-		else if (n.get_nodetype() == AST_NODE_TYPE.AST_BFS)
-		{
+		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
 			gm_bound_set_info bsi = GlobalMembersGm_rw_analysis.gm_get_bound_set_info((ast_bfs) n);
 			if (bsi != null)
 				bsi.dispose();

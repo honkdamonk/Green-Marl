@@ -34,26 +34,32 @@ public class GlobalMembersGm_defs {
 		return (i == GMTYPE_T.GMTYPE_NODE) || (i == GMTYPE_T.GMTYPE_EDGE);
 	}
 
+	@Deprecated
 	public static boolean gm_is_node_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_NODE);
 	}
 
+	@Deprecated
 	public static boolean gm_is_edge_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_EDGE);
 	}
 
+	@Deprecated
 	public static boolean gm_is_int_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_INT);
 	}
 
+	@Deprecated
 	public static boolean gm_is_long_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_LONG);
 	}
 
+	@Deprecated
 	public static boolean gm_is_nil_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_NIL_UNKNOWN) || (i == GMTYPE_T.GMTYPE_NIL_NODE) || (i == GMTYPE_T.GMTYPE_NIL_EDGE);
 	}
 
+	@Deprecated
 	public static boolean gm_is_all_graph_node_iter_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_NODEITER_ALL) || (i == GMTYPE_T.GMTYPE_NODEITER_BFS); // [XXX]
 																							// to
@@ -61,10 +67,12 @@ public class GlobalMembersGm_defs {
 																							// finxed
 	}
 
+	@Deprecated
 	public static boolean gm_is_all_graph_edge_iter_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_EDGEITER_ALL) || (i == GMTYPE_T.GMTYPE_EDGEITER_BFS);
 	}
 
+	@Deprecated
 	public static boolean gm_is_all_graph_iter_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_all_graph_node_iter_type(i) || GlobalMembersGm_defs.gm_is_all_graph_edge_iter_type(i);
 	}
@@ -96,38 +104,47 @@ public class GlobalMembersGm_defs {
 		return (i == GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS);
 	}
 
+	@Deprecated
 	public static boolean gm_is_node_iter_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_all_graph_node_iter_type(i) || GlobalMembersGm_defs.gm_is_any_nbr_node_iter_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_edge_iter_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_all_graph_edge_iter_type(i) || GlobalMembersGm_defs.gm_is_any_nbr_edge_iter_type(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_node_collection_iter_type(GMTYPE_T i) {
 		return ((i == GMTYPE_T.GMTYPE_NODEITER_SET) || (i == GMTYPE_T.GMTYPE_NODEITER_SEQ) || (i == GMTYPE_T.GMTYPE_NODEITER_ORDER));
 	}
 
+	@Deprecated
 	public static boolean gm_is_edge_collection_iter_type(GMTYPE_T i) {
 		return ((i == GMTYPE_T.GMTYPE_EDGEITER_SET) || (i == GMTYPE_T.GMTYPE_EDGEITER_SEQ) || (i == GMTYPE_T.GMTYPE_EDGEITER_ORDER));
 	}
 
+	@Deprecated
 	public static boolean gm_is_unknown_collection_iter_type(GMTYPE_T i) {
 		return (i == GMTYPE_T.GMTYPE_ITER_ANY);
 	}
 
+	@Deprecated
 	public static boolean gm_is_collection_of_set_iter_type(GMTYPE_T i) {
 		return i == GMTYPE_T.GMTYPE_COLLECTIONITER_SET;
 	}
 
+	@Deprecated
 	public static boolean gm_is_collection_of_seq_iter_type(GMTYPE_T i) {
 		return i == GMTYPE_T.GMTYPE_COLLECTIONITER_SEQ;
 	}
 
+	@Deprecated
 	public static boolean gm_is_collection_of_order_iter_type(GMTYPE_T i) {
 		return i == GMTYPE_T.GMTYPE_COLLECTIONITER_ORDER;
 	}
 
+	@Deprecated
 	public static boolean gm_is_collection_of_collection_iter_type(GMTYPE_T i) {
 		return GlobalMembersGm_defs.gm_is_collection_of_set_iter_type(i) || GlobalMembersGm_defs.gm_is_collection_of_order_iter_type(i)
 				|| GlobalMembersGm_defs.gm_is_collection_of_seq_iter_type(i);
@@ -402,27 +419,33 @@ public class GlobalMembersGm_defs {
 																													// in
 																													// cpp)
 
+	@Deprecated
 	public static boolean gm_is_numeric_op(GM_OPS_T i) {
 		return (i == GM_OPS_T.GMOP_MULT) || (i == GM_OPS_T.GMOP_DIV) || (i == GM_OPS_T.GMOP_MOD) || (i == GM_OPS_T.GMOP_ADD) || (i == GM_OPS_T.GMOP_SUB)
 				|| (i == GM_OPS_T.GMOP_NEG) || (i == GM_OPS_T.GMOP_ABS) || (i == GM_OPS_T.GMOP_MAX) || (i == GM_OPS_T.GMOP_MIN);
 	}
 
+	@Deprecated
 	public static boolean gm_is_boolean_op(GM_OPS_T i) {
 		return (i == GM_OPS_T.GMOP_NOT) || (i == GM_OPS_T.GMOP_AND) || (i == GM_OPS_T.GMOP_OR);
 	}
 
+	@Deprecated
 	public static boolean gm_is_eq_op(GM_OPS_T i) {
 		return (i == GM_OPS_T.GMOP_EQ) || (i == GM_OPS_T.GMOP_NEQ);
 	}
 
+	@Deprecated
 	public static boolean gm_is_less_op(GM_OPS_T i) {
 		return (i == GM_OPS_T.GMOP_GT) || (i == GM_OPS_T.GMOP_LT) || (i == GM_OPS_T.GMOP_GE) || (i == GM_OPS_T.GMOP_LE);
 	}
 
+	@Deprecated
 	public static boolean gm_is_eq_or_less_op(GM_OPS_T i) {
 		return GlobalMembersGm_defs.gm_is_eq_op(i) || GlobalMembersGm_defs.gm_is_less_op(i);
 	}
 
+	@Deprecated
 	public static boolean gm_is_ternary_op(GM_OPS_T i) {
 		return (i == GM_OPS_T.GMOP_TER);
 	}
@@ -440,8 +463,8 @@ public class GlobalMembersGm_defs {
 		// int dummy1;
 		// int dummy2;
 		// boolean dummy_b;
-		tangible.RefObject<Integer> tempRef_dummy1 = new tangible.RefObject<Integer>(0);
-		tangible.RefObject<Integer> tempRef_dummy2 = new tangible.RefObject<Integer>(0);
+		tangible.RefObject<GMTYPE_T> tempRef_dummy1 = new tangible.RefObject<GMTYPE_T>(GMTYPE_T.GMTYPE_INVALID);
+		tangible.RefObject<GMTYPE_T> tempRef_dummy2 = new tangible.RefObject<GMTYPE_T>(GMTYPE_T.GMTYPE_INVALID);
 		tangible.RefObject<Boolean> tempRef_dummy_b = new tangible.RefObject<Boolean>(true);
 		return GlobalMembersGm_typecheck_oprules.gm_is_compatible_type(GM_OPS_T.GMOP_ASSIGN, t_lhs, t_rhs, tempRef_dummy1, tempRef_dummy2, t_new_rhs,
 				tempRef_dummy_b, warning);
@@ -450,16 +473,19 @@ public class GlobalMembersGm_defs {
 		// dummy_b = tempRef_dummy_b.argvalue; dont need that?
 	}
 
+	@Deprecated
 	public static boolean gm_is_strict_reduce_op(GM_REDUCE_T t) {
 		return (t == GM_REDUCE_T.GMREDUCE_PLUS) || (t == GM_REDUCE_T.GMREDUCE_MULT) || (t == GM_REDUCE_T.GMREDUCE_MIN) || (t == GM_REDUCE_T.GMREDUCE_MAX)
 				|| (t == GM_REDUCE_T.GMREDUCE_AND) || (t == GM_REDUCE_T.GMREDUCE_OR) || (t == GM_REDUCE_T.GMREDUCE_AVG);
 	}
 
+	@Deprecated
 	public static boolean gm_is_numeric_reduce_op(GM_REDUCE_T t) {
 		return (t == GM_REDUCE_T.GMREDUCE_PLUS) || (t == GM_REDUCE_T.GMREDUCE_MULT) || (t == GM_REDUCE_T.GMREDUCE_MIN) || (t == GM_REDUCE_T.GMREDUCE_MAX)
 				|| (t == GM_REDUCE_T.GMREDUCE_AVG);
 	}
 
+	@Deprecated
 	public static boolean gm_is_boolean_reduce_op(GM_REDUCE_T t) {
 		return (t == GM_REDUCE_T.GMREDUCE_AND) || (t == GM_REDUCE_T.GMREDUCE_OR);
 	}
@@ -544,6 +570,7 @@ public class GlobalMembersGm_defs {
 		return GlobalMembersGm_defs.gm_is_any_nbr_node_iter_type(itype);
 	}
 
+	@Deprecated
 	public static boolean gm_is_collection_access_none(GM_ACCESS_T i) {
 		return (i == GM_ACCESS_T.GMACCESS_NONE);
 	}

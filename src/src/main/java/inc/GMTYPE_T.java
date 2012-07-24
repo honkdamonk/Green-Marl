@@ -59,22 +59,22 @@ public enum GMTYPE_T {
 		}
 		return mappings;
 	}
-	
+
 	public boolean isSmallerThan(GMTYPE_T other) {
 		return this.getValue() < other.getValue();
 	}
-	
+
 	public boolean isGreaterThan(GMTYPE_T other) {
 		return this.getValue() > other.getValue();
 	}
-	
+
 	public int subtract(GMTYPE_T other) {
 		return this.getValue() - other.getValue();
 	}
-	
+
 	private GMTYPE_T(int value) {
 		intValue = value;
-		GMTYPE_T.getMappings().put(value, this);
+		getMappings().put(value, this);
 	}
 
 	public int getValue() {
@@ -90,33 +90,31 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_nodeedge_type() {
-		return (this == GMTYPE_T.GMTYPE_NODE) || (this == GMTYPE_T.GMTYPE_EDGE);
+		return (this == GMTYPE_NODE) || (this == GMTYPE_EDGE);
 	}
 
 	public boolean is_iter_type() {
-		return GlobalMembersGm_defs.gm_is_node_iter_type(this) || GlobalMembersGm_defs.gm_is_edge_iter_type(this) || this.is_collection_iter_type();
+		return this.is_node_iter_type() || this.is_edge_iter_type() || this.is_collection_iter_type();
 	}
 
 	public boolean is_node_type() {
-		return this == GMTYPE_T.GMTYPE_NODE;
+		return this == GMTYPE_NODE;
 	}
 
 	public boolean is_node_iter_type() {
-		return GlobalMembersGm_defs.gm_is_all_graph_node_iter_type(this) || this.is_any_nbr_node_iter_type();
+		return this.is_all_graph_node_iter_type() || this.is_any_nbr_node_iter_type();
 	}
 
 	public boolean is_edge_iter_type() {
-		return GlobalMembersGm_defs.gm_is_all_graph_edge_iter_type(this) || this.is_any_nbr_edge_iter_type();
+		return this.is_all_graph_edge_iter_type() || this.is_any_nbr_edge_iter_type();
 	}
 
 	public boolean is_node_compatible_type() {
-		return this.is_node_type() || this.is_node_iter_type() || GlobalMembersGm_defs.gm_is_node_collection_iter_type(this)
-				|| GlobalMembersGm_defs.gm_is_nil_type(this);
+		return this.is_node_type() || this.is_node_iter_type() || this.is_node_collection_iter_type() || this.is_nil_type();
 	}
 
 	public boolean is_edge_compatible_type() {
-		return GlobalMembersGm_defs.gm_is_edge_type(this) || this.is_edge_iter_type() || GlobalMembersGm_defs.gm_is_edge_collection_iter_type(this)
-				|| GlobalMembersGm_defs.gm_is_nil_type(this);
+		return this.is_edge_type() || this.is_edge_iter_type() || this.is_edge_collection_iter_type() || this.is_nil_type();
 	}
 
 	public boolean is_collection_type() {
@@ -128,7 +126,7 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_collection_of_collection_type() {
-		return this == GMTYPE_T.GMTYPE_COLLECTION;
+		return this == GMTYPE_COLLECTION;
 	}
 
 	public boolean is_set_collection_type() {
@@ -152,19 +150,19 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_foreign_expr_type() {
-		return (this == GMTYPE_T.GMTYPE_FOREIGN_EXPR);
+		return (this == GMTYPE_FOREIGN_EXPR);
 	}
 
 	public boolean is_integer_type() {
-		return (this == GMTYPE_T.GMTYPE_INT) || (this == GMTYPE_T.GMTYPE_LONG) || (this == GMTYPE_T.GMTYPE_BYTE) || (this == GMTYPE_T.GMTYPE_SHORT);
+		return (this == GMTYPE_INT) || (this == GMTYPE_LONG) || (this == GMTYPE_BYTE) || (this == GMTYPE_SHORT);
 	}
 
 	public boolean is_float_type() {
-		return (this == GMTYPE_T.GMTYPE_FLOAT) || (this == GMTYPE_T.GMTYPE_DOUBLE);
+		return (this == GMTYPE_FLOAT) || (this == GMTYPE_DOUBLE);
 	}
 
 	public boolean is_unknown_type() {
-		return (this == GMTYPE_T.GMTYPE_UNKNOWN) || (this == GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC);
+		return (this == GMTYPE_UNKNOWN) || (this == GMTYPE_UNKNOWN_NUMERIC);
 	}
 
 	public boolean is_iteration_on_collection() {
@@ -172,7 +170,7 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_common_nbr_iter_type() {
-		return this == GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS;
+		return this == GMTYPE_NODEITER_COMMON_NBRS;
 	}
 
 	public boolean is_iteration_on_neighbors_compatible() {
@@ -180,27 +178,27 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_node_set_type() {
-		return (this == GMTYPE_T.GMTYPE_NSET);
+		return (this == GMTYPE_NSET);
 	}
 
 	public boolean is_node_order_type() {
-		return (this == GMTYPE_T.GMTYPE_NORDER);
+		return (this == GMTYPE_NORDER);
 	}
 
 	public boolean is_node_sequence_type() {
-		return (this == GMTYPE_T.GMTYPE_NSEQ);
+		return (this == GMTYPE_NSEQ);
 	}
 
 	public boolean is_edge_set_type() {
-		return (this == GMTYPE_T.GMTYPE_ESET);
+		return (this == GMTYPE_ESET);
 	}
 
 	public boolean is_edge_order_type() {
-		return (this == GMTYPE_T.GMTYPE_EORDER);
+		return (this == GMTYPE_EORDER);
 	}
 
 	public boolean is_edge_sequence_type() {
-		return (this == GMTYPE_T.GMTYPE_ESEQ);
+		return (this == GMTYPE_ESEQ);
 	}
 
 	public boolean is_edge_collection_type() {
@@ -214,23 +212,23 @@ public enum GMTYPE_T {
 	// node set -> nodeset iter
 	// edge set -> edgeset iter ...
 	public GMTYPE_T get_natural_collection_iterator() {
-		if (this == GMTYPE_T.GMTYPE_NSET)
-			return GMTYPE_T.GMTYPE_NODEITER_SET;
-		else if (this == GMTYPE_T.GMTYPE_NSEQ)
-			return GMTYPE_T.GMTYPE_NODEITER_SEQ;
-		else if (this == GMTYPE_T.GMTYPE_NORDER)
-			return GMTYPE_T.GMTYPE_NODEITER_ORDER;
-		else if (this == GMTYPE_T.GMTYPE_ESET)
-			return GMTYPE_T.GMTYPE_NODEITER_SET;
-		else if (this == GMTYPE_T.GMTYPE_NSEQ)
-			return GMTYPE_T.GMTYPE_NODEITER_SEQ;
-		else if (this == GMTYPE_T.GMTYPE_EORDER)
-			return GMTYPE_T.GMTYPE_NODEITER_ORDER;
-		else if (this == GMTYPE_T.GMTYPE_COLLECTION)
-			return GMTYPE_T.GMTYPE_ITER_UNDERSPECIFIED; // handle that later
+		if (this == GMTYPE_NSET)
+			return GMTYPE_NODEITER_SET;
+		else if (this == GMTYPE_NSEQ)
+			return GMTYPE_NODEITER_SEQ;
+		else if (this == GMTYPE_NORDER)
+			return GMTYPE_NODEITER_ORDER;
+		else if (this == GMTYPE_ESET)
+			return GMTYPE_NODEITER_SET;
+		else if (this == GMTYPE_NSEQ)
+			return GMTYPE_NODEITER_SEQ;
+		else if (this == GMTYPE_EORDER)
+			return GMTYPE_NODEITER_ORDER;
+		else if (this == GMTYPE_COLLECTION)
+			return GMTYPE_ITER_UNDERSPECIFIED; // handle that later
 		else {
 			assert false;
-			return GMTYPE_T.GMTYPE_INVALID;
+			return GMTYPE_INVALID;
 		}
 	}
 
@@ -238,20 +236,18 @@ public enum GMTYPE_T {
 		switch (this) {
 		case GMTYPE_NSET:
 		case GMTYPE_ESET:
-			return GMTYPE_T.GMTYPE_COLLECTIONITER_SET;
+			return GMTYPE_COLLECTIONITER_SET;
 		case GMTYPE_NSEQ:
 		case GMTYPE_ESEQ:
-			return GMTYPE_T.GMTYPE_COLLECTIONITER_SEQ;
+			return GMTYPE_COLLECTIONITER_SEQ;
 		case GMTYPE_NORDER:
 		case GMTYPE_EORDER:
-			return GMTYPE_T.GMTYPE_COLLECTIONITER_ORDER;
+			return GMTYPE_COLLECTIONITER_ORDER;
 		default:
 			assert false;
-			return GMTYPE_T.GMTYPE_INVALID;
+			return GMTYPE_INVALID;
 		}
 	}
-	
-	
 
 	// return true if this type has a target graph
 	public boolean has_target_graph_type() {
@@ -280,35 +276,35 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_iteration_on_set() {
-		return (this == GMTYPE_T.GMTYPE_NODEITER_SET) || (this == GMTYPE_T.GMTYPE_EDGEITER_SET);
+		return (this == GMTYPE_NODEITER_SET) || (this == GMTYPE_EDGEITER_SET);
 	}
 
 	public boolean is_iteration_on_order() {
-		return (this == GMTYPE_T.GMTYPE_NODEITER_ORDER) || (this == GMTYPE_T.GMTYPE_EDGEITER_ORDER);
+		return (this == GMTYPE_NODEITER_ORDER) || (this == GMTYPE_EDGEITER_ORDER);
 	}
 
 	public boolean is_iteration_on_sequence() {
-		return (this == GMTYPE_T.GMTYPE_NODEITER_SEQ) || (this == GMTYPE_T.GMTYPE_EDGEITER_SEQ);
+		return (this == GMTYPE_NODEITER_SEQ) || (this == GMTYPE_EDGEITER_SEQ);
 	}
 
 	public boolean is_iteration_on_all_graph() {
-		return GlobalMembersGm_defs.gm_is_all_graph_iter_type(this);
+		return this.is_all_graph_iter_type();
 	}
 
 	public boolean is_iteration_on_out_neighbors() {
-		return (this == GMTYPE_T.GMTYPE_EDGEITER_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_NBRS);
+		return (this == GMTYPE_EDGEITER_NBRS) || (this == GMTYPE_NODEITER_NBRS);
 	}
 
 	public boolean is_iteration_on_in_neighbors() {
-		return (this == GMTYPE_T.GMTYPE_EDGEITER_IN_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS);
+		return (this == GMTYPE_EDGEITER_IN_NBRS) || (this == GMTYPE_NODEITER_IN_NBRS);
 	}
 
 	public boolean is_iteration_on_up_neighbors() {
-		return (this == GMTYPE_T.GMTYPE_EDGEITER_UP_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS);
+		return (this == GMTYPE_EDGEITER_UP_NBRS) || (this == GMTYPE_NODEITER_UP_NBRS);
 	}
 
 	public boolean is_iteration_on_down_neighbors() {
-		return (this == GMTYPE_T.GMTYPE_EDGEITER_DOWN_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS);
+		return (this == GMTYPE_EDGEITER_DOWN_NBRS) || (this == GMTYPE_NODEITER_DOWN_NBRS);
 	}
 
 	public boolean is_iteration_use_reverse() {
@@ -316,15 +312,15 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_iteration_bfs() {
-		return (this == GMTYPE_T.GMTYPE_EDGEITER_BFS) || (this == GMTYPE_T.GMTYPE_NODEITER_BFS);
+		return (this == GMTYPE_EDGEITER_BFS) || (this == GMTYPE_NODEITER_BFS);
 	}
 
 	public boolean is_iteration_on_nodes() {
-		return GlobalMembersGm_defs.gm_is_node_iter_type(this);
+		return this.is_node_iter_type();
 	}
 
 	public boolean is_iteration_on_edges() {
-		return GlobalMembersGm_defs.gm_is_edge_iter_type(this);
+		return this.is_edge_iter_type();
 	}
 
 	public boolean is_iteration_on_updown_levels() {
@@ -332,20 +328,20 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_collection_iter_type() {
-		return GlobalMembersGm_defs.gm_is_node_collection_iter_type(this) || GlobalMembersGm_defs.gm_is_edge_collection_iter_type(this)
-				|| GlobalMembersGm_defs.gm_is_unknown_collection_iter_type(this) || GlobalMembersGm_defs.gm_is_collection_of_collection_iter_type(this);
+		return this.is_node_collection_iter_type() || this.is_edge_collection_iter_type() || this.is_unknown_collection_iter_type()
+				|| this.is_collection_of_collection_iter_type();
 	}
 
 	public boolean is_property_iter_set_type() {
-		return this == GMTYPE_T.GMTYPE_PROPERTYITER_SET;
+		return this == GMTYPE_PROPERTYITER_SET;
 	}
 
 	public boolean is_property_iter_seq_type() {
-		return this == GMTYPE_T.GMTYPE_PROPERTYITER_SEQ;
+		return this == GMTYPE_PROPERTYITER_SEQ;
 	}
 
 	public boolean is_property_iter_order_type() {
-		return this == GMTYPE_T.GMTYPE_PROPERTYITER_ORDER;
+		return this == GMTYPE_PROPERTYITER_ORDER;
 	}
 
 	public boolean is_property_iter_type() {
@@ -353,23 +349,23 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_boolean_type() {
-		return this == GMTYPE_T.GMTYPE_BOOL;
+		return this == GMTYPE_BOOL;
 	}
 
 	public boolean is_unknonwn_type() {
-		return (this == GMTYPE_T.GMTYPE_UNKNOWN) || (this == GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC);
+		return (this == GMTYPE_UNKNOWN) || (this == GMTYPE_UNKNOWN_NUMERIC);
 	}
 
 	public boolean is_void_type() {
-		return (this == GMTYPE_T.GMTYPE_VOID);
+		return (this == GMTYPE_VOID);
 	}
 
 	public boolean is_node_property_type() {
-		return (this == GMTYPE_T.GMTYPE_NODEPROP);
+		return (this == GMTYPE_NODEPROP);
 	}
 
 	public boolean is_edge_property_type() {
-		return (this == GMTYPE_T.GMTYPE_EDGEPROP);
+		return (this == GMTYPE_EDGEPROP);
 	}
 
 	public boolean is_property_type() {
@@ -377,12 +373,11 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_inf_type() {
-		return (this == GMTYPE_T.GMTYPE_INF) || (this == GMTYPE_T.GMTYPE_INF_INT) || (this == GMTYPE_T.GMTYPE_INF_LONG) || (this == GMTYPE_T.GMTYPE_INF_FLOAT)
-				|| (this == GMTYPE_T.GMTYPE_INF_FLOAT);
+		return (this == GMTYPE_INF) || (this == GMTYPE_INF_INT) || (this == GMTYPE_INF_LONG) || (this == GMTYPE_INF_FLOAT) || (this == GMTYPE_INF_FLOAT);
 	}
 
 	public boolean is_inf_type_unsized() {
-		return (this == GMTYPE_T.GMTYPE_INF);
+		return (this == GMTYPE_INF);
 	}
 
 	public boolean is_inf_type_sized() {
@@ -406,20 +401,76 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_inout_nbr_node_iter_type() {
-		return (this == GMTYPE_T.GMTYPE_NODEITER_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS);
+		return (this == GMTYPE_NODEITER_NBRS) || (this == GMTYPE_NODEITER_IN_NBRS);
 	}
 
 	public boolean is_any_nbr_node_iter_type() {
-		return (this == GMTYPE_T.GMTYPE_NODEITER_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS)
-				|| (this == GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS) || (this == GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS);
+		return (this == GMTYPE_NODEITER_NBRS) || (this == GMTYPE_NODEITER_IN_NBRS) || (this == GMTYPE_NODEITER_UP_NBRS) || (this == GMTYPE_NODEITER_DOWN_NBRS)
+				|| (this == GMTYPE_NODEITER_COMMON_NBRS);
 	}
 
 	public boolean is_any_nbr_edge_iter_type() {
-		return (this == GMTYPE_T.GMTYPE_EDGEITER_NBRS) || (this == GMTYPE_T.GMTYPE_EDGEITER_IN_NBRS) || (this == GMTYPE_T.GMTYPE_EDGEITER_UP_NBRS)
-				|| (this == GMTYPE_T.GMTYPE_EDGEITER_DOWN_NBRS);
+		return (this == GMTYPE_EDGEITER_NBRS) || (this == GMTYPE_EDGEITER_IN_NBRS) || (this == GMTYPE_EDGEITER_UP_NBRS) || (this == GMTYPE_EDGEITER_DOWN_NBRS);
 	}
 
 	public boolean is_any_nbr_iter_type() {
 		return this.is_any_nbr_edge_iter_type() || this.is_any_nbr_node_iter_type();
+	}
+
+	public boolean is_edge_type() {
+		return (this == GMTYPE_EDGE);
+	}
+
+	public boolean is_int_type() {
+		return (this == GMTYPE_INT);
+	}
+
+	public boolean is_long_type() {
+		return (this == GMTYPE_LONG);
+	}
+
+	public boolean is_nil_type() {
+		return (this == GMTYPE_NIL_UNKNOWN) || (this == GMTYPE_NIL_NODE) || (this == GMTYPE_NIL_EDGE);
+	}
+
+	public boolean is_all_graph_node_iter_type() {
+		// [XXX] to be finxed
+		return (this == GMTYPE_NODEITER_ALL) || (this == GMTYPE_NODEITER_BFS);
+	}
+
+	public boolean is_all_graph_edge_iter_type() {
+		return (this == GMTYPE_EDGEITER_ALL) || (this == GMTYPE_EDGEITER_BFS);
+	}
+
+	public boolean is_all_graph_iter_type() {
+		return this.is_all_graph_node_iter_type() || this.is_all_graph_edge_iter_type();
+	}
+
+	public boolean is_node_collection_iter_type() {
+		return ((this == GMTYPE_NODEITER_SET) || (this == GMTYPE_NODEITER_SEQ) || (this == GMTYPE_NODEITER_ORDER));
+	}
+
+	public boolean is_edge_collection_iter_type() {
+		return ((this == GMTYPE_EDGEITER_SET) || (this == GMTYPE_EDGEITER_SEQ) || (this == GMTYPE_EDGEITER_ORDER));
+	}
+
+	public boolean is_unknown_collection_iter_type() {
+		return (this == GMTYPE_ITER_ANY);
+	}
+
+	public boolean is_collection_of_set_iter_type() {
+		return this == GMTYPE_COLLECTIONITER_SET;
+	}
+
+	public boolean is_collection_of_seq_iter_type() {
+		return this == GMTYPE_COLLECTIONITER_SEQ;
+	}
+
+	public boolean is_collection_of_order_iter_type() {
+		return this == GMTYPE_COLLECTIONITER_ORDER;
+	}
+
+	public boolean is_collection_of_collection_iter_type() {
+		return this.is_collection_of_set_iter_type() || this.is_collection_of_order_iter_type() || this.is_collection_of_seq_iter_type();
 	}
 }

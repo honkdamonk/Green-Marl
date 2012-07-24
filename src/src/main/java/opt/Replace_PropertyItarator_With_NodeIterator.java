@@ -25,7 +25,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply
 		this.newIteratorName = null;
 		this.oldIteratorName = null;
 		this.fe = null;
-		this.iterType = 0;
+		this.iterType = GMTYPE_T.GMTYPE_INVALID;
 		set_for_sent(true);
 	}
 
@@ -35,7 +35,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply
 		if (sent.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)
 			return true;
 		fe = (ast_foreach) sent;
-		if (!GlobalMembersGm_defs.gm_is_property_iter_type(fe.get_iter_type()))
+		if (!fe.get_iter_type().is_property_iter_type())
 			return true;
 		else
 			return changeForeach();
@@ -45,7 +45,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply
 	private String newIteratorName;
 	private String oldIteratorName;
 	private ast_foreach fe;
-	private int iterType;
+	private GMTYPE_T iterType;
 
 	//For(s: prop.Items) -> For(n: G.Nodes) {Set s = n.prop
 	private boolean changeForeach()
@@ -79,17 +79,17 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply
 		return newIterator;
 	}
 
-	private int getNewIterType()
+	private GMTYPE_T getNewIterType()
 	{
-		int sourceType = fe.get_source().getTypeSummary();
-		if (GlobalMembersGm_defs.gm_is_node_property_type(sourceType))
+		GMTYPE_T sourceType = fe.get_source().getTypeSummary();
+		if (sourceType.is_node_property_type())
 			return GMTYPE_T.GMTYPE_NODEITER_ALL;
-		else if (GlobalMembersGm_defs.gm_is_edge_property_type(sourceType))
+		else if (sourceType.is_edge_property_type())
 			return GMTYPE_T.GMTYPE_EDGEITER_ALL;
 		else
 		{
 			assert false;
-			return 0;
+			throw new AssertionError();
 		}
 	}
 
@@ -129,10 +129,10 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply
 		return leftHandSide;
 	}
 
-	private int getTypeOfSourceItems()
+	private GMTYPE_T getTypeOfSourceItems()
 	{
 		ast_id source = fe.get_source();
-		assert GlobalMembersGm_defs.gm_is_collection_type(source.getTargetTypeSummary());
+		assert source.getTargetTypeSummary().is_collection_type();
 		return source.getTargetTypeSummary();
 	}
 
@@ -173,7 +173,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply
 		find_and_connect_symbol(id, SYM);
 
 		if (is_okay)
-			GlobalMembersGm_main.FE.voca_add(id.get_orgname());
+			GlobalMembersGm_main.FE.voca_add(new RefObject<String>(id.get_orgname()));
 
 		return is_okay;
 	}

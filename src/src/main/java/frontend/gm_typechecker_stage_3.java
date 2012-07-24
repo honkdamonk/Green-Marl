@@ -186,7 +186,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 
 			return true;
 		} // not
-		else if (GlobalMembersGm_defs.gm_is_boolean_op(op_type)) {
+		else if (op_type.is_boolean_op()) {
 			if (!exp_type.is_boolean_type()) {
 				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
 						GlobalMembersGm_misc.gm_get_type_string(exp_type));
@@ -196,7 +196,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			e.set_type_summary(exp_type);
 			return true;
 		} // neg or abs
-		else if (GlobalMembersGm_defs.gm_is_numeric_op(op_type)) {
+		else if (op_type.is_numeric_op()) {
 			if (!exp_type.is_numeric_type()) {
 				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
 						GlobalMembersGm_misc.gm_get_type_string(exp_type));
@@ -221,7 +221,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		int c = e.get_col();
 
 		// result is always BOOL
-		if (GlobalMembersGm_defs.gm_is_boolean_op(op_type) || GlobalMembersGm_defs.gm_is_eq_or_less_op(op_type))
+		if (op_type.is_boolean_op() || op_type.is_eq_or_less_op())
 			e.set_type_summary(GMTYPE_T.GMTYPE_BOOL);
 
 		if (l_type.is_unknown_type() || r_type.is_unknown_type()) {
@@ -249,15 +249,15 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			}
 		}
 
-		int result_type;
-		int l_new;
-		int r_new;
+		GMTYPE_T result_type;
+		GMTYPE_T l_new;
+		GMTYPE_T r_new;
 		boolean w1_warn;
 		boolean w2_warn;
 
-		tangible.RefObject<Integer> tempRef_result_type = new tangible.RefObject<Integer>(result_type);
-		tangible.RefObject<Integer> tempRef_l_new = new tangible.RefObject<Integer>(l_new);
-		tangible.RefObject<Integer> tempRef_r_new = new tangible.RefObject<Integer>(r_new);
+		tangible.RefObject<GMTYPE_T> tempRef_result_type = new tangible.RefObject<GMTYPE_T>(result_type);
+		tangible.RefObject<GMTYPE_T> tempRef_l_new = new tangible.RefObject<GMTYPE_T>(l_new);
+		tangible.RefObject<GMTYPE_T> tempRef_r_new = new tangible.RefObject<GMTYPE_T>(r_new);
 		tangible.RefObject<Boolean> tempRef_w1_warn = new tangible.RefObject<Boolean>(w1_warn);
 		tangible.RefObject<Boolean> tempRef_w2_warn = new tangible.RefObject<Boolean>(w2_warn);
 		boolean okay = GlobalMembersGm_typecheck_oprules.gm_is_compatible_type(op_type, l_type, r_type, tempRef_result_type, tempRef_l_new, tempRef_r_new,
@@ -283,11 +283,11 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			if (l_sym == null) {
 				// printf("TYPE = %s\n" gm_get_type_string(
 				// (e->get_left_op()->get_type_summary()));
-				assert GlobalMembersGm_defs.gm_is_nil_type(e.get_left_op().get_type_summary());
+				assert e.get_left_op().get_type_summary().is_nil_type();
 			}
 
 			if (r_sym == null) {
-				assert GlobalMembersGm_defs.gm_is_nil_type(e.get_right_op().get_type_summary());
+				assert e.get_right_op().get_type_summary().is_nil_type();
 			}
 
 			if ((l_sym != null) && (r_sym != null) && (l_sym != r_sym)) {
@@ -399,5 +399,5 @@ public class gm_typechecker_stage_3 extends gm_apply {
 	}
 
 	// expression, dest-type
-	public java.util.HashMap<ast_expr, Integer> coercion_targets = new java.util.HashMap<ast_expr, Integer>();
+	public java.util.HashMap<ast_expr, GMTYPE_T> coercion_targets = new java.util.HashMap<ast_expr, GMTYPE_T>();
 }

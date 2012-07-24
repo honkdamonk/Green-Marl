@@ -209,7 +209,7 @@ public class GlobalMembersGm_misc {
 	}
 
 	public static int gm_get_op_pred(GM_OPS_T op_type) {
-		return GlobalMembersGm_defs.GM_OPPRED_LEVEL[op_type];
+		return GlobalMembersGm_defs.GM_OPPRED_LEVEL[op_type.getValue()];
 	}
 
 	public static boolean gm_need_paranthesis(GM_OPS_T this_op, GM_OPS_T up_op, boolean is_right) {

@@ -1,21 +1,21 @@
 package frontend;
 
-import inc.GlobalMembersGm_defs;
+import inc.GMTYPE_T;
 import ast.ast_expr;
 import ast.ast_id;
 
-public class GlobalMembersGm_new_typecheck_step3
-{
+import common.gm_method_id_t;
 
-	public static boolean check_special_case_inside_group_assign(ast_id l_id, int alt_type_l, ast_expr r)
-	{
+public class GlobalMembersGm_new_typecheck_step3 {
 
-		int r_type = r.get_type_summary();
+	public static boolean check_special_case_inside_group_assign(ast_id l_id, GMTYPE_T alt_type_l, ast_expr r) {
 
-		if (GlobalMembersGm_defs.gm_is_node_compatible_type(alt_type_l) && !GlobalMembersGm_defs.gm_is_node_compatible_type(r_type))
+		GMTYPE_T r_type = r.get_type_summary();
+
+		if (alt_type_l.is_node_compatible_type() && !r_type.is_node_compatible_type())
 			return false;
 
-		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(alt_type_l) && !GlobalMembersGm_defs.gm_is_edge_compatible_type(r_type))
+		if (alt_type_l.is_edge_compatible_type() && !r_type.is_edge_compatible_type())
 			return false;
 
 		assert l_id.getTypeInfo().is_graph() || l_id.getTypeInfo().is_collection();
@@ -29,28 +29,28 @@ public class GlobalMembersGm_new_typecheck_step3
 		return true;
 	}
 
-	public static boolean gm_is_compatible_type_collection_of_collection(int shouldbeType, int currentType, int methodId)
-	{
-		//TODO find better way to do this
-		switch (methodId)
-		{
-			case GM_BLTIN_SET_ADD:
-			case GM_BLTIN_SET_ADD_BACK:
-				return shouldbeType == currentType;
-			case GM_BLTIN_SET_REMOVE:
-			case GM_BLTIN_SET_REMOVE_BACK:
-			case GM_BLTIN_SET_SIZE:
-				return true;
-			default:
-				assert false;
-				return false;
+	public static boolean gm_is_compatible_type_collection_of_collection(GMTYPE_T gmtype_T, GMTYPE_T currentType, gm_method_id_t methodId) {
+		// TODO find better way to do this
+		switch (methodId) {
+		case GM_BLTIN_SET_ADD:
+		case GM_BLTIN_SET_ADD_BACK:
+			return gmtype_T == currentType;
+		case GM_BLTIN_SET_REMOVE:
+		case GM_BLTIN_SET_REMOVE_BACK:
+		case GM_BLTIN_SET_SIZE:
+			return true;
+		default:
+			assert false;
+			return false;
 		}
-
-		return true;
 	}
-//C++ TO JAVA CONVERTER NOTE: Access declarations are not available in Java:
-	//;
+	
+	// C++ TO JAVA CONVERTER NOTE: Access declarations are not available in
+	// Java:
+	// ;
 
 	// defined in gm_coercion.cc
-	//extern void gm_insert_explicit_type_conversion_for_op(java.util.HashMap<ast_expr, int> targets);
+	// extern void
+	// gm_insert_explicit_type_conversion_for_op(java.util.HashMap<ast_expr,
+	// int> targets);
 }

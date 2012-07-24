@@ -190,7 +190,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			gm_symtab_entry r_sym = rhs.get_bound_graph();
 			assert l_sym != null;
 			if (r_sym == null) {
-				assert GlobalMembersGm_defs.gm_is_nil_type(summary_rhs) || summary_rhs.is_foreign_expr_type();
+				assert summary_rhs.is_nil_type() || summary_rhs.is_foreign_expr_type();
 			} else {
 				if (l_sym != r_sym) {
 					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH, l, c);

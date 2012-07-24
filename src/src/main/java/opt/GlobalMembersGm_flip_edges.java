@@ -75,7 +75,7 @@ public class GlobalMembersGm_flip_edges
 		if1 = if2 = null;
 		in = null;
 
-		if (!GlobalMembersGm_defs.gm_is_all_graph_node_iter_type(out.get_iter_type()))
+		if (!out.get_iter_type().is_all_graph_node_iter_type())
 			return false;
 
 		ast_sent body1;

@@ -1,11 +1,10 @@
 package ast;
 
+import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
+
 import common.GlobalMembersGm_dumptree;
 import common.GlobalMembersGm_misc;
-
-import frontend.gm_symtab_entry;
 
 //==========================================================================
 
@@ -83,7 +82,7 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	public static ast_typedecl new_nodeedge_iterator(ast_id tg, GMTYPE_T iter_type) {
-		assert GlobalMembersGm_defs.gm_is_all_graph_iter_type(iter_type);
+		assert iter_type.is_all_graph_iter_type();
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = iter_type;
 		t.target_graph = tg;
@@ -92,7 +91,7 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	public static ast_typedecl new_nbr_iterator(ast_id tg, GMTYPE_T iter_type) {
-		assert GlobalMembersGm_defs.gm_is_any_nbr_iter_type(iter_type);
+		assert iter_type.is_any_nbr_iter_type();
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = iter_type;
 		t.target_nbr = tg;
@@ -101,7 +100,7 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	public static ast_typedecl new_common_nbr_iterator(ast_id tg, ast_id tg2, GMTYPE_T iter_type) {
-		assert GlobalMembersGm_defs.gm_is_any_nbr_iter_type(iter_type);
+		assert iter_type.is_any_nbr_iter_type();
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = iter_type;
 		t.target_nbr = tg;
@@ -221,15 +220,15 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	public final boolean is_node() {
-		return GlobalMembersGm_defs.gm_is_node_type(type_id);
+		return type_id.is_node_type();
 	}
 
 	public final boolean is_edge() {
-		return GlobalMembersGm_defs.gm_is_edge_type(type_id);
+		return type_id.is_edge_type();
 	}
 
 	public final boolean is_nodeedge() {
-		return GlobalMembersGm_defs.gm_is_nodeedge_type(type_id);
+		return type_id.is_nodeedge_type();
 	}
 
 	public final boolean is_collection() {
@@ -253,15 +252,15 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	public final boolean is_unknown_collection_iterator() {
-		return GlobalMembersGm_defs.gm_is_unknown_collection_iter_type(type_id);
+		return type_id.is_unknown_collection_iter_type();
 	}
 
 	public final boolean is_node_iterator() {
-		return GlobalMembersGm_defs.gm_is_node_iter_type(type_id);
+		return type_id.is_node_iter_type();
 	}
 
 	public final boolean is_edge_iterator() {
-		return GlobalMembersGm_defs.gm_is_edge_iter_type(type_id);
+		return type_id.is_edge_iter_type();
 	}
 
 	public final boolean is_node_edge_iterator() {
@@ -305,11 +304,11 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	public final boolean is_all_graph_iterator() {
-		return GlobalMembersGm_defs.gm_is_all_graph_iter_type(type_id);
+		return type_id.is_all_graph_iter_type();
 	}
 
 	public final boolean is_any_nbr_iterator() {
-		return GlobalMembersGm_defs.gm_is_any_nbr_iter_type(type_id);
+		return type_id.is_any_nbr_iter_type();
 	}
 
 	public final boolean is_common_nbr_iterator() {

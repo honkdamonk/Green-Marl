@@ -1,3 +1,5 @@
+package common;
+
 public class gm_userargs
 {
 
@@ -6,11 +8,9 @@ public class gm_userargs
 	public final void set_arg_string(String key, String val)
 	{
 		assert key != null;
-		String _k = new byte[key.length() + 1];
-		_k = key;
-		assert val != null;
-		String _v = new byte[val.length() + 1];
-		_v = val;
+		assert val != null;		
+		String _k = key;
+		String _v = val;
 
 		java.util.Iterator<String, String > it = str_args.find(key);
 		if (it.hasNext()) // delete old, if found
@@ -24,8 +24,7 @@ public class gm_userargs
 	public final void set_arg_bool(String key, boolean b)
 	{
 		assert key != null;
-		String _k = new byte[key.length() + 1];
-		_k = key;
+		String _k = key;
 		java.util.Iterator<String, Boolean> it = bool_args.find(key);
 		if (it.hasNext()) // delete old, if found
 		{
@@ -38,8 +37,7 @@ public class gm_userargs
 	public final void set_arg_int(String key, int i)
 	{
 		assert key != null;
-		String _k = new byte[key.length() + 1];
-		_k = key;
+		String _k = key;
 		java.util.Iterator<String, Integer> it = int_args.find(key);
 		if (it.hasNext()) // delete old, if found
 		{

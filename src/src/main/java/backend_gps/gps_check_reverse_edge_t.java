@@ -5,11 +5,11 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_foreach;
 import ast.ast_sent;
-import frontend.gm_symtab_entry;
-import inc.GlobalMembersGm_defs;
 
 import common.gm_apply;
 import common.gm_method_id_t;
+
+import frontend.gm_symtab_entry;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X
@@ -41,7 +41,7 @@ public class gps_check_reverse_edge_t extends gm_apply
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
 		{
 			ast_foreach fe = (ast_foreach) s;
-			if (GlobalMembersGm_defs.gm_is_iteration_use_reverse(fe.get_iter_type()))
+			if (fe.get_iter_type().is_iteration_use_reverse())
 			{
 				target_graph = fe.get_iterator().getTypeInfo().get_target_graph_sym();
 				r_edge = true;

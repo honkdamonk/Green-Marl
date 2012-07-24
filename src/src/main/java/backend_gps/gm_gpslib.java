@@ -13,7 +13,7 @@ import ast.ast_id;
 import ast.ast_procdef;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
-import backend_giraph.GlobalMembersGm_giraph_lib;
+import backend_gps.GlobalMembersGm_gps_lib;
 
 import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_misc;
@@ -317,7 +317,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("public void write(IoBuffer IOB) {");
 		for (I = prop.iterator(); I.hasNext();) {
 			gm_symtab_entry sym = I.next();
-			GlobalMembersGm_giraph_lib.genPutIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
+			GlobalMembersGm_gps_lib.genPutIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
 		}
 		Body.pushln("}");
 
@@ -325,7 +325,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("public void read(IoBuffer IOB) {");
 		for (I = prop.iterator(); I.hasNext();) {
 			gm_symtab_entry sym = I.next();
-			GlobalMembersGm_giraph_lib.genGetIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
+			GlobalMembersGm_gps_lib.genGetIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
 		}
 		Body.pushln("}");
 
@@ -462,7 +462,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln(")).getValue().getValue();");
 	}
 
-	public void generate_message_fields_define(int gm_type, int count, gm_code_writer Body) {
+	public void generate_message_fields_define(GMTYPE_T gm_type, int count, gm_code_writer Body) {
 		for (int i = 0; i < count; i++) {
 			String str = main.get_type_string(gm_type);
 			String vname = get_message_field_var_name(gm_type, i);
@@ -536,11 +536,11 @@ public class gm_gpslib extends gm_graph_library {
 			return 0;
 		}
 
-		return GlobalMembersGm_giraph_lib.get_java_type_size(gm_type);
+		return GlobalMembersGm_gps_lib.get_java_type_size(gm_type);
 	}
 
 	// caller should delete var_name later
-	public String get_message_field_var_name(int gm_type, int index) {
+	public String get_message_field_var_name(GMTYPE_T gm_type, int index) {
 
 		String temp = new String(new char[1024]);
 		String str = main.get_type_string(gm_type);

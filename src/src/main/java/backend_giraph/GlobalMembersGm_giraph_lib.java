@@ -7,8 +7,11 @@ import inc.gm_code_writer;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
+import ast.ast_expr_builtin;
+import ast.ast_foreach;
 import ast.ast_sent;
 import ast.ast_sentblock;
+import backend_gps.gm_gps_basic_block;
 import backend_gps.gm_gps_bbtype_t;
 import backend_gps.gm_gps_beinfo;
 import backend_gps.gm_gps_comm_t;
@@ -102,12 +105,12 @@ public class GlobalMembersGm_giraph_lib
         Body.push(name);
         Body.pushln(");");
     }
-    public static void genGetIOB(String name, int gm_type, gm_code_writer Body, gm_giraphlib lib)
+    public static void genGetIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_giraphlib lib)
     {
         if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type))
-            gm_type = GMTYPE_T.GMTYPE_NODE.getValue();
+            gm_type = GMTYPE_T.GMTYPE_NODE;
         if (GlobalMembersGm_defs.gm_is_edge_compatible_type(gm_type))
-            gm_type = GMTYPE_T.GMTYPE_EDGE.getValue();
+            gm_type = GMTYPE_T.GMTYPE_EDGE;
 
         Body.push(name);
         Body.push(" = in.");
@@ -173,7 +176,7 @@ public class GlobalMembersGm_giraph_lib
     ///#define MESSAGE_PER_TYPE_LOOP_BEGIN(info, SYMS, str_buf) std::list<gm_gps_congruent_msg_class*>& LOOPS = info->get_congruent_message_classes(); std::list<gm_gps_congruent_msg_class*>::iterator I; bool is_single = info->is_single_message(); bool is_first = true; for(I=LOOPS.begin(); I!=LOOPS.end(); I++) { gm_gps_communication_size_info& SYMS = *((*I)->sz_info); int sz = get_total_size(SYMS); if (!is_single && is_first) { is_first = false; sprintf(str_buf,"if (m_type == %d) ", SYMS.id); Body.push(str_buf); } else if (!is_single) { sprintf(str_buf,"else if (m_type == %d) ", SYMS.id); Body.push(str_buf); }
     //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
     ///#define MESSAGE_PER_TYPE_LOOP_END() }
-    public static void generate_message_write_each(gm_giraphlib lib, int cnt, int gm_type, gm_code_writer Body)
+    public static void generate_message_write_each(gm_giraphlib lib, int cnt, GMTYPE_T gm_type, gm_code_writer Body)
     {
         for (int i = 0; i < cnt; i++)
         {
@@ -182,7 +185,7 @@ public class GlobalMembersGm_giraph_lib
             vname = null;
         }
     }
-    public static void generate_message_read1_each(gm_giraphlib lib, int cnt, int gm_type, gm_code_writer Body)
+    public static void generate_message_read1_each(gm_giraphlib lib, int cnt, GMTYPE_T gm_type, gm_code_writer Body)
     {
         for (int i = 0; i < cnt; i++)
         {
@@ -192,9 +195,9 @@ public class GlobalMembersGm_giraph_lib
         }
     }
 //C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable declaration (not allowed in Java):
-private static void generate_message_class_write_generate_message_class_read1(gm_giraphlib lib, gm_gps_beinfo info, gm_code_writer& Body)
+private static void generate_message_class_write_generate_message_class_read1(gm_giraphlib lib, gm_gps_beinfo info, gm_code_writer Body) {}
 //C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable declaration (not allowed in Java):
-private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_gps_basic_block* b, gm_symtab_entry *e)
+private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {}
 
     public static void generate_message_class_write(gm_giraphlib lib, gm_gps_beinfo info, gm_code_writer Body)
     {
@@ -204,12 +207,10 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
             Body.pushln("out.writeByte(m_type);");
         String str_buf = new String(new char[1024]);
         java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        java.util.Iterator<gm_gps_congruent_msg_class> I;
         boolean is_single = info.is_single_message();
         boolean is_first = true;
-        for(I = LOOPS.iterator(); I.hasNext();)
-        {
-            gm_gps_communication_size_info SYMS = *((I.next()).sz_info);
+        for (gm_gps_congruent_msg_class c : LOOPS) {
+            gm_gps_communication_size_info SYMS = c.sz_info;
             int sz = GlobalMembersGm_giraph_lib.get_total_size(SYMS);
             if (!is_single && is_first)
             {
@@ -237,7 +238,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
     }
 
     //C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not allowed in Java) has been moved just prior to the method:
-    //static void generate_message_class_read1(gm_giraphlib* lib, gm_gps_beinfo* info, gm_code_writer& Body)
+    static void generate_message_class_read1(gm_giraphlib lib, gm_gps_beinfo info, gm_code_writer Body)
     {
         Body.pushln("@Override");
         Body.pushln("public void readFields(DataInput in) throws IOException {");
@@ -277,7 +278,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
         () }() Body.pushln("}");
     }
 
-    void gm_giraphlib.generate_message_class_details(gm_gps_beinfo info, gm_code_writer& Body)
+    void generate_message_class_details(gm_gps_beinfo info, gm_code_writer Body)
     {
 
         Body.pushln("// union of all message fields  ");
@@ -294,7 +295,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
         generate_message_class_write_generate_message_class_read1(this, info, Body);
     }
 
-    void gm_giraphlib.generate_message_send(ast_foreach* fe, gm_code_writer& Body)
+    void generate_message_send(ast_foreach fe, gm_code_writer Body)
     {
         String temp = new String(new char[1024]);
 
@@ -453,7 +454,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
     }
 
     //C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not allowed in Java) has been moved just prior to the method:
-    //static boolean is_symbol_defined_in_bb(gm_gps_basic_block* b, gm_symtab_entry *e)
+    static boolean is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e)
     {
         java.util.HashMap<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
         if ( ! SYMS.containsKey(e))
@@ -462,22 +463,22 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
             return true;
     }
 
-    void gm_giraphlib.generate_message_receive_begin(ast_foreach* fe, gm_code_writer& Body, gm_gps_basic_block* b, boolean is_only_comm)
+    void generate_message_receive_begin(ast_foreach fe, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm)
     {
         gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-        int comm_type = (fe == null) ? gm_gps_comm_t.GPS_COMM_INIT : gm_gps_comm_t.GPS_COMM_NESTED;
+        gm_gps_comm_t comm_type = (fe == null) ? gm_gps_comm_t.GPS_COMM_INIT : gm_gps_comm_t.GPS_COMM_NESTED;
         gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, fe);
         generate_message_receive_begin(U, Body, b, is_only_comm);
     }
-    void gm_giraphlib.generate_message_receive_begin(ast_sentblock* sb, gm_symtab_entry* drv, gm_code_writer& Body, gm_gps_basic_block* b, boolean is_only_comm)
+    void generate_message_receive_begin(ast_sentblock sb, gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm)
     {
         gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-        int comm_type = gm_gps_comm_t.GPS_COMM_RANDOM_WRITE.getValue();
+        gm_gps_comm_t comm_type = gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
         gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, sb, drv);
         generate_message_receive_begin(U, Body, b, is_only_comm);
     }
 
-    void gm_giraphlib.generate_message_receive_begin(gm_gps_comm_unit& U, gm_code_writer& Body, gm_gps_basic_block *b, boolean is_only_comm)
+    void generate_message_receive_begin(gm_gps_comm_unit U, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm)
     {
         gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
@@ -522,7 +523,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
         }
     }
 
-    void gm_giraphlib.generate_message_receive_end(gm_code_writer& Body, boolean is_only_comm)
+    void generate_message_receive_end(gm_code_writer Body, boolean is_only_comm)
     {
         if (!is_only_comm)
         {
@@ -530,7 +531,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
         }
     }
 
-    void gm_giraphlib.generate_expr_builtin(ast_expr_builtin* be, gm_code_writer& Body, boolean is_master)
+    void generate_expr_builtin(ast_expr_builtin be, gm_code_writer Body, boolean is_master)
     {
         gm_builtin_def def = be.get_builtin_def();
         java.util.LinkedList<ast_expr> ARGS = be.get_args();
@@ -566,7 +567,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
         }
     }
 
-    void gm_giraphlib.generate_prepare_bb(gm_code_writer& Body, gm_gps_basic_block* bb)
+    void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block bb)
     {
         String temp = new String(new char[1024]);
 

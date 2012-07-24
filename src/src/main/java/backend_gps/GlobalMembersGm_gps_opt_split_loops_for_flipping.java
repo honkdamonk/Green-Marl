@@ -1,5 +1,7 @@
 package backend_gps;
 
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_foreach;
 import ast.ast_if;
@@ -77,12 +79,9 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 	//---------------------------------------
 	public static void filter_target_loops(java.util.HashMap<ast_foreach, ast_foreach> SRC, java.util.HashSet<ast_foreach> SET)
 	{
-
-		java.util.Iterator<ast_foreach, ast_foreach> I;
-		for (I = SRC.iterator(); I.hasNext();)
+		for (ast_foreach in : SRC.keySet())
 		{
-			ast_foreach in = I.next().getKey();
-			ast_foreach out = I.next().getValue();
+			ast_foreach out = SRC.get(in);
 			if (out == null)
 				continue;
 
@@ -91,16 +90,13 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 			boolean is_target = false;
 			// check if inner loop requires flipping
 			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> WMAP = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(in.get_body());
-			java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> M;
-			for (M = WMAP.iterator(); M.hasNext();)
+			for (gm_symtab_entry e : WMAP.keySet())
 			{
-				java.util.LinkedList<gm_rwinfo> LIST = M.next().getValue();
-				java.util.Iterator<gm_rwinfo> I;
-				boolean is_field = M.next().getKey().getType().is_property();
-				for (I = LIST.iterator(); I.hasNext();)
+				java.util.LinkedList<gm_rwinfo> LIST = WMAP.get(e);
+				boolean is_field = e.getType().is_property();
+				for (gm_rwinfo info : LIST)
 				{
-					gm_rwinfo info = I.next();
-					if (is_field && (info.driver == null) && (info.access_range == gm_range_type_t.GM_RANGE_RANDOM.getValue()))
+					if (is_field && (info.driver == null) && (info.access_range == gm_range_type_t.GM_RANGE_RANDOM))
 					{
 						is_target = true;
 						continue;
@@ -123,15 +119,12 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 				}
 			}
 
-			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> DMAP = GlobalMembersGm_rw_analysis_check2.gm_get_reduce_set(in.get_body());
-			for (M = DMAP.iterator(); M.hasNext();)
-			{
-				java.util.LinkedList<gm_rwinfo> LIST = M.next().getValue();
-				java.util.Iterator<gm_rwinfo> I;
-				for (I = LIST.iterator(); I.hasNext();)
+			java.util.HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> DMAP = GlobalMembersGm_rw_analysis_check2.gm_get_reduce_set(in.get_body());
+			for (gm_symtab_entry e : DMAP.keySet()) {
+				LinkedList<gm_rwinfo> LIST = DMAP.get(e);
+				for (gm_rwinfo info : LIST)
 				{
-					gm_rwinfo info = I.next();
-					if ((info.driver == null) && (info.access_range == gm_range_type_t.GM_RANGE_RANDOM.getValue()))
+					if ((info.driver == null) && (info.access_range == gm_range_type_t.GM_RANGE_RANDOM))
 					{
 						continue;
 					}
@@ -332,15 +325,15 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 		for (K = ALL.iterator(); K.hasNext();)
 		{
 			gm_symtab_entry e = K.next();
-			if ((PREVS.find(e).hasNext()) && (NEXTS.find(e).hasNext()))
+			if ((PREVS.contains(e)) && (NEXTS.contains(e)))
 			{
 				assert false;
 				// [todo] replace these symbols with temporary node_prop
 				// re-do rw-analysis afterward.
 			}
-			else if (PREVS.find(e).hasNext())
+			else if (PREVS.contains(e))
 				e.add_info_int(USED_BY_WHO, USED_BY_OLDER);
-			else if (NEXTS.find(e).hasNext())
+			else if (NEXTS.contains(e))
 				e.add_info_int(USED_BY_WHO, USED_BY_YOUNGER);
 		}
 	}
@@ -489,18 +482,15 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 	{
 		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
 		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> R = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
-		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> K;
-		for (K = W.iterator(); K.hasNext();)
+		for (gm_symtab_entry e : W.keySet())
 		{
-			gm_symtab_entry e = K.next().getKey();
 			if (!e.getType().is_property())
 			{
 				TARGET.add(e);
 			}
 		}
-		for (K = R.iterator(); K.hasNext();)
+		for (gm_symtab_entry e : R.keySet())
 		{
-			gm_symtab_entry e = K.next().getKey();
 			if (!e.getType().is_property())
 			{
 				TARGET.add(e);

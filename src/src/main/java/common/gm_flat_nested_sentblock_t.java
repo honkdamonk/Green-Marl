@@ -1,5 +1,7 @@
 package common;
 
+import java.util.Iterator;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -34,8 +36,7 @@ public class gm_flat_nested_sentblock_t extends gm_apply
 
 	public final void post_process()
 	{
-		java.util.Iterator<ast_sentblock> I;
-		for (I = targets.iterator(); I.hasNext();)
+		for (Iterator<ast_sentblock> I = targets.iterator(); I.hasNext();)
 		{
 			ast_sentblock sb = I.next();
 			ast_sentblock parent = (ast_sentblock) sb.get_parent();
@@ -43,27 +44,19 @@ public class gm_flat_nested_sentblock_t extends gm_apply
 			java.util.LinkedList<ast_sent> parent_sents = parent.get_sents();
 			java.util.LinkedList<ast_sent> my_sents = sb.get_sents();
 
-			java.util.Iterator<ast_sent> I;
-
 			// prepare moving mine to parent's
-			for (I = my_sents.iterator(); I.hasNext();)
+			for (Iterator<ast_sent> J = my_sents.iterator(); J.hasNext();)
 			{
-				ast_sent s = I.next();
+				ast_sent s = J.next();
 				s.set_parent(parent);
 			}
 
+			//TODO not tested!
 			// find location
-			for (I = parent_sents.iterator(); I.hasNext();)
-			{
-				if (I.next() == sb)
-					break;
-			}
-			assert I.hasNext();
-
-			// move my_sents after I
-			parent_sents.splice(I, my_sents);
-//C++ TO JAVA CONVERTER TODO TASK: There is no direct equivalent to the STL list 'erase' method in Java:
-			parent_sents.erase(I);
+			int index = parent_sents.indexOf(sb);
+			// move my_sents to parent
+			parent_sents.addAll(index + 1, my_sents);
+			parent_sents.remove(index);
 
 			// delete SB
 			if (sb != null)

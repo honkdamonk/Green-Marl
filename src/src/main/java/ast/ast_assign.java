@@ -108,9 +108,7 @@ public class ast_assign extends ast_sent {
 			LinkedList<ast_node> L = get_lhs_list();
 			int cnt = 0;
 			int last = L.size();
-			Iterator<ast_node> I = L.iterator();
-			while (I.hasNext()) {
-				ast_node n = I.next();
+			for (ast_node n : L) {
 				if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
 					ast_field f = (ast_field) n;
 					f.reproduce(0);

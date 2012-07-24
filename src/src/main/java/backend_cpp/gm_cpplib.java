@@ -331,7 +331,7 @@ public class gm_cpplib extends gm_graph_library {
 		V.add_word(GlobalMembersGm_cpplib_words.R_BEGIN);
 	}
 
-public boolean need_up_initializer(ast_foreach f) {
+	public boolean need_up_initializer(ast_foreach f) {
 		GMTYPE_T iter_type = f.get_iter_type();
 		if (iter_type.is_iteration_on_collection())
 			return true;
@@ -494,8 +494,7 @@ public boolean need_up_initializer(ast_foreach f) {
 			// [todo] check name-conflict
 			String alias_name = fe.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR);
 			String graph_name = source.getTypeInfo().get_target_graph_id().get_genname();
-			String array_name = type.is_iteration_use_reverse() ? GlobalMembersGm_cpplib_words.R_BEGIN
-					: GlobalMembersGm_cpplib_words.BEGIN;
+			String array_name = type.is_iteration_use_reverse() ? GlobalMembersGm_cpplib_words.R_BEGIN : GlobalMembersGm_cpplib_words.BEGIN;
 			String src_name = source.get_genname();
 
 			String.format(str_buf, "for (%s %s = %s.%s[%s];", GlobalMembersGm_cpplib_words.EDGE_T, alias_name, graph_name, array_name, src_name);
@@ -507,7 +506,7 @@ public boolean need_up_initializer(ast_foreach f) {
 		} else if (type.is_iteration_on_collection()) {
 
 			assert !fe.is_parallel();
-			assert GlobalMembersGm_defs.gm_is_node_collection_iter_type(type) || GlobalMembersGm_defs.gm_is_collection_of_collection_iter_type(type);
+			assert type.is_node_collection_iter_type() || type.is_collection_of_collection_iter_type();
 
 			String iter_name = fe.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_COLLECTION_ITERATOR);
 			String.format(str_buf, "while (%s.has_next())", iter_name);
@@ -557,84 +556,79 @@ public boolean need_up_initializer(ast_foreach f) {
 
 	}
 
-	public String get_function_name_graph(gm_method_id_t methodId)
-	{
-		switch (methodId)
-		{
-			case GM_BLTIN_GRAPH_NUM_NODES:
-				return GlobalMembersGm_cpplib_words.NUM_NODES;
-			case GM_BLTIN_GRAPH_NUM_EDGES:
-				return GlobalMembersGm_cpplib_words.NUM_EDGES;
-			case GM_BLTIN_GRAPH_RAND_NODE:
-				return GlobalMembersGm_cpplib_words.RANDOM_NODE;
-			default:
-				assert false;
-				return "ERROR";
+	public String get_function_name_graph(gm_method_id_t methodId) {
+		switch (methodId) {
+		case GM_BLTIN_GRAPH_NUM_NODES:
+			return GlobalMembersGm_cpplib_words.NUM_NODES;
+		case GM_BLTIN_GRAPH_NUM_EDGES:
+			return GlobalMembersGm_cpplib_words.NUM_EDGES;
+		case GM_BLTIN_GRAPH_RAND_NODE:
+			return GlobalMembersGm_cpplib_words.RANDOM_NODE;
+		default:
+			assert false;
+			return "ERROR";
 		}
 	}
-	public String get_function_name_nset(gm_method_id_t methodId, boolean in_parallel)
-	{
-		switch (methodId)
-		{
-			case GM_BLTIN_SET_HAS:
-				return "is_in";
-			case GM_BLTIN_SET_REMOVE:
-				return in_parallel ? "remove_par" : "remove_seq";
-			case GM_BLTIN_SET_ADD:
-				return in_parallel ? "add_par" : "add_seq";
-			case GM_BLTIN_SET_UNION:
-				return "union_";
-			case GM_BLTIN_SET_COMPLEMENT:
-				return "complement";
-			case GM_BLTIN_SET_INTERSECT:
-				return "intersect";
-			case GM_BLTIN_SET_SUBSET:
-				return "is_subset";
-			case GM_BLTIN_SET_SIZE:
-				return "get_size";
-			default:
-				assert false;
-				return "ERROR";
+
+	public String get_function_name_nset(gm_method_id_t methodId, boolean in_parallel) {
+		switch (methodId) {
+		case GM_BLTIN_SET_HAS:
+			return "is_in";
+		case GM_BLTIN_SET_REMOVE:
+			return in_parallel ? "remove_par" : "remove_seq";
+		case GM_BLTIN_SET_ADD:
+			return in_parallel ? "add_par" : "add_seq";
+		case GM_BLTIN_SET_UNION:
+			return "union_";
+		case GM_BLTIN_SET_COMPLEMENT:
+			return "complement";
+		case GM_BLTIN_SET_INTERSECT:
+			return "intersect";
+		case GM_BLTIN_SET_SUBSET:
+			return "is_subset";
+		case GM_BLTIN_SET_SIZE:
+			return "get_size";
+		default:
+			assert false;
+			return "ERROR";
 		}
 	}
-	public String get_function_name_nseq(gm_method_id_t methodId)
-	{
-		switch (methodId)
-		{
-			case GM_BLTIN_SET_ADD:
-				return "push_front";
-			case GM_BLTIN_SET_ADD_BACK:
-				return "push_back";
-			case GM_BLTIN_SET_REMOVE:
-				return "pop_front";
-			case GM_BLTIN_SET_REMOVE_BACK:
-				return "pop_back";
-			case GM_BLTIN_SET_SIZE:
-				return "get_size";
-			default:
-				assert false;
-				return "ERROR";
+
+	public String get_function_name_nseq(gm_method_id_t methodId) {
+		switch (methodId) {
+		case GM_BLTIN_SET_ADD:
+			return "push_front";
+		case GM_BLTIN_SET_ADD_BACK:
+			return "push_back";
+		case GM_BLTIN_SET_REMOVE:
+			return "pop_front";
+		case GM_BLTIN_SET_REMOVE_BACK:
+			return "pop_back";
+		case GM_BLTIN_SET_SIZE:
+			return "get_size";
+		default:
+			assert false;
+			return "ERROR";
 		}
 	}
-	public String get_function_name_norder(gm_method_id_t methodId)
-	{
-		switch (methodId)
-		{
-			case GM_BLTIN_SET_ADD:
-				return "push_front";
-			case GM_BLTIN_SET_ADD_BACK:
-				return "push_back";
-			case GM_BLTIN_SET_REMOVE:
-				return "pop_front";
-			case GM_BLTIN_SET_REMOVE_BACK:
-				return "pop_back";
-			case GM_BLTIN_SET_HAS:
-				return "is_in";
-			case GM_BLTIN_SET_SIZE:
-				return "get_size";
-			default:
-				assert false;
-				return "ERROR";
+
+	public String get_function_name_norder(gm_method_id_t methodId) {
+		switch (methodId) {
+		case GM_BLTIN_SET_ADD:
+			return "push_front";
+		case GM_BLTIN_SET_ADD_BACK:
+			return "push_back";
+		case GM_BLTIN_SET_REMOVE:
+			return "pop_front";
+		case GM_BLTIN_SET_REMOVE_BACK:
+			return "pop_back";
+		case GM_BLTIN_SET_HAS:
+			return "is_in";
+		case GM_BLTIN_SET_SIZE:
+			return "get_size";
+		default:
+			assert false;
+			return "ERROR";
 		}
 	}
 

@@ -1,23 +1,22 @@
 package backend_giraph;
 
+import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_backend_gps;
-import inc.GlobalMembersGm_defs;
 import inc.gm_code_writer;
 import ast.ast_assign;
 import ast.ast_id;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
-import backend_cpp.*;
-import backend_giraph.*;
+import backend_gps.GlobalMembersGps_syminfo;
+import backend_gps.gm_gps_beinfo;
 import backend_gps.gm_gps_gen;
 import backend_gps.gm_gpslib;
 import backend_gps.gps_syminfo;
-import common.*;
-import frontend.*;
-import opt.*;
-import tangible.*;
+
+import common.GlobalMembersGm_main;
+import common.GlobalMembersGm_misc;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X
@@ -89,9 +88,9 @@ public class gm_giraphlib extends gm_gpslib
 		//---------------------------------------------------
 		// Type:  Long, Int, Double, Float, Bool, NODE,EDGE
 		//---------------------------------------------------
-		if (GlobalMembersGm_defs.gm_is_node_compatible_type(type_id))
+		if (type_id.is_node_compatible_type())
 			type_id = GMTYPE_T.GMTYPE_NODE; //TODO setting argument?
-		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(type_id))
+		if (type_id.is_edge_compatible_type())
 			type_id = GMTYPE_T.GMTYPE_EDGE; //TODO setting argument?
     
 		switch (type_id)

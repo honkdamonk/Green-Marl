@@ -2,6 +2,7 @@ package ast;
 
 import inc.lhs_list;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import common.gm_apply;
@@ -27,9 +28,9 @@ public class ast_foreign extends ast_sent {
 		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
 		// be a copy constructor call - this should be verified and a copy
 		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: java.util.LinkedList<ast_node*>&L = l->LIST;
-		LinkedList<ast_node> L = new LinkedList(l.LIST);
-		java.util.Iterator<ast_node> I;
+		// ORIGINAL LINE: LinkedList<ast_node*>&L = l->LIST;
+		LinkedList<ast_node> L = new LinkedList<ast_node>(l.LIST);
+		Iterator<ast_node> I;
 		for (I = L.iterator(); I.hasNext();) {
 			ast_node n = I.next();
 			n.set_parent(S);
@@ -45,7 +46,7 @@ public class ast_foreign extends ast_sent {
 		if (modified.size() > 0) {
 			Out.push("::[");
 			int cnt = 0;
-			java.util.Iterator<ast_node> I;
+			Iterator<ast_node> I;
 			for (I = modified.begin(); I.hasNext(); I++, cnt++) {
 				ast_node n = I.next();
 				n.reproduce(ind_level);
@@ -64,7 +65,7 @@ public class ast_foreign extends ast_sent {
 		boolean b = a.has_separate_post_apply();
 		if (is_pre) {
 			if (for_id) {
-				java.util.Iterator<ast_node> I;
+				Iterator<ast_node> I;
 				for (I = modified.begin(); I.hasNext();) {
 					if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) (I.next());
@@ -78,7 +79,7 @@ public class ast_foreign extends ast_sent {
 				}
 			}
 			if (for_lhs) {
-				java.util.Iterator<ast_node> I;
+				Iterator<ast_node> I;
 				for (I = modified.begin(); I.hasNext();) {
 					if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) (I.next());
@@ -98,7 +99,7 @@ public class ast_foreign extends ast_sent {
 
 		if (is_post) {
 			if (for_id) {
-				java.util.Iterator<ast_node> I;
+				Iterator<ast_node> I;
 				for (I = modified.begin(); I.hasNext();) {
 					if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) (I.next());
@@ -120,7 +121,7 @@ public class ast_foreign extends ast_sent {
 				}
 			}
 			if (for_lhs) {
-				java.util.Iterator<ast_node> I;
+				Iterator<ast_node> I;
 				for (I = modified.begin(); I.hasNext();) {
 					if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) (I.next());
@@ -151,7 +152,7 @@ public class ast_foreign extends ast_sent {
 	public void dump_tree(int id_level) {
 	}
 
-	public final java.util.LinkedList<ast_node> get_modified() {
+	public final LinkedList<ast_node> get_modified() {
 		return modified;
 	}
 
@@ -169,5 +170,5 @@ public class ast_foreign extends ast_sent {
 	}
 
 	private ast_expr_foreign expr;
-	private java.util.LinkedList<ast_node> modified = new java.util.LinkedList<ast_node>();
+	private LinkedList<ast_node> modified = new LinkedList<ast_node>();
 }

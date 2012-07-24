@@ -38,10 +38,8 @@ import frontend.gm_symtab_entry;
 //   For every bfs
 //   - save sym entries of collections that are used inside each bfs
 //---------------------------------------------------------------
-public class check_bfs_main_t extends gm_apply
-{
-	public check_bfs_main_t(ast_procdef p)
-	{
+public class check_bfs_main_t extends gm_apply {
+	public check_bfs_main_t(ast_procdef p) {
 		this.current_bfs = null;
 		this.proc = p;
 		this.has_bfs = false;
@@ -51,22 +49,18 @@ public class check_bfs_main_t extends gm_apply
 		set_separate_post_apply(true);
 	}
 
-	public final void process_rwinfo(java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> MAP, java.util.HashSet<Object > SET)
-	{
+	public final void process_rwinfo(java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> MAP, java.util.HashSet<Object> SET) {
 		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> I;
-		for (I = MAP.iterator(); I.hasNext();)
-		{
+		for (I = MAP.iterator(); I.hasNext();) {
 			gm_symtab_entry e = I.next().getKey();
 			SET.add(e);
 
 			java.util.LinkedList<gm_rwinfo> use = I.next().getValue();
-			assert(use != null);
+			assert (use != null);
 			java.util.Iterator<gm_rwinfo> K;
-			for (K = use.iterator(); K.hasNext();)
-			{
+			for (K = use.iterator(); K.hasNext();) {
 				gm_symtab_entry driver = (K.next()).driver;
-				if (driver != null)
-				{
+				if (driver != null) {
 					SET.add(driver);
 					ast_id g = driver.getType().get_target_graph_id();
 					ast_id c = driver.getType().get_target_collection_id();
@@ -79,12 +73,10 @@ public class check_bfs_main_t extends gm_apply
 		}
 	}
 
-	public final boolean apply(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS)
-		{
+	public final boolean apply(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
 			ast_extra_info_set syms = new ast_extra_info_set();
-			java.util.HashSet<Object > S = syms.get_set();
+			java.util.HashSet<Object> S = syms.get_set();
 
 			// insert graph symbol at the first
 			gm_symtab_entry graph = ((ast_bfs) s).get_root().getTypeInfo().get_target_graph_sym();
@@ -95,15 +87,27 @@ public class check_bfs_main_t extends gm_apply
 			gm_rwinfo_sets RWINFO = GlobalMembersGm_rw_analysis.gm_get_rwinfo_sets(s);
 			assert RWINFO != null;
 
-//C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy constructor call - this should be verified and a copy constructor should be created if it does not yet exist:
-//ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*, java.util.LinkedList<gm_rwinfo*>*>& RS = RWINFO->read_set;
-			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> RS = new java.util.HashMap(RWINFO.read_set);
-//C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy constructor call - this should be verified and a copy constructor should be created if it does not yet exist:
-//ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*, java.util.LinkedList<gm_rwinfo*>*>& WS = RWINFO->write_set;
-			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> WS = new java.util.HashMap(RWINFO.write_set);
-//C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy constructor call - this should be verified and a copy constructor should be created if it does not yet exist:
-//ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*, java.util.LinkedList<gm_rwinfo*>*>& DS = RWINFO->reduce_set;
-			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> DS = new java.util.HashMap(RWINFO.reduce_set);
+			// C++ TO JAVA CONVERTER WARNING: The following line was determined
+			// to be a copy constructor call - this should be verified and a
+			// copy constructor should be created if it does not yet exist:
+			// ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*,
+			// java.util.LinkedList<gm_rwinfo*>*>& RS = RWINFO->read_set;
+			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> RS = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>(
+					RWINFO.read_set);
+			// C++ TO JAVA CONVERTER WARNING: The following line was determined
+			// to be a copy constructor call - this should be verified and a
+			// copy constructor should be created if it does not yet exist:
+			// ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*,
+			// java.util.LinkedList<gm_rwinfo*>*>& WS = RWINFO->write_set;
+			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> WS = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>(
+					RWINFO.write_set);
+			// C++ TO JAVA CONVERTER WARNING: The following line was determined
+			// to be a copy constructor call - this should be verified and a
+			// copy constructor should be created if it does not yet exist:
+			// ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*,
+			// java.util.LinkedList<gm_rwinfo*>*>& DS = RWINFO->reduce_set;
+			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> DS = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>(
+					RWINFO.reduce_set);
 
 			process_rwinfo(RS, S);
 			process_rwinfo(WS, S);
@@ -116,9 +120,11 @@ public class check_bfs_main_t extends gm_apply
 			String temp = new String(new char[1024]);
 			String.format(temp, "%s", proc.get_procname().get_genname());
 			String suffix = bfs.is_bfs() ? "_bfs" : "_dfs";
-//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
-//ORIGINAL LINE: sbyte* c = FE.voca_temp_name_and_add(temp, suffix);
-			byte c = GlobalMembersGm_main.FE.voca_temp_name_and_add(temp, suffix);
+			// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent
+			// for pointers to value types:
+			// ORIGINAL LINE: sbyte* c = FE.voca_temp_name_and_add(temp,
+			// suffix);
+			String c = GlobalMembersGm_main.FE.voca_temp_name_and_add(temp, suffix);
 
 			s.add_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_NAME, c);
 
@@ -133,28 +139,23 @@ public class check_bfs_main_t extends gm_apply
 	}
 
 	// [XXX]: should be merged with 'improved RW' analysis (to be done)
-	public final boolean apply(ast_expr e)
-	{
+	public final boolean apply(ast_expr e) {
 		if (!in_bfs)
 			return true;
-		if (e.is_builtin())
-		{
+		if (e.is_builtin()) {
 			ast_expr_builtin bin = (ast_expr_builtin) e;
 			ast_id driver = bin.get_driver();
-			if (driver != null)
-			{
+			if (driver != null) {
 
-				java.util.HashSet<Object > SET = ((ast_extra_info_set) current_bfs.find_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_SYMBOLS)).get_set();
+				java.util.HashSet<Object> SET = ((ast_extra_info_set) current_bfs.find_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_SYMBOLS)).get_set();
 				SET.add(driver.getSymInfo());
 			}
 		}
 		return true;
 	}
 
-	public final boolean apply2(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS)
-		{
+	public final boolean apply2(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
 			in_bfs = false;
 		}
 		return true;

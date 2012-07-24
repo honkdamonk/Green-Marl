@@ -54,7 +54,7 @@ public class gm_defer_write extends gm_apply
 		assert B != null;
 //C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy constructor call - this should be verified and a copy constructor should be created if it does not yet exist:
 //ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*, java.util.LinkedList<gm_rwinfo*>*>& BSET = B->bound_set;
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> BSET = new java.util.HashMap(B.bound_set);
+		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> BSET = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>(B.bound_set);
 
 		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> i;
 		for (i = BSET.iterator(); i.hasNext();)
@@ -68,7 +68,7 @@ public class gm_defer_write extends gm_apply
 			for (j = l.iterator(); j.hasNext();)
 			{
 				gm_rwinfo I = j.next();
-				if (I.reduce_op == GM_REDUCE_T.GMREDUCE_DEFER.getValue())
+				if (I.reduce_op == GM_REDUCE_T.GMREDUCE_DEFER)
 				{
 					is_deferred = true;
 					has_found = true;

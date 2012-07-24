@@ -1,15 +1,14 @@
 package opt;
 
+import inc.GMTYPE_T;
+import inc.GM_OPS_T;
+import inc.GM_REDUCE_T;
+import inc.gm_assignment_t;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_reduce;
 import ast.ast_sent;
 import ast.ast_sentblock;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
-import inc.gm_assignment_t;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_transform_helper;
@@ -98,9 +97,9 @@ public class GlobalMembersGm_syntax_sugar2 {
 
 	public static gm_method_id_t find_count_function(GMTYPE_T source_type, GMTYPE_T iter_type) {
 		if (source_type.is_graph_type()) {
-			if (GlobalMembersGm_defs.gm_is_all_graph_node_iter_type(iter_type)) {
+			if (iter_type.is_all_graph_node_iter_type()) {
 				return gm_method_id_t.GM_BLTIN_GRAPH_NUM_NODES;
-			} else if (GlobalMembersGm_defs.gm_is_all_graph_node_iter_type(iter_type)) {
+			} else if (iter_type.is_all_graph_node_iter_type()) {
 				return gm_method_id_t.GM_BLTIN_GRAPH_NUM_EDGES;
 			}
 		} else if (source_type.is_node_compatible_type()) {

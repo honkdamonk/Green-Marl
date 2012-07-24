@@ -45,16 +45,16 @@ public enum GM_REDUCE_T {
 		return getMappings().get(value);
 	}
 
-	public boolean gm_is_strict_reduce_op() {
+	public boolean is_strict_reduce_op() {
 		return (this == GMREDUCE_PLUS) || (this == GMREDUCE_MULT) || (this == GMREDUCE_MIN) || (this == GMREDUCE_MAX) || (this == GMREDUCE_AND)
 				|| (this == GMREDUCE_OR) || (this == GMREDUCE_AVG);
 	}
 
-	public boolean gm_is_numeric_reduce_op() {
+	public boolean is_numeric_reduce_op() {
 		return (this == GMREDUCE_PLUS) || (this == GMREDUCE_MULT) || (this == GMREDUCE_MIN) || (this == GMREDUCE_MAX) || (this == GMREDUCE_AVG);
 	}
 
-	public boolean gm_is_boolean_reduce_op() {
+	public boolean is_boolean_reduce_op() {
 		return (this == GMREDUCE_AND) || (this == GMREDUCE_OR);
 	}
 }

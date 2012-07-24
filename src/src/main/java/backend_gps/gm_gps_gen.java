@@ -1681,7 +1681,7 @@ public class gm_gps_gen extends gm_backend, gm_code_generator
 	public void generate_sent_foreach(ast_foreach fe)
 	{
 		// must be a sending foreach
-		assert GlobalMembersGm_defs.gm_is_iteration_on_out_neighbors(fe.get_iter_type()) || GlobalMembersGm_defs.gm_is_iteration_on_in_neighbors(fe.get_iter_type()) || GlobalMembersGm_defs.gm_is_iteration_on_down_neighbors(fe.get_iter_type());
+		assert fe.get_iter_type().is_iteration_on_out_neighbors() || fe.get_iter_type().is_iteration_on_in_neighbors() || fe.get_iter_type().is_iteration_on_down_neighbors();
     
 		get_lib().generate_message_send(fe, Body);
 	}

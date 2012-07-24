@@ -186,7 +186,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 
 			return true;
 		} // not
-		else if (GlobalMembersGm_defs.gm_is_boolean_op(op_type)) {
+		else if (op_type.is_boolean_op()) {
 			if (!exp_type.is_boolean_type()) {
 				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
 						GlobalMembersGm_misc.gm_get_type_string(exp_type));
@@ -196,7 +196,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			e.set_type_summary(exp_type);
 			return true;
 		} // neg or abs
-		else if (GlobalMembersGm_defs.gm_is_numeric_op(op_type)) {
+		else if (op_type.is_numeric_op()) {
 			if (!exp_type.is_numeric_type()) {
 				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
 						GlobalMembersGm_misc.gm_get_type_string(exp_type));
@@ -221,7 +221,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		int c = e.get_col();
 
 		// result is always BOOL
-		if (GlobalMembersGm_defs.gm_is_boolean_op(op_type) || GlobalMembersGm_defs.gm_is_eq_or_less_op(op_type))
+		if (op_type.is_boolean_op() || op_type.is_eq_or_less_op())
 			e.set_type_summary(GMTYPE_T.GMTYPE_BOOL);
 
 		if (l_type.is_unknown_type() || r_type.is_unknown_type()) {

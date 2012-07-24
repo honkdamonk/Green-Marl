@@ -42,10 +42,8 @@ import common.gm_apply;
 //------------------------------------------------
 
 // check condition 1-4
-public class gps_check_synth_t extends gm_apply
-{
-	public gps_check_synth_t(ast_procdef p)
-	{
+public class gps_check_synth_t extends gm_apply {
+	public gps_check_synth_t(ast_procdef p) {
 		_error = false;
 		set_for_symtab(true);
 		set_for_sent(true);
@@ -55,32 +53,27 @@ public class gps_check_synth_t extends gm_apply
 		_graph_defined = false;
 		proc = p;
 	}
-	public final boolean is_error()
-	{
+
+	public final boolean is_error() {
 		return _error;
 	}
 
 	// pre apply
 	@Override
-	public boolean apply(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS)
-		{
+	public boolean apply(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "BFS or DFS");
 			_error = true;
 		}
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_RETURN)
-		{
-			if (foreach_depth > 0)
-			{
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_RETURN) {
+			if (foreach_depth > 0) {
 				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "Return inside foreach");
 				_error = true;
 			}
 		}
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
-		{
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			foreach_depth++;
 		}
 
@@ -88,10 +81,8 @@ public class gps_check_synth_t extends gm_apply
 	}
 
 	@Override
-	public boolean apply2(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
-		{
+	public boolean apply2(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			foreach_depth--;
 		}
 		return true;
@@ -99,33 +90,27 @@ public class gps_check_synth_t extends gm_apply
 
 	// visit entry
 	@Override
-	public boolean apply(gm_symtab_entry e, int symtab_type)
-	{
+	public boolean apply(gm_symtab_entry e, int symtab_type) {
 		GMTYPE_T type_id = e.getType().get_typeid();
-		if (GlobalMembersGm_defs.gm_is_collection_type(type_id))
-		{
-			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_COLLECTION, e.getId().get_line(), e.getId().get_col(), e.getId().get_orgname());
+		if (type_id.is_collection_type()) {
+			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_COLLECTION, e.getId().get_line(), e.getId().get_col(), e
+					.getId().get_orgname());
 			_error = true;
 		}
 
-		else if (GlobalMembersGm_defs.gm_is_edge_property_type(type_id))
-		{
+		else if (type_id.is_edge_property_type()) {
 			/*
-			 gm_backend_error(
-			 GM_ERROR_GPS_UNSUPPORTED_COLLECTION,
-			 e->getId()->get_line(),
-			 e->getId()->get_col(),
-			 e->getId()->get_orgname());
-			 _error = true;
+			 * gm_backend_error( GM_ERROR_GPS_UNSUPPORTED_COLLECTION,
+			 * e->getId()->get_line(), e->getId()->get_col(),
+			 * e->getId()->get_orgname()); _error = true;
 			 */
 			proc.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP, true);
 		}
 
-		else if (GlobalMembersGm_defs.gm_is_graph_type(type_id))
-		{
-			if (_graph_defined)
-			{
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_MULTIPLE_GRAPH, e.getId().get_line(), e.getId().get_col(), e.getId().get_orgname());
+		else if (type_id.is_graph_type()) {
+			if (_graph_defined) {
+				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_MULTIPLE_GRAPH, e.getId().get_line(), e.getId().get_col(), e.getId()
+						.get_orgname());
 				_error = true;
 			}
 			_graph_defined = true;
@@ -134,8 +119,7 @@ public class gps_check_synth_t extends gm_apply
 		return true;
 	}
 
-	public final boolean is_graph_defined()
-	{
+	public final boolean is_graph_defined() {
 		return _graph_defined;
 	}
 

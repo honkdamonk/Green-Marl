@@ -23,9 +23,7 @@ public class gm_symtab {
 		 * for(int i=0;i<entries.size(); i++) { gm_symtab_entry* e = entries[i];
 		 * delete e; }
 		 */
-		java.util.Iterator<gm_symtab_entry> I;
-		for (I = entries.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next();
+		for (gm_symtab_entry e : entries) {
 			if (e != null)
 				e.dispose();
 		}
@@ -89,9 +87,7 @@ public class gm_symtab {
 
 	public final gm_symtab_entry find_symbol(ast_id id) {
 		// for(int i=0;i<entries.size(); i++) {
-		java.util.Iterator<gm_symtab_entry> I;
-		for (I = entries.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next();
+		for (gm_symtab_entry e : entries) {
 			// gm_symtab_entry* e = entries[i];
 			String c = e.getId().get_orgname();
 			String c2 = id.get_orgname();
@@ -134,10 +130,9 @@ public class gm_symtab {
 	// (assertion: name conflict has been resolved before calling this function)
 	public final void merge(gm_symtab A) {
 		assert A != null;
-		java.util.Iterator<gm_symtab_entry> i;
-		for (i = A.entries.iterator(); i.hasNext();) {
+		for (gm_symtab_entry entry : A.entries) {
 			// entries.push_back(*i);
-			entries.add(i.next());
+			entries.add(entry);
 		}
 		A.entries.clear();
 	}
@@ -163,8 +158,8 @@ public class gm_symtab {
 
 	public final int get_graph_declaration_count() {
 		int count = 0;
-		for (java.util.Iterator<gm_symtab_entry> II = entries.iterator(); II.hasNext();) {
-			ast_typedecl entryType = (II.next()).getType();
+		for (gm_symtab_entry entry : entries) {
+			ast_typedecl entryType = entry.getType();
 			if (entryType.is_graph()) {
 				count++;
 			}

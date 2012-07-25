@@ -238,9 +238,7 @@ public class gm_rw_analysis extends gm_apply {
 			{
 				gm_symtab_entry org_sym = target_sym;
 				LinkedList<ast_node> L = a.get_lhs_list();
-				Iterator<ast_node> I;
-				for (I = L.iterator(); I.hasNext();) {
-					ast_node n = I.next();
+				for (ast_node n : L) {
 					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) n;
 						target_sym = id.getSymInfo();
@@ -312,9 +310,8 @@ public class gm_rw_analysis extends gm_apply {
 		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> M = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets.mutate_set);
 
 		LinkedList<ast_sent> sents = s.get_sents();
-		Iterator<ast_sent> i;
-		for (i = sents.iterator(); i.hasNext();) {
-			gm_rwinfo_sets sets2 = GlobalMembersGm_rw_analysis.get_rwinfo_sets(i.next());
+		for (ast_sent sent : sents) {
+			gm_rwinfo_sets sets2 = GlobalMembersGm_rw_analysis.get_rwinfo_sets(sent);
 			// C++ TO JAVA CONVERTER WARNING: The following line was determined
 			// to be a copy constructor call - this should be verified and a
 			// copy constructor should be created if it does not yet exist:
@@ -656,16 +653,15 @@ public class gm_rw_analysis extends gm_apply {
 		// Mutation LIST
 		// -----------------------------------------
 		LinkedList<ast_node> L = f.get_modified();
-		Iterator<ast_node> I;
 		gm_rwinfo new_entry = null;
-		for (I = L.iterator(); I.hasNext();) {
-			if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
-				ast_id id = (ast_id) I.next();
+		for (ast_node node : L) {
+			if (node.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+				ast_id id = (ast_id) node;
 				target_sym = id.getSymInfo();
 				assert target_sym != null;
 				new_entry = gm_rwinfo.new_scala_inst(id, GM_REDUCE_T.GMREDUCE_NULL, null);
-			} else if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
-				ast_field fld = (ast_field) I.next();
+			} else if (node.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+				ast_field fld = (ast_field) node;
 				target_sym = fld.get_second().getSymInfo();
 				gm_symtab_entry iter_sym = fld.get_first().getSymInfo();
 				assert target_sym != null;

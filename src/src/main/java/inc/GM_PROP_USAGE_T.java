@@ -19,6 +19,3 @@ public enum GM_PROP_USAGE_T
 		return values()[value];
 	}
 }
-//DEF_STRING(GMUSAGE_PROPERTY);
-
-

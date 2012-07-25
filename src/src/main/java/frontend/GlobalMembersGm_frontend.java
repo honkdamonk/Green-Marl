@@ -64,7 +64,7 @@ public class GlobalMembersGm_frontend {
 	// gm_apply_compiler_stage(java.util.LinkedList<gm_compile_step> LIST);
 	// extern boolean gm_apply_all_proc(gm_compile_step S);
 
-	public static String GMUSAGE_PROPERTY = "X";
+	public static String GMUSAGE_PROPERTY = "GMUSAGE_PROPERTY";
 
 	// --------------------------------------------
 	// Functions called from gm_grammer.y

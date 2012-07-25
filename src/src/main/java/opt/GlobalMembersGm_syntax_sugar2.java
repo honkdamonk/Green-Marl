@@ -90,10 +90,10 @@ public class GlobalMembersGm_syntax_sugar2 {
 
 	// static void mark_
 
-	public static String OPT_FLAG_NESTED_REDUCTION = "X";
-	public static String OPT_SYM_NESTED_REDUCTION_TARGET = "X";
-	public static String OPT_SYM_NESTED_REDUCTION_BOUND = "X";
-	public static String OPT_SB_NESTED_REDUCTION_SCOPE = "X";
+	public static String OPT_FLAG_NESTED_REDUCTION = "OPT_FLAG_NESTED_REDUCTION";
+	public static String OPT_SYM_NESTED_REDUCTION_TARGET = "OPT_SYM_NESTED_REDUCTION_TARGET";
+	public static String OPT_SYM_NESTED_REDUCTION_BOUND = "OPT_SYM_NESTED_REDUCTION_BOUND";
+	public static String OPT_SB_NESTED_REDUCTION_SCOPE = "OPT_SB_NESTED_REDUCTION_SCOPE";
 
 	public static gm_method_id_t find_count_function(GMTYPE_T source_type, GMTYPE_T iter_type) {
 		if (source_type.is_graph_type()) {

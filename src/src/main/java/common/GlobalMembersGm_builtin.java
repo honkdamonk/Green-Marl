@@ -30,10 +30,10 @@ public class GlobalMembersGm_builtin {
 	// in-line:
 	// /#define GM_BLTIN_FLAG_TRUE true
 
-	public static String GM_BLTIN_INFO_USE_REVERSE = "X";
-	public static String GM_BLTIN_INFO_CHECK_NBR = "X";
-	public static String GM_BLTIN_INFO_NEED_FROM = "X";
-	public static String GM_BLTIN_INFO_MUTATING = "X";
+	public static String GM_BLTIN_INFO_USE_REVERSE = "GM_BLTIN_INFO_USE_REVERSE";
+	public static String GM_BLTIN_INFO_CHECK_NBR = "GM_BLTIN_INFO_CHECK_NBR";
+	public static String GM_BLTIN_INFO_NEED_FROM = "GM_BLTIN_INFO_NEED_FROM";
+	public static String GM_BLTIN_INFO_MUTATING = "GM_BLTIN_INFO_MUTATING";
 
 	public static final gm_builtin_desc_t[] GM_builtins = { //
 			new gm_builtin_desc_t("Graph:NumNodes:Int:0", gm_method_id_t.GM_BLTIN_GRAPH_NUM_NODES, ""),

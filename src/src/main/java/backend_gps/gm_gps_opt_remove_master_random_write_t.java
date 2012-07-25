@@ -36,11 +36,9 @@ import common.gm_apply;
 // replace random-write in sequential context
 //-----------------------------------------------------
 
-public class gm_gps_opt_remove_master_random_write_t extends gm_apply
-{
+public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 
-	public gm_gps_opt_remove_master_random_write_t()
-	{
+	public gm_gps_opt_remove_master_random_write_t() {
 		set_for_sent(true);
 		set_separate_post_apply(true);
 		depth = 0;
@@ -48,19 +46,15 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply
 
 	// pre
 	@Override
-	public boolean apply(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
-		{
-			if (((ast_foreach)s).is_parallel())
+	public boolean apply(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+			if (((ast_foreach) s).is_parallel())
 				depth++;
 		}
 
-		if ((depth == 0) && (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN))
-		{
+		if ((depth == 0) && (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)) {
 			ast_assign a = (ast_assign) s;
-			if (!a.is_target_scalar() && !a.is_reduce_assign())
-			{
+			if (!a.is_target_scalar() && !a.is_reduce_assign()) {
 				if (a.get_lhs_field().get_first().getTypeInfo().get_target_graph_sym() != null)
 					targets.addLast(a);
 			}
@@ -69,42 +63,38 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply
 	}
 
 	@Override
-	public boolean apply2(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
-		{
-			if (((ast_foreach)s).is_parallel())
+	public boolean apply2(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+			if (((ast_foreach) s).is_parallel())
 				depth--;
 		}
 		return true;
 	}
 
-	public final void post_process()
-	{
+	public final void post_process() {
 		java.util.Iterator<ast_assign> I;
-		for (I = targets.iterator(); I.hasNext();)
-		{
+		for (I = targets.iterator(); I.hasNext();) {
 			ast_assign a = I.next();
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			ast_sentblock sb = (ast_sentblock) a.get_parent();
 
-
-			byte[] name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_t", null, true);
+			String name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_t", null, true);
 			ast_id id = ast_id.new_id(name, a.get_line(), a.get_col());
 			ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
-			ast_foreach foreach_out = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(id, a.get_lhs_field().get_first().getTypeInfo().get_target_graph_id().copy(true), foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
+			ast_foreach foreach_out = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(id, a.get_lhs_field().get_first().getTypeInfo()
+					.get_target_graph_id().copy(true), foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
 			GlobalMembersGm_transform_helper.gm_add_sent_after(a, foreach_out);
 			name = null;
 			GlobalMembersGm_transform_helper.gm_ripoff_sent(a);
 
-			ast_expr check = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ, ast_expr.new_id_expr(foreach_out.get_iterator().copy(true)), ast_expr.new_id_expr(a.get_lhs_field().get_first().copy(true)));
+			ast_expr check = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ, ast_expr.new_id_expr(foreach_out.get_iterator().copy(true)),
+					ast_expr.new_id_expr(a.get_lhs_field().get_first().copy(true)));
 
 			ast_field f = a.get_lhs_field();
 			f.get_first().setSymInfo(foreach_out.get_iterator().getSymInfo());
 
 			ast_if iff = ast_if.new_if(check, a, null);
 			foreach_sb.add_sent(iff);
-
 		}
 	}
 

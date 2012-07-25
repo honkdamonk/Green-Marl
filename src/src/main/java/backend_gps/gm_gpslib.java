@@ -650,9 +650,9 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public static void genPutIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_gpslib lib) {
-		if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type))
+		if (gm_type.is_node_compatible_type())
 			gm_type = GMTYPE_T.GMTYPE_NODE; // TODO setting input var?
-		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(gm_type))
+		if (gm_type.is_edge_compatible_type())
 			gm_type = GMTYPE_T.GMTYPE_EDGE; // TODO setting input var?
 
 		// assumtion: IOB name is IOB
@@ -704,9 +704,9 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public static void genGetIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_gpslib lib) {
-		if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type))
+		if (gm_type.is_node_compatible_type())
 			gm_type = GMTYPE_T.GMTYPE_NODE;
-		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(gm_type))
+		if (gm_type.is_edge_compatible_type())
 			gm_type = GMTYPE_T.GMTYPE_EDGE;
 
 		// assumtion: IOB name is IOB
@@ -752,7 +752,7 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public static void genReadByte(String name, GMTYPE_T gm_type, int offset, gm_code_writer Body, gm_gpslib lib) {
-		if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type)) {
+		if (gm_type.is_node_compatible_type()) {
 			gm_type = (lib.is_node_type_int()) ? GMTYPE_T.GMTYPE_INT : GMTYPE_T.GMTYPE_LONG;
 		}
 		// assumption: "byte[] _BA, int _idx"

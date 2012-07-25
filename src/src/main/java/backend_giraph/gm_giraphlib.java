@@ -607,9 +607,9 @@ public class gm_giraphlib extends gm_gpslib
 
     public static void genPutIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_giraphlib lib)
     {
-        if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type))
+        if (gm_type.is_node_compatible_type())
             gm_type = GMTYPE_T.GMTYPE_NODE; //TODO setting input var?
-        if (GlobalMembersGm_defs.gm_is_edge_compatible_type(gm_type))
+        if (gm_type.is_edge_compatible_type())
             gm_type = GMTYPE_T.GMTYPE_EDGE; //TODO setting input var?
 
         Body.push("out.");
@@ -662,9 +662,9 @@ public class gm_giraphlib extends gm_gpslib
     }
     public static void genGetIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_giraphlib lib)
     {
-        if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type))
+        if (gm_type.is_node_compatible_type())
             gm_type = GMTYPE_T.GMTYPE_NODE;
-        if (GlobalMembersGm_defs.gm_is_edge_compatible_type(gm_type))
+        if (gm_type.is_edge_compatible_type())
             gm_type = GMTYPE_T.GMTYPE_EDGE;
 
         Body.push(name);

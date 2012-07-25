@@ -68,20 +68,16 @@ public class opt_scalar_reduction_t extends gm_apply {
 		assert fe.is_parallel();
 
 		boolean has_scalar_reduction = false;
-		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> I;
-		for (I = B.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next().getKey();
+		for (gm_symtab_entry e : B.keySet()) {
 			if (e.getType().is_property())
 				continue;
 
 			has_scalar_reduction = true;
 			break;
-
 		}
 
 		if (has_scalar_reduction)
 			_targets.addLast(fe);
-
 		return true;
 	}
 

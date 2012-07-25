@@ -1,6 +1,11 @@
 package frontend;
 
+import inc.GMTYPE_T;
+
+import backend_cpp.DefineConstants;
+
 import inc.GM_REDUCE_T;
+import inc.gm_assignment_location_t;
 
 import java.util.HashMap;
 import java.util.Iterator;
@@ -187,7 +192,7 @@ public class gm_rw_analysis extends gm_apply {
 		// (1) LHS
 		boolean is_reduce = (a.is_reduce_assign() || a.is_defer_assign());
 		gm_symtab_entry bound_sym = null;
-		int bound_op = GM_REDUCE_T.GMREDUCE_NULL.getValue();
+		GM_REDUCE_T bound_op = GM_REDUCE_T.GMREDUCE_NULL;
 		if (is_reduce) {
 			assert a.get_bound() != null;
 			bound_sym = a.get_bound().getSymInfo();
@@ -260,14 +265,19 @@ public class gm_rw_analysis extends gm_apply {
 		if (is_group_assign) // [deprecated]
 		{
 			assert false;
-			range_cond_t RR = new range_cond_t(gm_range_type_t.GM_RANGE_LINEAR, true);
-			GlobalMembersGm_rw_analysis.Default_DriverMap.put(graph_sym, RR);
+			throw new AssertionError();
+			// dead code range_cond_t RR = new
+			// range_cond_t(gm_range_type_t.GM_RANGE_LINEAR, true);
+			// dead code
+			// GlobalMembersGm_rw_analysis.Default_DriverMap.put(graph_sym, RR);
 		}
 		GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(rhs, R);
 		if (is_group_assign) // [deprecated]
 		{
 			assert false;
-			GlobalMembersGm_rw_analysis.Default_DriverMap.remove(graph_sym);
+			throw new AssertionError();
+			// dead code
+			// GlobalMembersGm_rw_analysis.Default_DriverMap.remove(graph_sym);
 		}
 
 		return is_okay;
@@ -488,27 +498,28 @@ public class gm_rw_analysis extends gm_apply {
 		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D_temp2 = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>();
 		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> M_temp = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>();
 
-		int iter_type = a.get_iter_type(); // should be GMTYPE_NODEITER_BFS ||
-											// GMTYPE_NODEIER_DFS
+		GMTYPE_T iter_type = a.get_iter_type(); // should be GMTYPE_NODEITER_BFS
+												// ||
+		// GMTYPE_NODEIER_DFS
 		gm_symtab_entry it = a.get_iterator().getSymInfo();
 		assert it != null;
 
 		if (a.get_navigator() != null) {
-			range_cond_t R = new range_cond_t(gm_range_type_t.GM_RANGE_LEVEL_DOWN, true);
-			GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
+			range_cond_t R_alt = new range_cond_t(gm_range_type_t.GM_RANGE_LEVEL_DOWN, true);
+			GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R_alt);
 			GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(a.get_navigator(), R_temp);
 			GlobalMembersGm_rw_analysis.Default_DriverMap.remove(it);
 		}
 
 		if (a.get_f_filter() != null) {
-			range_cond_t R = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
-			GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
+			range_cond_t R_alt = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
+			GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R_alt);
 			GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(a.get_f_filter(), R_temp);
 			GlobalMembersGm_rw_analysis.Default_DriverMap.remove(it);
 		}
 		if (a.get_b_filter() != null) {
-			range_cond_t R = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
-			GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
+			range_cond_t R_alt = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
+			GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R_alt);
 			GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(a.get_b_filter(), R_temp);
 			GlobalMembersGm_rw_analysis.Default_DriverMap.remove(it);
 		}
@@ -638,7 +649,7 @@ public class gm_rw_analysis extends gm_apply {
 
 		gm_symtab_entry bound_sym = null;
 		gm_symtab_entry target_sym = null;
-		int bound_op = GM_REDUCE_T.GMREDUCE_NULL.getValue();
+		GM_REDUCE_T bound_op = GM_REDUCE_T.GMREDUCE_NULL;
 		boolean is_okay = true;
 
 		// -----------------------------------------

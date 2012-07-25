@@ -1,15 +1,17 @@
 package backend_gps;
 
-import ast.ast_expr;
+import static inc.GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE;
+import inc.GlobalMembersGm_backend_gps;
 
+import java.util.LinkedList;
+
+import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_id;
-import frontend.gm_symtab_entry;
-import inc.GlobalMembersGm_backend_gps;
 
 import common.gm_apply;
 
-import static inc.GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE;
+import frontend.gm_symtab_entry;
 
 //---------------------------------------------------------------------
 // Find scope of each expression
@@ -82,10 +84,8 @@ public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
 			gm_gps_new_scope_analysis_t t2 = get_scope_from_driver(i.getSymInfo());
 
 			// scope of arguments
-			java.util.Iterator<ast_expr> I;
-			java.util.LinkedList<ast_expr> L = b.get_args();
-			for (I = L.iterator(); I.hasNext();) {
-				ast_expr ee = I.next();
+			LinkedList<ast_expr> L = b.get_args();
+			for (ast_expr ee : L) {
 				t2 = gm_gps_new_scope_analysis_t.get_more_restricted_scope(t2, gm_gps_new_scope_analysis_t.forValue(ee.find_info_int(GPS_INT_EXPR_SCOPE)));
 			}
 

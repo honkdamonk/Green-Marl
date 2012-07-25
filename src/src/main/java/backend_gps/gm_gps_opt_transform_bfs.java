@@ -31,10 +31,8 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step
     
 		gps_opt_find_bfs_t T = new gps_opt_find_bfs_t();
 		p.traverse_both(T);
-		java.util.Iterator<ast_bfs> I;
-		for (I = T.get_targets().iterator(); I.hasNext();)
+		for (ast_bfs b : T.get_targets())
 		{
-			ast_bfs b = I.next();
 			GlobalMembersGm_gps_opt_transform_bfs.gm_gps_rewrite_bfs(b);
 		}
     

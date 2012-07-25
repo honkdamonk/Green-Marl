@@ -1,5 +1,7 @@
 package backend_gps;
 
+import java.util.LinkedList;
+
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
@@ -33,11 +35,8 @@ public class gm_gps_opt_merge_ebb_again extends gm_compile_step
 		//-------------------------------------------
 		// Apply State Merge
 		//-------------------------------------------
-		java.util.Iterator<java.util.LinkedList<gm_gps_basic_block>> L;
-		for (L = all_lists.iterator(); L.hasNext();)
+		for (LinkedList<gm_gps_basic_block> CL : all_lists)
 		{
-			java.util.LinkedList<gm_gps_basic_block> CL = L.next();
-			java.util.Iterator<gm_gps_basic_block> I;
 			if (CL.size() == 0)
 				continue;
 			/*

@@ -72,9 +72,7 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 	}
 
 	public final void post_process() {
-		java.util.Iterator<ast_assign> I;
-		for (I = targets.iterator(); I.hasNext();) {
-			ast_assign a = I.next();
+		for (ast_assign a : targets) {
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			ast_sentblock sb = (ast_sentblock) a.get_parent();
 

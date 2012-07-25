@@ -63,10 +63,8 @@ public class gps_rewrite_rhs_preprocessing_t extends gm_apply
 	}
 	public final void process()
 	{
-		java.util.Iterator<ast_foreach> I;
-		for (I = inner_loops.iterator(); I.hasNext();)
+		for (ast_foreach fe : inner_loops)
 		{
-			ast_foreach fe = I.next();
 			ast_sent s = fe.get_body();
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(s);
 

@@ -52,19 +52,16 @@ public class GlobalMembersGm_merge_sentblock
 		// (3.2) other sentneces at the bottem
 		ast_sent anchor = null;
 		java.util.LinkedList<ast_sent> Ps = P.get_sents();
-		java.util.Iterator<ast_sent> it;
-		for (it = Ps.iterator(); it.hasNext();)
+		for (ast_sent s : Ps)
 		{
-			ast_sent s = it.next();
 			if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL) // stop at the first non-decl sentence
 				break;
 			anchor = s;
 		}
 
 		java.util.LinkedList<ast_sent> Qs = Q.get_sents(); // work on a copy
-		for (it = Qs.iterator(); it.hasNext();)
+		for (ast_sent s : Qs)
 		{
-			ast_sent s = it.next();
 			GlobalMembersGm_transform_helper.gm_ripoff_sent(s);
 			if (s.get_nodetype() == AST_NODE_TYPE.AST_VARDECL)
 			{

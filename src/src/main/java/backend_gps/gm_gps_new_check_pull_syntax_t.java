@@ -48,9 +48,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply {
 			}
 
 			if (a.has_lhs_list()) {
-				java.util.Iterator<ast_node> I;
-				for (I = a.get_lhs_list().iterator(); I.hasNext();) {
-					ast_node n = I.next();
+				for (ast_node n : a.get_lhs_list()) {
 					gm_gps_new_scope_analysis_t scope2;
 					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						scope2 = get_scope_from_id(((ast_id) n).getSymInfo());

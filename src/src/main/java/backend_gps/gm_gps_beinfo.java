@@ -76,9 +76,7 @@ public class gm_gps_beinfo extends gm_backend_info {
 	public final gm_gps_communication_symbol_info find_communication_symbol_info(gm_gps_comm_unit C, gm_symtab_entry sym) {
 		assert comm_symbol_info.containsKey(C);
 		LinkedList<gm_gps_communication_symbol_info> sym_info = comm_symbol_info.get(C);
-		Iterator<gm_gps_communication_symbol_info> I;
-		for (I = sym_info.iterator(); I.hasNext();) {
-			gm_gps_communication_symbol_info S = I.next();
+		for (gm_gps_communication_symbol_info S : sym_info) {
 			if (S.symbol == sym) // found
 				return S;
 		}
@@ -130,7 +128,6 @@ public class gm_gps_beinfo extends gm_backend_info {
 		assert comm_symbol_info.containsKey(C);
 
 		LinkedList<gm_gps_communication_symbol_info> sym_info = comm_symbol_info.get(C);
-		Iterator<gm_gps_communication_symbol_info> I;
 		gm_gps_communication_size_info size_info = comm_size_info.get(C);
 
 		GMTYPE_T target_type;
@@ -148,8 +145,7 @@ public class gm_gps_beinfo extends gm_backend_info {
 			throw new AssertionError();
 		}
 		int idx = 0;
-		for (I = sym_info.iterator(); I.hasNext();) {
-			gm_gps_communication_symbol_info S = I.next();
+		for (gm_gps_communication_symbol_info S : sym_info) {
 			if (S.symbol == sym) // already added
 				return;
 			if (S.gm_type == target_type)
@@ -242,9 +238,9 @@ public class gm_gps_beinfo extends gm_backend_info {
 
 	// get maximum communication size over all comm-loops
 	public final void compute_max_communication_size() {
-		for (gm_gps_comm_unit value : comm_loops) {
-			ast_foreach fe = value.fe;
-			gm_gps_communication_size_info size_info = comm_size_info.get(value);
+		for (gm_gps_comm_unit unit : this.comm_loops) {
+			ast_foreach fe = unit.fe;
+			gm_gps_communication_size_info size_info = (comm_size_info.get(unit));
 
 			if (max_comm_size.num_int < size_info.num_int) {
 				max_comm_size.num_int = size_info.num_int;

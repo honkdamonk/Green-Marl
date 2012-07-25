@@ -14,13 +14,11 @@ public class gm_fe_check_property_argument_usage extends gm_compile_step
 	{
 		gm_symtab props = proc.get_symtab_field();
 		java.util.HashSet<gm_symtab_entry> SET = props.get_entries();
-		java.util.Iterator<gm_symtab_entry> I;
 		java.util.HashSet<gm_symtab_entry> write_or_read_write = new java.util.HashSet<gm_symtab_entry>();
 		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(proc.get_body()).read_set;
 		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(proc.get_body()).write_set;
-		for (I = SET.iterator(); I.hasNext();)
+		for (gm_symtab_entry e : SET)
 		{
-			gm_symtab_entry e = I.next();
 			if ((!R.containsKey(e)) && (!W.containsKey(e)))
 				e.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_UNUSED);
 			else if ((!R.containsKey(e)) && (W.containsKey(e)))

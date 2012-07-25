@@ -103,9 +103,7 @@ public class gm_frontend {
 	// Interface to compiler main
 	public final boolean do_local_frontend_process() {
 		// create information objects for all procedures
-		java.util.Iterator<ast_procdef> I;
-		for (I = procs.iterator(); I.hasNext();) {
-			ast_procdef p = I.next();
+		for (ast_procdef p : procs) {
 			proc_info.put(p, new gm_procinfo(p));
 		}
 
@@ -118,17 +116,15 @@ public class gm_frontend {
 	// ----------------------------------------------------------------------------------------
 	public final void reproduce() {
 
-		java.util.Iterator<ast_procdef> it;
-		for (it = procs.iterator(); it.hasNext();) {
-			(it.next()).reproduce(0);
+		for (ast_procdef p : procs) {
+			p.reproduce(0);
 		}
 	}
 
 	public final void dump_tree() {
 
-		java.util.Iterator<ast_procdef> it;
-		for (it = procs.iterator(); it.hasNext();) {
-			(it.next()).dump_tree(0);
+		for (ast_procdef p : procs) {
+			p.dump_tree(0);
 		}
 	}
 

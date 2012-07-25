@@ -21,9 +21,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> rset,
 	// HashMap<gm_symtab_entry, range_cond_t> DrvMap);
 	public static boolean is_reported(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, int y) {
-		java.util.Iterator<conf_info_t> i;
-		for (i = errors.iterator(); i.hasNext();) {
-			conf_info_t db = i.next();
+		for (conf_info_t db : errors) {
 			if ((db.sym1 == t) && (db.sym2 == b) && (db.conflict_type == y))
 				return true;
 		}
@@ -359,7 +357,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 
 			// find exact match
 			LinkedList<gm_rwinfo> list = W.get(w_sym);
-			for (gm_rwinfo : R : list) {
+			for (gm_rwinfo R : list) {
 				if (Q._check_range && (Q.range != R.access_range)) {
 					continue;
 				}
@@ -400,11 +398,13 @@ public class GlobalMembersGm_rw_analysis_check2 {
 			else
 				System.out.printf("{%s:", e.getId().get_orgname());
 
-			java.util.Iterator<gm_rwinfo> ii;
-			for (ii = l.iterator(); ii.hasNext();) {
-				if (ii != l.iterator())
+			boolean _first = true;
+			for (gm_rwinfo info : l) {
+				if (_first)
+					_first = false;
+				else
 					System.out.print(",");
-				(ii.next()).print();
+				info.print();
 			}
 			System.out.print("}");
 		}

@@ -30,10 +30,8 @@ public class gm_fe_check_argmin_lhs_consistency extends gm_apply {
 			return false;
 
 		java.util.LinkedList<ast_node> L = a.get_lhs_list();
-		java.util.Iterator<ast_node> I;
 		if (a.is_target_scalar()) {
-			for (I = L.iterator(); I.hasNext();) {
-				ast_node n = I.next();
+			for (ast_node n : L) {
 				if (n.get_nodetype() != AST_NODE_TYPE.AST_ID) {
 					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INCONSISTENT_ARGMAX, n.get_line(), n.get_col());
 					_is_okay = false;
@@ -41,8 +39,7 @@ public class gm_fe_check_argmin_lhs_consistency extends gm_apply {
 			}
 		} else {
 			gm_symtab_entry sym = a.get_lhs_field().get_first().getSymInfo();
-			for (I = L.iterator(); I.hasNext();) {
-				ast_node n = I.next();
+			for (ast_node n : L) {
 				if (n.get_nodetype() != AST_NODE_TYPE.AST_FIELD) {
 					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INCONSISTENT_ARGMAX, n.get_line(), n.get_col());
 					_is_okay = false;

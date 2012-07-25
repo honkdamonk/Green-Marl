@@ -67,6 +67,16 @@ public:
 
     virtual void clear() = 0;
 
+protected:
+
+    static bool compare_smaller(Value a, Value b) {
+        return a < b;
+    }
+
+    static bool compare_greater(Value a, Value b) {
+        return a > b;
+    }
+
 };
 
 template<class Key, class Value, Value defaultValue>
@@ -77,9 +87,104 @@ private:
     gm_spinlock_t lock;
     typedef typename map<Key, Value>::iterator Iterator;
 
+#ifdef  __clang__
+
+    template<class Function>
+    inline Value getValue_generic(Function compare) {
+        assert(size() > 0);
+        Iterator iter = data.begin();
+        Value value = iter->second;
+        #pragma omp parallel for
+        for (iter = data.begin(); iter != data.end(); iter++) {
+            if (compare(iter->second, value)) {
+                #pragma omp critical
+                if(compare(iter->second, value)) {
+                    value = iter->second;
+                }
+            }
+        }
+        return value;
+    }
+
+    template<class Function>
+    inline Key getKey_generic(Function compare) {
+        assert(size() > 0);
+        Iterator iter = data.begin();
+        Key key = iter->first;
+        Value value = iter->second;
+        #pragma omp parallel for
+        for (iter = data.begin(); iter != data.end(); iter++) {
+            if (compare(iter->second, value)) {
+                #pragma omp critical
+                if(compare(iter->second, value)) {
+                    key = iter->first;
+                    value = iter->second;
+                }
+            }
+        }
+        return key;
+    }
+
+    template<class Function>
+    inline bool hasValue_generic(Function compare, const Key key) {
+        if (size() == 0 || !hasKey(key)) return false;
+        Value value = data[key];
+        bool result = true;
+        #pragma omp parallel for
+        for (Iterator iter = data.begin(); iter != data.end(); iter++) {
+            if (compare(iter->second, value)) result = false;
+        }
+        return result;
+    }
+
+#elif __GNUC__
+
+    template<class Function>
+    inline Value getValue_generic(Function compare) {
+        assert(size() > 0);
+        Iterator iter = data.begin();
+        Value value = iter->second;
+        for (iter++; iter != data.end(); iter++) {
+            if (compare(iter->second, value)) {
+                value = iter->second;
+            }
+        }
+        return value;
+    }
+
+    template<class Function>
+    inline Key getKey_generic(Function compare) {
+        assert(size() > 0);
+        Iterator iter = data.begin();
+        Key key = iter->first;
+        Value value = iter->second;
+        for (iter++; iter != data.end(); iter++) {
+            if (compare(iter->second, value)) {
+                key = iter->first;
+                value = iter->second;
+            }
+        }
+        return key;
+    }
+
+    template<class Function>
+    inline bool hasValue_generic(Function compare, const Key key) {
+        if (size() == 0 || !hasKey(key)) return false;
+        Value value = data[key];
+        bool result = true;
+        for (Iterator iter = data.begin(); iter != data.end(); iter++) {
+            if (compare(iter->second, value)) result = false;
+        }
+        return result;
+    }
+
+#else
+#error "Your compiler is not supported. Use GCC or Clang"
+#endif
+
+
 public:
     gm_map_small() : lock(0) {
-
     }
 
     ~gm_map_small() {
@@ -103,67 +208,27 @@ public:
     }
 
     bool hasMaxValue(const Key key) {
-        if (size() == 0 || !hasKey(key)) return false;
-        Value value = data[key];
-        for (Iterator iter = data.begin(); iter != data.end(); iter++)
-            if (value < iter->second) return false;
-        return true;
+        return hasValue_generic(&gm_map<Key, Value>::compare_greater, key);
     }
 
     bool hasMinValue(const Key key) {
-        if (size() == 0 || !hasKey(key)) return false;
-        Value value = data[key];
-        for (Iterator iter = data.begin(); iter != data.end(); iter++)
-            if (value > iter->second) return false;
-        return true;
+        return hasValue_generic(&gm_map<Key, Value>::compare_smaller, key);
     }
 
     Key getMaxKey() {
-        assert(size() > 0);
-        Iterator iter = data.begin();
-        Key key = iter->first;
-        Value value = iter->second;
-        for (iter++; iter != data.end(); iter++)
-            if (value < iter->second) {
-                key = iter->first;
-                value = iter->second;
-            }
-        return key;
+        return getKey_generic(&gm_map<Key, Value>::compare_greater);
     }
 
     Key getMinKey() {
-        assert(size() > 0);
-        Iterator iter = data.begin();
-        Key key = iter->first;
-        Value value = iter->second;
-        for (iter++; iter != data.end(); iter++)
-            if (value > iter->second) {
-                key = iter->first;
-                value = iter->second;
-            }
-        return key;
+        return getKey_generic(&gm_map<Key, Value>::compare_smaller);
     }
 
     Value getMaxValue() {
-        assert(size() > 0);
-        Iterator iter = data.begin();
-        Value value = iter->second;
-        for (iter++; iter != data.end(); iter++)
-            if (value < iter->second) {
-                value = iter->second;
-            }
-        return value;
+        return getValue_generic(&gm_map<Key, Value>::compare_greater);
     }
 
     Value getMinValue() {
-        assert(size() > 0);
-        Iterator iter = data.begin();
-        Value value = iter->second;
-        for (iter++; iter != data.end(); iter++)
-            if (value > iter->second) {
-                value = iter->second;
-            }
-        return value;
+        return getValue_generic(&gm_map<Key, Value>::compare_smaller);
     }
 
     size_t size() {
@@ -247,7 +312,7 @@ private:
     }
 
     template<class Function>
-    inline bool hasKey_generic(Function compare, const Key key) {
+    inline bool hasValue_generic(Function compare, const Key key) {
         if (size() == 0 || !hasKey(key)) return false;
         Value value = data[key];
         bool result = true;
@@ -255,14 +320,6 @@ private:
         for (int i = 0; i < size(); i++)
             if (valid[i] && compare(data[i], value)) result = false;
         return result;
-    }
-
-    static bool compare_smaller(Value a, Value b) {
-        return a < b;
-    }
-
-    static bool compare_greater(Value a, Value b) {
-        return a > b;
     }
 
 public:
@@ -296,27 +353,27 @@ public:
     }
 
     bool hasMaxValue(const Key key) {
-        return hasKey_generic(&compare_greater, key);
+        return hasValue_generic(&gm_map<Key, Value>::compare_greater, key);
     }
 
     bool hasMinValue(const Key key) {
-        return hasKey_generic(&compare_smaller, key);
+        return hasValue_generic(&gm_map<Key, Value>::compare_smaller, key);
     }
 
     Key getMaxKey() {
-        return getKey_generic(&compare_greater, gm_get_min<Value>());
+        return getKey_generic(&gm_map<Key, Value>::compare_greater, gm_get_min<Value>());
     }
 
     Key getMinKey() {
-        return getKey_generic(&compare_smaller, gm_get_max<Value>());
+        return getKey_generic(&gm_map<Key, Value>::compare_smaller, gm_get_max<Value>());
     }
 
     Value getMaxValue() {
-        return getValue_generic(std::max<Value>, gm_get_min<Value>());
+        return getValue_generic(&std::max<Value>, gm_get_min<Value>());
     }
 
     Value getMinValue() {
-        return getValue_generic(std::min<Value>, gm_get_max<Value>());
+        return getValue_generic(&std::min<Value>, gm_get_max<Value>());
     }
 
     size_t size() {

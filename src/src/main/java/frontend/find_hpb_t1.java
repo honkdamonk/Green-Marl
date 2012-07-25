@@ -72,7 +72,7 @@ public class find_hpb_t1 extends gm_apply {
 
 	// phase 1: create depth_map
 	@Override
-	public boolean apply(gm_symtab_entry e, int symtab_type) {
+	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
 		depth_map.put(e, current_depth);
 		return true;
 	}

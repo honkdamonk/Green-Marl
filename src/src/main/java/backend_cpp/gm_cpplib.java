@@ -4,6 +4,7 @@ import inc.GMTYPE_T;
 import inc.GlobalMembersGm_backend_cpp;
 import inc.gm_code_writer;
 import inc.gm_graph_library;
+import inc.nop_enum_cpp;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_builtin_field;
@@ -146,12 +147,12 @@ public class gm_cpplib extends gm_graph_library {
 	}
 
 	public void generate_sent_nop(ast_nop f) {
-		int subtype = f.get_subtype();
+		nop_enum_cpp subtype = f.get_subtype();
 		switch (subtype) {
 		default:
 			assert false;
 			break;
-		}
+		} //FIXME wtf? o.O
 	}
 
 	public void generate_expr_builtin(ast_expr_builtin e, gm_code_writer Body) {
@@ -261,7 +262,7 @@ public class gm_cpplib extends gm_graph_library {
 			break;
 		default:
 			assert false;
-			break;
+			throw new AssertionError();
 		}
 
 		String.format(str_buf, "%s.%s(", i.get_genname(), func_name);

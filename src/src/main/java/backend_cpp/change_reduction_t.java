@@ -29,17 +29,10 @@ public class change_reduction_t extends gm_apply {
 
 		ast_id lhs = a.get_lhs_scala();
 
-		java.util.Iterator<gm_symtab_entry, gm_symtab_entry> I;
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy assignment (rather than a reference assignment) - this
-		// should be verified and a 'copyFrom' method should be created if it
-		// does not yet exist:
-		// ORIGINAL LINE: I = symbol_map->find(lhs->getSymInfo());
-		I.copyFrom(symbol_map.get(lhs.getSymInfo()));
-		if (I == symbol_map.end()) // not target
+		if (!symbol_map.containsKey(lhs.getSymInfo())) // not target
 			return true;
 
-		gm_symtab_entry new_target = I.next().getValue();
+		gm_symtab_entry new_target = symbol_map.get(lhs.getSymInfo());
 
 		// change lhs symbol
 		lhs.setSymInfo(new_target);

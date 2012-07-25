@@ -388,11 +388,12 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// For debug
 	// -----------------------------------------------------
 	public static void gm_print_rwinfo_set(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> m) {
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> it;
-		for (it = m.iterator(); it.hasNext();) {
-			gm_symtab_entry e = it.next().getKey();
-			LinkedList<gm_rwinfo> l = it.next().getValue();
-			if (it != m.iterator())
+		boolean first = true;
+		for (gm_symtab_entry e : m.keySet()) {
+			LinkedList<gm_rwinfo> l = m.get(e);
+			if (first)
+				first = false;
+			else
 				System.out.print(",");
 
 			if (e.getType().is_property())

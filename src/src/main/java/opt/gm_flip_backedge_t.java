@@ -156,7 +156,7 @@ public class gm_flip_backedge_t extends gm_apply {
 							check_init.put(t, false);
 						}
 					} else {
-						if (info.access_range != gm_range_type_t.GM_RANGE_LINEAR.getValue()) {
+						if (info.access_range != gm_range_type_t.GM_RANGE_LINEAR) {
 							check_init.put(t, false);
 						} else {
 							check_init.put(t, true);

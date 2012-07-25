@@ -1,5 +1,6 @@
 package backend_gps;
 
+import tangible.RefObject;
 import ast.ast_extra_info;
 import ast.ast_foreach;
 import ast.ast_id;
@@ -242,14 +243,14 @@ public class gm_gps_basic_block
 					gm_gps_comm_unit U = I.next();
 					if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_NESTED)
 					{
-						GlobalMembersGm_reproduce.gm_push_reproduce((String) "//Receive Nested Loop");
+						GlobalMembersGm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Nested Loop"));
 						GlobalMembersGm_reproduce.gm_newline_reproduce();
 						ast_foreach fe = U.fe;
 						fe.reproduce(0);
 					}
 					else if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_RANDOM_WRITE)
 					{
-						GlobalMembersGm_reproduce.gm_push_reproduce((String) "//Receive Random Write Sent");
+						GlobalMembersGm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Random Write Sent"));
 						GlobalMembersGm_reproduce.gm_newline_reproduce();
 						java.util.LinkedList<ast_sent> LL = info.get_random_write_sents(U);
 						java.util.Iterator<ast_sent> II;

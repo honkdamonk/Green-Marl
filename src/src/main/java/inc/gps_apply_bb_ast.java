@@ -10,6 +10,7 @@ import backend_cpp.*;
 import backend_giraph.*;
 import backend_gps.gm_gps_basic_block;
 import backend_gps.gm_gps_bbtype_t;
+import backend_gps.gm_gps_beinfo;
 import backend_gps.gm_gps_comm_t;
 import backend_gps.gm_gps_comm_unit;
 import common.*;

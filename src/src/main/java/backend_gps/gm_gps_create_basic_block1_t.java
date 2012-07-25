@@ -50,7 +50,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply
 		 fflush(stdout);
 		 }
 		 */
-		(assert(s_mark.containsKey(s)));
+		assert(s_mark.containsKey(s));
 
 		if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_SEQ))
 		{
@@ -193,17 +193,14 @@ public class gm_gps_create_basic_block1_t extends gm_apply
 
 	// post
 	@Override
-	public boolean apply2(ast_sent s)
-	{
-		if (already_added)
-		{
+	public boolean apply2(ast_sent s) {
+		if (already_added) {
 			added_depth--;
 			if (added_depth == 0)
 				already_added = false;
 		}
 
-		if (prev_map.containsKey(s))
-		{
+		if (prev_map.containsKey(s)) {
 			prev = prev_stack.getFirst();
 			prev_stack.removeFirst();
 			next = next_stack.getFirst();
@@ -213,13 +210,12 @@ public class gm_gps_create_basic_block1_t extends gm_apply
 		return true;
 	}
 
-	private void insert_between_prev_next(gm_gps_basic_block bb1, gm_gps_basic_block bb2)
-	{
-		//------------------------------
+	private void insert_between_prev_next(gm_gps_basic_block bb1, gm_gps_basic_block bb2) {
+		// ------------------------------
 		// prev -> next
 		// prev -> (bb1 ... bb2) -> next
 		// bb2 becomes new prev
-		//------------------------------
+		// ------------------------------
 		assert prev.get_num_exits() == 1;
 		assert next.get_num_entries() == 1;
 
@@ -232,24 +228,22 @@ public class gm_gps_create_basic_block1_t extends gm_apply
 		prev = bb2;
 	}
 
-	private gm_gps_basic_block newBB()
-	{
+	private gm_gps_basic_block newBB() {
 		return newBB(gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ);
 	}
-//C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
-//ORIGINAL LINE: gm_gps_basic_block* newBB(int t = GM_GPS_BBTYPE_SEQ)
-	private gm_gps_basic_block newBB(int t)
-	{
+
+	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
+	// parameters. Overloaded methods are inserted above.
+	// ORIGINAL LINE: gm_gps_basic_block* newBB(int t = GM_GPS_BBTYPE_SEQ)
+	private gm_gps_basic_block newBB(gm_gps_bbtype_t gmGpsBbtypeSeq) {
 		assert gen != null;
-		gm_gps_basic_block bb = new gm_gps_basic_block(gen.issue_basicblock_id(), t);
+		gm_gps_basic_block bb = new gm_gps_basic_block(gen.issue_basicblock_id(), gmGpsBbtypeSeq);
 		return bb;
 	}
 
-	public final gm_gps_basic_block get_entry()
-	{
+	public final gm_gps_basic_block get_entry() {
 		return entry;
 	}
-
 
 	private int bb_number;
 	private java.util.HashMap<ast_sent, gm_gps_basic_block> prev_map = new java.util.HashMap<ast_sent, gm_gps_basic_block>();

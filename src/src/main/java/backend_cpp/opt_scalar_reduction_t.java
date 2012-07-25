@@ -125,16 +125,14 @@ public class opt_scalar_reduction_t extends gm_apply {
 
 		// foreach scalar boundsymbol
 		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
-		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> I;
-		for (I = B.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next().getKey();
+		for (gm_symtab_entry e : B.keySet()) {
 			if (e.getType().is_property())
 				continue;
 
-			GM_REDUCE_T reduce_type = I.next().getValue().getFirst().reduce_op;
+			GM_REDUCE_T reduce_type = B.get(e).getFirst().reduce_op;
 			GMTYPE_T e_type = e.getType().getTypeSummary();
-			boolean is_supple = I.next().getValue().getFirst().is_supplement;
-			gm_symtab_entry org_target = I.next().getValue().getFirst().org_lhs;
+			boolean is_supple = B.get(e).getFirst().is_supplement;
+			gm_symtab_entry org_target = B.get(e).getFirst().org_lhs;
 
 			if (!e_type.is_prim_type()) {
 				assert e.getType().is_node_compatible() || e.getType().is_edge_compatible();
@@ -194,9 +192,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 			new_name = null;
 		}
 
-		java.util.Iterator<gm_symtab_entry> J;
-		for (J = old_s.iterator(); J.hasNext();) {
-			gm_symtab_entry e = J.next();
+		for (gm_symtab_entry e : old_s) {
 			if (!old_supple_map.containsKey(e)) {
 				java.util.LinkedList<gm_symtab_entry> L = new java.util.LinkedList<gm_symtab_entry>(); // empty
 																										// list

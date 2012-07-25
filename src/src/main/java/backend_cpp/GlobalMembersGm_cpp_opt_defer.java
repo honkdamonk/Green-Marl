@@ -328,11 +328,10 @@ public class GlobalMembersGm_cpp_opt_defer {
 			// todo
 			ast_sentblock sb = (ast_sentblock) up;
 			java.util.LinkedList<ast_sent> sents = sb.get_sents();
-			java.util.Iterator<ast_sent> I;
-			for (I = sents.iterator(); I.hasNext();) {
-				if (I.next() == myself)
+			for (ast_sent sent : sents) {
+				if (sent == myself)
 					continue;
-				if (GlobalMembersGm_rw_analysis_check2.gm_is_modified(I.next(), e))
+				if (GlobalMembersGm_rw_analysis_check2.gm_is_modified(sent, e))
 					return true;
 			}
 		}

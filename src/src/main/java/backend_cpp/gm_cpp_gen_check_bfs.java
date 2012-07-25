@@ -30,10 +30,9 @@ public class gm_cpp_gen_check_bfs extends gm_compile_step {
 			// copy constructor should be created if it does not yet exist:
 			// ORIGINAL LINE: LinkedList<ast_sent*>&L = T.bfs_lists;
 			LinkedList<ast_sent> L = new LinkedList<ast_sent>(T.bfs_lists);
-			Iterator<ast_sent> I;
 			ast_extra_info_list BL = new ast_extra_info_list();
-			for (I = L.iterator(); I.hasNext();) {
-				BL.get_list().addLast(I.next());
+			for (ast_sent s : L) {
+				BL.get_list().addLast(s);
 			}
 			d.add_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_LIST, BL);
 		}

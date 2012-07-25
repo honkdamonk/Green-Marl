@@ -47,9 +47,9 @@ public class ast_sentblock extends ast_sent {
 			return;
 
 		java.util.LinkedList<ast_sent> sents = get_sents();
-		java.util.Iterator<ast_sent> i;
-		for (i = sents.iterator(); i.hasNext();)
-			(i.next()).traverse(a, is_post, is_pre);
+		for (ast_sent sent : sents) {
+			sent.traverse(a, is_post, is_pre);
+		}
 
 		// a->end_context(this);
 	}

@@ -19,7 +19,7 @@ public class nop_reduce_scalar extends ast_nop {
 		super(nop_enum_cpp.NOP_REDUCE_SCALAR);
 	}
 
-	public void set_symbols(LinkedList<gm_symtab_entry> O, LinkedList<gm_symtab_entry> N, LinkedList<Integer> R, LinkedList<LinkedList<gm_symtab_entry>> O_S,
+	public void set_symbols(LinkedList<gm_symtab_entry> O, LinkedList<gm_symtab_entry> N, LinkedList<GM_REDUCE_T> R, LinkedList<LinkedList<gm_symtab_entry>> O_S,
 			LinkedList<LinkedList<gm_symtab_entry>> N_S) {
 		// shallow copy the whole list
 		old_s = O;
@@ -132,7 +132,7 @@ public class nop_reduce_scalar extends ast_nop {
 
 	public LinkedList<gm_symtab_entry> old_s = new LinkedList<gm_symtab_entry>();
 	public LinkedList<gm_symtab_entry> new_s = new LinkedList<gm_symtab_entry>();
-	public LinkedList<Integer> reduce_op = new LinkedList<Integer>();
+	public LinkedList<GM_REDUCE_T> reduce_op = new LinkedList<GM_REDUCE_T>();
 	public LinkedList<LinkedList<gm_symtab_entry>> old_supple = new LinkedList<LinkedList<gm_symtab_entry>>(); // supplimental
 																												// lhs
 																												// for

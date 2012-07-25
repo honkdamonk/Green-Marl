@@ -134,18 +134,17 @@ public class ast_procdef extends ast_node {
 		// --------------------------
 		// [todo] symbol-table for (name && signature, return type)
 		// a->apply(get_procname());
-		java.util.Iterator<ast_argdecl> it;
 		{
 			java.util.LinkedList<ast_argdecl> args = get_in_args();
-			for (it = args.iterator(); it.hasNext();) {
-				ast_idlist idl = (it.next()).get_idlist();
+			for (ast_argdecl decl : args) {
+				ast_idlist idl = decl.get_idlist();
 				idl.apply_id(a, is_post);
 			}
 		}
 		{
 			java.util.LinkedList<ast_argdecl> args = get_out_args();
-			for (it = args.iterator(); it.hasNext();) {
-				ast_idlist idl = (it.next()).get_idlist();
+			for (ast_argdecl decl : args) {
+				ast_idlist idl = decl.get_idlist();
 				idl.apply_id(a, is_post);
 			}
 		}

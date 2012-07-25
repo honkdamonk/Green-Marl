@@ -316,28 +316,23 @@ public class gm_gpslib extends gm_graph_library {
 		String.format(temp, "%d;}", total);
 		Body.pushln(temp);
 
-		java.util.Iterator<gm_symtab_entry> I;
-
 		Body.pushln("@Override");
 		Body.pushln("public void write(IoBuffer IOB) {");
-		for (I = prop.iterator(); I.hasNext();) {
-			gm_symtab_entry sym = I.next();
+		for (gm_symtab_entry sym : prop) {
 			genPutIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
 		}
 		Body.pushln("}");
 
 		Body.pushln("@Override");
 		Body.pushln("public void read(IoBuffer IOB) {");
-		for (I = prop.iterator(); I.hasNext();) {
-			gm_symtab_entry sym = I.next();
+		for (gm_symtab_entry sym : prop) {
 			genGetIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
 		}
 		Body.pushln("}");
 
 		Body.pushln("@Override");
 		Body.pushln("public int read(byte[] _BA, int _idx) {");
-		for (I = prop.iterator(); I.hasNext();) {
-			gm_symtab_entry sym = I.next();
+		for (gm_symtab_entry sym : prop) {
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			int base = syminfo.get_start_byte();
 			genReadByte(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), base, Body, this);
@@ -363,8 +358,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("public String toString() {");
 		Body.push("return \"\"");
 		boolean firstProperty = true;
-		for (I = prop.iterator(); I.hasNext();) {
-			gm_symtab_entry sym = I.next();
+		for (gm_symtab_entry sym : prop) {
 			if (sym.find_info(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == null) // this
 																					// property
 																					// is
@@ -407,8 +401,7 @@ public class gm_gpslib extends gm_graph_library {
 			if (is_edge_prop)
 				total_count = prop.size();
 			else {
-				for (I = prop.iterator(); I.hasNext();) {
-					gm_symtab_entry e = I.next();
+				for (gm_symtab_entry e : prop) {
 					if ((e.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
 							|| (e.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
 						total_count++;
@@ -416,8 +409,7 @@ public class gm_gpslib extends gm_graph_library {
 			}
 
 			if (total_count == 1) {
-				for (I = prop.iterator(); I.hasNext();) {
-					gm_symtab_entry sym = I.next();
+				for (gm_symtab_entry sym : prop) {
 					if (!is_edge_prop && (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
 							&& (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
 						continue;
@@ -431,8 +423,7 @@ public class gm_gpslib extends gm_graph_library {
 				Body.pushln("String[] split = inputString.split(\"###\");");
 				boolean firstProperty = true;
 				int cnt = 0;
-				for (I = prop.iterator(); I.hasNext();) {
-					gm_symtab_entry sym = I.next();
+				for (gm_symtab_entry sym : prop) {
 					String name1;
 					String name2;
 					if (!is_edge_prop && (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
@@ -1232,9 +1223,8 @@ public class gm_gpslib extends gm_graph_library {
 		if ((fe != null) && (fe.has_info_list(GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE))) {
 			java.util.LinkedList<Object> L = fe.get_info_list(GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE);
 
-			java.util.Iterator<Object> I;
-			for (I = L.iterator(); I.hasNext();) {
-				ast_sent s = (ast_sent) I.next();
+			for (Object obj : L) {
+				ast_sent s = (ast_sent) obj;
 				assert s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN;
 				ast_assign a = (ast_assign) s;
 				assert !a.is_target_scalar();
@@ -1266,19 +1256,15 @@ public class gm_gpslib extends gm_graph_library {
 		// ------------------------------------------------------------
 		if (fe != null) {
 			assert fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
-			java.util.Iterator<ast_sent> J;
 			ast_sentblock sb = (ast_sentblock) fe.get_body();
-			for (J = sb.get_sents().iterator(); J.hasNext();) {
-				ast_sent s = J.next();
+			for (ast_sent s : sb.get_sents()) {
 				if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_COMM_DEF_ASSIGN)) {
 					get_main().generate_sent(s);
 				}
 			}
 		}
 
-		java.util.Iterator<gm_gps_communication_symbol_info> I;
-		for (I = LIST.iterator(); I.hasNext();) {
-			gm_gps_communication_symbol_info SYM = I.next();
+		for (gm_gps_communication_symbol_info SYM : LIST) {
 			Body.push("_msg.");
 			String fname = get_message_field_var_name(SYM.gm_type, SYM.idx);
 			Body.push(fname);
@@ -1355,9 +1341,7 @@ public class gm_gpslib extends gm_graph_library {
 			Body.pushln(temp);
 		}
 
-		java.util.Iterator<gm_gps_communication_symbol_info> I;
-		for (I = LIST.iterator(); I.hasNext();) {
-			gm_gps_communication_symbol_info SYM = I.next();
+		for (gm_gps_communication_symbol_info SYM : LIST) {
 			gm_symtab_entry e = SYM.symbol;
 
 			// check it once again later

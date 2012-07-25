@@ -418,9 +418,8 @@ public class gm_giraphlib extends gm_gpslib
     
 		Body.pushln("@Override");
 		Body.pushln("public void readFields(DataInput in) throws IOException {");
-		for (I = prop.iterator(); I.hasNext();)
+		for (gm_symtab_entry sym : prop)
 		{
-			gm_symtab_entry sym = I.next();
 			genGetIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
 		}
 		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE))

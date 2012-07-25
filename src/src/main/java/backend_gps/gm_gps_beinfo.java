@@ -77,10 +77,8 @@ public class gm_gps_beinfo extends gm_backend_info
 	{
 		assert comm_symbol_info.containsKey(C);
 		java.util.LinkedList<gm_gps_communication_symbol_info> sym_info = comm_symbol_info.get(C);
-		java.util.Iterator<gm_gps_communication_symbol_info> I;
-		for (I = sym_info.iterator(); I.hasNext();)
+		for (gm_gps_communication_symbol_info S : sym_info)
 		{
-			gm_gps_communication_symbol_info S = I.next();
 			if (S.symbol == sym) // found
 				return S;
 		}
@@ -134,7 +132,6 @@ public class gm_gps_beinfo extends gm_backend_info
 		assert comm_symbol_info.containsKey(C);
 
 		java.util.LinkedList<gm_gps_communication_symbol_info> sym_info = comm_symbol_info.get(C);
-		java.util.Iterator<gm_gps_communication_symbol_info> I;
 		gm_gps_communication_size_info size_info = comm_size_info.get(C);
 
 		GMTYPE_T target_type;
@@ -158,9 +155,8 @@ public class gm_gps_beinfo extends gm_backend_info
 			assert false;
 		}
 		int idx = 0;
-		for (I = sym_info.iterator(); I.hasNext();)
+		for (gm_gps_communication_symbol_info S : sym_info)
 		{
-			gm_gps_communication_symbol_info S = I.next();
 			if (S.symbol == sym) // already added
 				return;
 			if (S.gm_type == target_type)
@@ -266,11 +262,10 @@ public class gm_gps_beinfo extends gm_backend_info
 	// get maximum communication size over all comm-loops
 	public final void compute_max_communication_size()
 	{
-		java.util.Iterator<gm_gps_comm_unit, gm_gps_comm_unit> I;
-		for (I = this.comm_loops.iterator(); I.hasNext();)
+		for (gm_gps_comm_unit unit : this.comm_loops)
 		{
-			ast_foreach fe = I.fe;
-			gm_gps_communication_size_info size_info = *(comm_size_info.get(I.next()));
+			ast_foreach fe = unit.fe;
+			gm_gps_communication_size_info size_info = (comm_size_info.get(unit));
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define UPDATE_A_IF_SMALLER(A,B) if ((A)<(B)) {A = B; }

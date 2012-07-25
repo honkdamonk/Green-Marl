@@ -168,16 +168,15 @@ public static void gm_traverse_exprs(ast_expr top, gm_apply a)
 	public static void apply_symtab_each(gm_apply a, gm_symtab s, SYMTAB_TYPES symtab_type, boolean is_post)
 	{
 		java.util.HashSet<gm_symtab_entry> v = s.get_entries();
-		java.util.Iterator<gm_symtab_entry> I;
-		for (I = v.iterator(); I.hasNext();)
+		for (gm_symtab_entry entry : v)
 		{
 			if (is_post && a.has_separate_post_apply())
 			{
-				a.apply2(I.next(), symtab_type);
+				a.apply2(entry, symtab_type);
 			}
 			else
 			{
-				a.apply(I.next(), symtab_type);
+				a.apply(entry, symtab_type);
 			}
 		}
 	}

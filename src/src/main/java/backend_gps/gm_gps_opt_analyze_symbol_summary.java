@@ -20,10 +20,8 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 		// -----------------------------------------------
 		// mark special markers to the property arguments
 		// -----------------------------------------------
-		java.util.Iterator<gm_symtab_entry> J;
 		java.util.HashSet<gm_symtab_entry> args = p.get_symtab_field().get_entries();
-		for (J = args.iterator(); J.hasNext();) {
-			gm_symtab_entry sym = J.next();
+		for (gm_symtab_entry sym : args) {
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			assert syminfo != null;
 			syminfo.set_is_argument(true);
@@ -52,9 +50,7 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 		// --------------------------------------------------------
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		boolean need_node_prop_init = false;
-		java.util.Iterator<gm_symtab_entry> I;
-		for (I = prop.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next();
+		for (gm_symtab_entry e : prop) {
 			if ((e.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
 					|| (e.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue())) {
 				/*

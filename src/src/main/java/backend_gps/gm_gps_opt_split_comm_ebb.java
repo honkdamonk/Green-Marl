@@ -29,12 +29,9 @@ public class gm_gps_opt_split_comm_ebb extends gm_compile_step
 		///  BB => 
 		//   BB1 (send) -> seq -> BB2 (receive) 
 		//-------------------------------------------
-		java.util.Iterator<gm_gps_basic_block> I;
-		for (I = BB_list.iterator(); I.hasNext();)
+		for (gm_gps_basic_block BB : BB_list)
 		{
-			gm_gps_basic_block BB = I.next();
 			gm_gps_basic_block BB2 = GlobalMembersGm_gps_bb_split.split_vertex_BB(BB, info);
-    
 		}
 	}
 	@Override

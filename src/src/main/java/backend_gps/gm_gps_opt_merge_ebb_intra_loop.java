@@ -28,8 +28,6 @@ public class gm_gps_opt_merge_ebb_intra_loop extends gm_compile_step
 		java.util.LinkedList<gps_intra_merge_candidate_t> L = new java.util.LinkedList<gps_intra_merge_candidate_t>();
 		GlobalMembersGm_gps_bb_merge_intra_loop.find_linear_while_segments(entry, L);
     
-		java.util.Iterator<gps_intra_merge_candidate_t> I;
-    
 		/*
 		 for(I=L.begin(); I!=L.end(); I++) {
 		 gps_intra_merge_candidate_t* C = *I;
@@ -44,9 +42,9 @@ public class gm_gps_opt_merge_ebb_intra_loop extends gm_compile_step
 		//-------------------------------------------
 		// find merge them
 		//-------------------------------------------
-		for (I = L.iterator(); I.hasNext();)
+		for (gps_intra_merge_candidate_t candidate: L)
 		{
-			GlobalMembersGm_gps_bb_merge_intra_loop.apply_intra_merge(I.next());
+			GlobalMembersGm_gps_bb_merge_intra_loop.apply_intra_merge(candidate);
 		}
 	}
 	@Override

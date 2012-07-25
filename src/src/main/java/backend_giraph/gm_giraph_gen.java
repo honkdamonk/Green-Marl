@@ -181,9 +181,8 @@ public class gm_giraph_gen extends gm_gps_gen
 		GlobalMembersGm_reproduce.gm_redirect_reproduce(f_body); // for temporary
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
     
-		for (I = bb_blocks.iterator(); I.hasNext();)
+		for (gm_gps_basic_block b : bb_blocks)
 		{
-			gm_gps_basic_block b = I.next();
 			do_generate_master_state_body(b);
 		}
 		GlobalMembersGm_reproduce.gm_redirect_reproduce(System.out);

@@ -81,15 +81,12 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply
 
 	public final void post_process()
 	{
-		java.util.Iterator<ast_assign> I;
-		for (I = targets.iterator(); I.hasNext();)
+		for (ast_assign a : targets)
 		{
-			ast_assign a = I.next();
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			ast_sentblock sb = (ast_sentblock) a.get_parent();
 
-
-			byte[] name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_t", null, true);
+			String name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_t", null, true);
 			ast_id id = ast_id.new_id(name, a.get_line(), a.get_col());
 			ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
 			ast_foreach foreach_out = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(id, a.get_lhs_field().get_first().getTypeInfo().get_target_graph_id().copy(true), foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);

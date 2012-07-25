@@ -101,12 +101,10 @@ public class gm_stage_create_pre_process_t extends gm_apply
 			// seq if every body sentence is sequential
 			java.util.LinkedList<ast_sent> L = ((ast_sentblock) s).get_sents();
 			boolean seq = true;
-			java.util.Iterator<ast_sent> I;
-			for (I = L.iterator(); I.hasNext();)
+			for (ast_sent sent : L)
 			{
-				ast_sent s = I.next();
-				assert(s_mark.containsKey(s));
-				seq = (s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_SEQ) && seq;
+				assert(s_mark.containsKey(sent));
+				seq = (s_mark.get(sent) == gps_gps_sentence_t.GPS_TYPE_SEQ) && seq;
 			}
 			s_mark.put(s, (seq) ? gps_gps_sentence_t.GPS_TYPE_SEQ : gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX);
 		}

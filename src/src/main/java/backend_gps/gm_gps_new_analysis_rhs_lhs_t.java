@@ -76,10 +76,8 @@ public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
 			gm_gps_new_scope_analysis_t t = get_scope_from_driver(i.getSymInfo());
 
 			// scope of arguments
-			java.util.Iterator<ast_expr> I;
 			java.util.LinkedList<ast_expr> L = b.get_args();
-			for (I = L.iterator(); I.hasNext();) {
-				ast_expr ee = I.next();
+			for (ast_expr ee : L) {
 				t = GlobalMembersGm_gps_new_analysis_scope_rhs_lhs.get_more_restricted_scope(t,
 						ee.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE));
 			}

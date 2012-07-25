@@ -12,6 +12,10 @@ public class gm_builtin_desc_t
 		extra_info = extraInfo;
 	}
 	
+	public gm_builtin_desc_t(gm_builtin_desc_t other) {
+		this(other.def_string, other.method_id, other.extra_info);
+	}
+
 	public String def_string; //source:type:name:return_type:num_args:arg_type0:arg_type1: ...
 	public gm_method_id_t method_id;
 	public String extra_info; //key:value,key:value,...

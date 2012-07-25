@@ -13,6 +13,12 @@ import inc.gm_compile_step;
 import inc.gm_ind_opt_flip_edges;
 import inc.gm_ind_opt_loop_merge;
 import inc.gm_ind_opt_move_propdecl;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -33,7 +39,6 @@ import ast.ast_vardecl;
 import ast.ast_while;
 import backend_cpp.FILE;
 import backend_cpp.gm_cpp_opt_defer;
-import backend_giraph.GlobalMembersGm_giraph_gen_master;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_apply_compiler_stage;
@@ -133,7 +138,7 @@ public class gm_gps_gen extends BackendGenerator {
 	}
 
 	public void init_opt_steps() {
-		java.util.LinkedList<gm_compile_step> L = get_opt_steps();
+		LinkedList<gm_compile_step> L = get_opt_steps();
 		L.addLast(gm_cpp_opt_defer.get_factory());
 		L.addLast(gm_gps_opt_transform_bfs.get_factory());
 		L.addLast(gm_ind_opt_move_propdecl.get_factory());
@@ -152,7 +157,7 @@ public class gm_gps_gen extends BackendGenerator {
 	}
 
 	public void init_gen_steps() {
-		java.util.LinkedList<gm_compile_step> L = get_gen_steps();
+		LinkedList<gm_compile_step> L = get_gen_steps();
 		// no more change of AST at this point
 		L.addLast(gm_gps_opt_check_reverse_edges.get_factory());
 		L.addLast(gm_gps_new_check_depth_two.get_factory());
@@ -176,16 +181,16 @@ public class gm_gps_gen extends BackendGenerator {
 		L.addLast(gm_gps_gen_class.get_factory());
 	}
 
-	protected final java.util.LinkedList<gm_compile_step> get_opt_steps() {
+	protected final LinkedList<gm_compile_step> get_opt_steps() {
 		return opt_steps;
 	}
 
-	protected final java.util.LinkedList<gm_compile_step> get_gen_steps() {
+	protected final LinkedList<gm_compile_step> get_gen_steps() {
 		return gen_steps;
 	}
 
-	protected java.util.LinkedList<gm_compile_step> opt_steps = new java.util.LinkedList<gm_compile_step>();
-	protected java.util.LinkedList<gm_compile_step> gen_steps = new java.util.LinkedList<gm_compile_step>();
+	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
+	protected LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
 
 	// ----------------------------------
 	// stages in backend gen
@@ -266,8 +271,8 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("switch(_master_state) {");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
-		java.util.LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
-		java.util.Iterator<gm_gps_basic_block> I;
+		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
+		Iterator<gm_gps_basic_block> I;
 
 		for (I = bb_blocks.iterator(); I.hasNext();) {
 			gm_gps_basic_block b = I.next();
@@ -341,15 +346,15 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln(temp);
 
 		Body.pushln("// parse command-line arguments (if any)");
-		Body.pushln("java.util.HashMap<String,String> arg_map = new java.util.HashMap<String,String>();");
+		Body.pushln("HashMap<String,String> arg_map = new HashMap<String,String>();");
 		Body.pushln("gps.node.Utils.parseOtherOptions(line, arg_map);");
 		Body.NL();
 
 		// Iterate symbol table and
 		gm_symtab args = proc.get_symtab_var();
 		assert args != null;
-		java.util.HashSet<gm_symtab_entry> syms = args.get_entries();
-		java.util.Iterator<gm_symtab_entry> I;
+		HashSet<gm_symtab_entry> syms = args.get_entries();
+		Iterator<gm_symtab_entry> I;
 		for (I = syms.iterator(); I.hasNext();) {
 			gm_symtab_entry s = I.next();
 
@@ -426,8 +431,8 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("//----------------------------------------------------------");
 		String temp = new String(new char[1024]);
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
-		java.util.Iterator<gm_symtab_entry> I;
+		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
+		Iterator<gm_symtab_entry> I;
 
 		for (I = scalar.iterator(); I.hasNext();) {
 			gm_symtab_entry e = I.next();
@@ -459,8 +464,8 @@ public class gm_gps_gen extends BackendGenerator {
 
 		// Intra-Loop Merging
 		if (proc.has_info(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL)) {
-			java.util.LinkedList<Object> L = proc.get_info_list(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL);
-			java.util.Iterator<Object> l;
+			LinkedList<Object> L = proc.get_info_list(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL);
+			Iterator<Object> l;
 			for (l = L.iterator(); l.hasNext();) {
 				gm_gps_basic_block bb = (gm_gps_basic_block) (l.next());
 				String.format(temp, "private boolean %s%d = true;", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, bb.get_id());
@@ -509,16 +514,11 @@ public class gm_gps_gen extends BackendGenerator {
 			}
 
 			// define local variables
-			java.util.HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
-			java.util.Iterator<gm_symtab_entry, gps_syminfo> I;
-			for (I = symbols.iterator(); I.hasNext();) {
-				gm_symtab_entry sym = I.next().getKey();
-				gps_syminfo local_info = I.next().getValue();
-				if (!local_info.is_scalar() || sym.isArgument()) // TODO: why is
-																	// sym->isArgument()
-																	// !=
-																	// local_info->is_argument()
-																	// ?
+			HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
+			for (gm_symtab_entry sym : symbols.keySet()) {
+				gps_syminfo local_info = symbols.get(sym);
+				// TODO: why is sym->isArgument() != local_info->is_argument()?
+				if (!local_info.is_scalar() || sym.isArgument())
 					continue;
 				gps_syminfo global_info = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 
@@ -638,11 +638,10 @@ public class gm_gps_gen extends BackendGenerator {
 		get_lib().generate_broadcast_prepare(Body);
 
 		// check if scalar variable is used inside the block
-		java.util.HashMap<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
-		java.util.Iterator<gm_symtab_entry, gps_syminfo> I;
-		for (I = syms.iterator(); I.hasNext();) {
-			gps_syminfo local_info = I.next().getValue();
-			gps_syminfo global_info = (gps_syminfo) I.next().getKey().find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+		HashMap<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
+		for (gm_symtab_entry key : syms.keySet()) {
+			gps_syminfo local_info = syms.get(key);
+			gps_syminfo global_info = (gps_syminfo) key.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			if (!global_info.is_scalar())
 				continue;
 			if (local_info.is_used_as_reduce()) {
@@ -650,8 +649,8 @@ public class gm_gps_gen extends BackendGenerator {
 
 				// printf("being used as reduce :%s\n",
 				// I->first->getId()->get_genname());
-				get_lib().generate_broadcast_reduce_initialize_master(I.next().getKey().getId(), Body, reduce_type,
-						GlobalMembersGm_giraph_gen_master.get_reduce_base_value(reduce_type, I.next().getKey().getType().getTypeSummary()));
+				get_lib().generate_broadcast_reduce_initialize_master(key.getId(), Body, reduce_type,
+						GlobalMembersGm_giraph_gen_master.get_reduce_base_value(reduce_type, key.getType().getTypeSummary()));
 				// [TODO] global argmax
 				continue;
 			}
@@ -659,7 +658,7 @@ public class gm_gps_gen extends BackendGenerator {
 				continue;
 			if (local_info.is_used_as_rhs()) {
 				// create a broad cast variable
-				get_lib().generate_broadcast_send_master(I.next().getKey().getId(), Body);
+				get_lib().generate_broadcast_send_master(key.getId(), Body);
 			}
 		}
 	}
@@ -670,18 +669,17 @@ public class gm_gps_gen extends BackendGenerator {
 		assert pred.is_vertex();
 
 		// check if scalar variable is modified inside the block
-		java.util.HashMap<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
-		java.util.Iterator<gm_symtab_entry, gps_syminfo> I;
-		for (I = syms.iterator(); I.hasNext();) {
-			gps_syminfo local_info = I.next().getValue();
-			gps_syminfo global_info = (gps_syminfo) I.next().getKey().find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+		HashMap<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
+		for (gm_symtab_entry key : syms.keySet()) {
+			gps_syminfo local_info = syms.get(key);
+			gps_syminfo global_info = (gps_syminfo) key.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			if (!global_info.is_scalar())
 				continue;
 			if (!global_info.is_used_in_master())
 				continue;
 			if (local_info.is_used_as_lhs() || local_info.is_used_as_reduce()) {
 				// create a broad cast variable
-				get_lib().generate_broadcast_receive_master(I.next().getKey().getId(), Body, local_info.get_reduce_type());
+				get_lib().generate_broadcast_receive_master(key.getId(), Body, local_info.get_reduce_type());
 			}
 		}
 	}
@@ -689,8 +687,8 @@ public class gm_gps_gen extends BackendGenerator {
 	public void do_generate_shared_variables_keys() {
 		Body.pushln("// Keys for shared_variables ");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
-		java.util.Iterator<gm_symtab_entry> I;
+		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
+		Iterator<gm_symtab_entry> I;
 
 		for (I = scalar.iterator(); I.hasNext();) {
 			gm_symtab_entry sym = I.next();
@@ -745,8 +743,8 @@ public class gm_gps_gen extends BackendGenerator {
 		// list out property
 		Body.pushln("// properties");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		java.util.HashSet<gm_symtab_entry> prop = is_edge_prop ? info.get_edge_prop_symbols() : info.get_node_prop_symbols();
-		java.util.Iterator<gm_symtab_entry> I;
+		HashSet<gm_symtab_entry> prop = is_edge_prop ? info.get_edge_prop_symbols() : info.get_node_prop_symbols();
+		Iterator<gm_symtab_entry> I;
 		for (I = prop.iterator(); I.hasNext();) {
 			gm_symtab_entry sym = I.next();
 			// gps_syminfo* syminfo = (gps_syminfo*)
@@ -891,8 +889,8 @@ public class gm_gps_gen extends BackendGenerator {
 
 		Body.pushln("switch(_state_vertex) { ");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		java.util.LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
-		java.util.Iterator<gm_gps_basic_block> I;
+		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
+		Iterator<gm_gps_basic_block> I;
 		int cnt = 0;
 		for (I = bb_blocks.iterator(); I.hasNext();) {
 			gm_gps_basic_block b = I.next();
@@ -964,8 +962,8 @@ public class gm_gps_gen extends BackendGenerator {
 			Body.pushln("// Begin msg receive");
 			Body.pushln("for(MessageData _msg : _msgs) {");
 
-			java.util.LinkedList<gm_gps_comm_unit> R = b.get_receivers();
-			java.util.Iterator<gm_gps_comm_unit> I;
+			LinkedList<gm_gps_comm_unit> R = b.get_receivers();
+			Iterator<gm_gps_comm_unit> I;
 			for (I = R.iterator(); I.hasNext();) {
 				gm_gps_comm_unit U = I.next();
 				if (U.get_type() == gm_gps_comm_t.GPS_COMM_NESTED) {
@@ -1002,8 +1000,8 @@ public class gm_gps_gen extends BackendGenerator {
 						GlobalMembersGm_reproduce.gm_baseindent_reproduce(6);
 					else
 						GlobalMembersGm_reproduce.gm_baseindent_reproduce(5);
-					java.util.LinkedList<ast_sent> sents = sb.get_sents();
-					java.util.Iterator<ast_sent> I;
+					LinkedList<ast_sent> sents = sb.get_sents();
+					Iterator<ast_sent> I;
 					for (I = sents.iterator(); I.hasNext();) {
 						ast_sent s = I.next();
 						if (s.find_info_ptr(GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb)
@@ -1045,8 +1043,8 @@ public class gm_gps_gen extends BackendGenerator {
 			Body.pushln("-----*/");
 			Body.NL();
 
-			java.util.LinkedList<ast_sent> sents = b.get_sents();
-			java.util.Iterator<ast_sent> I;
+			LinkedList<ast_sent> sents = b.get_sents();
+			Iterator<ast_sent> I;
 			int cnt = 0;
 			for (I = sents.iterator(); I.hasNext();) {
 				ast_sent s = I.next();
@@ -1081,11 +1079,9 @@ public class gm_gps_gen extends BackendGenerator {
 	public void do_generate_vertex_state_receive_global(gm_gps_basic_block b) {
 
 		// load scalar variable
-		java.util.HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
-		java.util.Iterator<gm_symtab_entry, gps_syminfo> I;
-		for (I = symbols.iterator(); I.hasNext();) {
-			gm_symtab_entry sym = I.next().getKey();
-			gps_syminfo local_info = I.next().getValue();
+		HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
+		for (gm_symtab_entry sym : symbols.keySet()) {
+			gps_syminfo local_info = symbols.get(sym);
 			if (!local_info.is_scalar())
 				continue;
 
@@ -1274,7 +1270,7 @@ public class gm_gps_gen extends BackendGenerator {
 	public void generate_expr_builtin(ast_expr e) {
 		ast_expr_builtin be = (ast_expr_builtin) e;
 		gm_builtin_def def = be.get_builtin_def();
-		java.util.LinkedList<ast_expr> ARGS = be.get_args();
+		LinkedList<ast_expr> ARGS = be.get_args();
 
 		switch (def.get_method_id()) {
 		case GM_BLTIN_TOP_DRAND: // rand function
@@ -1448,9 +1444,9 @@ public class gm_gps_gen extends BackendGenerator {
 			generate_expr(a.get_rhs());
 			Body.pushln(";");
 
-			java.util.LinkedList<ast_node> lhs_list = a.get_lhs_list();
-			java.util.LinkedList<ast_expr> rhs_list = a.get_rhs_list();
-			java.util.Iterator<ast_expr> J;
+			LinkedList<ast_node> lhs_list = a.get_lhs_list();
+			LinkedList<ast_expr> rhs_list = a.get_rhs_list();
+			Iterator<ast_expr> J;
 			J = rhs_list.iterator();
 			for (ast_node n : lhs_list) {
 				if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
@@ -1613,14 +1609,14 @@ public class gm_gps_gen extends BackendGenerator {
 	}
 
 	public void generate_sent_block(ast_sentblock sb, boolean need_brace) {
-		java.util.LinkedList<ast_sent> sents = sb.get_sents();
+		LinkedList<ast_sent> sents = sb.get_sents();
 
-		java.util.Iterator<ast_sent> i;
+		Iterator<ast_sent> i;
 		if (need_brace)
 			Body.pushln("{");
 		if (sb.has_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB)) {
-			java.util.HashSet<Object> S = sb.get_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB);
-			java.util.Iterator<Object> I;
+			HashSet<Object> S = sb.get_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB);
+			Iterator<Object> I;
 			for (I = S.iterator(); I.hasNext();) {
 				gm_symtab_entry sym = (gm_symtab_entry) I.next();
 				get_lib().generate_message_create_for_random_write(sb, sym, Body);
@@ -1636,8 +1632,8 @@ public class gm_gps_gen extends BackendGenerator {
 		if (sb.has_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB)) {
 			Body.NL();
 
-			java.util.HashSet<Object> S = sb.get_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB);
-			java.util.Iterator<Object> I;
+			HashSet<Object> S = sb.get_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB);
+			Iterator<Object> I;
 			for (I = S.iterator(); I.hasNext();) {
 				gm_symtab_entry sym = (gm_symtab_entry) I.next();
 				get_lib().generate_message_send_for_random_write(sb, sym, Body);

@@ -1,6 +1,8 @@
 package opt;
 
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 import ast.ast_foreach;
 import ast.ast_id;
@@ -52,16 +54,14 @@ public class GlobalMembersGm_merge_loops {
 	public static boolean intersect_check_for_merge(HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> S1,
 			HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> S2, HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> S1_reduce,
 			boolean check_reduce) {
-		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> i;
-		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> j;
-		for (i = S1.iterator(); i.hasNext();) {
-			gm_symtab_entry e = i.next().getKey();
+		Map.Entry<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> j; //TODO argl...shoot me -.-
+		for (gm_symtab_entry e : S1.keySet()) {
 			// C++ TO JAVA CONVERTER WARNING: The following line was determined
 			// to be a copy assignment (rather than a reference assignment) -
 			// this should be verified and a 'copyFrom' method should be created
 			// if it does not yet exist:
 			// ORIGINAL LINE: j = S2.find(e);
-			j.copyFrom(S2.find(e));
+			j.copyFrom(S2.get(e));
 			if (j.hasNext()) {
 				// found entry
 				if (!e.getType().is_property()) // scala
@@ -76,7 +76,7 @@ public class GlobalMembersGm_merge_loops {
 					return true;
 				} else {
 					// check S1, S2 is linearly accessed only.
-					if (!GlobalMembersGm_merge_loops.is_linear_access_only(i.next().getValue()))
+					if (!GlobalMembersGm_merge_loops.is_linear_access_only(S1.get(e)))
 						return true;
 					if (!GlobalMembersGm_merge_loops.is_linear_access_only(j.next().getValue()))
 						return true;

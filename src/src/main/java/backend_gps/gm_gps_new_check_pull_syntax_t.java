@@ -28,45 +28,33 @@ import common.gm_apply;
 //            Foreach(t: s.Nbrs)
 //                s.A = .... ; // error PULL  
 //------------------------------------------------------------------------
-public class gm_gps_new_check_pull_syntax_t extends gm_apply
-{
-	public gm_gps_new_check_pull_syntax_t()
-	{
+public class gm_gps_new_check_pull_syntax_t extends gm_apply {
+	public gm_gps_new_check_pull_syntax_t() {
 		set_for_sent(true);
 		_error = false;
 
 	}
 
 	// write to OUT_SCOPE in INNER_LOOP is an error
-	public final boolean apply(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)
-		{
+	public final boolean apply(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			int context = s.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYNTAX_CONTEXT);
 			gm_gps_new_scope_analysis_t scope;
-			if (a.is_target_scalar())
-			{
+			if (a.is_target_scalar()) {
 				scope = get_scope_from_id(a.get_lhs_scala().getSymInfo());
-			}
-			else
-			{
+			} else {
 				scope = get_scope_from_driver(a.get_lhs_field().get_first().getSymInfo());
 			}
 
-			if (a.has_lhs_list())
-			{
+			if (a.has_lhs_list()) {
 				java.util.Iterator<ast_node> I;
-				for (I = a.get_lhs_list().iterator(); I.hasNext();)
-				{
+				for (I = a.get_lhs_list().iterator(); I.hasNext();) {
 					ast_node n = I.next();
 					gm_gps_new_scope_analysis_t scope2;
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID)
-					{
+					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						scope2 = get_scope_from_id(((ast_id) n).getSymInfo());
-					}
-					else
-					{
+					} else {
 						scope2 = get_scope_from_driver(((ast_field) n).get_first().getSymInfo());
 					}
 
@@ -75,43 +63,38 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply
 			}
 
 			// writing to out-scope inside inner-loop.
-			if ((context == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue()) && (scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT))
-			{
+			if ((context == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue()) && (scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT)) {
 				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PULL_SYNTAX, s.get_line(), s.get_col());
 				_error = true;
 			}
-		}
-		else if (s.get_nodetype() == AST_NODE_TYPE.AST_CALL)
-		{
+		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_CALL) {
 			assert false;
-		}
-		else if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREIGN)
-		{
+		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREIGN) {
 			assert false;
 			// should check out-scope is modified
 		}
 		return true;
 	}
-	public final boolean is_error()
-	{
+
+	public final boolean is_error() {
 		return _error;
 	}
 
 	private boolean _error;
 
-	private gm_gps_new_scope_analysis_t get_scope_from_id(gm_symtab_entry e)
-	{
-		return e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYMBOL_SCOPE);
+	private gm_gps_new_scope_analysis_t get_scope_from_id(gm_symtab_entry e) {
+		return gm_gps_new_scope_analysis_t.forValue(e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYMBOL_SCOPE));
 	}
 
-	private gm_gps_new_scope_analysis_t get_scope_from_driver(gm_symtab_entry e)
-	{
+	private gm_gps_new_scope_analysis_t get_scope_from_driver(gm_symtab_entry e) {
 		return get_scope_from_driver(e, false);
 	}
-//C++ TO JAVA CONVERTER NOTE: Java does not allow default values for parameters. Overloaded methods are inserted above.
-//ORIGINAL LINE: int get_scope_from_driver(gm_symtab_entry* e, boolean is_rarrow = false)
-	private gm_gps_new_scope_analysis_t get_scope_from_driver(gm_symtab_entry e, boolean is_rarrow)
-	{
+
+	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
+	// parameters. Overloaded methods are inserted above.
+	// ORIGINAL LINE: int get_scope_from_driver(gm_symtab_entry* e, boolean
+	// is_rarrow = false)
+	private gm_gps_new_scope_analysis_t get_scope_from_driver(gm_symtab_entry e, boolean is_rarrow) {
 		if (e.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP))
 			return gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN;
 		else if (e.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_OUTER_LOOP))

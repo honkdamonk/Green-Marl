@@ -1,5 +1,7 @@
 package backend_gps;
 
+import java.util.Map;
+
 import tangible.RefObject;
 import ast.ast_extra_info;
 import ast.ast_foreach;
@@ -32,9 +34,8 @@ public class gm_gps_basic_block {
 	}
 
 	public void dispose() {
-		java.util.Iterator<gm_symtab_entry, gps_syminfo> I;
-		for (I = symbols.iterator(); I.hasNext();) {
-			gps_syminfo s = I.next().getValue();
+		for (gm_symtab_entry key : symbols.keySet()) {
+			gps_syminfo s = symbols.get(key);
 			if (s != null)
 				s.dispose();
 		}

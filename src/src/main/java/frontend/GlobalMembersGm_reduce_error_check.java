@@ -44,9 +44,7 @@ public class GlobalMembersGm_reduce_error_check {
 	public static void remove_bound(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type) {
 		for (bound_info_t db : L) {
 			if ((db.target == t) && (db.reduce_type == r_type) && (db.bound == b)) {
-				// C++ TO JAVA CONVERTER TODO TASK: There is no direct
-				// equivalent to the STL list 'erase' method in Java:
-				L.remove(i);
+				L.remove(db);
 				if (db != null)
 					db.dispose();
 				return;

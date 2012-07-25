@@ -1001,9 +1001,7 @@ public class gm_gps_gen extends BackendGenerator {
 					else
 						GlobalMembersGm_reproduce.gm_baseindent_reproduce(5);
 					LinkedList<ast_sent> sents = sb.get_sents();
-					Iterator<ast_sent> I;
-					for (I = sents.iterator(); I.hasNext();) {
-						ast_sent s = I.next();
+					for (ast_sent s : sents) {
 						if (s.find_info_ptr(GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb)
 							s.reproduce(0);
 					}
@@ -1012,8 +1010,7 @@ public class gm_gps_gen extends BackendGenerator {
 					Body.pushln("-----*/");
 					get_lib().generate_message_receive_begin(sb, U.sym, Body, b, R.size() == 1);
 
-					for (I = sents.iterator(); I.hasNext();) {
-						ast_sent s = I.next();
+					for (ast_sent s : sents) {
 						if (s.find_info_ptr(GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb) {
 							// implement receiving sentence
 							generate_sent(s);

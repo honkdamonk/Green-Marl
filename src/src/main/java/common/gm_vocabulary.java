@@ -23,8 +23,8 @@ public class gm_vocabulary
 	{
 //C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
 //ORIGINAL LINE: sbyte* dup = gm_strdup(w);
-		byte dup = GlobalMembersGm_misc.gm_strdup(w.argvalue);
-		words.add((String) dup);
+		String dup = GlobalMembersGm_misc.gm_strdup(w.argvalue);
+		words.add(dup);
 	}
 	public final boolean has_word(tangible.RefObject<String> w)
 	{

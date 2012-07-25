@@ -650,9 +650,9 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public static void genPutIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_gpslib lib) {
-		if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type))
+		if (gm_type.is_node_compatible_type())
 			gm_type = GMTYPE_T.GMTYPE_NODE; // TODO setting input var?
-		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(gm_type))
+		if (gm_type.is_edge_compatible_type())
 			gm_type = GMTYPE_T.GMTYPE_EDGE; // TODO setting input var?
 
 		// assumtion: IOB name is IOB
@@ -704,9 +704,9 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public static void genGetIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_gpslib lib) {
-		if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type))
+		if (gm_type.is_node_compatible_type())
 			gm_type = GMTYPE_T.GMTYPE_NODE;
-		if (GlobalMembersGm_defs.gm_is_edge_compatible_type(gm_type))
+		if (gm_type.is_edge_compatible_type())
 			gm_type = GMTYPE_T.GMTYPE_EDGE;
 
 		// assumtion: IOB name is IOB
@@ -752,7 +752,7 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public static void genReadByte(String name, GMTYPE_T gm_type, int offset, gm_code_writer Body, gm_gpslib lib) {
-		if (GlobalMembersGm_defs.gm_is_node_compatible_type(gm_type)) {
+		if (gm_type.is_node_compatible_type()) {
 			gm_type = (lib.is_node_type_int()) ? GMTYPE_T.GMTYPE_INT : GMTYPE_T.GMTYPE_LONG;
 		}
 		// assumption: "byte[] _BA, int _idx"
@@ -1244,7 +1244,7 @@ public class gm_gpslib extends gm_graph_library {
 				// equivalent for pointers to value types:
 				// ORIGINAL LINE: int* i = (int*)
 				// fe->find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
-				int i = (int) fe.find_info_map_value(GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS, e);
+				Integer i = (Integer) fe.find_info_map_value(GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS, e);
 				assert i != null;
 
 				if (i == gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_SENT_WRITE.getValue()) {
@@ -1473,24 +1473,18 @@ public class gm_gpslib extends gm_graph_library {
 
 	public boolean do_local_optimize() {
 		String[] NAMES = { "[(nothing)]" };
-		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
-		// a direct reference to the array length:
-		// ORIGINAL LINE: const int COUNT = sizeof(NAMES) / sizeof(String);
 		final int COUNT = NAMES.length;
 
 		boolean is_okay = true;
 
 		for (int i = 0; i < COUNT; i++) {
 			GlobalMembersGm_main.gm_begin_minor_compiler_stage(i + 1, NAMES[i]);
-			{
-				switch (i) {
-				case 0:
-					break;
-				case COUNT:
-				default:
-					assert false;
-					break;
-				}
+			switch (i) {
+			case 0:
+				break;
+			default:
+				assert false;
+				break;
 			}
 			GlobalMembersGm_main.gm_end_minor_compiler_stage();
 			if (!is_okay)

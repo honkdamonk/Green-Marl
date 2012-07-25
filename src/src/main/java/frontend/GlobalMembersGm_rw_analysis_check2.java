@@ -149,34 +149,34 @@ public class GlobalMembersGm_rw_analysis_check2 {
 			gm_conflict_t conf_type, LinkedList<conf_info_t> Report) {
 		boolean is_okay = true;
 		boolean is_warning;
-		int error_code;
+		GM_ERRORS_AND_WARNINGS error_code;
 		switch (conf_type) {
 		case RW_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_WRITE_CONFLICT.getValue();
+			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_WRITE_CONFLICT;
 			is_warning = true;
 			break;
 		case WW_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_WRITE_CONFLICT.getValue();
+			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_WRITE_CONFLICT;
 			is_warning = true;
 			break;
 		case RD_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_REDUCE_CONFLICT.getValue();
+			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_REDUCE_CONFLICT;
 			is_warning = false;
 			break;
 		case WD_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_REDUCE_CONFLICT.getValue();
+			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_REDUCE_CONFLICT;
 			is_warning = false;
 			break;
 		case RM_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_MUTATE_CONFLICT.getValue();
+			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_MUTATE_CONFLICT;
 			is_warning = true;
 			break;
 		case WM_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_MUTATE_CONFLICT.getValue();
+			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_MUTATE_CONFLICT;
 			is_warning = false;
 			break;
 		case MM_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_MUTATE_MUTATE_CONFLICT.getValue();
+			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_MUTATE_MUTATE_CONFLICT;
 			is_warning = true;
 			break;
 		default:
@@ -184,19 +184,15 @@ public class GlobalMembersGm_rw_analysis_check2 {
 			break;
 		}
 
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i1;
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i2;
-		for (i1 = S1.iterator(); i1.hasNext();) {
-			gm_symtab_entry sym1 = i1.next().getKey();
-			LinkedList<gm_rwinfo> list1 = i1.next().getValue();
+		for (gm_symtab_entry sym1 : S1.keySet()) {
+			LinkedList<gm_rwinfo> list1 = S1.get(sym1);
 			gm_rwinfo e1 = null;
 
 			// Damn o.O if (!sym1->getType()->is_property()) continue; // todo
 			// 'scalar' check
 
-			for (i2 = S2.iterator(); i2.hasNext();) {
-				gm_symtab_entry sym2 = i2.next().getKey();
-				LinkedList<gm_rwinfo> list2 = i2.next().getValue();
+			for (gm_symtab_entry sym2 : S2.keySet()) {
+				LinkedList<gm_rwinfo> list2 = S2.get(sym2);
 				gm_rwinfo e2 = null;
 
 				// find same symbol
@@ -231,12 +227,11 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// ==================================================================
 	public static boolean gm_does_intersect(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S1, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S2,
 			boolean regard_mutate_direction) {
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-		for (i = S1.iterator(); i.hasNext();) {
-			gm_symtab_entry e = i.next().getKey();
+
+		for (gm_symtab_entry e : S1.keySet()) {
 			if (S2.containsKey(e)) {
 				if (regard_mutate_direction) {
-					if (i.next().getKey().find_info_int("GM_BLTIN_INFO_MUTATING") != S2.find(e).next().getKey().find_info_int("GM_BLTIN_INFO_MUTATING")) {
+					if (e.find_info_int("GM_BLTIN_INFO_MUTATING") != S2.find(e).next().getKey().find_info_int("GM_BLTIN_INFO_MUTATING")) {
 						return true;
 					}
 				} else {
@@ -347,9 +342,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	public static boolean gm_is_modified(ast_sent S, gm_symtab_entry e) {
 
 		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-		for (i = W.iterator(); i.hasNext();) {
-			gm_symtab_entry w_sym = i.next().getKey();
+		for (gm_symtab_entry w_sym : W.keySet()) {
 			if (e == w_sym)
 				return true;
 		}
@@ -359,14 +352,12 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	public static boolean gm_is_modified_with_condition(ast_sent S, gm_symtab_entry e, gm_rwinfo_query Q) {
 		assert Q != null;
 		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-		for (i = W.iterator(); i.hasNext();) {
-			gm_symtab_entry w_sym = i.next().getKey();
+		for (gm_symtab_entry w_sym : W.keySet()) {
 			if (e != w_sym)
 				continue;
 
 			// find exact match
-			LinkedList<gm_rwinfo> list = i.next().getValue();
+			LinkedList<gm_rwinfo> list = W.get(w_sym);
 			java.util.Iterator<gm_rwinfo> j;
 			for (j = list.iterator(); j.hasNext();) {
 				gm_rwinfo R = j.next();

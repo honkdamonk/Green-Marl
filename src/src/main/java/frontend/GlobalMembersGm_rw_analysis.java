@@ -4,6 +4,7 @@ import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;
@@ -94,8 +95,8 @@ public class GlobalMembersGm_rw_analysis {
 	// ORIGINAL LINE: boolean gm_add_rwinfo_to_set(HashMap<gm_symtab_entry*,
 	// LinkedList<gm_rwinfo*>*>& info_set, gm_symtab_entry* sym, gm_rwinfo*
 	// new_entry, boolean is_reduce_ops = false)
-	public static boolean gm_add_rwinfo_to_set(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> info_set, gm_symtab_entry sym, gm_rwinfo new_entry, boolean is_reduce_ops)
-	{
+	public static boolean gm_add_rwinfo_to_set(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> info_set, gm_symtab_entry sym, gm_rwinfo new_entry,
+			boolean is_reduce_ops) {
 		boolean is_error = false;
 
 		// find entry in the map
@@ -105,49 +106,46 @@ public class GlobalMembersGm_rw_analysis {
 			l.addLast(new_entry);
 			info_set.put(sym, l);
 		} // check entries already exists
-		else
-		{
+		else {
 			LinkedList<gm_rwinfo> l = info_set.get(sym);
-			java.util.Iterator<gm_rwinfo> ii;
+			Iterator<gm_rwinfo> ii;
 			assert l != null;
-			for (ii = l.iterator(); ii.hasNext();)
-			{
+			for (ii = l.iterator(); ii.hasNext();) {
 				gm_rwinfo e2 = ii.next();
 
 				// check reduce error
-				if (is_reduce_ops)
-				{
+				if (is_reduce_ops) {
 
 					is_error = GlobalMembersGm_rw_analysis.is_reduce_error(e2, new_entry);
-					if (is_error)
-					{
+					if (is_error) {
 						if (new_entry != null)
-						new_entry.dispose(); // not required
+							new_entry.dispose(); // not required
 						return false;
 					}
 
 				}
 
-				if (GlobalMembersGm_rw_analysis.is_same_entry(e2, new_entry))
-				{
+				if (GlobalMembersGm_rw_analysis.is_same_entry(e2, new_entry)) {
 					if (new_entry != null)
-					new_entry.dispose(); // not required
+						new_entry.dispose(); // not required
 					return true;
 				} // old entry is wider
-				else if (GlobalMembersGm_rw_analysis.is_wider_entry(new_entry, e2))
-				{
+				else if (GlobalMembersGm_rw_analysis.is_wider_entry(new_entry, e2)) {
 					if (new_entry != null)
-					new_entry.dispose(); // drop new entry
+						new_entry.dispose(); // drop new entry
 					return true;
 				} // new_entry is wider
-				else if (GlobalMembersGm_rw_analysis.is_wider_entry(e2, new_entry))
-				{
+				else if (GlobalMembersGm_rw_analysis.is_wider_entry(e2, new_entry)) {
 					// hack. copy new entry into old one
-//C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy assignment (rather than a reference assignment) - this should be verified and a 'copyFrom' method should be created if it does not yet exist:
-//ORIGINAL LINE: *e2 = *new_entry;
+					// C++ TO JAVA CONVERTER WARNING: The following line was
+					// determined to be a copy assignment (rather than a
+					// reference assignment) - this should be verified and a
+					// 'copyFrom' method should be created if it does not yet
+					// exist:
+					// ORIGINAL LINE: *e2 = *new_entry;
 					e2.copyFrom(new_entry);
 					if (new_entry != null)
-					new_entry.dispose(); // not required
+						new_entry.dispose(); // not required
 					return true;
 				}
 
@@ -162,12 +160,8 @@ public class GlobalMembersGm_rw_analysis {
 	// Actual information kept for sentence
 	// Three maps. (readset, writeset, reduce-set)
 	public static void gm_delete_rwinfo_map(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> m) {
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-		for (i = m.iterator(); i.hasNext();) {
-			LinkedList<gm_rwinfo> l = i.next().getValue();
-			java.util.Iterator<gm_rwinfo> ii;
-			for (ii = l.iterator(); ii.hasNext();) {
-				gm_rwinfo j = ii.next();
+		for (LinkedList<gm_rwinfo> l : m.values()) {
+			for (gm_rwinfo j : l) {
 				if (j != null)
 					j.dispose();
 			}
@@ -310,9 +304,9 @@ public class GlobalMembersGm_rw_analysis {
 		boolean is_okay = true;
 
 		// search for all elements in then-part
-		for(gm_symtab_entry sym : S1.keySet()) {
+		for (gm_symtab_entry sym : S1.keySet()) {
 			LinkedList<gm_rwinfo> l1 = S1.get(sym);
-			java.util.Iterator<gm_rwinfo> ss1;
+			Iterator<gm_rwinfo> ss1;
 			assert l1 != null;
 
 			// check this symbol is accessed in S2 as well
@@ -333,8 +327,9 @@ public class GlobalMembersGm_rw_analysis {
 					if (copy.always == true) {
 						boolean found = false;
 						// check if the same access happens in else part
-						LinkedList<gm_rwinfo> l2 = S2.get(sym);;
-						java.util.Iterator<gm_rwinfo> ss2;
+						LinkedList<gm_rwinfo> l2 = S2.get(sym);
+						;
+						Iterator<gm_rwinfo> ss2;
 						assert l2 != null;
 						for (ss2 = l2.iterator(); ss2.hasNext();) {
 							gm_rwinfo else_info = ss2.next();
@@ -356,12 +351,12 @@ public class GlobalMembersGm_rw_analysis {
 		}
 
 		// elements in the else-part
-		for(gm_symtab_entry sym : S2.keySet()) {
+		for (gm_symtab_entry sym : S2.keySet()) {
 			// we can blindly add here.
 			// (If merged from the then-part, wider entry will be already in the
 			// target set.)
 			LinkedList<gm_rwinfo> l2 = S2.get(sym);
-			java.util.Iterator<gm_rwinfo> ss2;
+			Iterator<gm_rwinfo> ss2;
 			for (ss2 = l2.iterator(); ss2.hasNext();) {
 				gm_rwinfo e = ss2.next();
 				gm_rwinfo copy = e.copy();
@@ -553,7 +548,7 @@ public class GlobalMembersGm_rw_analysis {
 			HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
 		// add every arguments in the readset
 		LinkedList<ast_expr> args = builtin.get_args();
-		java.util.Iterator<ast_expr> I;
+		Iterator<ast_expr> I;
 		for (I = args.iterator(); I.hasNext();) {
 			ast_expr a = I.next();
 			GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(a, rset, DrvMap);
@@ -565,7 +560,7 @@ public class GlobalMembersGm_rw_analysis {
 
 		gm_rwinfo new_entry;
 		LinkedList<ast_node> N = f.get_parsed_nodes();
-		java.util.Iterator<ast_node> I = N.iterator();
+		Iterator<ast_node> I = N.iterator();
 		for (; I.hasNext();) {
 			ast_node n = I.next();
 			if (n == null)
@@ -622,14 +617,11 @@ public class GlobalMembersGm_rw_analysis {
 	public static boolean merge_for_if(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> Target, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S1,
 			boolean is_reduce) {
 		boolean is_okay = true;
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> s1;
-
 		// search for all elements in then-part
 		// and add a copy into the target set.
-		for (s1 = S1.iterator(); s1.hasNext();) {
-			gm_symtab_entry sym = s1.next().getKey();
-			LinkedList<gm_rwinfo> l1 = s1.next().getValue();
-			java.util.Iterator<gm_rwinfo> ss1;
+		for (gm_symtab_entry sym : S1.keySet()) {
+			LinkedList<gm_rwinfo> l1 = S1.get(sym);
+			Iterator<gm_rwinfo> ss1;
 			assert l1 != null;
 
 			for (ss1 = l1.iterator(); ss1.hasNext();) {
@@ -652,9 +644,7 @@ public class GlobalMembersGm_rw_analysis {
 	public static boolean merge_for_sentblock(ast_sentblock s, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> target,
 			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> old, boolean is_reduce) {
 		boolean is_okay = true;
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-		for (i = old.iterator(); i.hasNext();) {
-			gm_symtab_entry e = i.next().getKey();
+		for (gm_symtab_entry e : old.keySet()) {
 			boolean is_current_level;
 			// check e belongs to current scope
 			if (e.getType().is_property()) {
@@ -670,8 +660,8 @@ public class GlobalMembersGm_rw_analysis {
 			}
 
 			// add copy of access info to the target set
-			LinkedList<gm_rwinfo> l = i.next().getValue();
-			java.util.Iterator<gm_rwinfo> ii;
+			LinkedList<gm_rwinfo> l = old.get(e);
+			Iterator<gm_rwinfo> ii;
 			for (ii = l.iterator(); ii.hasNext();) {
 				gm_rwinfo copy = (ii.next()).copy();
 				boolean b = GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(target, e, copy, is_reduce);
@@ -691,13 +681,11 @@ public class GlobalMembersGm_rw_analysis {
 	public static boolean merge_all(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> target, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> old,
 			boolean is_reduce) {
 		boolean is_okay = true;
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-		for (i = old.iterator(); i.hasNext();) {
-			gm_symtab_entry e = i.next().getKey();
 
+		for (gm_symtab_entry e : old.keySet()) {
 			// add copy of access info to the target set
-			LinkedList<gm_rwinfo> l = i.next().getValue();
-			java.util.Iterator<gm_rwinfo> ii;
+			LinkedList<gm_rwinfo> l = old.get(e);
+			Iterator<gm_rwinfo> ii;
 			for (ii = l.iterator(); ii.hasNext();) {
 				gm_rwinfo copy = (ii.next()).copy();
 				is_okay = GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(target, e, copy, is_reduce) && is_okay;
@@ -801,18 +789,16 @@ public class GlobalMembersGm_rw_analysis {
 	public static boolean cleanup_iterator_access(ast_id iter, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> T_temp,
 			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> T, GMTYPE_T iter_type, boolean is_parallel) {
 		boolean is_okay = true;
+
 		gm_symtab_entry iter_sym = iter.getSymInfo();
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
 		gm_range_type_t range = GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type);
 		// printf("iter_type = %s, range = %s\n", gm_get_type_string(iter_type),
 		// gm_get_range_string(range));
-
-		for (i = T_temp.iterator(); i.hasNext();) {
-			gm_symtab_entry sym = i.next().getKey();
-			LinkedList<gm_rwinfo> l = i.next().getValue();
+		for (gm_symtab_entry sym : T_temp.keySet()) {
+			LinkedList<gm_rwinfo> l = T_temp.get(sym);
 			if (sym == iter_sym) // direct reading of iterator
 				continue;
-			java.util.Iterator<gm_rwinfo> ii;
+			Iterator<gm_rwinfo> ii;
 			for (ii = l.iterator(); ii.hasNext();) {
 				gm_rwinfo e = ii.next();
 				gm_rwinfo cp = e.copy();
@@ -856,23 +842,18 @@ public class GlobalMembersGm_rw_analysis {
 																		// or
 																		// G.Edges
 
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-		for (i = T.iterator(); i.hasNext();) {
+		for (gm_symtab_entry key : T.keySet()) {
 			boolean is_target = false;
 			boolean is_already = false;
 			ast_id location = null;
-			LinkedList<gm_rwinfo> l = i.next().getValue();
+			LinkedList<gm_rwinfo> l = T.get(key);
 			// remove all items that are LEVEL_UP/DOWN
-			java.util.Iterator<gm_rwinfo> ii = l.iterator();
-			while (ii.hasNext()) {
-				gm_rwinfo e = ii.next();
+			while (!l.isEmpty()) {
+				gm_rwinfo e = l.removeFirst();
 				if ((e.access_range == gm_range_type_t.GM_RANGE_LEVEL) || (e.access_range == gm_range_type_t.GM_RANGE_LEVEL_UP)
 						|| (e.access_range == gm_range_type_t.GM_RANGE_LEVEL_DOWN)) {
 					is_target = true;
 					location = e.location;
-					// C++ TO JAVA CONVERTER TODO TASK: There is no direct
-					// equivalent to the STL list 'erase' method in Java:
-					ii = l.erase(ii);
 					continue;
 				} else if ((e.access_range == gm_range_type_t.GM_RANGE_LINEAR) && (e.always == false)) {
 					is_already = true;
@@ -912,15 +893,11 @@ public class GlobalMembersGm_rw_analysis {
 	{
 		boolean is_okay = true;
 		gm_symtab_entry iter_sym = iter.getSymInfo();
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
 		gm_range_type_t range = GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type);
 
-		for (i = D_temp.iterator(); i.hasNext();) {
-			gm_symtab_entry sym = i.next().getKey();
-			LinkedList<gm_rwinfo> l = i.next().getValue();
-			java.util.Iterator<gm_rwinfo> ii;
-			for (ii = l.iterator(); ii.hasNext();) {
-				gm_rwinfo e = ii.next();
+		for (gm_symtab_entry sym : D_temp.keySet()) {
+			LinkedList<gm_rwinfo> l = D_temp.get(sym);
+			for (gm_rwinfo e : l) {
 				gm_rwinfo cp = e.copy();
 
 				// X.val <= .... @ Y

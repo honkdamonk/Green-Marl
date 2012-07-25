@@ -78,7 +78,6 @@ public class opt_scalar_reduction_t extends gm_apply {
 
 		if (has_scalar_reduction)
 			_targets.addLast(fe);
-
 		return true;
 	}
 

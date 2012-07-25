@@ -20,15 +20,14 @@ public class gm_merge_loop_t extends gm_apply
 			return true;
 
 		ast_sentblock sb = (ast_sentblock) s;
-		java.util.LinkedList<ast_sent> sents = sb.get_sents(); // work with a copyed list
-		java.util.Iterator<ast_sent> i;
+		java.util.LinkedList<ast_sent> sents = sb.get_sents(); // work with a copyed list TODO it's not a copy!
 		ast_foreach prev = null;
-		for (i = sents.iterator(); i.hasNext();)
+		for (ast_sent sent : sents)
 		{
 			if (prev == null)
 			{
-				if ((i.next()).get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
-					prev = (ast_foreach)(i.next());
+				if (sent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
+					prev = (ast_foreach) sent;
 				continue;
 			}
 			else
@@ -36,9 +35,9 @@ public class gm_merge_loop_t extends gm_apply
 				// pick two consecutive foreach blocks.
 				// check they are mergeable.
 				// If so, merge. delete the second one.
-				if ((i.next()).get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
+				if (sent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
 				{
-					ast_foreach curr = (ast_foreach)(i.next());
+					ast_foreach curr = (ast_foreach) sent;
 					if (GlobalMembersGm_merge_loops.gm_is_mergeable_loops(prev, curr))
 					{
 
@@ -85,9 +84,6 @@ public class gm_merge_loop_t extends gm_apply
 		set_for_sent(true);
 		_changed = false;
 		top.traverse_post(this);
-		java.util.Iterator<ast_sent> i;
-		for (i = to_be_deleted.iterator(); i.hasNext();)
-			i.next() = null;
 
 		to_be_deleted.clear();
 	}

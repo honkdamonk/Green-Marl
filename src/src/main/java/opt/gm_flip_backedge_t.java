@@ -88,13 +88,11 @@ public class gm_flip_backedge_t extends gm_apply {
 		// --------------------------------------
 		// check if bodies are all assignments
 		// --------------------------------------
-		java.util.Iterator<ast_sent> I;
-		for (I = S.iterator(); I.hasNext();) {
-			ast_sent s = I.next();
+		for (ast_sent s : S) {
 			if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
 				return true;
 
-			ast_assign a = (ast_assign) (I.next());
+			ast_assign a = (ast_assign) s;
 
 			if (a.is_defer_assign())
 				return true;
@@ -140,15 +138,11 @@ public class gm_flip_backedge_t extends gm_apply {
 			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(RW.write_set);
 
 			// check if this sentence initializes any target
-			java.util.Iterator<gm_symtab_entry> T;
-			for (T = targets.iterator(); T.hasNext();) {
-				gm_symtab_entry t = T.next();
+			for (gm_symtab_entry t : targets) {
 				if (!W.containsKey(t))
 					continue;
 				LinkedList<gm_rwinfo> lst = W.get(t);
-				java.util.Iterator<gm_rwinfo> J;
-				for (J = lst.iterator(); J.hasNext();) {
-					gm_rwinfo info = J.next();
+				for (gm_rwinfo info : lst) {
 					if (info.driver != null) {
 						if (info.driver != root) // other than thru root, init
 													// is being broken.
@@ -167,9 +161,7 @@ public class gm_flip_backedge_t extends gm_apply {
 		}
 
 		// check if every symbol has been initialized
-		java.util.Iterator<gm_symtab_entry> T;
-		for (T = targets.iterator(); T.hasNext();) {
-			gm_symtab_entry t = T.next();
+		for (gm_symtab_entry t : targets) {
 			if (!check_init.containsKey(t))
 				return true;
 			if (check_init.get(t) == false)
@@ -177,8 +169,8 @@ public class gm_flip_backedge_t extends gm_apply {
 		}
 
 		// now put every assignment in the candiate statement
-		for (I = S.iterator(); I.hasNext();) {
-			ast_assign a = (ast_assign) (I.next());
+		for (ast_sent sent : S) {
+			ast_assign a = (ast_assign) sent;
 			// add to target
 			_cands.addLast(a);
 			_tops.addLast(body);
@@ -190,7 +182,6 @@ public class gm_flip_backedge_t extends gm_apply {
 	public final boolean post_process() // return true if something changed
 	{
 		if (_cands.size() > 0) {
-			boolean b = false;
 			java.util.Iterator<ast_sentblock> P;
 			java.util.Iterator<ast_assign> A;
 			A = _cands.iterator();

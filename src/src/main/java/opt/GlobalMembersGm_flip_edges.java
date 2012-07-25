@@ -135,15 +135,12 @@ public class GlobalMembersGm_flip_edges {
 
 	// Now actually flip the edges
 	public static void do_flip_edges(java.util.LinkedList<ast_foreach> target) {
-		ast_foreach out;
 		ast_foreach in;
 		ast_if if1;
 		ast_if if2;
 		ast_sent dest;
 
-		java.util.Iterator<ast_foreach> I;
-		for (I = target.iterator(); I.hasNext();) {
-			out = I.next();
+		for (ast_foreach out : target) {
 			RefObject<ast_foreach> in_ref = new RefObject<ast_foreach>(null);
 			RefObject<ast_if> if1_ref = new RefObject<ast_if>(null);
 			RefObject<ast_if> if2_ref = new RefObject<ast_if>(null);

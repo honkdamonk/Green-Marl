@@ -79,9 +79,7 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 	}
 
 	public final void post_process2() {
-		java.util.Iterator<ast_assign> I;
-		for (I = targets.iterator(); I.hasNext();) {
-			ast_assign a = I.next();
+		for (ast_assign a : targets) {
 			assert a.is_reduce_assign();
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			GlobalMembersGm_fixup_bound_symbol.gm_make_normal_assign(a);
@@ -101,10 +99,7 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 	}
 
 	private boolean check_all_okay(java.util.LinkedList<ast_assign> L, gm_symtab_entry bound) {
-		java.util.Iterator<ast_assign> I;
-		for (I = L.iterator(); I.hasNext();) {
-			ast_assign a = I.next();
-
+		for (ast_assign a : L) {
 			if (a.get_lhs_field().get_first().getSymInfo() != bound)
 				return false;
 

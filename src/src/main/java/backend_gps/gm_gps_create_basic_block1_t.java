@@ -8,8 +8,10 @@ import ast.ast_while;
 
 import common.gm_apply;
 
-public class gm_gps_create_basic_block1_t extends gm_apply {
-	public gm_gps_create_basic_block1_t(java.util.HashMap<ast_sent, Integer> s, gm_gps_beinfo _gen) {
+public class gm_gps_create_basic_block1_t extends gm_apply
+{
+	public gm_gps_create_basic_block1_t(java.util.HashMap<ast_sent, Integer> s, gm_gps_beinfo _gen)
+	{
 		already_added = false;
 		added_depth = 0;
 		s_mark = s;
@@ -50,7 +52,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 		 */
 		assert(s_mark.containsKey(s));
 
-		if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_SEQ.getValue()))
+		if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_SEQ))
 		{
 			// add this sentence to the basic block
 			prev.add_sent(s);
@@ -59,7 +61,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 			return true;
 		}
 
-		else if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_BEGIN_VERTEX.getValue()))
+		else if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_BEGIN_VERTEX))
 		{
 			gm_gps_basic_block bb1 = newBB(gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX);
 			gm_gps_basic_block bb2 = newBB();
@@ -74,7 +76,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 			return true;
 		}
 
-		else if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX.getValue()))
+		else if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX))
 		{
 			if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK)
 			{
@@ -246,7 +248,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 	private int bb_number;
 	private java.util.HashMap<ast_sent, gm_gps_basic_block> prev_map = new java.util.HashMap<ast_sent, gm_gps_basic_block>();
 	private java.util.HashMap<ast_sent, gm_gps_basic_block> next_map = new java.util.HashMap<ast_sent, gm_gps_basic_block>();
-	private java.util.HashMap<ast_sent, Integer> s_mark;
+	private java.util.HashMap<ast_sent, gps_gps_sentence_t> s_mark;
 
 	private gm_gps_basic_block prev;
 	private gm_gps_basic_block entry;

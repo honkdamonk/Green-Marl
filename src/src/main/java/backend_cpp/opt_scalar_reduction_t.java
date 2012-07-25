@@ -68,15 +68,12 @@ public class opt_scalar_reduction_t extends gm_apply {
 		assert fe.is_parallel();
 
 		boolean has_scalar_reduction = false;
-		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> I;
-		for (I = B.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next().getKey();
+		for (gm_symtab_entry e : B.keySet()) {
 			if (e.getType().is_property())
 				continue;
 
 			has_scalar_reduction = true;
 			break;
-
 		}
 
 		if (has_scalar_reduction)
@@ -151,6 +148,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 				_thread_local = GlobalMembersGm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_EDGE, e.getType().get_target_graph_sym(),
 						new RefObject<String>(new_name));
 			} else {
+				_thread_local = null;
 				assert false;
 			}
 

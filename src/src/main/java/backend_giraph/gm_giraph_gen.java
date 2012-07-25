@@ -147,11 +147,9 @@ public class gm_giraph_gen extends gm_gps_gen
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
     
 		java.util.LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
-		java.util.Iterator<gm_gps_basic_block> I;
     
-		for (I = bb_blocks.iterator(); I.hasNext();)
+		for (gm_gps_basic_block b : bb_blocks)
 		{
-			gm_gps_basic_block b = I.next();
 			int id = b.get_id();
 			String.format(temp, "case %d: _master_state_%d(); break;", id, id);
 			Body.pushln(temp);
@@ -188,7 +186,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			gm_gps_basic_block b = I.next();
 			do_generate_master_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(stdout);
+		GlobalMembersGm_reproduce.gm_redirect_reproduce(System.out);
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
 	}
 	public void do_generate_master_class()
@@ -218,19 +216,13 @@ public class gm_giraph_gen extends gm_gps_gen
     
 		Body.pushln("public void initialize() throws InstantiationException, IllegalAccessException {");
     
-		// Basic blocks iterator
 		java.util.LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
-		java.util.Iterator<gm_gps_basic_block> I_bb;
-    
-		// Symbol iterator
 		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
-		java.util.Iterator<gm_symtab_entry> I_sym;
     
 		String.format(temp, "registerAggregator(%s, IntOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
-		for (I_bb = bb_blocks.iterator(); I_bb.hasNext();)
+		for (gm_gps_basic_block b : bb_blocks)
 		{
-			gm_gps_basic_block b = I_bb.next();
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
     
@@ -242,9 +234,8 @@ public class gm_giraph_gen extends gm_gps_gen
 			}
 		}
     
-		for (I_sym = scalar.iterator(); I_sym.hasNext();)
+		for (gm_symtab_entry sym : scalar)
 		{
-			gm_symtab_entry sym = I_sym.next();
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			assert syminfo != null;
     
@@ -261,11 +252,8 @@ public class gm_giraph_gen extends gm_gps_gen
 		gm_symtab args = proc.get_symtab_var();
 		assert args != null;
 		java.util.HashSet<gm_symtab_entry> syms = args.get_entries();
-		java.util.Iterator<gm_symtab_entry> I;
-		for (I = syms.iterator(); I.hasNext();)
+		for (gm_symtab_entry s : syms)
 		{
-			gm_symtab_entry s = I.next();
-    
 			// check if used in master
 			gps_syminfo syminfo = (gps_syminfo) s.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			if (!syminfo.is_used_in_master())
@@ -329,10 +317,8 @@ public class gm_giraph_gen extends gm_gps_gen
 			String.format(temp, "System.out.println(\"%s:\\t\" + %s + \"\\n\");", GlobalMembersGm_backend_gps.GPS_RET_VALUE, GlobalMembersGm_backend_gps.GPS_RET_VALUE);
 			Body.pushln(temp);
 		}
-		for (I = syms.iterator(); I.hasNext();)
+		for (gm_symtab_entry s : syms)
 		{
-			gm_symtab_entry s = I.next();
-    
 			// output arguments
 			if (!s.getType().is_primitive())
 				continue;
@@ -353,11 +339,9 @@ public class gm_giraph_gen extends gm_gps_gen
 		String temp = new String(new char[1024]);
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
-		java.util.Iterator<gm_symtab_entry> I;
     
-		for (I = scalar.iterator(); I.hasNext();)
+		for (gm_symtab_entry e : scalar)
 		{
-			gm_symtab_entry e = I.next();
 			gps_syminfo syminfo = (gps_syminfo) e.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			if (!syminfo.is_used_in_master())
 				continue;
@@ -378,10 +362,9 @@ public class gm_giraph_gen extends gm_gps_gen
 		if (proc.has_info(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL))
 		{
 			java.util.LinkedList<Object > L = proc.get_info_list(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL);
-			java.util.Iterator<Object > l;
-			for (l = L.iterator(); l.hasNext();)
+			for (Object obj : L)
 			{
-				gm_gps_basic_block bb = (gm_gps_basic_block)(l.next());
+				gm_gps_basic_block bb = (gm_gps_basic_block)(obj);
 				String.format(temp, "private boolean %s%d = true;", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, bb.get_id());
 				Body.pushln(temp);
 			}
@@ -615,11 +598,9 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("// Keys for shared_variables ");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
-		java.util.Iterator<gm_symtab_entry> I;
     
-		for (I = scalar.iterator(); I.hasNext();)
+		for (gm_symtab_entry sym : scalar)
 		{
-			gm_symtab_entry sym = I.next();
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			assert syminfo != null;
     
@@ -656,13 +637,8 @@ public class gm_giraph_gen extends gm_gps_gen
 		String proc_name = GlobalMembersGm_main.FE.get_current_proc().get_procname().get_genname();
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
     
-		// Basic blocks iterator
 		java.util.LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
-		java.util.Iterator<gm_gps_basic_block> I_bb;
-    
-		// Symbol iterator
 		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
-		java.util.Iterator<gm_symtab_entry> I_sym;
     
 		Body.pushln("//----------------------------------------------");
 		Body.pushln("// Worker Context Class");
@@ -675,9 +651,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		String.format(temp, "registerAggregator(%s, IntOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
     
-		for (I_bb = bb_blocks.iterator(); I_bb.hasNext();)
-		{
-			gm_gps_basic_block b = I_bb.next();
+		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
     
@@ -689,9 +663,8 @@ public class gm_giraph_gen extends gm_gps_gen
 			}
 		}
     
-		for (I_sym = scalar.iterator(); I_sym.hasNext();)
+		for (gm_symtab_entry sym : scalar)
 		{
-			gm_symtab_entry sym = I_sym.next();
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			assert syminfo != null;
     
@@ -715,9 +688,8 @@ public class gm_giraph_gen extends gm_gps_gen
 		String.format(temp, "useAggregator(%s);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
     
-		for (I_bb = bb_blocks.iterator(); I_bb.hasNext();)
+		for (gm_gps_basic_block b : bb_blocks)
 		{
-			gm_gps_basic_block b = I_bb.next();
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
     
@@ -729,9 +701,8 @@ public class gm_giraph_gen extends gm_gps_gen
 			}
 		}
     
-		for (I_sym = scalar.iterator(); I_sym.hasNext();)
+		for (gm_symtab_entry sym : scalar)
 		{
-			gm_symtab_entry sym = I_sym.next();
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			assert syminfo != null;
     
@@ -769,10 +740,8 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("// properties");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		java.util.HashSet<gm_symtab_entry> prop = is_edge_prop ? info.get_edge_prop_symbols() : info.get_node_prop_symbols();
-		java.util.Iterator<gm_symtab_entry> I;
-		for (I = prop.iterator(); I.hasNext();)
+		for (gm_symtab_entry sym : prop)
 		{
-			gm_symtab_entry sym = I.next();
 			//gps_syminfo* syminfo = (gps_syminfo*) sym->find_info(TAG_BB_USAGE);
 			String.format(temp, "%s %s;", get_type_string(sym.getType().get_target_type(), is_master_generate()), sym.getId().get_genname());
     
@@ -861,11 +830,9 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("switch(_state_vertex) { ");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		java.util.LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
-		java.util.Iterator<gm_gps_basic_block> I;
 		int cnt = 0;
-		for (I = bb_blocks.iterator(); I.hasNext();)
+		for (gm_gps_basic_block b : bb_blocks)
 		{
-			gm_gps_basic_block b = I.next();
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			int id = b.get_id();
@@ -883,9 +850,8 @@ public class gm_giraph_gen extends gm_gps_gen
     
 		GlobalMembersGm_reproduce.gm_redirect_reproduce(f_body); // for temporary
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
-		for (I = bb_blocks.iterator(); I.hasNext();)
+		for (gm_gps_basic_block b : bb_blocks)
 		{
-			gm_gps_basic_block b = I.next();
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			do_generate_vertex_state_body(b);
@@ -938,10 +904,8 @@ public class gm_giraph_gen extends gm_gps_gen
 			Body.pushln("MessageData _msg = _msgs.next();");
     
 			java.util.LinkedList<gm_gps_comm_unit> R = b.get_receivers();
-			java.util.Iterator<gm_gps_comm_unit> I;
-			for (I = R.iterator(); I.hasNext();)
+			for (gm_gps_comm_unit U : R)
 			{
-				gm_gps_comm_unit U = I.next();
 				if (U.get_type() == gm_gps_comm_t.GPS_COMM_NESTED)
 				{
 					ast_foreach fe = U.fe;
@@ -1026,11 +990,9 @@ public class gm_giraph_gen extends gm_gps_gen
 			Body.NL();
     
 			java.util.LinkedList<ast_sent> sents = b.get_sents();
-			java.util.Iterator<ast_sent> I;
 			int cnt = 0;
-			for (I = sents.iterator(); I.hasNext();)
+			for (ast_sent s : sents)
 			{
-				ast_sent s = I.next();
 				assert s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH;
 				ast_foreach fe = (ast_foreach) s;
 				ast_sent body = fe.get_body();
@@ -1264,7 +1226,6 @@ public class gm_giraph_gen extends gm_gps_gen
 		gm_symtab args = proc.get_symtab_var();
 		assert args != null;
 		java.util.HashSet<gm_symtab_entry> syms = args.get_entries();
-		java.util.Iterator<gm_symtab_entry> I;
     
 		Body.NL();
 		Body.pushln("//----------------------------------------------");
@@ -1278,9 +1239,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("options.addOption(\"w\", \"workers\", true, \"Number of workers\");");
 		Body.pushln("options.addOption(\"i\", \"input\", true, \"Input filename\");");
 		Body.pushln("options.addOption(\"o\", \"output\", true, \"Output filename\");");
-		for (I = syms.iterator(); I.hasNext();)
-		{
-			gm_symtab_entry s = I.next();
+		for (gm_symtab_entry s : syms) {
 			if (!s.getType().is_primitive() && (!s.getType().is_node()))
 				continue;
 			if (s.isReadable())
@@ -1308,9 +1267,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("LOG.info(\"Need to set input path (-i)\");");
 		Body.pushln("return -1;");
 		Body.pushln("}");
-		for (I = syms.iterator(); I.hasNext();)
-		{
-			gm_symtab_entry s = I.next();
+		for (gm_symtab_entry s : syms) {
 			if (!s.getType().is_primitive() && (!s.getType().is_node()))
 				continue;
 			if (s.isReadable())
@@ -1342,9 +1299,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("}");
 		Body.pushln("int workers = Integer.parseInt(cmd.getOptionValue('w'));");
 		Body.pushln("job.setWorkerConfiguration(workers, workers, 100.0f);");
-		for (I = syms.iterator(); I.hasNext();)
-		{
-			gm_symtab_entry s = I.next();
+		for (gm_symtab_entry s : syms) {
 			if (!s.getType().is_primitive() && (!s.getType().is_node()))
 				continue;
 			if (s.isReadable())

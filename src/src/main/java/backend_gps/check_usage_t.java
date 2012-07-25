@@ -166,11 +166,10 @@ public class check_usage_t extends gps_apply_bb_ast
 			{
 				usage.put(e, GM_REDUCE_T.GMREDUCE_INVALID); // normal write
 				java.util.LinkedList<ast_node> L = a.get_lhs_list();
-				java.util.Iterator<ast_node> I;
-				for (I = L.iterator(); I.hasNext();)
+				for (ast_node node : L)
 				{
-					assert (I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID;
-					gm_symtab_entry e2 = ((ast_id)(I.next())).getSymInfo();
+					assert node.get_nodetype() == AST_NODE_TYPE.AST_ID;
+					gm_symtab_entry e2 = ((ast_id) node).getSymInfo();
 					usage.put(e2, GM_REDUCE_T.GMREDUCE_INVALID);
 				}
 			}

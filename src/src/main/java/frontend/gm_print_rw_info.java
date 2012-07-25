@@ -28,18 +28,16 @@ public class gm_print_rw_info extends gm_apply {
 	private void print_set(String c, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> m) {
 		print_tab(_tab);
 		System.out.printf(" <%s>", c);
-		Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> it;
 		int cnt2 = 0;
-		for (it = m.iterator(); it.hasNext(); it++, cnt2++) {
-			gm_symtab_entry e = it.next().getKey();
-			LinkedList<gm_rwinfo> l = it.next().getValue();
+		for (gm_symtab_entry e : m.keySet()) {
+			LinkedList<gm_rwinfo> l = m.get(e);
 			assert e != null;
 			assert l != null;
 			if ((cnt2 % 8) == 7) {
 				System.out.print("\n");
 				print_tab(_tab + 1);
 			}
-			if (it != m.iterator())
+			if (cnt2 != 0) // (it != m.iterator())
 				System.out.print(",");
 
 			if (e.getType().is_property())
@@ -55,6 +53,7 @@ public class gm_print_rw_info extends gm_apply {
 			}
 
 			System.out.print("}");
+			cnt2++;
 		}
 		System.out.print("\n");
 	}

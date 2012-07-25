@@ -1,15 +1,12 @@
 package backend_gps;
 
+import inc.GlobalMembersGm_backend_gps;
+import ast.AST_NODE_TYPE;
 import ast.ast_if;
 import ast.ast_sent;
 import ast.ast_while;
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import inc.*;
-import opt.*;
-import tangible.*;
+
+import common.gm_apply;
 
 public class gm_gps_create_basic_block1_t extends gm_apply
 {
@@ -257,7 +254,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply
 	private int bb_number;
 	private java.util.HashMap<ast_sent, gm_gps_basic_block> prev_map = new java.util.HashMap<ast_sent, gm_gps_basic_block>();
 	private java.util.HashMap<ast_sent, gm_gps_basic_block> next_map = new java.util.HashMap<ast_sent, gm_gps_basic_block>();
-	private java.util.HashMap<ast_sent, Integer> s_mark;
+	private java.util.HashMap<ast_sent, gps_gps_sentence_t> s_mark;
 
 	private gm_gps_basic_block prev;
 	private gm_gps_basic_block entry;

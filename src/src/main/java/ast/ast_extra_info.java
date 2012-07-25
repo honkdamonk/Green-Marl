@@ -1,12 +1,5 @@
 package ast;
 
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import opt.*;
-import tangible.*;
-
 // any information can be added to nodes
 public class ast_extra_info {
 	public int ival;
@@ -65,6 +58,13 @@ public class ast_extra_info {
 	}
 
 	public void base_copy(ast_extra_info from) {
-		this = from;
+		// this = from;
+		ival = from.ival;
+		bval = from.bval;
+		fval = from.fval;
+		ptr1 = from.ptr1;
+		ptr2 = from.ptr2;
+
 	}
+
 }

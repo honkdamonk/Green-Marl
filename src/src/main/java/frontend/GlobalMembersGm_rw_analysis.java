@@ -99,19 +99,15 @@ public class GlobalMembersGm_rw_analysis {
 		boolean is_error = false;
 
 		// find entry in the map
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-//C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy assignment (rather than a reference assignment) - this should be verified and a 'copyFrom' method should be created if it does not yet exist:
-//ORIGINAL LINE: i = info_set.find(sym);
-		i.copyFrom(info_set.find(sym));
-		if (i == info_set.end()) // not found --> add new;
+		if (!info_set.containsKey(sym)) // not found --> add new;
 		{
-			LinkedList<gm_rwinfo> l = new LinkedList<gm_rwinfo*>();
+			LinkedList<gm_rwinfo> l = new LinkedList<gm_rwinfo>();
 			l.addLast(new_entry);
 			info_set.put(sym, l);
 		} // check entries already exists
 		else
 		{
-			LinkedList<gm_rwinfo> l = i.next().getValue();
+			LinkedList<gm_rwinfo> l = info_set.get(sym);
 			java.util.Iterator<gm_rwinfo> ii;
 			assert l != null;
 			for (ii = l.iterator(); ii.hasNext();)
@@ -312,24 +308,15 @@ public class GlobalMembersGm_rw_analysis {
 	public static boolean merge_for_if_else(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> Target, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S1,
 			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S2, boolean is_reduce) {
 		boolean is_okay = true;
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> s1;
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> s2;
 
 		// search for all elements in then-part
-		for (s1 = S1.iterator(); s1.hasNext();) {
-			gm_symtab_entry sym = s1.next().getKey();
-			LinkedList<gm_rwinfo> l1 = s1.next().getValue();
+		for(gm_symtab_entry sym : S1.keySet()) {
+			LinkedList<gm_rwinfo> l1 = S1.get(sym);
 			java.util.Iterator<gm_rwinfo> ss1;
 			assert l1 != null;
 
 			// check this symbol is accessed in S2 as well
-			// C++ TO JAVA CONVERTER WARNING: The following line was determined
-			// to be a copy assignment (rather than a reference assignment) -
-			// this should be verified and a 'copyFrom' method should be created
-			// if it does not yet exist:
-			// ORIGINAL LINE: s2 = S2.find(sym);
-			s2.copyFrom(S2.find(sym));
-			if (s2 == S2.end()) {
+			if (S2.containsKey(sym)) {
 				// not in the else path
 				// --> copy_and_add all the accesses to this symbol.
 				for (ss1 = l1.iterator(); ss1.hasNext();) {
@@ -346,7 +333,7 @@ public class GlobalMembersGm_rw_analysis {
 					if (copy.always == true) {
 						boolean found = false;
 						// check if the same access happens in else part
-						LinkedList<gm_rwinfo> l2 = s2.next().getValue();
+						LinkedList<gm_rwinfo> l2 = S2.get(sym);;
 						java.util.Iterator<gm_rwinfo> ss2;
 						assert l2 != null;
 						for (ss2 = l2.iterator(); ss2.hasNext();) {
@@ -369,12 +356,11 @@ public class GlobalMembersGm_rw_analysis {
 		}
 
 		// elements in the else-part
-		for (s2 = S2.iterator(); s2.hasNext();) {
+		for(gm_symtab_entry sym : S2.keySet()) {
 			// we can blindly add here.
 			// (If merged from the then-part, wider entry will be already in the
 			// target set.)
-			gm_symtab_entry sym = s2.next().getKey();
-			LinkedList<gm_rwinfo> l2 = s2.next().getValue();
+			LinkedList<gm_rwinfo> l2 = S2.get(sym);
 			java.util.Iterator<gm_rwinfo> ss2;
 			for (ss2 = l2.iterator(); ss2.hasNext();) {
 				gm_rwinfo e = ss2.next();
@@ -545,8 +531,7 @@ public class GlobalMembersGm_rw_analysis {
 		assert iter_sym.getType() != null;
 
 		gm_rwinfo new_entry;
-		java.util.Iterator<gm_symtab_entry, range_cond_t> i = DrvMap.find(iter_sym);
-		if (i == DrvMap.end()) {
+		if (!DrvMap.containsKey(iter_sym)) {
 			new_entry = gm_rwinfo.new_field_inst(iter_sym, e.get_field().get_first()); // iterator
 																						// syminfo
 
@@ -556,8 +541,8 @@ public class GlobalMembersGm_rw_analysis {
 
 		} // temporary driver or vector driver
 		else {
-			int range_type = i.next().getValue().range_type;
-			boolean always = i.next().getValue().is_always;
+			gm_range_type_t range_type = DrvMap.get(iter_sym).range_type;
+			boolean always = DrvMap.get(iter_sym).is_always;
 			new_entry = gm_rwinfo.new_range_inst(range_type, always, e.get_field().get_first());
 		}
 
@@ -596,13 +581,12 @@ public class GlobalMembersGm_rw_analysis {
 				gm_symtab_entry iter_sym = f.get_first().getSymInfo();
 				gm_symtab_entry field_sym = f.get_second().getSymInfo();
 
-				java.util.Iterator<gm_symtab_entry, range_cond_t> i = DrvMap.find(iter_sym);
-				if (i == DrvMap.end()) {
+				if (!DrvMap.containsKey(iter_sym)) {
 					new_entry = gm_rwinfo.new_field_inst(iter_sym, f.get_first());
 				} // temporary driver or vector driver
 				else {
-					gm_range_type_t range_type = i.next().getValue().range_type;
-					boolean always = i.next().getValue().is_always;
+					gm_range_type_t range_type = DrvMap.get(iter_sym).range_type;
+					boolean always = DrvMap.get(iter_sym).is_always;
 					new_entry = gm_rwinfo.new_range_inst(range_type, always, f.get_first());
 				}
 				GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(rset, field_sym, new_entry);

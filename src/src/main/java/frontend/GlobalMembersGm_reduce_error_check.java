@@ -2,6 +2,8 @@ package frontend;
 
 import inc.GM_REDUCE_T;
 
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.ast_id;
@@ -13,7 +15,7 @@ import common.GlobalMembersGm_misc;
 public class GlobalMembersGm_reduce_error_check {
 	public static boolean is_conflict(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type,
 			tangible.RefObject<Boolean> is_bound_error, tangible.RefObject<Boolean> is_type_error) {
-		java.util.Iterator<bound_info_t> i;
+		Iterator<bound_info_t> i;
 		is_type_error.argvalue = false;
 		is_bound_error.argvalue = false;
 		for (i = L.iterator(); i.hasNext();) {
@@ -54,14 +56,10 @@ public class GlobalMembersGm_reduce_error_check {
 	}
 
 	// returns is_okay
-	public static boolean check_add_and_report_conflicts(LinkedList<bound_info_t> L, java.util.HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> B) {
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-		for (i = B.iterator(); i.hasNext();) {
-			gm_symtab_entry e = i.next().getKey();
-			LinkedList<gm_rwinfo> l = i.next().getValue();
-			java.util.Iterator<gm_rwinfo> j;
-			for (j = l.iterator(); j.hasNext();) {
-				gm_rwinfo jj = j.next();
+	public static boolean check_add_and_report_conflicts(LinkedList<bound_info_t> L, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> B) {
+		for (gm_symtab_entry e : B.keySet()) {
+			LinkedList<gm_rwinfo> l = B.get(e);
+			for (gm_rwinfo jj : l) {
 				boolean is_bound_error = false;
 				boolean is_type_error = false;
 				assert jj.bound_symbol != null;
@@ -92,14 +90,10 @@ public class GlobalMembersGm_reduce_error_check {
 		return true;
 	}
 
-	public static void remove_all(LinkedList<bound_info_t> L, java.util.HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> B) {
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> i;
-		for (i = B.iterator(); i.hasNext();) {
-			gm_symtab_entry e = i.next().getKey();
-			LinkedList<gm_rwinfo> l = i.next().getValue();
-			java.util.Iterator<gm_rwinfo> j;
-			for (j = l.iterator(); j.hasNext();) {
-				gm_rwinfo jj = j.next();
+	public static void remove_all(LinkedList<bound_info_t> L, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> B) {
+		for (gm_symtab_entry e : B.keySet()) {
+			LinkedList<gm_rwinfo> l = B.get(e);
+			for (gm_rwinfo jj : l) {
 				GlobalMembersGm_reduce_error_check.remove_bound(L, e, jj.bound_symbol, jj.reduce_op);
 			}
 		}

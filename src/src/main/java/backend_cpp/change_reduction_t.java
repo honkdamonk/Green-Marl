@@ -35,7 +35,7 @@ public class change_reduction_t extends gm_apply {
 		// should be verified and a 'copyFrom' method should be created if it
 		// does not yet exist:
 		// ORIGINAL LINE: I = symbol_map->find(lhs->getSymInfo());
-		I.copyFrom(symbol_map.find(lhs.getSymInfo()));
+		I.copyFrom(symbol_map.get(lhs.getSymInfo()));
 		if (I == symbol_map.end()) // not target
 			return true;
 

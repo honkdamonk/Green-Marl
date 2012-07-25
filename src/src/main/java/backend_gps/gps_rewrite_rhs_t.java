@@ -1,5 +1,6 @@
 package backend_gps;
 
+import tangible.RefObject;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GlobalMembersGm_backend_gps;
@@ -55,11 +56,9 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	}
 
 	public final void process() {
-		java.util.Iterator<ast_foreach, java.util.HashSet<ast_expr>> I;
-
-		for (I = sub_exprs.iterator(); I.hasNext();) {
-			if (I.next().getValue().size() > 0)
-				process_foreach(I.next().getKey(), I.next().getValue());
+		for (ast_foreach key : sub_exprs.keySet()) {
+			if (sub_exprs.get(key).size() > 0)
+				process_foreach(key, sub_exprs.get(key));
 		}
 	}
 
@@ -126,10 +125,8 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		}
 
 		// create definitions
-		java.util.Iterator<ast_expr, gm_symtab_entry> K;
-		for (K = expr_vars.iterator(); K.hasNext();) {
-			ast_expr rhs = K.next().getKey();
-			gm_symtab_entry target = K.next().getValue();
+		for (ast_expr rhs : expr_vars.keySet()) {
+			gm_symtab_entry target = expr_vars.get(rhs);
 			ast_id lhs_id = target.getId().copy(true);
 			ast_assign r_assign = ast_assign.new_assign_scala(lhs_id, rhs);
 
@@ -138,10 +135,8 @@ public class gps_rewrite_rhs_t extends gm_apply {
 			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, r_assign);
 		}
 
-		java.util.Iterator<gm_symtab_entry, gm_symtab_entry> J;
-		for (J = props_vars.iterator(); J.hasNext();) {
-			gm_symtab_entry prop = J.next().getKey();
-			gm_symtab_entry target = J.next().getValue();
+		for (gm_symtab_entry prop : props_vars.keySet()) {
+			gm_symtab_entry target = props_vars.get(prop);
 
 			ast_id lhs_id = target.getId().copy(true);
 			ast_id driver = out_iter.getId().copy(true);
@@ -178,16 +173,17 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		String temp_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_m");
 		gm_symtab_entry target;
 		if (type.is_prim_type()) {
-			target = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, type, (String) temp_name);
+			target = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, type, new RefObject<String>(temp_name));
 		} else if (type.is_node_edge_compatible_type()) {
 			if (type.is_node_compatible_type()) {
 				type = GMTYPE_T.GMTYPE_NODE;
 			} else if (type.is_edge_compatible_type()) {
 				type = GMTYPE_T.GMTYPE_EDGE;
 			}
-			target = GlobalMembersGm_add_symbol.gm_add_new_symbol_nodeedge_type(sb, type, graph, (String) temp_name);
+			target = GlobalMembersGm_add_symbol.gm_add_new_symbol_nodeedge_type(sb, type, graph, new RefObject<String>(temp_name));
 		} else {
 			assert false;
+			throw new AssertionError();
 		}
 		temp_name = null;
 
@@ -197,7 +193,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	private boolean parent_already_added(ast_expr e) {
 		e = e.get_up_op();
 		while (e != null) {
-			if (sub_exprs.get(current_fe).find(e).hasNext()) {
+			if (sub_exprs.get(current_fe).contains(e)) {
 				return true;
 			}
 			e = e.get_up_op();

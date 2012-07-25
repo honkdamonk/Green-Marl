@@ -2,14 +2,10 @@ package backend_gps;
 
 import ast.ast_foreach;
 import ast.ast_sentblock;
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import opt.*;
-import tangible.*;
+import frontend.gm_symtab_entry;
 
 public class gm_gps_comm_unit {
+	
   public gm_gps_comm_unit() {
     this.type_of_comm = gm_gps_comm_t.GPS_COMM_INIT;
     this.fe = null;
@@ -43,20 +39,22 @@ public class gm_gps_comm_unit {
   // for comparison (less)
   // C++ TO JAVA CONVERTER TODO TASK: The following operator cannot be converted
   // to Java:
-  boolean operator ()(gm_gps_comm_unit lhs, gm_gps_comm_unit rhs)
+  @Deprecated
+  boolean operator /*()*/(gm_gps_comm_unit lhs, gm_gps_comm_unit rhs)
   {
-    if (lhs.type_of_comm != rhs.type_of_comm)
-      return (lhs.type_of_comm < rhs.type_of_comm);
-
-    else if (lhs.fe != rhs.fe)
-      return (lhs.fe < rhs.fe);
-
-    else if (lhs.sb != rhs.sb)
-      return (lhs.sb < rhs.sb);
-
-    else if (lhs.sym != rhs.sym)
-      return (lhs.sym < rhs.sym);
+//    if (lhs.type_of_comm != rhs.type_of_comm)
+//      return (lhs.type_of_comm < rhs.type_of_comm);
+//
+//    else if (lhs.fe != rhs.fe)
+//      return (lhs.fe < rhs.fe);
+//
+//    else if (lhs.sb != rhs.sb)
+//      return (lhs.sb < rhs.sb);
+//
+//    else if (lhs.sym != rhs.sym)
+//      return (lhs.sym < rhs.sym);
 
     return false; // if same, answer is false
   }
+
 }

@@ -62,7 +62,7 @@ public class GlobalMembersGm_merge_loops {
 			// if it does not yet exist:
 			// ORIGINAL LINE: j = S2.find(e);
 			j.copyFrom(S2.get(e));
-			if (j.hasNext()) {
+			if (S2.containsKey(e)) {
 				// found entry
 				if (!e.getType().is_property()) // scala
 				{
@@ -78,7 +78,7 @@ public class GlobalMembersGm_merge_loops {
 					// check S1, S2 is linearly accessed only.
 					if (!GlobalMembersGm_merge_loops.is_linear_access_only(S1.get(e)))
 						return true;
-					if (!GlobalMembersGm_merge_loops.is_linear_access_only(j.next().getValue()))
+					if (!GlobalMembersGm_merge_loops.is_linear_access_only(S2.get(e)))
 						return true;
 					if (check_reduce) // if e is in the reduce-set,
 					{

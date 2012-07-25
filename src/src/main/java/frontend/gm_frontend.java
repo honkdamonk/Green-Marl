@@ -151,7 +151,7 @@ public class gm_frontend {
 
 	public final ast_procdef get_next_proc() {
 		if (I == procs.end()) {
-			GlobalMembersGm_error.gm_set_curr_procname((String) "");
+			GlobalMembersGm_error.gm_set_curr_procname("");
 			set_current_proc(null);
 			return null;
 		} else {
@@ -181,12 +181,22 @@ public class gm_frontend {
 	// -------------------------------------------------------
 	// short-cut to current procedure's vocaburary
 	// -------------------------------------------------------
+	@Deprecated
 	public final void voca_add(tangible.RefObject<String> n) {
 		proc_info.get(_curr_proc).add_voca(n);
 	}
+	
+	public final void voca_add(String value) {
+		proc_info.get(_curr_proc).add_voca(value);
+	}
 
+	@Deprecated
 	public final boolean voca_isin(tangible.RefObject<String> n) {
 		return proc_info.get(_curr_proc).isin_voca(n);
+	}
+	
+	public final boolean voca_isin(String value) {
+		return proc_info.get(_curr_proc).isin_voca(value);
 	}
 
 	public final void voca_clear() {
@@ -249,10 +259,8 @@ public class gm_frontend {
 		// ORIGINAL LINE: sbyte* c =
 		// proc_info[_curr_proc]->generate_temp_name(base, extra1,
 		// try_org_name_first);
-		byte c = proc_info.get(_curr_proc).generate_temp_name(base, extra1, try_org_name_first);
-		tangible.RefObject<String> tempRef_c = new tangible.RefObject<String>(c);
-		voca_add(tempRef_c);
-		c = tempRef_c.argvalue;
+		String c = proc_info.get(_curr_proc).generate_temp_name(base, extra1, try_org_name_first);
+		voca_add(c);
 		return c;
 	}
 

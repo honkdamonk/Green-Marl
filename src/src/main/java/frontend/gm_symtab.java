@@ -1,5 +1,6 @@
 package frontend;
 
+import tangible.RefObject;
 import ast.ast_id;
 import ast.ast_node;
 import ast.ast_typedecl;
@@ -46,12 +47,12 @@ public class gm_symtab {
 
 	// if old entry is not found, copy of id and copy of typedecl is added into
 	// the table
-	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA) {
-		return check_duplicate_and_add_symbol(id, type, old_def, isRA, true);
+	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA) {
+		return check_duplicate_and_add_symbol(id, type, old_def_ref, isRA, true);
 	}
 
-	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def) {
-		return check_duplicate_and_add_symbol(id, type, old_def, true, true);
+	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref) {
+		return check_duplicate_and_add_symbol(id, type, old_def_ref, true, true);
 	}
 
 	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
@@ -59,22 +60,22 @@ public class gm_symtab {
 	// ORIGINAL LINE: boolean check_duplicate_and_add_symbol(ast_id* id,
 	// ast_typedecl* type, gm_symtab_entry*& old_def, boolean isRA = true,
 	// boolean isWA = true)
-	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA, boolean isWA) {
+	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA, boolean isWA) {
 		assert id.getSymInfo() == null;
 		// printf("check duplicate for %s\n", id->get_orgname());
-		old_def = find_symbol(id);
-		if (old_def != null)
+		old_def_ref.argvalue = find_symbol(id);
+		if (old_def_ref.argvalue != null)
 			return false;
 		add_entry(id, type, isRA, isWA); // copy is created inside
 		return true;
 	}
 
-	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA) {
-		return check_and_add_symbol(id, type, old_def, isRA, true);
+	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA) {
+		return check_and_add_symbol(id, type, old_def_ref, isRA, true);
 	}
 
-	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def) {
-		return check_and_add_symbol(id, type, old_def, true, true);
+	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref) {
+		return check_and_add_symbol(id, type, old_def_ref, true, true);
 	}
 
 	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
@@ -82,8 +83,8 @@ public class gm_symtab {
 	// ORIGINAL LINE: boolean check_and_add_symbol(ast_id* id, ast_typedecl*
 	// type, gm_symtab_entry*& old_def, boolean isRA = true, boolean isWA =
 	// true)
-	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA, boolean isWA) {
-		return check_duplicate_and_add_symbol(id, type, old_def, isRA, isWA);
+	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA, boolean isWA) {
+		return check_duplicate_and_add_symbol(id, type, old_def_ref, isRA, isWA);
 	}
 
 	public final gm_symtab_entry find_symbol(ast_id id) {

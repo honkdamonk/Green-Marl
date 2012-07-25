@@ -150,7 +150,6 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply
 
 	private void assemble(ast_id newIterator, ast_sent newBody)
 	{
-		fe.get_iterator() = null;
 		fe.set_iterator(newIterator);
 		fe.set_body(newBody);
 
@@ -165,10 +164,10 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply
 	private static boolean declare_symbol(gm_symtab SYM, ast_id id, ast_typedecl type, boolean is_readable, boolean is_writeable)
 	{
 
-		gm_symtab_entry old_e;
+		RefObject<gm_symtab_entry> old_e = new RefObject<gm_symtab_entry>(null);
 		boolean is_okay = SYM.check_duplicate_and_add_symbol(id, type, old_e, is_readable, is_writeable);
 		if (!is_okay)
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DUPLICATE, id, old_e.getId());
+			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DUPLICATE, id, old_e.argvalue.getId());
 
 		find_and_connect_symbol(id, SYM);
 

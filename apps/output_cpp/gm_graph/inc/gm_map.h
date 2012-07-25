@@ -87,58 +87,6 @@ private:
     gm_spinlock_t lock;
     typedef typename map<Key, Value>::iterator Iterator;
 
-#ifdef  __clang__
-
-    template<class Function>
-    inline Value getValue_generic(Function compare) {
-        assert(size() > 0);
-        Iterator iter = data.begin();
-        Value value = iter->second;
-        #pragma omp parallel for
-        for (iter = data.begin(); iter != data.end(); iter++) {
-            if (compare(iter->second, value)) {
-                #pragma omp critical
-                if(compare(iter->second, value)) {
-                    value = iter->second;
-                }
-            }
-        }
-        return value;
-    }
-
-    template<class Function>
-    inline Key getKey_generic(Function compare) {
-        assert(size() > 0);
-        Iterator iter = data.begin();
-        Key key = iter->first;
-        Value value = iter->second;
-        #pragma omp parallel for
-        for (iter = data.begin(); iter != data.end(); iter++) {
-            if (compare(iter->second, value)) {
-                #pragma omp critical
-                if(compare(iter->second, value)) {
-                    key = iter->first;
-                    value = iter->second;
-                }
-            }
-        }
-        return key;
-    }
-
-    template<class Function>
-    inline bool hasValue_generic(Function compare, const Key key) {
-        if (size() == 0 || !hasKey(key)) return false;
-        Value value = data[key];
-        bool result = true;
-        #pragma omp parallel for
-        for (Iterator iter = data.begin(); iter != data.end(); iter++) {
-            if (compare(iter->second, value)) result = false;
-        }
-        return result;
-    }
-
-#elif __GNUC__
-
     template<class Function>
     inline Value getValue_generic(Function compare) {
         assert(size() > 0);
@@ -177,11 +125,6 @@ private:
         }
         return result;
     }
-
-#else
-#error "Your compiler is not supported. Use GCC or Clang"
-#endif
-
 
 public:
     gm_map_small() : lock(0) {

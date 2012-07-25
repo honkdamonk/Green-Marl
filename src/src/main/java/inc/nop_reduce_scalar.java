@@ -78,7 +78,7 @@ public class nop_reduce_scalar extends ast_nop {
 	{
 		java.util.Iterator<gm_symtab_entry> I1;
 		java.util.Iterator<gm_symtab_entry> I2;
-		java.util.Iterator<Integer> I3;
+		java.util.Iterator<GM_REDUCE_T> I3;
 		java.util.Iterator<LinkedList<gm_symtab_entry>> I4; // supple old
 		java.util.Iterator<LinkedList<gm_symtab_entry>> I5; // supple new
 		I1 = old_s.begin();
@@ -90,7 +90,7 @@ public class nop_reduce_scalar extends ast_nop {
 		{
 			gm_symtab_entry old_sym = I1.next();
 			gm_symtab_entry new_sym = I2.next();
-			int r_type = I3.next();
+			GM_REDUCE_T r_type = I3.next();
 			LinkedList<gm_symtab_entry> OLD_LIST = I4.next();
 			LinkedList<gm_symtab_entry> NEW_LIST = I5.next();
     
@@ -113,7 +113,7 @@ public class nop_reduce_scalar extends ast_nop {
 					assert lhs_sym != null;
 					assert rhs_sym != null;
 					ast_id lhs = lhs_sym.getId().copy(true);
-					(assert(lhs != null));
+					assert(lhs != null);
 					assert lhs.getSymInfo() != null;
 					ast_id rhs_s = rhs_sym.getId().copy(true);
 					ast_expr rhs = ast_expr.new_id_expr(rhs_s);

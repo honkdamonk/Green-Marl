@@ -147,6 +147,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 				_thread_local = GlobalMembersGm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_EDGE, e.getType().get_target_graph_sym(),
 						new RefObject<String>(new_name));
 			} else {
+				_thread_local = null;
 				assert false;
 			}
 

@@ -339,8 +339,6 @@ public class gm_giraphlib extends gm_gpslib
 
 	public void generate_master_class_details(java.util.HashSet<gm_symtab_entry> prop, gm_code_writer Body)
 	{
-		java.util.Iterator<gm_symtab_entry> I;
-    
 		Body.pushln("@Override");
 		Body.pushln("public void write(DataOutput out) throws IOException {");
 		Body.pushln("out.writeInt(_master_state);");
@@ -348,9 +346,8 @@ public class gm_giraphlib extends gm_gpslib
 		Body.pushln("out.writeBoolean(_master_should_start_workers);");
 		Body.pushln("out.writeBoolean(_master_should_finish);");
     
-		for (I = prop.iterator(); I.hasNext();)
+		for (gm_symtab_entry sym : prop)
 		{
-			gm_symtab_entry sym = I.next();
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			if (!syminfo.is_used_in_master())
 				continue;
@@ -366,9 +363,8 @@ public class gm_giraphlib extends gm_gpslib
 		Body.pushln("_master_should_start_workers = in.readBoolean();");
 		Body.pushln("_master_should_finish = in.readBoolean();");
     
-		for (I = prop.iterator(); I.hasNext();)
+		for (gm_symtab_entry sym : prop)
 		{
-			gm_symtab_entry sym = I.next();
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			if (!syminfo.is_used_in_master())
 				continue;
@@ -382,8 +378,6 @@ public class gm_giraphlib extends gm_gpslib
 	{
 		String temp = new String(new char[1024]);
 		int total = is_edge_prop ? ((gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info()).get_total_edge_property_size() : ((gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info()).get_total_node_property_size();
-    
-		java.util.Iterator<gm_symtab_entry> I;
     
 		if (is_edge_prop)
 		{
@@ -407,9 +401,8 @@ public class gm_giraphlib extends gm_gpslib
     
 		Body.pushln("@Override");
 		Body.pushln("public void write(DataOutput out) throws IOException {");
-		for (I = prop.iterator(); I.hasNext();)
+		for (gm_symtab_entry sym : prop)
 		{
-			gm_symtab_entry sym = I.next();
 			genPutIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
 		}
 		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE))
@@ -801,12 +794,11 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
             Body.pushln("m_type = in.readByte();");
         String str_buf = new String(new char[1024]);
         java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        java.util.Iterator<gm_gps_congruent_msg_class> I;
         boolean is_single = info.is_single_message();
         boolean is_first = true;
-        for(I = LOOPS.iterator(); I.hasNext();)
+        for(gm_gps_congruent_msg_class c : LOOPS)
         {
-            gm_gps_communication_size_info SYMS = *((I.next()).sz_info);
+            gm_gps_communication_size_info SYMS = c.sz_info;
             int sz = get_total_size(SYMS);
             if (!is_single && is_first)
             {
@@ -899,10 +891,9 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
         {
             java.util.LinkedList<Object > L = fe.get_info_list(GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE);
 
-            java.util.Iterator<Object > I;
-            for (I = L.iterator(); I.hasNext();)
+            for (Object obj : L)
             {
-                ast_sent s = (ast_sent) I.next();
+                ast_sent s = (ast_sent) obj;
                 assert s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN;
                 ast_assign a = (ast_assign) s;
                 assert !a.is_target_scalar();
@@ -910,7 +901,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
 //C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
 //ORIGINAL LINE: int* i = (int*) fe->find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
                 int i = (int) fe.find_info_map_value(GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS, e);
-                assert i!= null;
+                assert i != null;
 
                 if (i == gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_SENT_WRITE.getValue())
                 {
@@ -936,11 +927,9 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
         if (fe != null)
         {
             assert fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
-            java.util.Iterator<ast_sent> J;
             ast_sentblock sb = (ast_sentblock) fe.get_body();
-            for (J = sb.get_sents().iterator(); J.hasNext();)
+            for (ast_sent s : sb.get_sents())
             {
-                ast_sent s = J.next();
                 if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_COMM_DEF_ASSIGN))
                 {
                     get_main().generate_sent(s);
@@ -948,10 +937,8 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
             }
         }
 
-        java.util.Iterator<gm_gps_communication_symbol_info> I;
-        for (I = LIST.iterator(); I.hasNext();)
+        for (gm_gps_communication_symbol_info SYM : LIST)
         {
-            gm_gps_communication_symbol_info SYM = I.next();
             Body.push("_msg.");
             String fname = get_message_field_var_name(SYM.gm_type, SYM.idx);
             Body.push(fname);
@@ -994,10 +981,8 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
             if (sents_after_message.size() > 0)
             {
                 Body.NL();
-                java.util.Iterator<ast_sent> I;
-                for (I = sents_after_message.iterator(); I.hasNext();)
+                for (ast_sent s : sents_after_message)
                 {
-                    ast_sent s = I.next();
                     get_main().generate_sent(s);
                 }
 
@@ -1048,10 +1033,8 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
             Body.pushln(temp);
         }
 
-        java.util.Iterator<gm_gps_communication_symbol_info> I;
-        for (I = LIST.iterator(); I.hasNext();)
+        for (gm_gps_communication_symbol_info SYM : LIST)
         {
-            gm_gps_communication_symbol_info SYM = I.next();
             gm_symtab_entry e = SYM.symbol;
 
             // check it once again later

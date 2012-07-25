@@ -90,6 +90,11 @@ public class gm_giraphlib extends gm_gpslib
 		String.format(temp, "((BooleanOverwriteAggregator) getAggregator(\"%s\")).setAggregatedValue(%s);", is_first_var, is_first_var);
 		Body.pushln(temp);
 	}
+	
+	public void generate_broadcast_variable_type(GMTYPE_T type_id, gm_code_writer Body) {
+		generate_broadcast_variable_type(type_id, Body, GM_REDUCE_T.GMREDUCE_NULL);
+	}
+	
 	public void generate_broadcast_variable_type(GMTYPE_T type_id, gm_code_writer Body, GM_REDUCE_T reduce_op)
     
 	{
@@ -418,9 +423,7 @@ public class gm_giraphlib extends gm_gpslib
     
 		Body.pushln("@Override");
 		Body.pushln("public void readFields(DataInput in) throws IOException {");
-		for (I = prop.iterator(); I.hasNext();)
-		{
-			gm_symtab_entry sym = I.next();
+		for(gm_symtab_entry sym : prop) {
 			genGetIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
 		}
 		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE))
@@ -848,7 +851,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
 
         gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
-        int m_type = (fe == null) ? gm_gps_comm_t.GPS_COMM_INIT : gm_gps_comm_t.GPS_COMM_NESTED;
+        gm_gps_comm_t m_type = (fe == null) ? gm_gps_comm_t.GPS_COMM_INIT : gm_gps_comm_t.GPS_COMM_NESTED;
 
         gm_gps_comm_unit U = new gm_gps_comm_unit(m_type, fe);
 
@@ -900,7 +903,7 @@ private static boolean generate_message_class_write_is_symbol_defined_in_bb(gm_g
                 gm_symtab_entry e = a.get_lhs_field().get_second().getSymInfo();
 //C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
 //ORIGINAL LINE: int* i = (int*) fe->find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
-                int i = (int) fe.find_info_map_value(GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS, e);
+                Integer i = (Integer) fe.find_info_map_value(GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS, e);
                 assert i != null;
 
                 if (i == gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_SENT_WRITE.getValue())

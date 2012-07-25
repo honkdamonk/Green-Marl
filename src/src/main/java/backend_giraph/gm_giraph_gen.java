@@ -14,6 +14,7 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_while;
+import backend_cpp.FILE;
 import backend_gps.GlobalMembersGps_syminfo;
 import backend_gps.gm_gps_basic_block;
 import backend_gps.gm_gps_bbtype_t;
@@ -185,7 +186,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		{
 			do_generate_master_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(System.out);
+		GlobalMembersGm_reproduce.gm_redirect_reproduce(new FILE(System.out));
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
 	}
 	public void do_generate_master_class()
@@ -855,7 +856,7 @@ public class gm_giraph_gen extends gm_gps_gen
 				continue;
 			do_generate_vertex_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(System.out);
+		GlobalMembersGm_reproduce.gm_redirect_reproduce(new FILE(System.out));
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
 	}
 	public void do_generate_vertex_state_body(gm_gps_basic_block b)

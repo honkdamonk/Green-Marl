@@ -4,7 +4,6 @@ import inc.GM_REDUCE_T;
 import inc.gm_assignment_location_t;
 import inc.gm_assignment_t;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import common.GlobalMembersGm_dumptree;
@@ -148,9 +147,7 @@ public class ast_assign extends ast_sent {
 			java.util.LinkedList<ast_expr> L = get_rhs_list();
 			int cnt = 0;
 			int last = L.size();
-			Iterator<ast_expr> I = L.iterator();
-			while (I.hasNext()) {
-				ast_expr n = I.next();
+			for (ast_expr n : L) {
 				n.reproduce(0);
 				if (cnt != (last - 1))
 					Out.push(", ");

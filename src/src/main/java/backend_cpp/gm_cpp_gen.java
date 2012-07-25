@@ -686,8 +686,6 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 	}
 
 	public void generate_sent_foreach(ast_foreach f) {
-
-		int ptr;
 		boolean need_init_before = get_lib().need_up_initializer(f);
 
 		if (need_init_before) {
@@ -743,14 +741,13 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 		ast_extra_info_set syms = (ast_extra_info_set) bfs.find_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_SYMBOLS);
 		assert syms != null;
 		HashSet<Object> S = syms.get_set();
-		Iterator<Object> I;
 		boolean is_first = true;
-		for (I = S.iterator(); I.hasNext();) {
+		for (Object sym : S) {
 			if (!is_first) {
 				_Body.push(", ");
 			}
 			is_first = false;
-			gm_symtab_entry e = (gm_symtab_entry) I.next();
+			gm_symtab_entry e = (gm_symtab_entry) sym;
 			_Body.push(e.getId().get_genname());
 		}
 		_Body.pushln(");");
@@ -803,12 +800,10 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 		generate_sent_block_enter(sb);
 
 		LinkedList<ast_sent> sents = sb.get_sents();
-		Iterator<ast_sent> it;
 		boolean vardecl_started = false;
 		boolean other_started = false;
-		for (it = sents.iterator(); it.hasNext();) {
+		for (ast_sent s : sents) {
 			// insert newline after end of VARDECL
-			ast_sent s = it.next();
 			if (!vardecl_started) {
 				if (s.get_nodetype() == AST_NODE_TYPE.AST_VARDECL)
 					vardecl_started = true;
@@ -820,7 +815,7 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 					}
 				}
 			}
-			generate_sent(it.next());
+			generate_sent(s);
 		}
 
 		// sentblock exit
@@ -894,9 +889,7 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 			// for(int i=0;i<E.size();i++) {
 			// gm_symtab_entry* e = E[i];
 			HashSet<gm_symtab_entry> E = vars.get_entries();
-			Iterator<gm_symtab_entry> I;
-			for (I = E.iterator(); I.hasNext();) {
-				gm_symtab_entry e = I.next();
+			for (gm_symtab_entry e : E) {
 				if (e.getType().is_graph()) {
 					String.format(temp, "%s.%s();", e.getId().get_genname(), GlobalMembersGm_backend_cpp.FREEZE);
 					_Body.pushln(temp);
@@ -915,9 +908,7 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 						// for(int j=0;j<F.size();j++) {
 						// gm_symtab_entry* f = F[j];
 						HashSet<gm_symtab_entry> F = fields.get_entries();
-						Iterator<gm_symtab_entry> J;
-						for (J = F.iterator(); J.hasNext();) {
-							gm_symtab_entry f = J.next();
+						for (gm_symtab_entry f : F) {
 							if ((f.getType().get_target_graph_sym() == e) && (f.getType().is_edge_property()))
 								has_edge_prop = true;
 						}
@@ -958,9 +949,7 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 				// std::vector<gm_symtab_entry*>& entries = tab->get_entries();
 				// std::vector<gm_symtab_entry*>::iterator I;
 				HashSet<gm_symtab_entry> entries = tab.get_entries();
-				Iterator<gm_symtab_entry> I;
-				for (I = entries.iterator(); I.hasNext();) {
-					gm_symtab_entry e = I.next();
+				for (gm_symtab_entry e : entries) {
 					String.format(temp, "%s(%s,%s());", GlobalMembersGm_backend_cpp.DEALLOCATE, e.getId().get_genname(), GlobalMembersGm_backend_cpp.THREAD_ID);
 					_Body.pushln(temp);
 				}
@@ -991,11 +980,10 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 		if (proc.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_HAS_BFS)) {
 			ast_extra_info_list L = (ast_extra_info_list) proc.find_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_LIST);
 			assert L != null;
-			Iterator<Object> I;
 			_Body.NL();
 			_Body.pushln("// BFS/DFS definitions for the procedure");
-			for (I = L.get_list().iterator(); I.hasNext();) {
-				ast_bfs bfs = (ast_bfs) I.next();
+			for (Object info : L.get_list()) {
+				ast_bfs bfs = (ast_bfs) info;
 				generate_bfs_def(bfs);
 			}
 		}
@@ -1030,20 +1018,19 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 		int remain_args = proc.get_in_args().size() + proc.get_out_args().size();
 		{
 			LinkedList<ast_argdecl> lst = proc.get_in_args();
-			Iterator<ast_argdecl> i;
-			for (i = lst.iterator(); i.hasNext();) {
+			for (ast_argdecl decl : lst) {
 				remain_args--;
 				arg_curr++;
 
-				ast_typedecl T = (i.next()).get_type();
+				ast_typedecl T = decl.get_type();
 				Out.push(get_type_string(T));
 				if (T.is_primitive() || T.is_property())
 					Out.push(" ");
 				else
 					Out.push("& ");
 
-				assert (i.next()).get_idlist().get_length() == 1;
-				Out.push((i.next()).get_idlist().get_item(0).get_genname());
+				assert decl.get_idlist().get_length() == 1;
+				Out.push(decl.get_idlist().get_item(0).get_genname());
 				if (remain_args > 0) {
 					Out.push(", ");
 				}
@@ -1056,14 +1043,13 @@ public abstract class gm_cpp_gen extends BackendGenerator {
 		}
 		{
 			LinkedList<ast_argdecl> lst = proc.get_out_args();
-			Iterator<ast_argdecl> i;
-			for (i = lst.iterator(); i.hasNext();) {
+			for (ast_argdecl decl : lst) {
 				remain_args--;
 				arg_curr++;
 
-				Out.push(get_type_string((i.next()).get_type()));
+				Out.push(get_type_string(decl.get_type()));
 				Out.push_spc("&");
-				Out.push((i.next()).get_idlist().get_item(0).get_genname());
+				Out.push(decl.get_idlist().get_item(0).get_genname());
 				if (remain_args > 0) {
 					Out.push(", ");
 				}

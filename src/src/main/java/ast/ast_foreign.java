@@ -30,14 +30,10 @@ public class ast_foreign extends ast_sent {
 		// constructor should be created if it does not yet exist:
 		// ORIGINAL LINE: LinkedList<ast_node*>&L = l->LIST;
 		LinkedList<ast_node> L = new LinkedList<ast_node>(l.LIST);
-		Iterator<ast_node> I;
-		for (I = L.iterator(); I.hasNext();) {
-			ast_node n = I.next();
+		for (ast_node n : L) {
 			n.set_parent(S);
 			S.modified.addLast(n);
 		}
-		if (l != null)
-			l.dispose();
 		return (S);
 	}
 

@@ -50,16 +50,13 @@ public class check_bfs_main_t extends gm_apply {
 	}
 
 	public final void process_rwinfo(java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> MAP, java.util.HashSet<Object> SET) {
-		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> I;
-		for (I = MAP.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next().getKey();
+		for (gm_symtab_entry e : MAP.keySet()) {
 			SET.add(e);
 
-			java.util.LinkedList<gm_rwinfo> use = I.next().getValue();
+			java.util.LinkedList<gm_rwinfo> use = MAP.get(e);
 			assert (use != null);
-			java.util.Iterator<gm_rwinfo> K;
-			for (K = use.iterator(); K.hasNext();) {
-				gm_symtab_entry driver = (K.next()).driver;
+			for (gm_rwinfo rwinfo : use) {
+				gm_symtab_entry driver = rwinfo.driver;
 				if (driver != null) {
 					SET.add(driver);
 					ast_id g = driver.getType().get_target_graph_id();

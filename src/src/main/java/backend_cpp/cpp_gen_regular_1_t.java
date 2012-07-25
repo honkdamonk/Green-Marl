@@ -45,9 +45,8 @@ public class cpp_gen_regular_1_t extends gm_apply
 
 	public final void post_process()
 	{
-		java.util.Iterator<ast_sent> I;
-		for (I = targets.iterator(); I.hasNext();)
-			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(I.next());
+		for (ast_sent sent : targets)
+			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(sent);
 	}
 
 	private java.util.LinkedList<ast_sent> targets = new java.util.LinkedList<ast_sent>();

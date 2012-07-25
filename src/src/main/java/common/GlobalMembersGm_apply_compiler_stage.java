@@ -17,13 +17,10 @@ public class GlobalMembersGm_apply_compiler_stage
 	public static boolean gm_apply_compiler_stage(java.util.LinkedList<gm_compile_step> LIST)
 	{
 		boolean is_okay = true;
-		java.util.Iterator<gm_compile_step> I;
 		int i = 0;
 
 		// for each compilation step
-		for (I = LIST.iterator(); I.hasNext(); I++, i++)
-		{
-			gm_compile_step step = (I.next());
+		for (gm_compile_step step : LIST) {
 			GlobalMembersGm_main.gm_begin_minor_compiler_stage(i + 1, step.get_description());
 
 			is_okay = GlobalMembersGm_apply_compiler_stage.gm_apply_all_proc(step) && is_okay;

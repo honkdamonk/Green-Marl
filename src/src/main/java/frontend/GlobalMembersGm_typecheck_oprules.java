@@ -243,10 +243,10 @@ public class GlobalMembersGm_typecheck_oprules {
 
 			if (GlobalMembersGm_typecheck_oprules.is_applicable_rule(R, op, t1, t2)) {
 				// apply coercion
-				RefObject<GMTYPE_T> tempRef_t1_new = new RefObject<GMTYPE_T>(t1_new);
-				RefObject<Integer> tempRef_t2_new = new RefObject<Integer>(t2_new);
-				RefObject<Boolean> tempRef_t1_warn = new RefObject<Boolean>(t1_warn);
-				RefObject<Boolean> tempRef_t2_warn = new RefObject<Boolean>(t2_warn);
+				RefObject<GMTYPE_T> tempRef_t1_new = t1_new;
+				RefObject<Integer> tempRef_t2_new = t2_new;
+				RefObject<Boolean> tempRef_t1_warn = t1_warn;
+				RefObject<Boolean> tempRef_t2_warn = t2_warn;
 				GlobalMembersGm_typecheck_oprules.apply_coercion(R.coercion_rule, t1, t2, tempRef_t1_new, tempRef_t2_new, tempRef_t1_warn, tempRef_t2_warn);
 				t1_new.argvalue = tempRef_t1_new.argvalue;
 				t2_new.argvalue = tempRef_t2_new.argvalue;

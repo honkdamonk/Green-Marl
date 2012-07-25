@@ -1526,7 +1526,7 @@ public class gm_gps_gen extends BackendGenerator {
 	public void generate_sent_assign(ast_assign a) {
 		// normal assign
 		if (is_master_generate()) {
-			this.gm_code_generator.generate_sent_assign(a);
+			generate_sent_assign(a);
 			return;
 		}
 
@@ -1565,7 +1565,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 			// normal assign
 			if (!syminfo.is_scoped_global()) {
-				this.gm_code_generator.generate_sent_assign(a);
+				generate_sent_assign(a);
 				return;
 			} else {
 				// write to global scalar
@@ -1579,8 +1579,7 @@ public class gm_gps_gen extends BackendGenerator {
 			}
 		} else {
 			ast_field f = a.get_lhs_field();
-
-			this.gm_code_generator.generate_sent_assign(a);
+			generate_sent_assign(a);
 		}
 	}
 

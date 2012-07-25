@@ -1,5 +1,6 @@
 package opt;
 
+import tangible.RefObject;
 import inc.GMTYPE_T;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
@@ -11,46 +12,52 @@ import ast.ast_sentblock;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
-public class GlobalMembersGm_flip_edges
-{
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define TO_STR(X) #X
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define DEF_STRING(X) static const char *X = "X"
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
+public class GlobalMembersGm_flip_edges {
+	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
+	// in-line:
+	// /#define TO_STR(X) #X
+	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
+	// in-line:
+	// /#define DEF_STRING(X) static const char *X = "X"
+	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
+	// in-line:
+	// /#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public
+	// gm_compile_step { private: CLASS() {set_description(DESC);}public:
+	// virtual void process(ast_procdef*p); virtual gm_compile_step*
+	// get_instance(){return new CLASS();} static gm_compile_step*
+	// get_factory(){return new CLASS();} };
+	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
+	// in-line:
+	// /#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
 
-	//--------------------------------------------------------------------
-	// flip edges 
-	//--------------------------------------------------------------------
-	//   Foreach (n: G.Nodes) 
-	//     if (f(n))                                <- optional
-	//        Foreach(t: n. Nbrs)
-	//           if (g(t))                          <- optional
-	//               sentence (reduce @ n)
-	//--------------------------------------------------------------------
-	//   Foreach (t: G.Nodes) 
-	//     if (g(t)) 
-	//        Foreach(n: t. InNbrs)
-	//           if (f(n))
-	//               sentence (reduce @ t)
-	//--------------------------------------------------------------------
+	// --------------------------------------------------------------------
+	// flip edges
+	// --------------------------------------------------------------------
+	// Foreach (n: G.Nodes)
+	// if (f(n)) <- optional
+	// Foreach(t: n. Nbrs)
+	// if (g(t)) <- optional
+	// sentence (reduce @ n)
+	// --------------------------------------------------------------------
+	// Foreach (t: G.Nodes)
+	// if (g(t))
+	// Foreach(n: t. InNbrs)
+	// if (f(n))
+	// sentence (reduce @ t)
+	// --------------------------------------------------------------------
 	// Steps
-	//    1. Find candiates
-	//        - avoid reverse edges (for cpp) // Inner loop use InNbr
-	//        - avoid pull syntax   (for gps) // sentence is an assign and dest is outer-loop iter
-	//    2. Flip each nested foreach
-	//--------------------------------------------------------------------
+	// 1. Find candiates
+	// - avoid reverse edges (for cpp) // Inner loop use InNbr
+	// - avoid pull syntax (for gps) // sentence is an assign and dest is
+	// outer-loop iter
+	// 2. Flip each nested foreach
+	// --------------------------------------------------------------------
 
 	// { { foo; } } ==> foo
 	// { foo; bar; } ==> NULL
 
-	public static ast_sent get_single_destination_sentence(ast_sent s)
-	{
-		while (true)
-		{
+	public static ast_sent get_single_destination_sentence(ast_sent s) {
+		while (true) {
 			if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
 				return s;
 
@@ -61,18 +68,18 @@ public class GlobalMembersGm_flip_edges
 		}
 	}
 
-	// return true if  sym is used inside e
-	public static boolean check_if_outer_loop_iterator_used(ast_expr e, gm_symtab_entry sym)
-	{
+	// return true if sym is used inside e
+	public static boolean check_if_outer_loop_iterator_used(ast_expr e, gm_symtab_entry sym) {
 		check_sym_used T = new check_sym_used(sym);
 		e.traverse_pre(T);
 		return T.is_used();
 	}
 
-	public static boolean capture_pattern(ast_foreach out, ast_if if1, ast_foreach in, ast_if if2, ast_sent dest)
-	{
-		if1 = if2 = null;
-		in = null;
+	public static boolean capture_pattern(ast_foreach out, RefObject<ast_if> if1_ref, RefObject<ast_foreach> in_ref, RefObject<ast_if> if2_ref,
+			RefObject<ast_sent> dest_ref) {
+		ast_if if1 = null;
+		ast_if if2 = null;
+		ast_foreach in = null;
 
 		if (!out.get_iter_type().is_all_graph_node_iter_type())
 			return false;
@@ -82,8 +89,7 @@ public class GlobalMembersGm_flip_edges
 		if (body1 == null)
 			return false;
 
-		if (body1.get_nodetype() == AST_NODE_TYPE.AST_IF)
-		{
+		if (body1.get_nodetype() == AST_NODE_TYPE.AST_IF) {
 			if1 = (ast_if) body1;
 			if (if1.get_else() != null)
 				return false;
@@ -106,8 +112,7 @@ public class GlobalMembersGm_flip_edges
 		body1 = GlobalMembersGm_flip_edges.get_single_destination_sentence(in.get_body());
 		if (body1 == null)
 			return false;
-		if (body1.get_nodetype() == AST_NODE_TYPE.AST_IF)
-		{
+		if (body1.get_nodetype() == AST_NODE_TYPE.AST_IF) {
 			if2 = (ast_if) body1;
 			if (if2.get_else() != null)
 				return false;
@@ -121,13 +126,15 @@ public class GlobalMembersGm_flip_edges
 				return false;
 		}
 
-		dest = body1;
+		dest_ref.argvalue = body1;
+		in_ref.argvalue = in;
+		if1_ref.argvalue = if1;
+		if2_ref.argvalue = if2;
 		return true;
 	}
 
 	// Now actually flip the edges
-	public static void do_flip_edges(java.util.LinkedList<ast_foreach> target)
-	{
+	public static void do_flip_edges(java.util.LinkedList<ast_foreach> target) {
 		ast_foreach out;
 		ast_foreach in;
 		ast_if if1;
@@ -135,22 +142,28 @@ public class GlobalMembersGm_flip_edges
 		ast_sent dest;
 
 		java.util.Iterator<ast_foreach> I;
-		for (I = target.iterator(); I.hasNext();)
-		{
+		for (I = target.iterator(); I.hasNext();) {
 			out = I.next();
-			boolean b;
-			b = GlobalMembersGm_flip_edges.capture_pattern(out, if1, in, if2, dest);
+			RefObject<ast_foreach> in_ref = new RefObject<ast_foreach>(null);
+			RefObject<ast_if> if1_ref = new RefObject<ast_if>(null);
+			RefObject<ast_if> if2_ref = new RefObject<ast_if>(null);
+			RefObject<ast_sent> dest_ref = new RefObject<ast_sent>(null);
+			boolean b = GlobalMembersGm_flip_edges.capture_pattern(out, if1_ref, in_ref, if2_ref, dest_ref);
+			in = in_ref.argvalue;
+			if1 = if1_ref.argvalue;
+			if2 = if2_ref.argvalue;
+			dest = dest_ref.argvalue;
 			assert b;
 
-			//--------------------------------------------------------
+			// --------------------------------------------------------
 			// now do flipping edges
-			//   1. exchange iterators between for loops
-			//   2. flip inner loop edge direction
-			//   3. exchange if conditions
-			//      - if2 does not exist
-			//      - if1 does not exist
-			//   4. set new binding symbol
-			//--------------------------------------------------------
+			// 1. exchange iterators between for loops
+			// 2. flip inner loop edge direction
+			// 3. exchange if conditions
+			// - if2 does not exist
+			// - if1 does not exist
+			// 4. set new binding symbol
+			// --------------------------------------------------------
 
 			// 1) iterator exchange
 			gm_symtab_entry iter_out = out.get_iterator().getSymInfo();
@@ -176,8 +189,7 @@ public class GlobalMembersGm_flip_edges
 				in.set_iter_type(GMTYPE_T.GMTYPE_NODEITER_IN_NBRS);
 			else if (in.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS)
 				in.set_iter_type(GMTYPE_T.GMTYPE_NODEITER_NBRS);
-			else
-			{
+			else {
 				assert false;
 			}
 
@@ -185,12 +197,9 @@ public class GlobalMembersGm_flip_edges
 			iter_out.getType().set_typeid(in.get_iter_type());
 
 			// 3) exchange if conditions
-			if ((if1 == null) && (if2 == null))
-			{
+			if ((if1 == null) && (if2 == null)) {
 				// done
-			}
-			else if (if1 == null)
-			{
+			} else if (if1 == null) {
 				ast_sent body1 = out.get_body();
 				ast_sent body2 = if2.get_then();
 
@@ -204,8 +213,7 @@ public class GlobalMembersGm_flip_edges
 				if2.set_parent(out);
 			}
 
-			else if (if2 == null)
-			{
+			else if (if2 == null) {
 				ast_sent body1 = if1.get_then();
 				ast_sent body2 = in.get_body();
 
@@ -217,9 +225,7 @@ public class GlobalMembersGm_flip_edges
 
 				out.set_body(in);
 				in.set_parent(out);
-			}
-			else
-			{
+			} else {
 				// exchange conditions
 				ast_expr e1 = if1.get_cond();
 				ast_expr e2 = if2.get_cond();
@@ -229,16 +235,13 @@ public class GlobalMembersGm_flip_edges
 				e1.set_parent(if2);
 			}
 
-			if (dest.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)
-			{
+			if (dest.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 				ast_assign a = (ast_assign) dest;
-				if (a.get_bound() != null)
-				{
+				if (a.get_bound() != null) {
 					gm_symtab_entry bound_sym = a.get_bound().getSymInfo();
 					// [xx] correct?
 					// due to flip, the bound should be always be new outer-loop
-					if ((bound_sym == iter_out) || (bound_sym == iter_in))
-					{
+					if ((bound_sym == iter_out) || (bound_sym == iter_in)) {
 						a.get_bound().setSymInfo(iter_in); // new outer-loop
 					}
 				}

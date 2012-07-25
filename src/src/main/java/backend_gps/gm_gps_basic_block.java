@@ -357,7 +357,7 @@ public class gm_gps_basic_block {
 	}
 
 	public final void add_info(String id, ast_extra_info e) {
-		return for_info.add_info(id, e);
+		for_info.add_info(id, e);
 	}
 
 	public final void add_info_int(String id, int i) {

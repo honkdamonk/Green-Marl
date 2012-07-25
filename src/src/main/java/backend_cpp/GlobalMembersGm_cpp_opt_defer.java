@@ -1,5 +1,6 @@
 package backend_cpp;
 
+import inc.GMTYPE_T;
 import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
@@ -12,6 +13,12 @@ import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
+
+import common.GlobalMembersGm_add_symbol;
+import common.GlobalMembersGm_main;
+import common.GlobalMembersGm_new_sents_after_tc;
+import common.GlobalMembersGm_transform_helper;
+
 import frontend.GlobalMembersGm_rw_analysis;
 import frontend.GlobalMembersGm_rw_analysis_check2;
 import frontend.gm_range_type_t;
@@ -19,13 +26,6 @@ import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
-import inc.GlobalMembersGm_defs;
-
-import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_main;
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_transform_helper;
 
 public class GlobalMembersGm_cpp_opt_defer {
 	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced

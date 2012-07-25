@@ -28,8 +28,13 @@ import common.GlobalMembersGm_reproduce;
 // default code generator
 public abstract class gm_code_generator {
 
+	public gm_code_generator() {
+		this._Body = new gm_code_writer();
+	}
+
+	@Deprecated
 	public gm_code_generator(gm_code_writer W) {
-		this._Body = new gm_code_writer(W);
+		this._Body = new gm_code_writer();
 	}
 
 	public void dispose() {
@@ -97,7 +102,7 @@ public abstract class gm_code_generator {
 	public void generate_expr_list(LinkedList<ast_expr> L) {
 		int i = 0;
 		int size = L.size();
-		for(ast_expr expr : L) {
+		for (ast_expr expr : L) {
 			generate_expr(expr);
 			if (i != (size - 1))
 				_Body.push(", ");
@@ -418,6 +423,10 @@ public abstract class gm_code_generator {
 			generate_sent(b);
 		}
 
+	}
+
+	public void generate_sent_block(ast_sentblock sb) {
+		generate_sent_block(sb, true);
 	}
 
 	public void generate_sent_block(ast_sentblock sb, boolean need_brace) {

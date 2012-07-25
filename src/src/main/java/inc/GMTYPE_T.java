@@ -1,5 +1,8 @@
 package inc;
 
+import tangible.RefObject;
+import frontend.GlobalMembersGm_typecheck_oprules;
+
 public enum GMTYPE_T {
 	GMTYPE_GRAPH(0), GMTYPE_UGRAPH(1), GMTYPE_NODEPROP(2), GMTYPE_EDGEPROP(3), GMTYPE_NODE(4), GMTYPE_EDGE(5), GMTYPE_NSET(6), GMTYPE_NSEQ(7), GMTYPE_NORDER(8), GMTYPE_ESET(
 			9), GMTYPE_ESEQ(10), GMTYPE_EORDER(11), GMTYPE_COLLECTION(12),
@@ -472,5 +475,29 @@ public enum GMTYPE_T {
 
 	public boolean is_collection_of_collection_iter_type() {
 		return this.is_collection_of_set_iter_type() || this.is_collection_of_order_iter_type() || this.is_collection_of_seq_iter_type();
+	}
+	
+	// checking to apply op (including assignment) between two types.
+	// (not including target-graph checking)
+	// boolean gm_is_compatible_type(int op, int t1, int t2,
+	// tangible.RefObject<int> op_result_type, tangible.RefObject<int>
+	// t1_coerced, tangible.RefObject<int> t2_coerced,
+	// tangible.RefObject<boolean> t1_coerced_lost_precision,
+	// tangible.RefObject<boolean> t2_coerced_lost_precision);
+	public static boolean gm_is_compatible_type_for_assign(GMTYPE_T t_lhs, GMTYPE_T t_rhs, RefObject<Integer> t_new_rhs,
+			RefObject<Boolean> warning) {
+		tangible.RefObject<GMTYPE_T> tempRef_dummy1 = new tangible.RefObject<GMTYPE_T>(GMTYPE_T.GMTYPE_INVALID);
+		tangible.RefObject<GMTYPE_T> tempRef_dummy2 = new tangible.RefObject<GMTYPE_T>(GMTYPE_T.GMTYPE_INVALID);
+		tangible.RefObject<Boolean> tempRef_dummy_b = new tangible.RefObject<Boolean>(true);
+		return GlobalMembersGm_typecheck_oprules.gm_is_compatible_type(GM_OPS_T.GMOP_ASSIGN, t_lhs, t_rhs, tempRef_dummy1, tempRef_dummy2, t_new_rhs,
+				tempRef_dummy_b, warning);
+	}
+	
+	public static boolean is_t2_larger_than_t1(GMTYPE_T t1, GMTYPE_T t2) {
+		if ((t1 == GMTYPE_INT) && (t2 == GMTYPE_LONG))
+			return true;
+		if ((t1 == GMTYPE_FLOAT) && (t2 == GMTYPE_DOUBLE))
+			return true;
+		return false;
 	}
 }

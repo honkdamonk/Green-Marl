@@ -3,7 +3,6 @@ package frontend;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
 
 import java.util.LinkedList;
 

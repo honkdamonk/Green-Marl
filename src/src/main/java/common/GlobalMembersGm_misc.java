@@ -1,10 +1,9 @@
 package common;
 
-import ast.AST_NODE_TYPE;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_defs;
+import ast.AST_NODE_TYPE;
 
 public class GlobalMembersGm_misc {
 	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
@@ -208,8 +207,9 @@ public class GlobalMembersGm_misc {
 		return opstr;
 	}
 
+	@Deprecated
 	public static int gm_get_op_pred(GM_OPS_T op_type) {
-		return GlobalMembersGm_defs.GM_OPPRED_LEVEL[op_type.getValue()];
+		return op_type.get_op_pred();
 	}
 
 	public static boolean gm_need_paranthesis(GM_OPS_T this_op, GM_OPS_T up_op, boolean is_right) {

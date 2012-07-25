@@ -1,5 +1,7 @@
 package inc;
 
+import backend_cpp.FILE;
+
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 ///#define TO_STR(X) #X
@@ -19,8 +21,8 @@ public class gm_code_writer
 		col = 0;
 		max_col = MAX_COL;
 		file_ptr = 0;
-		_buf = new byte[MAX_COL * 2]; // one line buffer
-		file_buf = new byte[32 * 1024 * 1024]; // 32MB. should be enough for a file
+//		_buf = new byte[MAX_COL * 2]; // one line buffer
+//		file_buf = new byte[32 * 1024 * 1024]; // 32MB. should be enough for a file
 	}
 	public void dispose()
 	{
@@ -114,6 +116,10 @@ public class gm_code_writer
 	{
 		push(s);
 		NL();
+	}
+	
+	public final void push_spc(char c) {
+		push_spc("" + c);
 	}
 
 	public final void push_spc(String s)

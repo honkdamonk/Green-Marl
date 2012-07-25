@@ -1,5 +1,6 @@
 package ast;
 
+import inc.nop_enum_cpp;
 import common.GlobalMembersGm_dumptree;
 import common.gm_apply;
 
@@ -10,46 +11,45 @@ import common.gm_apply;
 //class gm_rwinfo;
 //typedef std::list<gm_rwinfo*> gm_rwinfo_list;
 //typedef std::map<gm_symtab_entry*, gm_rwinfo_list*> gm_rwinfo_map;
-public class ast_nop extends ast_sent
-{
-	protected ast_nop()
-	{
+public class ast_nop extends ast_sent {
+	protected ast_nop() {
 		super(AST_NODE_TYPE.AST_NOP);
-		this.subtype = 0;
+		this.subtype = nop_enum_cpp.NOP_REDUCE_SCALAR;
 	}
-	protected ast_nop(int t)
-	{
+
+	protected ast_nop(nop_enum_cpp nopReduceScalar) {
 		super(AST_NODE_TYPE.AST_NOP);
-		set_subtype(t);
+		set_subtype(nopReduceScalar);
 	}
-	public void dispose()
-	{
+
+	public void dispose() {
 	}
-	public final int get_subtype()
-	{
+
+	public final nop_enum_cpp get_subtype() {
 		return subtype;
 	}
-	public final void set_subtype(int s)
-	{
-		subtype = s;
+
+	public final void set_subtype(nop_enum_cpp nopReduceScalar) {
+		subtype = nopReduceScalar;
 	}
-	public void reproduce(int ind_level)
-	{
+
+	public void reproduce(int ind_level) {
 		Out.pushln("//NOP");
 	}
-	public void dump_tree(int ind_level)
-	{
+
+	public void dump_tree(int ind_level) {
 		GlobalMembersGm_dumptree.IND(ind_level);
 		assert parent != null;
 		System.out.printf("[NOP %d]\n", get_subtype());
 	}
+
 	@Override
-	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre)
-	{
+	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre) {
 	}
-	public boolean do_rw_analysis()
-	{
+
+	public boolean do_rw_analysis() {
 		return true;
 	}
-	private int subtype;
+
+	private nop_enum_cpp subtype;
 }

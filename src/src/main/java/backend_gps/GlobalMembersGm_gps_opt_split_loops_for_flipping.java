@@ -1,5 +1,8 @@
 package backend_gps;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;
@@ -8,16 +11,16 @@ import ast.ast_if;
 import ast.ast_node;
 import ast.ast_sent;
 import ast.ast_sentblock;
+
+import common.GlobalMembersGm_new_sents_after_tc;
+import common.GlobalMembersGm_resolve_nc;
+import common.GlobalMembersGm_transform_helper;
+
 import frontend.GlobalMembersGm_rw_analysis_check2;
 import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
-import inc.GlobalMembersGm_defs;
-
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_resolve_nc;
-import common.GlobalMembersGm_transform_helper;
 
 public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 {
@@ -37,7 +40,7 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 	///#define GM_BLTIN_FLAG_TRUE true
 
 	// defined in opt_find_nested_foreach_loops.cc
-	//extern void gm_gps_find_double_nested_loops(ast_node p, java.util.HashMap<ast_foreach, ast_foreach> MAP);
+	//extern void gm_gps_find_double_nested_loops(ast_node p, HashMap<ast_foreach, ast_foreach> MAP);
 
 	//----------------------------------------------------
 	// N_P<Int>(G) _tmp_S;
@@ -77,7 +80,7 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 	//    .... (B)
 	// }
 	//---------------------------------------
-	public static void filter_target_loops(java.util.HashMap<ast_foreach, ast_foreach> SRC, java.util.HashSet<ast_foreach> SET)
+	public static void filter_target_loops(HashMap<ast_foreach, ast_foreach> SRC, HashSet<ast_foreach> SET)
 	{
 		for (ast_foreach in : SRC.keySet())
 		{
@@ -89,10 +92,10 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 
 			boolean is_target = false;
 			// check if inner loop requires flipping
-			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> WMAP = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(in.get_body());
+			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> WMAP = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(in.get_body());
 			for (gm_symtab_entry e : WMAP.keySet())
 			{
-				java.util.LinkedList<gm_rwinfo> LIST = WMAP.get(e);
+				LinkedList<gm_rwinfo> LIST = WMAP.get(e);
 				boolean is_field = e.getType().is_property();
 				for (gm_rwinfo info : LIST)
 				{
@@ -119,7 +122,7 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 				}
 			}
 
-			java.util.HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> DMAP = GlobalMembersGm_rw_analysis_check2.gm_get_reduce_set(in.get_body());
+			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> DMAP = GlobalMembersGm_rw_analysis_check2.gm_get_reduce_set(in.get_body());
 			for (gm_symtab_entry e : DMAP.keySet()) {
 				LinkedList<gm_rwinfo> LIST = DMAP.get(e);
 				for (gm_rwinfo info : LIST)
@@ -263,13 +266,13 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 	//        F;
 	//    }   
 	//------------------------------------------        
-	public static ast_node reconstruct_old_new(java.util.LinkedList<ast_node> frame, java.util.HashMap<ast_sentblock, java.util.LinkedList<ast_sent>> siblings, boolean is_old)
+	public static ast_node reconstruct_old_new(LinkedList<ast_node> frame, HashMap<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old)
 	{
 		ast_node last = null;
 
 		// reconstruct hierarchy
 		// inmost --> outmost
-		java.util.Iterator<ast_node> I;
+		Iterator<ast_node> I;
 		for (I = frame.iterator(); I.hasNext();)
 		{
 			 GlobalMembersGm_gps_opt_split_loops_for_flipping.reconstruct_old_new_main(I.next(), siblings, is_old, last);
@@ -277,14 +280,14 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 
 		return last;
 	}
-	public static void ensure_no_dependency_via_scala(java.util.LinkedList<ast_node> frame, java.util.HashMap<ast_sentblock, java.util.LinkedList<ast_sent>> elder, java.util.HashMap<ast_sentblock, java.util.LinkedList<ast_sent>> younger)
+	public static void ensure_no_dependency_via_scala(LinkedList<ast_node> frame, HashMap<ast_sentblock, LinkedList<ast_sent>> elder, HashMap<ast_sentblock, LinkedList<ast_sent>> younger)
 	{
 		// create prev/next
 		// create set of scalar
-		java.util.HashSet<gm_symtab_entry> PREVS = new java.util.HashSet<gm_symtab_entry>(); // symbols used in prev
-		java.util.HashSet<gm_symtab_entry> NEXTS = new java.util.HashSet<gm_symtab_entry>(); // symbols used in next
-		java.util.HashSet<gm_symtab_entry> ALL = new java.util.HashSet<gm_symtab_entry>(); // every scalar symbols
-		java.util.Iterator<ast_node> I;
+		HashSet<gm_symtab_entry> PREVS = new HashSet<gm_symtab_entry>(); // symbols used in prev
+		HashSet<gm_symtab_entry> NEXTS = new HashSet<gm_symtab_entry>(); // symbols used in next
+		HashSet<gm_symtab_entry> ALL = new HashSet<gm_symtab_entry>(); // every scalar symbols
+		Iterator<ast_node> I;
 		for (I = frame.iterator(); I.hasNext();)
 		{
 			if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_IF)
@@ -294,9 +297,9 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 			else if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK)
 			{
 				ast_sentblock sb = (ast_sentblock)(I.next());
-				java.util.LinkedList<ast_sent> OLD = elder.get(sb);
-				java.util.LinkedList<ast_sent> NEW = younger.get(sb);
-				java.util.Iterator<ast_sent> J;
+				LinkedList<ast_sent> OLD = elder.get(sb);
+				LinkedList<ast_sent> NEW = younger.get(sb);
+				Iterator<ast_sent> J;
 				for (J = OLD.iterator(); J.hasNext();)
 				{
 					GlobalMembersGm_gps_opt_split_loops_for_flipping.add_scalar_rw(J.next(), PREVS);
@@ -307,8 +310,8 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 					GlobalMembersGm_gps_opt_split_loops_for_flipping.add_scalar_rw(J.next(), NEXTS);
 				}
 
-				java.util.HashSet<gm_symtab_entry> E = sb.get_symtab_var().get_entries();
-				java.util.Iterator<gm_symtab_entry> K;
+				HashSet<gm_symtab_entry> E = sb.get_symtab_var().get_entries();
+				Iterator<gm_symtab_entry> K;
 				for (K = E.iterator(); K.hasNext();)
 				{
 					ALL.add(K.next());
@@ -321,7 +324,7 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 		}
 
 		// check if any entry is both used PREV and NEXT
-		java.util.Iterator<gm_symtab_entry> K;
+		Iterator<gm_symtab_entry> K;
 		for (K = ALL.iterator(); K.hasNext();)
 		{
 			gm_symtab_entry e = K.next();
@@ -370,9 +373,9 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 		//   younger[C] = {C3; C4;}
 		//----------------------------------------------------------------
 
-		java.util.LinkedList<ast_node> frame = new java.util.LinkedList<ast_node>();
-		java.util.HashMap<ast_sentblock, java.util.LinkedList<ast_sent>> older_siblings = new java.util.HashMap<ast_sentblock, java.util.LinkedList<ast_sent>>();
-		java.util.HashMap<ast_sentblock, java.util.LinkedList<ast_sent>> younger_siblings = new java.util.HashMap<ast_sentblock, java.util.LinkedList<ast_sent>>();
+		LinkedList<ast_node> frame = new LinkedList<ast_node>();
+		HashMap<ast_sentblock, LinkedList<ast_sent>> older_siblings = new HashMap<ast_sentblock, LinkedList<ast_sent>>();
+		HashMap<ast_sentblock, LinkedList<ast_sent>> younger_siblings = new HashMap<ast_sentblock, LinkedList<ast_sent>>();
 
 		ast_node current = in;
 		boolean need_young = false;
@@ -398,10 +401,10 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 				frame.addLast(sb);
 
 				// add elder and younger brothers
-				java.util.LinkedList<ast_sent> All = sb.get_sents();
-				java.util.LinkedList<ast_sent> OLD = new java.util.LinkedList<ast_sent>();
-				java.util.LinkedList<ast_sent> YOUNG = new java.util.LinkedList<ast_sent>();
-				java.util.Iterator<ast_sent> I;
+				LinkedList<ast_sent> All = sb.get_sents();
+				LinkedList<ast_sent> OLD = new LinkedList<ast_sent>();
+				LinkedList<ast_sent> YOUNG = new LinkedList<ast_sent>();
+				Iterator<ast_sent> I;
 				boolean older = true;
 				for (I = All.iterator(); I.hasNext();)
 				{
@@ -440,7 +443,7 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 		}
 		assert out != null;
 
-		assert GlobalMembersGm_defs.gm_is_iteration_on_all_graph(out.get_iter_type());
+		assert out.get_iter_type().is_iteration_on_all_graph();
 		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(out);
 		assert out.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 
@@ -451,7 +454,7 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 		//----------------------------------------------------------------
 		// reconstruct program
 		//----------------------------------------------------------------
-		java.util.Iterator<ast_node> I;
+		Iterator<ast_node> I;
 		if (need_old)
 		{
 			ast_node old = GlobalMembersGm_gps_opt_split_loops_for_flipping.reconstruct_old_new(frame, older_siblings, true);
@@ -478,10 +481,10 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 		}
 	}
 
-	public static void add_scalar_rw(ast_sent s, java.util.HashSet<gm_symtab_entry> TARGET)
+	public static void add_scalar_rw(ast_sent s, HashSet<gm_symtab_entry> TARGET)
 	{
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> R = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
+		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
+		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
 		for (gm_symtab_entry e : W.keySet())
 		{
 			if (!e.getType().is_property())
@@ -502,7 +505,7 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 	public static final int USED_BY_OLDER = 1;
 	public static final int USED_BY_YOUNGER = 2;
 
-	public static void reconstruct_old_new_main(ast_node n, java.util.HashMap<ast_sentblock, java.util.LinkedList<ast_sent>> siblings, boolean is_old, ast_node last)
+	public static void reconstruct_old_new_main(ast_node n, HashMap<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old, ast_node last)
 	{
 
 		if (n.get_nodetype() == AST_NODE_TYPE.AST_IF)
@@ -521,8 +524,8 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 		{
 			ast_sentblock sb_org = (ast_sentblock)(n);
 			ast_sentblock sb = ast_sentblock.new_sentblock();
-			java.util.LinkedList<ast_sent> SIB = siblings.get(sb_org);
-			java.util.Iterator<ast_sent> J;
+			LinkedList<ast_sent> SIB = siblings.get(sb_org);
+			Iterator<ast_sent> J;
 			sb.set_line(sb_org.get_line());
 			sb.set_col(sb_org.get_col());
 
@@ -551,9 +554,9 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 			// move scalar symbols
 			gm_symtab old_tab = sb_org.get_symtab_var();
 			gm_symtab new_tab = sb.get_symtab_var();
-			java.util.HashSet<gm_symtab_entry> entries = old_tab.get_entries();
-			java.util.Iterator<gm_symtab_entry> E;
-			java.util.HashSet<gm_symtab_entry> T = new java.util.HashSet<gm_symtab_entry>();
+			HashSet<gm_symtab_entry> entries = old_tab.get_entries();
+			Iterator<gm_symtab_entry> E;
+			HashSet<gm_symtab_entry> T = new HashSet<gm_symtab_entry>();
 			for (E = entries.iterator(); E.hasNext();)
 			{
 				gm_symtab_entry e = E.next();

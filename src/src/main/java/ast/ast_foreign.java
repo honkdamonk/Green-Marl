@@ -46,9 +46,7 @@ public class ast_foreign extends ast_sent {
 		if (modified.size() > 0) {
 			Out.push("::[");
 			int cnt = 0;
-			Iterator<ast_node> I;
-			for (I = modified.begin(); I.hasNext(); I++, cnt++) {
-				ast_node n = I.next();
+			for (ast_node n : modified) {
 				n.reproduce(ind_level);
 				if (cnt != (int) (modified.size() - 1))
 					Out.push(", ");
@@ -65,27 +63,25 @@ public class ast_foreign extends ast_sent {
 		boolean b = a.has_separate_post_apply();
 		if (is_pre) {
 			if (for_id) {
-				Iterator<ast_node> I;
-				for (I = modified.begin(); I.hasNext();) {
-					if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
-						ast_id id = (ast_id) (I.next());
+				for (ast_node n : modified) {
+					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+						ast_id id = (ast_id) n;
 						a.apply(id);
-					} else if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
-						ast_id id1 = ((ast_field) (I.next())).get_first();
-						ast_id id2 = ((ast_field) (I.next())).get_second();
+					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+						ast_id id1 = ((ast_field) n).get_first();
+						ast_id id2 = ((ast_field) n).get_second();
 						a.apply(id1);
 						a.apply(id2);
 					}
 				}
 			}
 			if (for_lhs) {
-				Iterator<ast_node> I;
-				for (I = modified.begin(); I.hasNext();) {
-					if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
-						ast_id id = (ast_id) (I.next());
+				for (ast_node n : modified) {
+					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+						ast_id id = (ast_id) n;
 						a.apply_lhs(id);
-					} else if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
-						ast_field f = ((ast_field) (I.next()));
+					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+						ast_field f = ((ast_field) n);
 						a.apply_lhs(f);
 					}
 				}
@@ -99,17 +95,16 @@ public class ast_foreign extends ast_sent {
 
 		if (is_post) {
 			if (for_id) {
-				Iterator<ast_node> I;
-				for (I = modified.begin(); I.hasNext();) {
-					if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
-						ast_id id = (ast_id) (I.next());
+				for (ast_node n : modified) {
+					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+						ast_id id = (ast_id) n;
 						if (b)
 							a.apply2(id);
 						else
 							a.apply(id);
-					} else if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
-						ast_id id1 = ((ast_field) (I.next())).get_first();
-						ast_id id2 = ((ast_field) (I.next())).get_second();
+					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+						ast_id id1 = ((ast_field) n).get_first();
+						ast_id id2 = ((ast_field) n).get_second();
 						if (b) {
 							a.apply2(id1);
 							a.apply2(id2);
@@ -121,16 +116,15 @@ public class ast_foreign extends ast_sent {
 				}
 			}
 			if (for_lhs) {
-				Iterator<ast_node> I;
-				for (I = modified.begin(); I.hasNext();) {
-					if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
-						ast_id id = (ast_id) (I.next());
+				for (ast_node n : modified) {
+					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+						ast_id id = (ast_id) n;
 						if (b)
 							a.apply_lhs2(id);
 						else
 							a.apply_lhs(id);
-					} else if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
-						ast_field f = ((ast_field) (I.next()));
+					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+						ast_field f = ((ast_field) n);
 						if (b)
 							a.apply_lhs2(f);
 						else

@@ -459,14 +459,10 @@ public class GlobalMembersGm_frontend {
 		a.set_argminmax_assign(true);
 		a.set_lhs_list(l_list.LIST); // shallow copy
 		a.set_rhs_list(r_list.LIST);
-		java.util.Iterator<ast_node> I;
-		for (I = l_list.LIST.iterator(); I.hasNext();) {
-			ast_node i = I.next();
+		for (ast_node i : l_list.LIST) {
 			i.set_parent(a);
 		}
-		java.util.Iterator<ast_expr> J;
-		for (J = r_list.LIST.iterator(); J.hasNext();) {
-			ast_expr e = J.next();
+		for (ast_expr e : r_list.LIST) {
 			e.set_parent(a);
 		}
 

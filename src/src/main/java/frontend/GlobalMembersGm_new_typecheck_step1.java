@@ -145,18 +145,17 @@ public static boolean gm_check_target_is_defined(ast_id target, gm_symtab vars)
 		do //search for a single graph instance in the symbol table
 		{
 			java.util.HashSet<gm_symtab_entry> entries = symTab.get_entries();
-			for (java.util.Iterator<gm_symtab_entry> II = entries.iterator(); II.hasNext();)
-			{
-				ast_typedecl entryType = (II.next()).getType();
+			for (gm_symtab_entry e : entries) {
+				ast_typedecl entryType = e.getType();
 				if (entryType.is_graph())
 				{
 					foundCount++;
 					if (foundCount > 1)
 					{
-						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS, targetGraph, (II.next()).getId());
+						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS, targetGraph, e.getId());
 						return null;
 					}
-					targetGraph = (II.next()).getId();
+					targetGraph = e.getId();
 				}
 			}
 			symTab = symTab.get_parent();

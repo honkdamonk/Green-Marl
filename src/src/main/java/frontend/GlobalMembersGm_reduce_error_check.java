@@ -3,7 +3,6 @@ package frontend;
 import inc.GM_REDUCE_T;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.ast_id;
@@ -15,11 +14,9 @@ import common.GlobalMembersGm_misc;
 public class GlobalMembersGm_reduce_error_check {
 	public static boolean is_conflict(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type,
 			tangible.RefObject<Boolean> is_bound_error, tangible.RefObject<Boolean> is_type_error) {
-		Iterator<bound_info_t> i;
 		is_type_error.argvalue = false;
 		is_bound_error.argvalue = false;
-		for (i = L.iterator(); i.hasNext();) {
-			bound_info_t db = i.next();
+		for (bound_info_t db : L) {
 			if (db.target == t) {
 				if (db.bound != b) {
 					is_bound_error.argvalue = true;

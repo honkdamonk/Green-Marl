@@ -201,9 +201,7 @@ public class find_hpb_t extends gm_apply {
 	}
 
 	public final void post_process() {
-		java.util.Iterator<ast_assign> I;
-		for (I = targets.iterator(); I.hasNext();) {
-			ast_assign a = I.next();
+		for (ast_assign a : targets) {
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			GlobalMembersGm_fixup_bound_symbol.gm_make_normal_assign(a);
 		}

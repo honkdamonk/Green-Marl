@@ -108,11 +108,8 @@ public class GlobalMembersGm_rw_analysis {
 		} // check entries already exists
 		else {
 			LinkedList<gm_rwinfo> l = info_set.get(sym);
-			Iterator<gm_rwinfo> ii;
 			assert l != null;
-			for (ii = l.iterator(); ii.hasNext();) {
-				gm_rwinfo e2 = ii.next();
-
+			for (gm_rwinfo e2 : l) {
 				// check reduce error
 				if (is_reduce_ops) {
 
@@ -306,33 +303,28 @@ public class GlobalMembersGm_rw_analysis {
 		// search for all elements in then-part
 		for (gm_symtab_entry sym : S1.keySet()) {
 			LinkedList<gm_rwinfo> l1 = S1.get(sym);
-			Iterator<gm_rwinfo> ss1;
 			assert l1 != null;
 
 			// check this symbol is accessed in S2 as well
 			if (S2.containsKey(sym)) {
 				// not in the else path
 				// --> copy_and_add all the accesses to this symbol.
-				for (ss1 = l1.iterator(); ss1.hasNext();) {
-					gm_rwinfo e = ss1.next();
+				for (gm_rwinfo e : l1) {
 					gm_rwinfo copy = e.copy();
 					copy.always = false; // chage it into conditional access
 					is_okay = is_okay && GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(Target, sym, copy, is_reduce);
 				}
 			} else {
 				// symbol also in the else path
-				for (ss1 = l1.iterator(); ss1.hasNext();) {
-					gm_rwinfo e = ss1.next();
+				for (gm_rwinfo e : l1) {
 					gm_rwinfo copy = e.copy();
 					if (copy.always == true) {
 						boolean found = false;
 						// check if the same access happens in else part
 						LinkedList<gm_rwinfo> l2 = S2.get(sym);
-						;
-						Iterator<gm_rwinfo> ss2;
+						
 						assert l2 != null;
-						for (ss2 = l2.iterator(); ss2.hasNext();) {
-							gm_rwinfo else_info = ss2.next();
+						for (gm_rwinfo else_info : l2) {
 							if (GlobalMembersGm_rw_analysis.is_same_entry(copy, else_info)) {
 								found = true;
 								break;
@@ -356,9 +348,7 @@ public class GlobalMembersGm_rw_analysis {
 			// (If merged from the then-part, wider entry will be already in the
 			// target set.)
 			LinkedList<gm_rwinfo> l2 = S2.get(sym);
-			Iterator<gm_rwinfo> ss2;
-			for (ss2 = l2.iterator(); ss2.hasNext();) {
-				gm_rwinfo e = ss2.next();
+			for (gm_rwinfo e : l2) {
 				gm_rwinfo copy = e.copy();
 				copy.always = false; // chage it into conditional access
 				is_okay = is_okay && GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(Target, sym, copy, is_reduce);
@@ -548,9 +538,7 @@ public class GlobalMembersGm_rw_analysis {
 			HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
 		// add every arguments in the readset
 		LinkedList<ast_expr> args = builtin.get_args();
-		Iterator<ast_expr> I;
-		for (I = args.iterator(); I.hasNext();) {
-			ast_expr a = I.next();
+		for (ast_expr a : args) {
 			GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(a, rset, DrvMap);
 		}
 	}
@@ -560,9 +548,7 @@ public class GlobalMembersGm_rw_analysis {
 
 		gm_rwinfo new_entry;
 		LinkedList<ast_node> N = f.get_parsed_nodes();
-		Iterator<ast_node> I = N.iterator();
-		for (; I.hasNext();) {
-			ast_node n = I.next();
+		for (ast_node n : N) {
 			if (n == null)
 				continue;
 			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
@@ -621,11 +607,9 @@ public class GlobalMembersGm_rw_analysis {
 		// and add a copy into the target set.
 		for (gm_symtab_entry sym : S1.keySet()) {
 			LinkedList<gm_rwinfo> l1 = S1.get(sym);
-			Iterator<gm_rwinfo> ss1;
 			assert l1 != null;
 
-			for (ss1 = l1.iterator(); ss1.hasNext();) {
-				gm_rwinfo e = ss1.next();
+			for (gm_rwinfo e : l1) {
 				gm_rwinfo copy = e.copy();
 				copy.always = false; // chage it into conditional access
 				is_okay = is_okay && GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(Target, sym, copy, is_reduce);
@@ -661,9 +645,8 @@ public class GlobalMembersGm_rw_analysis {
 
 			// add copy of access info to the target set
 			LinkedList<gm_rwinfo> l = old.get(e);
-			Iterator<gm_rwinfo> ii;
-			for (ii = l.iterator(); ii.hasNext();) {
-				gm_rwinfo copy = (ii.next()).copy();
+			for (gm_rwinfo info : l) {
+				gm_rwinfo copy = info.copy();
 				boolean b = GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(target, e, copy, is_reduce);
 				is_okay = is_okay && b;
 			}
@@ -685,9 +668,8 @@ public class GlobalMembersGm_rw_analysis {
 		for (gm_symtab_entry e : old.keySet()) {
 			// add copy of access info to the target set
 			LinkedList<gm_rwinfo> l = old.get(e);
-			Iterator<gm_rwinfo> ii;
-			for (ii = l.iterator(); ii.hasNext();) {
-				gm_rwinfo copy = (ii.next()).copy();
+			for (gm_rwinfo info : l) {
+				gm_rwinfo copy = info.copy();
 				is_okay = GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(target, e, copy, is_reduce) && is_okay;
 			}
 		}
@@ -798,9 +780,7 @@ public class GlobalMembersGm_rw_analysis {
 			LinkedList<gm_rwinfo> l = T_temp.get(sym);
 			if (sym == iter_sym) // direct reading of iterator
 				continue;
-			Iterator<gm_rwinfo> ii;
-			for (ii = l.iterator(); ii.hasNext();) {
-				gm_rwinfo e = ii.next();
+			for (gm_rwinfo e : l) {
 				gm_rwinfo cp = e.copy();
 				if (cp.driver != null)
 					/*

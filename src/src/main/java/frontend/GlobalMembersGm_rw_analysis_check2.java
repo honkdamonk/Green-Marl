@@ -5,6 +5,7 @@ import inc.GM_REDUCE_T;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import ast.AST_NODE_TYPE;
 import ast.ast_sent;
@@ -358,9 +359,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 
 			// find exact match
 			LinkedList<gm_rwinfo> list = W.get(w_sym);
-			java.util.Iterator<gm_rwinfo> j;
-			for (j = list.iterator(); j.hasNext();) {
-				gm_rwinfo R = j.next();
+			for (gm_rwinfo : R : list) {
 				if (Q._check_range && (Q.range != R.access_range)) {
 					continue;
 				}
@@ -388,11 +387,12 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// For debug
 	// -----------------------------------------------------
 	public static void gm_print_rwinfo_set(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> m) {
-		java.util.Iterator<gm_symtab_entry, LinkedList<gm_rwinfo>> it;
-		for (it = m.iterator(); it.hasNext();) {
-			gm_symtab_entry e = it.next().getKey();
-			LinkedList<gm_rwinfo> l = it.next().getValue();
-			if (it != m.iterator())
+		boolean first = true;
+		for (gm_symtab_entry e : m.keySet()) {
+			LinkedList<gm_rwinfo> l = m.get(e);
+			if (first)
+				first = false;
+			else
 				System.out.print(",");
 
 			if (e.getType().is_property())

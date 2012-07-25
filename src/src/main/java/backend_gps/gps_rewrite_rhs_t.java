@@ -38,11 +38,11 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 	public final boolean apply(ast_expr e) {
 		ast_sent s = get_current_sent();
-		if (s.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN)
+		if (s.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue())
 			return true;
 
-		if ((e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT)
-				|| (e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_EDGE)) {
+		if ((e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue())
+				|| (e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_EDGE.getValue())) {
 			// (current traversal engine does not support pruning, so should
 			// look at parents
 			//

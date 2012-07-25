@@ -1,6 +1,5 @@
 package frontend;
 
-import inc.GM_PROP_USAGE_T;
 import ast.ast_extra_info;
 import ast.ast_extra_info_string;
 import ast.ast_id;
@@ -136,8 +135,8 @@ public class gm_symtab_entry {
 		extra.put(id, e);
 	}
 
-	public void add_info_int(String id, GM_PROP_USAGE_T gmusageUnused) {
-		add_info(id, new ast_extra_info(gmusageUnused));
+	public void add_info_int(String id, int info) {
+		add_info(id, new ast_extra_info(info));
 	}
 
 	public void add_info_bool(String id, boolean b) {

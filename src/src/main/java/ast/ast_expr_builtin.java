@@ -154,7 +154,7 @@ public class ast_expr_builtin extends ast_expr {
 	}
 
 	// defined in gm_builtin.cc
-	public ast_expr_builtin new_builtin_expr(ast_id id, gm_builtin_def d, expr_list t) {
+	public static ast_expr_builtin new_builtin_expr(ast_id id, gm_builtin_def d, expr_list t) {
 		ast_expr_builtin E = new ast_expr_builtin();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_BUILTIN;
 		E.driver = id;

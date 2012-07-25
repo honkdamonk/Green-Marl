@@ -2,6 +2,7 @@ package backend_giraph;
 
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
+import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_backend_gps;
 import inc.gm_compile_step;
@@ -278,7 +279,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			{
 	//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
 	//ORIGINAL LINE: sbyte* argname = s->getId()->get_genname();
-				byte argname = s.getId().get_genname();
+				String argname = s.getId().get_genname();
 				String.format(temp, "%s = getContext().getConfiguration().", argname);
 				Body.push(temp);
 				switch (s.getType().getTypeSummary())
@@ -301,7 +302,11 @@ public class gm_giraph_gen extends gm_gps_gen
 						String.format(temp, "getFloat(\"%s\", -1.0f);", argname);
 						break;
 					case GMTYPE_NODE:
-						get_lib().is_node_type_int() ? sprintf(temp, "getInteger(\"%s\", -1);", argname) : sprintf(temp, "getLong(\"%s\", -1L);", argname);
+						if (get_lib().is_node_type_int()) {
+							String.format(temp, "getInteger(\"%s\", -1);", argname);
+						} else {
+							String.format(temp, "getLong(\"%s\", -1L);", argname);
+						}
 						break;
 					default:
 						assert false;
@@ -393,7 +398,7 @@ public class gm_giraph_gen extends gm_gps_gen
 	public void do_generate_master_state_body(gm_gps_basic_block b)
 	{
 		int id = b.get_id();
-		int type = b.get_type();
+		gm_gps_bbtype_t type = b.get_type();
     
 		String temp = new String(new char[1024]);
 		String.format(temp, "private void _master_state_%d() {", id);
@@ -404,7 +409,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("-----*/");
 		String.format(temp, "LOG.info(\"Running _master_state %d\");", id);
 		Body.pushln(temp);
-		if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX.getValue())
+		if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX)
 		{
     
 			// generate Broadcast
@@ -425,7 +430,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			Body.pushln(temp);
 			Body.pushln("_master_should_start_workers = true;");
 		}
-		else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ.getValue())
+		else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ)
 		{
 			if (b.is_after_vertex())
 			{
@@ -435,11 +440,8 @@ public class gm_giraph_gen extends gm_gps_gen
     
 			// define local variables 
 			java.util.HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
-			java.util.Iterator<gm_symtab_entry, gps_syminfo> I;
-			for (I = symbols.iterator(); I.hasNext();)
-			{
-				gm_symtab_entry sym = I.next().getKey();
-				gps_syminfo local_info = I.next().getValue();
+			for (gm_symtab_entry sym : symbols.keySet()) {
+				gps_syminfo local_info = symbols.get(sym);
 				if (!local_info.is_scalar() || sym.isArgument()) //TODO: why is sym->isArgument() != local_info->is_argument() ?
 					continue;
 				gps_syminfo global_info = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
@@ -485,7 +487,7 @@ public class gm_giraph_gen extends gm_gps_gen
 				Body.pushln(temp);
 			}
 		}
-		else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_IF_COND.getValue())
+		else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_IF_COND)
 		{
     
 			Body.push("boolean _expression_result = ");
@@ -501,7 +503,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			String.format(temp, "if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;", b.get_nth_exit(0).get_id(), b.get_nth_exit(1).get_id());
 			Body.pushln(temp);
 		}
-		else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND.getValue())
+		else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND)
 		{
 			ast_sent s = b.get_1st_sent();
 			assert s != null;
@@ -527,7 +529,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			}
     
 		}
-		else if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1.getValue()) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2.getValue()))
+		else if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2))
 		{
     
 			// generate Broadcast
@@ -541,7 +543,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			Body.pushln(temp);
 			Body.pushln("_master_should_start_workers = true;");
 		}
-		else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL.getValue())
+		else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL)
 		{
 			Body.pushln("// Intra-Loop Merged");
 			int source_id = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
@@ -563,11 +565,9 @@ public class gm_giraph_gen extends gm_gps_gen
 	{
 		// check if scalar variable is used inside the block
 		java.util.HashMap<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
-		java.util.Iterator<gm_symtab_entry, gps_syminfo> I;
-		for (I = syms.iterator(); I.hasNext();)
-		{
-			gps_syminfo local_info = I.next().getValue();
-			gps_syminfo global_info = (gps_syminfo) I.next().getKey().find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+		for (gm_symtab_entry entry : syms.keySet()) {
+			gps_syminfo local_info = syms.get(entry);
+			gps_syminfo global_info = (gps_syminfo) entry.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			if (!global_info.is_scalar())
 				continue;
 			if (local_info.is_used_as_reduce())
@@ -575,7 +575,7 @@ public class gm_giraph_gen extends gm_gps_gen
 				GM_REDUCE_T reduce_type = local_info.get_reduce_type();
     
 				//printf("being used as reduce :%s\n", I->first->getId()->get_genname());
-				get_lib().generate_broadcast_reduce_initialize_master(I.next().getKey().getId(), Body, reduce_type, GlobalMembersGm_giraph_gen_master.get_reduce_base_value(reduce_type, I.next().getKey().getType().getTypeSummary()));
+				get_lib().generate_broadcast_reduce_initialize_master(entry.getId(), Body, reduce_type, get_reduce_base_value(reduce_type, entry.getType().getTypeSummary()));
 				// [TODO] global argmax
 				continue;
 			}
@@ -584,7 +584,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			if (local_info.is_used_as_rhs() && !global_info.is_argument())
 			{
 				// create a broad cast variable
-				get_lib().generate_broadcast_send_master(I.next().getKey().getId(), Body);
+				get_lib().generate_broadcast_send_master(entry.getId(), Body);
 			}
 		}
 	}
@@ -596,11 +596,9 @@ public class gm_giraph_gen extends gm_gps_gen
     
 		// check if scalar variable is modified inside the block
 		java.util.HashMap<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
-		java.util.Iterator<gm_symtab_entry, gps_syminfo> I;
-		for (I = syms.iterator(); I.hasNext();)
-		{
-			gps_syminfo local_info = I.next().getValue();
-			gps_syminfo global_info = (gps_syminfo) I.next().getKey().find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+		for (gm_symtab_entry entry : syms.keySet()) {
+			gps_syminfo local_info = syms.get(entry);
+			gps_syminfo global_info = (gps_syminfo) entry.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			if (!global_info.is_scalar())
 				continue;
 			if (!global_info.is_used_in_master())
@@ -608,7 +606,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			if (local_info.is_used_as_lhs() || local_info.is_used_as_reduce())
 			{
 				// create a broad cast variable
-				get_lib().generate_broadcast_receive_master(I.next().getKey().getId(), Body, local_info.get_reduce_type());
+				get_lib().generate_broadcast_receive_master(entry.getId(), Body, local_info.get_reduce_type());
 			}
 		}
 	}
@@ -892,13 +890,13 @@ public class gm_giraph_gen extends gm_gps_gen
 				continue;
 			do_generate_vertex_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(stdout);
+		GlobalMembersGm_reproduce.gm_redirect_reproduce(System.out);
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
 	}
 	public void do_generate_vertex_state_body(gm_gps_basic_block b)
 	{
 		int id = b.get_id();
-		int type = b.get_type();
+		gm_gps_bbtype_t type = b.get_type();
     
 		String temp = new String(new char[1024]);
 		String.format(temp, "private void _vertex_state_%d(Iterator<MessageData> _msgs) {", id);
@@ -915,7 +913,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			return;
 		}
     
-		assert type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX.getValue();
+		assert type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX;
 		boolean is_conditional = b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL);
 		String cond_var = new String(new char[128]);
 		if (is_conditional)
@@ -984,11 +982,8 @@ public class gm_giraph_gen extends gm_gps_gen
 						GlobalMembersGm_reproduce.gm_baseindent_reproduce(6);
 					else
 						GlobalMembersGm_reproduce.gm_baseindent_reproduce(5);
-					java.util.LinkedList<ast_sent> sents = sb.get_sents();
-					java.util.Iterator<ast_sent> I;
-					for (I = sents.iterator(); I.hasNext();)
+					for (ast_sent s : sb.get_sents())
 					{
-						ast_sent s = I.next();
 						if (s.find_info_ptr(GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb)
 							s.reproduce(0);
 					}
@@ -997,9 +992,7 @@ public class gm_giraph_gen extends gm_gps_gen
 					Body.pushln("-----*/");
 					get_lib().generate_message_receive_begin(sb, U.sym, Body, b, R.size() == 1);
     
-					for (I = sents.iterator(); I.hasNext();)
-					{
-						ast_sent s = I.next();
+					for (ast_sent s : sb.get_sents()) {
 						if (s.find_info_ptr(GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb)
 						{
 							// implement receiving sentence
@@ -1072,11 +1065,8 @@ public class gm_giraph_gen extends gm_gps_gen
     
 		// load scalar variable
 		java.util.HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
-		java.util.Iterator<gm_symtab_entry, gps_syminfo> I;
-		for (I = symbols.iterator(); I.hasNext();)
-		{
-			gm_symtab_entry sym = I.next().getKey();
-			gps_syminfo local_info = I.next().getValue();
+		for (gm_symtab_entry sym : symbols.keySet()) {
+			gps_syminfo local_info = symbols.get(sym);
 			if (!local_info.is_scalar())
 				continue;
     
@@ -1359,9 +1349,7 @@ public class gm_giraph_gen extends gm_gps_gen
 				continue;
 			if (s.isReadable())
 			{
-	//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
-	//ORIGINAL LINE: sbyte* argname = s->getId()->get_genname();
-				byte argname = s.getId().get_genname();
+				String argname = s.getId().get_genname();
 				String.format(temp, "job.getConfiguration().");
 				Body.push(temp);
 				switch (s.getType().getTypeSummary())
@@ -1384,7 +1372,11 @@ public class gm_giraph_gen extends gm_gps_gen
 						String.format(temp, "setFloat(\"%s\", Float.parseFloat(cmd.getOptionValue(\"%s\")));", argname, argname);
 						break;
 					case GMTYPE_NODE:
-						get_lib().is_node_type_int() ? sprintf(temp, "setInt(\"%s\", Integer.parseInt(cmd.getOptionValue(\"%s\")));", argname, argname) : sprintf(temp, "setLong(\"%s\", Long.parseLong(cmd.getOptionValue(\"%s\")));", argname, argname);
+						if (get_lib().is_node_type_int()) {
+							String.format(temp, "setInt(\"%s\", Integer.parseInt(cmd.getOptionValue(\"%s\")));", argname, argname);
+						} else {
+							String.format(temp, "setLong(\"%s\", Long.parseLong(cmd.getOptionValue(\"%s\")));", argname, argname);
+						}
 						break;
 					default:
 						assert false;
@@ -1438,6 +1430,60 @@ public class gm_giraph_gen extends gm_gps_gen
 		do_generate_job_configuration();
     
 		end_class();
+	}
+	
+	//extern void gm_redirect_reproduce(FILE f);
+	//extern void gm_baseindent_reproduce(int i);
+	//extern void gm_flush_reproduce();
+	//extern void gm_redirect_reproduce(FILE f);
+	//extern void gm_baseindent_reproduce(int i);
+	public static String get_reduce_base_value(GM_REDUCE_T reduce_type, GMTYPE_T gm_type)
+	{
+		switch (reduce_type)
+		{
+			case GMREDUCE_PLUS:
+				return "0";
+			case GMREDUCE_MULT:
+				return "1";
+			case GMREDUCE_AND:
+				return "true";
+			case GMREDUCE_OR:
+				return "false";
+			case GMREDUCE_MIN:
+				switch (gm_type)
+				{
+					case GMTYPE_INT:
+						return "Integer.MAX_VALUE";
+					case GMTYPE_LONG:
+						return "Long.MAX_VALUE";
+					case GMTYPE_FLOAT:
+						return "Float.MAX_VALUE";
+					case GMTYPE_DOUBLE:
+						return "Double.MAX_VALUE";
+					default:
+						assert false;
+						return "0";
+				}
+			case GMREDUCE_MAX:
+				switch (gm_type)
+				{
+					case GMTYPE_INT:
+						return "Integer.MIN_VALUE";
+					case GMTYPE_LONG:
+						return "Long.MIN_VALUE";
+					case GMTYPE_FLOAT:
+						return "Float.MIN_VALUE";
+					case GMTYPE_DOUBLE:
+						return "Double.MIN_VALUE";
+					default:
+						assert false;
+						return "0";
+				}
+			default:
+				assert false;
+				break;
+		}
+		return "0";
 	}
 
 }

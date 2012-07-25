@@ -1,20 +1,18 @@
 package backend_cpp;
 
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
-public class FILE extends FileOutputStream {
+public class FILE extends OutputStream {
 
 	public FILE(String fileName) throws FileNotFoundException {
-		super(fileName);
 	}
-
+	
 	public static FILE fopen(String temp, String string) {
 		try {
 			return new FILE(temp);
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			return null;
 		}
@@ -24,9 +22,12 @@ public class FILE extends FileOutputStream {
 		try {
 			f_header.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}		
+	}
+
+	@Override
+	public void write(int b) throws IOException {
 	}
 
 }

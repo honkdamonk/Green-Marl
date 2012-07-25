@@ -432,11 +432,9 @@ public abstract class gm_code_generator {
 	public void generate_sent_block(ast_sentblock sb, boolean need_brace) {
 		LinkedList<ast_sent> sents = sb.get_sents();
 
-		java.util.Iterator<ast_sent> i;
 		if (need_brace)
 			_Body.pushln("{");
-		for (i = sents.iterator(); i.hasNext();) {
-			ast_sent s = i.next();
+		for (ast_sent s : sents) {
 			generate_sent(s);
 		}
 		if (need_brace)

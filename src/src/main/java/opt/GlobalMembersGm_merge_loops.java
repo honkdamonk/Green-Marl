@@ -40,10 +40,8 @@ public class GlobalMembersGm_merge_loops {
 	// 3. merge two body(see gm_merge_sentlock.cc)
 	// ---------------------------------------------------------
 	public static boolean is_linear_access_only(java.util.LinkedList<gm_rwinfo> L) {
-		java.util.Iterator<gm_rwinfo> i;
 		assert L != null;
-		for (i = L.iterator(); i.hasNext();) {
-			gm_rwinfo rw = i.next();
+		for (gm_rwinfo rw : L) {
 			assert rw != null;
 			if (rw.access_range != gm_range_type_t.GM_RANGE_LINEAR)
 				return false;

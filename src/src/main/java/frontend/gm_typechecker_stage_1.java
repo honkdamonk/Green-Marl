@@ -85,9 +85,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		boolean is_okay = true;
 		// add arguments to the current symbol table
 		java.util.LinkedList<ast_argdecl> in_args = p.get_in_args();
-		java.util.Iterator<ast_argdecl> it;
-		for (it = in_args.iterator(); it.hasNext();) {
-			ast_argdecl a = it.next();
+		for (ast_argdecl a : in_args) {
 			ast_typedecl type = a.get_type();
 			boolean b = GlobalMembersGm_new_typecheck_step1.gm_check_type_is_well_defined(type, curr_sym);
 			is_okay = b && is_okay;
@@ -106,8 +104,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		}
 
 		java.util.LinkedList<ast_argdecl> out_args = p.get_out_args();
-		for (it = out_args.iterator(); it.hasNext();) {
-			ast_argdecl a = it.next();
+		for (ast_argdecl a : out_args) {
 			ast_typedecl type = a.get_type();
 			boolean b = GlobalMembersGm_new_typecheck_step1.gm_check_type_is_well_defined(type, curr_sym);
 			is_okay = b && is_okay;
@@ -192,9 +189,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		case GMEXPR_FOREIGN: {
 			ast_expr_foreign f = (ast_expr_foreign) p;
 			java.util.LinkedList<ast_node> L = f.get_parsed_nodes();
-			java.util.Iterator<ast_node> I;
-			for (I = L.iterator(); I.hasNext();) {
-				ast_node n = I.next();
+			for (ast_node n : L) {
 				if (n == null)
 					continue;
 				if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
@@ -257,9 +252,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 
 			if (a.is_argminmax_assign()) {
 				java.util.LinkedList<ast_node> L = a.get_lhs_list();
-				java.util.Iterator<ast_node> I;
-				for (I = L.iterator(); I.hasNext();) {
-					ast_node n = I.next();
+				for (ast_node n : L) {
 					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) n;
 						is_okay = find_symbol_id(id) && is_okay;
@@ -327,17 +320,16 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			// examine mutation list
 			// -----------------------------------
 			java.util.LinkedList<ast_node> L = f.get_modified();
-			java.util.Iterator<ast_node> I;
-			for (I = L.iterator(); I.hasNext();) {
-				if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID) {
-					ast_id id = (ast_id) (I.next());
+			for (ast_node node : L) {
+				if (node.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+					ast_id id = (ast_id) node;
 					boolean b = find_symbol_id(id, false);
 					if (!b) {
 						b = find_symbol_field_id(id);
 					}
 					is_okay = b && is_okay;
-				} else if ((I.next()).get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
-					ast_field ff = (ast_field) (I.next());
+				} else if (node.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+					ast_field ff = (ast_field) node;
 					is_okay = find_symbol_field(ff) && is_okay;
 				} else {
 					assert false;

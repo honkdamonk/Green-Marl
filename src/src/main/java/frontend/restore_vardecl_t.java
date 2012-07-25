@@ -31,22 +31,19 @@ public class restore_vardecl_t extends gm_apply
 		// Add vardecls after all 'NOP's
 		//-------------------------------------
 		java.util.LinkedList<ast_sent> sents = sb.get_sents();
-		java.util.Iterator<ast_sent> ii;
-		for (ii = sents.iterator(); ii.hasNext();)
+		for (ast_sent sent : sents)
 		{
-			if ((ii.next()).get_nodetype() != AST_NODE_TYPE.AST_NOP)
+			if (sent.get_nodetype() != AST_NODE_TYPE.AST_NOP)
 				break;
-			top = ii.next();
+			top = sent;
 		}
 
 		//----------------------------------------
 		// Iterate over symtab. 
 		// Add vardecl for each symbol
 		//----------------------------------------
-		java.util.Iterator<gm_symtab_entry> i;
-		for (i = Vs.iterator(); i.hasNext();) // scalar
+		for (gm_symtab_entry e : Vs) // scalar
 		{
-			gm_symtab_entry e = i.next();
 			ast_typedecl type = e.getType().copy();
 			ast_id id = e.getId().copy(true);
 
@@ -64,9 +61,8 @@ public class restore_vardecl_t extends gm_apply
 			top = v;
 		}
 
-		for (i = Fs.iterator(); i.hasNext();) // field
+		for (gm_symtab_entry e : Fs) // field
 		{
-			gm_symtab_entry e = i.next();
 			ast_typedecl type = e.getType().copy();
 			ast_id id = e.getId().copy(true);
 

@@ -33,10 +33,10 @@ public class GlobalMembersGm_gps_bb_split
 		// migrate receiver list to new_BB
 		//--------------------------------------
 		java.util.LinkedList<gm_gps_comm_unit> L = BB.get_receivers();
-		java.util.Iterator<gm_gps_comm_unit> I;
-		for (I = L.iterator(); I.hasNext();)
+
+		for (gm_gps_comm_unit unit : L)
 		{
-			new_BB.add_receiver(I.next());
+			new_BB.add_receiver(unit);
 		}
 		BB.clear_receivers();
 

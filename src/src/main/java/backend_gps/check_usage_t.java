@@ -130,11 +130,9 @@ public class check_usage_t extends gps_apply_bb_ast
 			if (a.is_argminmax_assign())
 			{
 				java.util.LinkedList<ast_node> L = a.get_lhs_list();
-				java.util.Iterator<ast_node> I;
-				for (I = L.iterator(); I.hasNext();)
-				{
-					assert (I.next()).get_nodetype() == AST_NODE_TYPE.AST_ID;
-					gm_symtab_entry e2 = ((ast_id)(I.next())).getSymInfo();
+				for (ast_node node : L) {
+					assert node.get_nodetype() == AST_NODE_TYPE.AST_ID;
+					gm_symtab_entry e2 = ((ast_id) node).getSymInfo();
 					if (!check_symbol_write_in_par2(e2, GM_REDUCE_T.GMREDUCE_INVALID))
 						return true;
 				}

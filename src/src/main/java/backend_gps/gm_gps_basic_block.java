@@ -219,9 +219,7 @@ public class gm_gps_basic_block {
 			if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) && (has_receiver()) && reproduce_receiver) {
 				gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 				java.util.LinkedList<gm_gps_comm_unit> L = get_receivers();
-				java.util.Iterator<gm_gps_comm_unit> I;
-				for (I = L.iterator(); I.hasNext();) {
-					gm_gps_comm_unit U = I.next();
+				for (gm_gps_comm_unit U : L) {
 					if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_NESTED) {
 						GlobalMembersGm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Nested Loop"));
 						GlobalMembersGm_reproduce.gm_newline_reproduce();
@@ -231,9 +229,7 @@ public class gm_gps_basic_block {
 						GlobalMembersGm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Random Write Sent"));
 						GlobalMembersGm_reproduce.gm_newline_reproduce();
 						java.util.LinkedList<ast_sent> LL = info.get_random_write_sents(U);
-						java.util.Iterator<ast_sent> II;
-						for (II = LL.iterator(); II.hasNext();) {
-							ast_sent s = II.next();
+						for (ast_sent s : LL) {
 							s.reproduce(0);
 						}
 					} else {

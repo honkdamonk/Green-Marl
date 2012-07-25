@@ -961,12 +961,11 @@ public class gm_gpslib extends gm_graph_library {
             Body.pushln("IOB.put(m_type);");
         String str_buf = new String(new char[1024]);
         java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        java.util.Iterator<gm_gps_congruent_msg_class> I;
         boolean is_single = info.is_single_message();
         boolean is_first = true;
-        for(I = LOOPS.iterator(); I.hasNext();)
+        for (gm_gps_congruent_msg_class c : LOOPS)
         {
-            gm_gps_communication_size_info SYMS = *((I.next()).sz_info);
+            gm_gps_communication_size_info SYMS = c.sz_info;
             int sz = get_total_size(SYMS);
             if (!is_single && is_first)
             {

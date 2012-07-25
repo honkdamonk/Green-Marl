@@ -30,11 +30,10 @@ public class GlobalMembersGm_gps_bb_merge_intra_loop
 		// merge PN/P1, SN/S1
 		//---------------------------------------------------
 		//  mark p_n's sents/receivers as 'conditional'
-		java.util.Iterator<ast_sent> I;
-		for (I = p_n.get_sents().iterator(); I.hasNext();)
-			(I.next()).add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
-		for (I = s_n.get_sents().iterator(); I.hasNext();)
-			(I.next()).add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
+		for (ast_sent sent : p_n.get_sents())
+			sent.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
+		for (ast_sent sent : s_n.get_sents())
+			sent.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
 
 		/* // don't need this
 		 std::list<gm_gps_comm_unit>::iterator J;
@@ -51,10 +50,10 @@ public class GlobalMembersGm_gps_bb_merge_intra_loop
 		 */
 
 		//  move p_1's sents and information to p_n (p_1 has no receivers)
-		for (I = p_1.get_sents().iterator(); I.hasNext();)
-			p_n.add_sent(I.next());
-		for (I = s_1.get_sents().iterator(); I.hasNext();)
-			s_n.add_sent(I.next());
+		for (ast_sent sent : p_1.get_sents())
+			p_n.add_sent(sent);
+		for (ast_sent sent : s_1.get_sents())
+			s_n.add_sent(sent);
 		p_n.copy_info_from(p_1);
 		s_n.copy_info_from(s_1);
 
@@ -189,15 +188,10 @@ public class GlobalMembersGm_gps_bb_merge_intra_loop
 
 	public static boolean check_if_argument_is_modified(java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> M)
 	{
-
-		java.util.Iterator<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> I;
-		for (I = M.iterator(); I.hasNext();)
-		{
-			gm_symtab_entry e = I.next().getKey();
+		for (gm_symtab_entry e : M.keySet()) {
 			if (e.isArgument())
 				return true;
 		}
-
 		return false;
 	}
 }

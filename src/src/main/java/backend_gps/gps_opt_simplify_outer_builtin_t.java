@@ -22,6 +22,12 @@ import common.gm_method_id_t;
 import frontend.gm_symtab_entry;
 
 public class gps_opt_simplify_outer_builtin_t extends gm_apply {
+	
+	private LinkedList<ast_sent> L1 = new LinkedList<ast_sent>();
+	private LinkedList<gm_symtab_entry> L2 = new LinkedList<gm_symtab_entry>();
+	private int depth;
+	private gm_symtab_entry outer_iter;
+	
 	public gps_opt_simplify_outer_builtin_t() {
 		set_for_sent(true);
 		set_separate_post_apply(true);
@@ -101,10 +107,4 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 
 		}
 	}
-
-	private LinkedList<ast_sent> L1 = new LinkedList<ast_sent>();
-	private LinkedList<gm_symtab_entry> L2 = new LinkedList<gm_symtab_entry>();
-	private int depth;
-	private gm_symtab_entry outer_iter;
-
 }

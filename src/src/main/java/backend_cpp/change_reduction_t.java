@@ -13,6 +13,10 @@ import frontend.GlobalMembersGm_fixup_bound_symbol;
 import frontend.gm_symtab_entry;
 
 public class change_reduction_t extends gm_apply {
+	
+	private java.util.HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map;
+	private java.util.LinkedList<ast_assign> to_normals = new java.util.LinkedList<ast_assign>();
+	
 	public final void set_map(java.util.HashMap<gm_symtab_entry, gm_symtab_entry> m) {
 		symbol_map = m;
 	}
@@ -61,8 +65,6 @@ public class change_reduction_t extends gm_apply {
 		}
 	}
 
-	private java.util.HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map;
-	private java.util.LinkedList<ast_assign> to_normals = new java.util.LinkedList<ast_assign>();
 }
 // supplimental lhs for argmin/argmax - new symbols - old symbols
 

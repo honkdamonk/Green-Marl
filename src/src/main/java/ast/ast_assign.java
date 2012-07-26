@@ -4,6 +4,7 @@ import inc.GM_REDUCE_T;
 import inc.gm_assignment_location_t;
 import inc.gm_assignment_t;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import common.GlobalMembersGm_dumptree;
@@ -11,6 +12,20 @@ import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
 public class ast_assign extends ast_sent {
+	
+	private gm_assignment_t assign_type; // normal, deferred, reduce
+	private gm_assignment_location_t lhs_type; // scalar, field
+	private GM_REDUCE_T reduce_type; // add, mult, min, max
+	private ast_id lhs_scala;
+	private ast_field lhs_field;
+	private ast_expr rhs;
+	private ast_id bound; // bounding iterator
+
+	private boolean arg_minmax;
+
+	private LinkedList<ast_node> l_list = new LinkedList<ast_node>();
+	private LinkedList<ast_expr> r_list = new LinkedList<ast_expr>();
+	
 	public void dispose() {
 		if (lhs_scala != null)
 			lhs_scala.dispose();
@@ -144,7 +159,7 @@ public class ast_assign extends ast_sent {
 
 		if (argmin) {
 			Out.push(" ; ");
-			java.util.LinkedList<ast_expr> L = get_rhs_list();
+			LinkedList<ast_expr> L = get_rhs_list();
 			int cnt = 0;
 			int last = L.size();
 			for (ast_expr n : L) {
@@ -230,8 +245,8 @@ public class ast_assign extends ast_sent {
 		}
 
 		if (is_argminmax_assign()) {
-			java.util.Iterator<ast_node> J = l_list.iterator();
-			java.util.Iterator<ast_expr> I = r_list.iterator();
+			Iterator<ast_node> J = l_list.iterator();
+			Iterator<ast_expr> I = r_list.iterator();
 			while (I.hasNext()) {
 				ast_node n = J.next();
 				ast_expr e = I.next();
@@ -422,20 +437,20 @@ public class ast_assign extends ast_sent {
 		return l_list.size() > 0;
 	}
 
-	public final java.util.LinkedList<ast_node> get_lhs_list() {
+	public final LinkedList<ast_node> get_lhs_list() {
 		return l_list;
 	}
 
-	public final java.util.LinkedList<ast_expr> get_rhs_list() {
+	public final LinkedList<ast_expr> get_rhs_list() {
 		return r_list;
 	}
 
-	public final void set_lhs_list(java.util.LinkedList<ast_node> L) {
-		l_list = new java.util.LinkedList<ast_node>(L);
+	public final void set_lhs_list(LinkedList<ast_node> L) {
+		l_list = new LinkedList<ast_node>(L);
 	}
 
-	public final void set_rhs_list(java.util.LinkedList<ast_expr> R) {
-		r_list = new java.util.LinkedList<ast_expr>(R);
+	public final void set_rhs_list(LinkedList<ast_expr> R) {
+		r_list = new LinkedList<ast_expr>(R);
 	}
 
 	public final void set_lhs_scala(ast_id new_id) {
@@ -461,18 +476,5 @@ public class ast_assign extends ast_sent {
 		this.assign_type = gm_assignment_t.GMASSIGN_NORMAL;
 		this.reduce_type = GM_REDUCE_T.GMREDUCE_INVALID;
 	}
-
-	private gm_assignment_t assign_type; // normal, deferred, reduce
-	private gm_assignment_location_t lhs_type; // scalar, field
-	private GM_REDUCE_T reduce_type; // add, mult, min, max
-	private ast_id lhs_scala;
-	private ast_field lhs_field;
-	private ast_expr rhs;
-	private ast_id bound; // bounding iterator
-
-	private boolean arg_minmax;
-
-	private java.util.LinkedList<ast_node> l_list = new java.util.LinkedList<ast_node>();
-	private java.util.LinkedList<ast_expr> r_list = new java.util.LinkedList<ast_expr>();
 
 }

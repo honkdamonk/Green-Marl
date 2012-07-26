@@ -6,12 +6,10 @@ import common.gm_apply;
 
 // a dummy nop IR.
 // May be used in back-end processing
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class gm_symtab_entry;
-//class gm_rwinfo;
-//typedef std::list<gm_rwinfo*> gm_rwinfo_list;
-//typedef std::map<gm_symtab_entry*, gm_rwinfo_list*> gm_rwinfo_map;
 public class ast_nop extends ast_sent {
+	
+	private nop_enum_cpp subtype;
+	
 	protected ast_nop() {
 		super(AST_NODE_TYPE.AST_NOP);
 		this.subtype = nop_enum_cpp.NOP_REDUCE_SCALAR;
@@ -51,5 +49,4 @@ public class ast_nop extends ast_sent {
 		return true;
 	}
 
-	private nop_enum_cpp subtype;
 }

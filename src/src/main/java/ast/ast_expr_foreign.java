@@ -10,6 +10,13 @@ import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
 public class ast_expr_foreign extends ast_expr {
+
+	private String orig_text;
+
+	// parsed foreign syntax
+	private LinkedList<ast_node> parsed_gm = new LinkedList<ast_node>();
+	private LinkedList<String> parsed_foreign = new LinkedList<String>();
+
 	public void dispose() {
 		// Iterator<ast_node> I;
 		// for (I = parsed_gm.iterator(); I.hasNext();)
@@ -89,12 +96,6 @@ public class ast_expr_foreign extends ast_expr {
 		this.orig_text = null;
 		set_nodetype(AST_NODE_TYPE.AST_EXPR_FOREIGN);
 	}
-
-	private String orig_text;
-
-	// parsed foreign syntax
-	private LinkedList<ast_node> parsed_gm = new LinkedList<ast_node>();
-	private LinkedList<String> parsed_foreign = new LinkedList<String>();
 
 	public void apply_id(gm_apply a, boolean apply2) {
 		for (ast_node n : parsed_gm) {
@@ -325,7 +326,7 @@ public class ast_expr_foreign extends ast_expr {
 		}
 
 		private void handleS_FIELD(char c) {
-			if (!Character.isLetterOrDigit(c) && (c != '_')) { 
+			if (!Character.isLetterOrDigit(c) && (c != '_')) {
 				FIELD_end = curr_ptr - 1;
 				doAssertOnField();
 				finishElement();

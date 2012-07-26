@@ -4,6 +4,10 @@ import inc.GMTYPE_T;
 
 // should-be a singleton 
 public class gm_builtin_manager {
+
+	private java.util.LinkedList<gm_builtin_def> defs = new java.util.LinkedList<gm_builtin_def>();
+	private gm_builtin_def last_def;
+
 	public gm_builtin_manager() {
 		// -----------------------------------------------------
 		// construct built-in library by
@@ -28,9 +32,9 @@ public class gm_builtin_manager {
 	}
 
 	public void dispose() {
-//		java.util.Iterator<gm_builtin_def> i;
-//		for (i = defs.iterator(); i.hasNext();)
-//			i.next() = null;
+		// java.util.Iterator<gm_builtin_def> i;
+		// for (i = defs.iterator(); i.hasNext();)
+		// i.next() = null;
 	}
 
 	public final gm_builtin_def find_builtin_def(GMTYPE_T source_type, String orgname) {
@@ -93,7 +97,4 @@ public class gm_builtin_manager {
 	public final gm_builtin_def get_last_def() {
 		return last_def;
 	}
-
-	private java.util.LinkedList<gm_builtin_def> defs = new java.util.LinkedList<gm_builtin_def>();
-	private gm_builtin_def last_def;
 }

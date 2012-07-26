@@ -1,6 +1,7 @@
 package frontend;
 
 import inc.GMTYPE_T;
+
 import inc.GM_REDUCE_T;
 
 import java.util.HashMap;
@@ -24,49 +25,50 @@ import common.GlobalMembersGm_error;
 import common.GlobalMembersGm_misc;
 import common.GlobalMembersGm_traverse;
 
+import static frontend.gm_range_type_t.*;
+
 public class GlobalMembersGm_rw_analysis {
 
 	public static gm_range_type_t gm_get_range_from_itertype(GMTYPE_T itype) {
 		switch (itype) {
 		case GMTYPE_NODEITER_ALL:
 		case GMTYPE_EDGEITER_ALL:
-			return gm_range_type_t.GM_RANGE_LINEAR;
+			return GM_RANGE_LINEAR;
 		case GMTYPE_NODEITER_NBRS:
 		case GMTYPE_NODEITER_IN_NBRS:
 		case GMTYPE_EDGEITER_NBRS:
 		case GMTYPE_NODEITER_COMMON_NBRS:
 		case GMTYPE_EDGEITER_IN_NBRS:
-			return gm_range_type_t.GM_RANGE_RANDOM;
+			return GM_RANGE_RANDOM;
 		case GMTYPE_NODEITER_BFS:
 		case GMTYPE_EDGEITER_BFS:
-			return gm_range_type_t.GM_RANGE_LEVEL;
+			return GM_RANGE_LEVEL;
 		case GMTYPE_NODEITER_UP_NBRS:
 		case GMTYPE_EDGEITER_UP_NBRS:
-			return gm_range_type_t.GM_RANGE_LEVEL_UP;
+			return GM_RANGE_LEVEL_UP;
 		case GMTYPE_NODEITER_DOWN_NBRS:
 		case GMTYPE_EDGEITER_DOWN_NBRS:
-			return gm_range_type_t.GM_RANGE_LEVEL_DOWN;
+			return GM_RANGE_LEVEL_DOWN;
 		case GMTYPE_NODEITER_SET:
 		case GMTYPE_EDGEITER_SET:
-			return gm_range_type_t.GM_RANGE_LINEAR;
+			return GM_RANGE_LINEAR;
 		case GMTYPE_NODEITER_ORDER:
 		case GMTYPE_EDGEITER_ORDER:
-			return gm_range_type_t.GM_RANGE_LINEAR;
+			return GM_RANGE_LINEAR;
 		case GMTYPE_NODEITER_SEQ:
 		case GMTYPE_EDGEITER_SEQ:
-			return gm_range_type_t.GM_RANGE_RANDOM;
+			return GM_RANGE_RANDOM;
 		case GMTYPE_NODE:
 		case GMTYPE_EDGE:
-			return gm_range_type_t.GM_RANGE_RANDOM;
+			return GM_RANGE_RANDOM;
 		case GMTYPE_PROPERTYITER_SET:
 		case GMTYPE_PROPERTYITER_SEQ:
 		case GMTYPE_PROPERTYITER_ORDER:
-			return gm_range_type_t.GM_RANGE_LINEAR;
+			return GM_RANGE_LINEAR;
 		case GMTYPE_COLLECTIONITER_SET:
 		case GMTYPE_COLLECTIONITER_SEQ:
 		case GMTYPE_COLLECTIONITER_ORDER:
-			return gm_range_type_t.GM_RANGE_RANDOM; // TODO is there somthing
-													// more suitable?
+			return GM_RANGE_RANDOM; // TODO is there somthing more suitable?
 		default:
 			System.out.printf("type = %d\n", itype);
 			assert false;
@@ -162,8 +164,8 @@ public class GlobalMembersGm_rw_analysis {
 					j.dispose();
 			}
 			l.clear();
-//			if (l != null)
-//				l.dispose();
+			// if (l != null)
+			// l.dispose();
 		}
 		m.clear();
 	}
@@ -255,7 +257,7 @@ public class GlobalMembersGm_rw_analysis {
 	// e, gm_rwinfo_query q);
 	public static boolean gm_is_modified_always_linearly(ast_sent S, gm_symtab_entry e) {
 		gm_rwinfo_query Q = new gm_rwinfo_query();
-		Q.check_range(gm_range_type_t.GM_RANGE_LINEAR);
+		Q.check_range(GM_RANGE_LINEAR);
 		Q.check_always(true);
 		return GlobalMembersGm_rw_analysis_check2.gm_is_modified_with_condition(S, e, Q);
 	}
@@ -321,7 +323,7 @@ public class GlobalMembersGm_rw_analysis {
 						boolean found = false;
 						// check if the same access happens in else part
 						LinkedList<gm_rwinfo> l2 = S2.get(sym);
-						
+
 						assert l2 != null;
 						for (gm_rwinfo else_info : l2) {
 							if (GlobalMembersGm_rw_analysis.is_same_entry(copy, else_info)) {
@@ -358,9 +360,8 @@ public class GlobalMembersGm_rw_analysis {
 	}
 
 	public static String gm_get_range_string(gm_range_type_t access_range) {
-		return (access_range == gm_range_type_t.GM_RANGE_LINEAR) ? "LINEAR" : (access_range == gm_range_type_t.GM_RANGE_RANDOM) ? "RANDOM"
-				: (access_range == gm_range_type_t.GM_RANGE_LEVEL) ? "LEVEL" : (access_range == gm_range_type_t.GM_RANGE_LEVEL_UP) ? "LEVEL_UP"
-						: (access_range == gm_range_type_t.GM_RANGE_LEVEL_DOWN) ? "LEVEL_DOWN" : "???";
+		return (access_range == GM_RANGE_LINEAR) ? "LINEAR" : (access_range == GM_RANGE_RANDOM) ? "RANDOM" : (access_range == GM_RANGE_LEVEL) ? "LEVEL"
+				: (access_range == GM_RANGE_LEVEL_UP) ? "LEVEL_UP" : (access_range == GM_RANGE_LEVEL_DOWN) ? "LEVEL_DOWN" : "???";
 	}
 
 	// ------------------------------------------------------------
@@ -793,13 +794,13 @@ public class GlobalMembersGm_rw_analysis {
 						cp.driver = null;
 						cp.access_range = range;
 					} else if (cp.driver == null) {
-						if (cp.access_range == gm_range_type_t.GM_RANGE_SINGLE) {
+						if (cp.access_range == GM_RANGE_SINGLE) {
 							// scalar, do nothing
 						} else if (is_parallel) {
 							// printf("sym = %s!!! %p line:%d, col:%d\n",
 							// sym->getId()->get_genname(), e->driver,
 							// e->location->get_line(), e->location->get_col());
-							cp.access_range = gm_range_type_t.GM_RANGE_RANDOM;
+							cp.access_range = GM_RANGE_RANDOM;
 							cp.driver = null;
 						}
 					} else if (is_parallel) {
@@ -817,9 +818,9 @@ public class GlobalMembersGm_rw_analysis {
 	public static void cleanup_iterator_access_bfs(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> T) {
 		// bfs iter ==> conditional, linear iteration
 		boolean new_always = false;
-		gm_range_type_t new_range = gm_range_type_t.GM_RANGE_LINEAR; // G.Nodes
-																		// or
-																		// G.Edges
+		gm_range_type_t new_range = GM_RANGE_LINEAR; // G.Nodes
+														// or
+														// G.Edges
 
 		for (gm_symtab_entry key : T.keySet()) {
 			boolean is_target = false;
@@ -829,12 +830,11 @@ public class GlobalMembersGm_rw_analysis {
 			// remove all items that are LEVEL_UP/DOWN
 			while (!l.isEmpty()) {
 				gm_rwinfo e = l.removeFirst();
-				if ((e.access_range == gm_range_type_t.GM_RANGE_LEVEL) || (e.access_range == gm_range_type_t.GM_RANGE_LEVEL_UP)
-						|| (e.access_range == gm_range_type_t.GM_RANGE_LEVEL_DOWN)) {
+				if ((e.access_range == GM_RANGE_LEVEL) || (e.access_range == GM_RANGE_LEVEL_UP) || (e.access_range == GM_RANGE_LEVEL_DOWN)) {
 					is_target = true;
 					location = e.location;
 					continue;
-				} else if ((e.access_range == gm_range_type_t.GM_RANGE_LINEAR) && (e.always == false)) {
+				} else if ((e.access_range == GM_RANGE_LINEAR) && (e.always == false)) {
 					is_already = true;
 				}
 			}
@@ -887,15 +887,15 @@ public class GlobalMembersGm_rw_analysis {
 					cp.access_range = range;
 				} else if (is_parallel) {
 					if (cp.driver == null) {
-						if (cp.access_range != gm_range_type_t.GM_RANGE_SINGLE) {
-							cp.access_range = gm_range_type_t.GM_RANGE_RANDOM; // scalar
-																				// access
-																				// becomes
-																				// random
-																				// access
+						if (cp.access_range != GM_RANGE_SINGLE) {
+							cp.access_range = GM_RANGE_RANDOM; // scalar
+																// access
+																// becomes
+																// random
+																// access
 						}
 					} else if (!cp.driver.getType().is_node_edge_iterator()) {
-						cp.access_range = gm_range_type_t.GM_RANGE_RANDOM;
+						cp.access_range = GM_RANGE_RANDOM;
 						cp.driver = null;
 					}
 				}

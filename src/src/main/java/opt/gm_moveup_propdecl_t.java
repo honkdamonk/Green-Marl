@@ -196,8 +196,8 @@ public class gm_moveup_propdecl_t extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab_entry e, int type) {
-		if (type != SYMTAB_TYPES.GM_SYMTAB_FIELD.getValue())
+	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES type) {
+		if (type != SYMTAB_TYPES.GM_SYMTAB_FIELD)
 			return true;
 		if (curr_state == IN_LOOP) {
 			save_target(e, this_scope, curr_top_scope);

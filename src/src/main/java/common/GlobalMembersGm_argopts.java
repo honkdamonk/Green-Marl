@@ -1,7 +1,7 @@
 package common;
 
 public class GlobalMembersGm_argopts {
-	
+
 	public static final int GMARG_NULL = 0;
 	public static final int GMARG_STRING = 1;
 	public static final int GMARG_INT = 2;
@@ -32,8 +32,7 @@ public class GlobalMembersGm_argopts {
 
 	// Add compiler options here
 	public static GM_comp_args[] GM_compiler_options = { //
-			new GM_comp_args(GMARGFLAG_HELP, GMARG_NULL, "Print help messages", null), 
-			new GM_comp_args(GMARGFLAG_VERSION, GMARG_NULL, "Print version", null),
+	new GM_comp_args(GMARGFLAG_HELP, GMARG_NULL, "Print help messages", null), new GM_comp_args(GMARGFLAG_VERSION, GMARG_NULL, "Print version", null),
 			new GM_comp_args(GMARGFLAG_TARGET, GMARG_STRING, "Target backend. Current valid targets are 'cpp_omp', 'cpp_seq', 'gps' and 'giraph'.", "cpp_omp"),
 			new GM_comp_args(GMARGFLAG_OUTDIR, GMARG_STRING, "Output directory.", "."),
 			new GM_comp_args(GMARGFLAG_OPT_LEV, GMARG_INT, "Optimization Level (tobe implemented)", "1"),
@@ -70,15 +69,20 @@ public class GlobalMembersGm_argopts {
 		int s = GM_compiler_options.length;
 		for (int i = 0; i < s; i++) {
 			int t = 0;
-			t += System.out.printf("  -%s", GM_compiler_options[i].name);
+			String message = String.format("  -%s", GM_compiler_options[i].name);
+			t += message.length();
+			System.out.println(message);
 			if (GM_compiler_options[i].arg_type == GMARG_NULL) {
 				// do nothing
 			} else if (GM_compiler_options[i].arg_type == GMARG_BOOL) {
-				t += System.out.print("[=0/1]");
+				message = "[=0/1]";
+				t += message.length();
 			} else if (GM_compiler_options[i].arg_type == GMARG_STRING) {
-				t += System.out.print("=<string>");
+				message = "=<string>";
+				t += message.length();
 			} else if (GM_compiler_options[i].arg_type == GMARG_INT) {
-				t += System.out.print("=<int>");
+				message = "=<int>";
+				t += message.length();
 			}
 			for (; t < 24; t++)
 				System.out.print(" ");
@@ -112,12 +116,12 @@ public class GlobalMembersGm_argopts {
 		if (argv.argvalue.charAt(0) == '-') {
 			// search '=' in the argument
 			int z = argv.argvalue.length();
-			String key_begin = argv.argvalue.charAt(1);
+			String key_begin = argv.argvalue.charAt(1) + "";
 			String val_begin = null;
 			for (int i = 1; i <= z; i++) {
 				if (argv.argvalue.charAt(i) == '=') {
 					argv.argvalue = tangible.StringFunctions.changeCharacter(argv.argvalue, i, '\0');
-					val_begin = (argv.argvalue.charAt(i + 1));
+					val_begin = argv.argvalue.charAt(i + 1) + "";
 					break;
 				}
 			}

@@ -15,6 +15,7 @@ import common.GlobalMembersGm_error;
 import common.gm_apply;
 import common.gm_method_id_t;
 
+import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab_entry;
 
 public class gps_check_edge_value_t extends gm_apply
@@ -41,7 +42,7 @@ public class gps_check_edge_value_t extends gm_apply
 	}
 
 	@Override
-	public boolean apply(gm_symtab_entry e, int type)
+	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES type)
 	{
 		if (e.getType().is_edge() && (inner_loop != null))
 		{

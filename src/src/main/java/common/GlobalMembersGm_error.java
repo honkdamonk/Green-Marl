@@ -403,8 +403,8 @@ public class GlobalMembersGm_error {
 		}
 	}
 
-	public static void gm_set_current_filename(tangible.RefObject<String> fname) {
-		curr_file = fname.argvalue;
+	public static void gm_set_current_filename(String fname1) {
+		curr_file = fname1;
 	}
 
 	public static String gm_get_current_filename() {

@@ -233,6 +233,10 @@ public class GlobalMembersGm_add_symbol {
 		top.traverse_pre(T);
 	}
 
+	public static ast_sentblock gm_find_defining_sentblock_up(ast_node node, gm_symtab_entry e) {
+		return gm_find_defining_sentblock_up(node, e, false);
+	}
+	
 	public static ast_sentblock gm_find_defining_sentblock_up(ast_node node, gm_symtab_entry e, boolean is_property) {
 		while (node != null) {
 			if (node.has_symtab()) {

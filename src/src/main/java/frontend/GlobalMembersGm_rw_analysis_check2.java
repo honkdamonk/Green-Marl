@@ -20,7 +20,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// extern void traverse_expr_for_readset_adding(ast_expr e,
 	// HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> rset,
 	// HashMap<gm_symtab_entry, range_cond_t> DrvMap);
-	public static boolean is_reported(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, int y) {
+	public static boolean is_reported(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, gm_conflict_t y) {
 		for (conf_info_t db : errors) {
 			if ((db.sym1 == t) && (db.sym2 == b) && (db.conflict_type == y))
 				return true;
@@ -28,11 +28,11 @@ public class GlobalMembersGm_rw_analysis_check2 {
 		return false;
 	}
 
-	public static void add_report(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, int y) {
+	public static void add_report(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, gm_conflict_t conf_type) {
 		conf_info_t T = new conf_info_t();
 		T.sym1 = t;
 		T.sym2 = b;
-		T.conflict_type = y;
+		T.conflict_type = conf_type;
 		errors.addLast(T);
 	}
 
@@ -102,7 +102,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 		return lev;
 	}
 
-	public static boolean check_if_conflict(LinkedList<gm_rwinfo> l1, LinkedList<gm_rwinfo> l2, gm_rwinfo e1, gm_rwinfo e2, int conf_type) {
+	public static boolean check_if_conflict(LinkedList<gm_rwinfo> l1, LinkedList<gm_rwinfo> l2, gm_rwinfo e1, gm_rwinfo e2, gm_conflict_t conf_type) {
 		java.util.Iterator<gm_rwinfo> i1;
 		java.util.Iterator<gm_rwinfo> i2;
 		for (i1 = l1.iterator(); i1.hasNext();) {
@@ -116,18 +116,18 @@ public class GlobalMembersGm_rw_analysis_check2 {
 																	// level
 					continue;
 
-				if ((conf_type == gm_conflict_t.RW_CONFLICT.getValue()) || (conf_type == gm_conflict_t.WW_CONFLICT.getValue())
-						|| (conf_type == gm_conflict_t.RM_CONFLICT.getValue()) || (conf_type == gm_conflict_t.WM_CONFLICT.getValue())) {
+				if ((conf_type == gm_conflict_t.RW_CONFLICT) || (conf_type == gm_conflict_t.WW_CONFLICT) || (conf_type == gm_conflict_t.RM_CONFLICT)
+						|| (conf_type == gm_conflict_t.WM_CONFLICT)) {
 					if ((e1.driver != null) && (e1.driver == e2.driver))
 						continue;
 				}
-				if (conf_type == gm_conflict_t.RD_CONFLICT.getValue()) {
+				if (conf_type == gm_conflict_t.RD_CONFLICT) {
 					if (e2.reduce_op == GM_REDUCE_T.GMREDUCE_DEFER)
 						continue;
 					System.out.printf("%d lev1 = %d, %d lev2 = %d\n", e1.access_range, lev1, e2.access_range, lev2);
 					assert false;
 				}
-				if (conf_type == gm_conflict_t.MM_CONFLICT.getValue()) {
+				if (conf_type == gm_conflict_t.MM_CONFLICT) {
 					if (e1.mutate_direction == e2.mutate_direction)
 						continue;
 				}
@@ -180,7 +180,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 			break;
 		default:
 			assert false;
-			break;
+			throw new AssertionError();
 		}
 
 		for (gm_symtab_entry sym1 : S1.keySet()) {

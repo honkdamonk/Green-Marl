@@ -8,32 +8,29 @@ import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
 
-public class gm_replace_symbol_access_t extends gm_apply
-{
-	public gm_replace_symbol_access_t(gm_sym_change_info I)
-	{
+public class gm_replace_symbol_access_t extends gm_apply {
+	public gm_replace_symbol_access_t(gm_sym_change_info I) {
 		this.INFO = new gm_sym_change_info(I);
 		set_for_sent(I.change_lhs);
 		set_for_expr(I.change_rhs);
 		changed = false;
 	}
 
-	private ast_id make_replace_id(ast_id src)
-	{
+	private ast_id make_replace_id(ast_id src) {
 		ast_id new_id = INFO.tgt.getId().copy(true);
 		new_id.set_line(src.get_line());
 		new_id.set_col(src.get_col());
 		return new_id;
 	}
-	private ast_id make_replace_id(ast_field src)
-	{
+
+	private ast_id make_replace_id(ast_field src) {
 		ast_id new_id = INFO.tgt.getId().copy(true);
 		new_id.set_line(src.get_line());
 		new_id.set_col(src.get_col());
 		return new_id;
 	}
-	private ast_field make_replace_field(ast_id src)
-	{
+
+	private ast_field make_replace_field(ast_id src) {
 		ast_id new_id1 = INFO.t_drv.getId().copy(true);
 		ast_id new_id2 = INFO.tgt.getId().copy(true);
 		ast_field f = ast_field.new_field(new_id1, new_id2);
@@ -46,8 +43,8 @@ public class gm_replace_symbol_access_t extends gm_apply
 
 		return f;
 	}
-	private ast_field make_replace_field(ast_field src)
-	{
+
+	private ast_field make_replace_field(ast_field src) {
 		ast_id new_id1 = INFO.t_drv.getId().copy(true);
 		ast_id new_id2 = INFO.tgt.getId().copy(true);
 		ast_field f = ast_field.new_field(new_id1, new_id2);
@@ -60,35 +57,29 @@ public class gm_replace_symbol_access_t extends gm_apply
 
 		return f;
 	}
-	private ast_node make_replace(ast_id src)
-	{
-		if (INFO.tgt_scalar)
-			return make_replace_field(src);
-		else
-			return make_replace_id(src);
-	}
-	private ast_node make_replace(ast_field src)
-	{
+
+	private ast_node make_replace(ast_id src) {
 		if (INFO.tgt_scalar)
 			return make_replace_field(src);
 		else
 			return make_replace_id(src);
 	}
 
-	public final boolean apply(ast_expr e)
-	{
+	private ast_node make_replace(ast_field src) {
+		if (INFO.tgt_scalar)
+			return make_replace_field(src);
+		else
+			return make_replace_id(src);
+	}
+
+	public final boolean apply(ast_expr e) {
 		ast_id new_id;
-		if (e.is_id() && (INFO.src_scalar))
-		{
+		if (e.is_id() && (INFO.src_scalar)) {
 			ast_id i = e.get_id();
-			if (i.getSymInfo() == INFO.src)
-			{
-				if (INFO.tgt_scalar)
-				{
+			if (i.getSymInfo() == INFO.src) {
+				if (INFO.tgt_scalar) {
 					e.set_id(make_replace_id(i));
-				}
-				else
-				{
+				} else {
 					e.set_id(null);
 					e.set_field(make_replace_field(i));
 				}
@@ -96,19 +87,13 @@ public class gm_replace_symbol_access_t extends gm_apply
 				if (i != null)
 					i.dispose();
 			}
-		}
-		else if (e.is_field() && (!INFO.src_scalar))
-		{
+		} else if (e.is_field() && (!INFO.src_scalar)) {
 			ast_field f = e.get_field();
-			if ((f.get_first().getSymInfo() == INFO.s_drv) && (f.get_second().getSymInfo() == INFO.src))
-			{
-				if (INFO.tgt_scalar)
-				{
+			if ((f.get_first().getSymInfo() == INFO.s_drv) && (f.get_second().getSymInfo() == INFO.src)) {
+				if (INFO.tgt_scalar) {
 					e.set_field(null);
 					e.set_id(make_replace_id(f));
-				}
-				else
-				{
+				} else {
 					e.set_field(make_replace_field(f));
 				}
 				changed = true;
@@ -120,22 +105,15 @@ public class gm_replace_symbol_access_t extends gm_apply
 	}
 
 	// LHS changing
-	public final boolean apply(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)
-		{
+	public final boolean apply(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
-			if (a.is_target_scalar() && INFO.src_scalar)
-			{
-				if (a.get_lhs_scala().getSymInfo() == INFO.src)
-				{
+			if (a.is_target_scalar() && INFO.src_scalar) {
+				if (a.get_lhs_scala().getSymInfo() == INFO.src) {
 					ast_id old_id = a.get_lhs_scala();
-					if (INFO.tgt_scalar)
-					{
+					if (INFO.tgt_scalar) {
 						a.set_lhs_scala(make_replace_id(old_id));
-					}
-					else
-					{
+					} else {
 						a.set_lhs_scala(null);
 						a.set_lhs_field(make_replace_field(old_id));
 					}
@@ -144,19 +122,13 @@ public class gm_replace_symbol_access_t extends gm_apply
 					if (old_id != null)
 						old_id.dispose();
 				}
-			}
-			else if (!a.is_target_scalar() && !INFO.src_scalar)
-			{
+			} else if (!a.is_target_scalar() && !INFO.src_scalar) {
 				ast_field old_f = a.get_lhs_field();
-				if ((old_f.get_first().getSymInfo() == INFO.s_drv) && (old_f.get_second().getSymInfo() == INFO.src))
-				{
-					if (INFO.tgt_scalar)
-					{
+				if ((old_f.get_first().getSymInfo() == INFO.s_drv) && (old_f.get_second().getSymInfo() == INFO.src)) {
+					if (INFO.tgt_scalar) {
 						a.set_lhs_field(null);
 						a.set_lhs_scala(make_replace_id(old_f));
-					}
-					else
-					{
+					} else {
 						a.set_lhs_field(make_replace_field(old_f));
 					}
 					changed = true;
@@ -166,53 +138,48 @@ public class gm_replace_symbol_access_t extends gm_apply
 			}
 
 			// lhs list
-			if (a.has_lhs_list())
-			{
+			if (a.has_lhs_list()) {
 				java.util.LinkedList<ast_node> lhs_list = a.get_lhs_list();
 				java.util.Iterator<ast_node> I;
 				java.util.LinkedList<java.util.Iterator<ast_node>> to_be_removed = new java.util.LinkedList<java.util.Iterator<ast_node>>();
-				for (I = lhs_list.iterator(); I.hasNext();)
-				{
+				for (I = lhs_list.iterator(); I.hasNext();) {
 					ast_node n = I.next();
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID)
-					{
+					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) n;
-						if (id.getSymInfo() == INFO.src)
-						{
+						if (id.getSymInfo() == INFO.src) {
 
 							// insert new lhs in front of this one
 							ast_node new_target = make_replace(id);
-//C++ TO JAVA CONVERTER TODO TASK: There is no direct equivalent to the STL list 'insert' method in Java:
+							// C++ TO JAVA CONVERTER TODO TASK: There is no
+							// direct equivalent to the STL list 'insert' method
+							// in Java:
 							lhs_list.insert(I, new_target);
 
 							to_be_removed.addLast(I);
 						}
-					}
-					else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD)
-					{
+					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
 						ast_field f = (ast_field) n;
-						if ((f.get_first().getSymInfo() == INFO.s_drv) && (f.get_second().getSymInfo() == INFO.src))
-						{
+						if ((f.get_first().getSymInfo() == INFO.s_drv) && (f.get_second().getSymInfo() == INFO.src)) {
 							// insert new lhs in front of this one
 							ast_node new_target = make_replace(f);
-//C++ TO JAVA CONVERTER TODO TASK: There is no direct equivalent to the STL list 'insert' method in Java:
+							// C++ TO JAVA CONVERTER TODO TASK: There is no
+							// direct equivalent to the STL list 'insert' method
+							// in Java:
 							lhs_list.insert(I, new_target);
 
 							to_be_removed.addLast(I);
 						}
-					}
-					else
-					{
+					} else {
 						assert false;
 					}
 				}
 
 				java.util.Iterator<java.util.Iterator<ast_node>> J;
-				for (J = to_be_removed.iterator(); J.hasNext();)
-				{
+				for (J = to_be_removed.iterator(); J.hasNext();) {
 					java.util.Iterator<ast_node> I = J.next();
 					ast_node n = I.next();
-//C++ TO JAVA CONVERTER TODO TASK: There is no direct equivalent to the STL list 'erase' method in Java:
+					// C++ TO JAVA CONVERTER TODO TASK: There is no direct
+					// equivalent to the STL list 'erase' method in Java:
 					lhs_list.erase(I);
 					if (n != null)
 						n.dispose();
@@ -225,10 +192,10 @@ public class gm_replace_symbol_access_t extends gm_apply
 		// TODO: procedure call
 	}
 
-	public final boolean is_changed()
-	{
+	public final boolean is_changed() {
 		return changed;
 	}
+
 	private gm_sym_change_info INFO;
 	private boolean changed;
 

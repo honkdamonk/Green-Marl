@@ -43,10 +43,10 @@ public class gm_frontend {
 	// ----------------------------------------------------
 	// interface to parser
 	// ----------------------------------------------------
-	public final int start_parse(tangible.RefObject<String> fname) {
+	public final int start_parse(String fname) {
 		// start lexer
-		if (GM_start_parse(fname.argvalue) == 0) {
-			System.out.printf("Error in loading %s\n", fname.argvalue);
+		if (GM_start_parse(fname) == 0) {
+			System.out.printf("Error in loading %s\n", fname);
 			return 0;
 		}
 

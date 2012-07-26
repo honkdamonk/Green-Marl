@@ -22,7 +22,7 @@ options {
 //
 @header {
 
-    package com.yourcompany.package.path;
+    package ppl.greenmarl.parse;
 }
 
 // This is just a simple lexer that matches the usual suspects

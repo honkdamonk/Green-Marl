@@ -114,8 +114,7 @@ public class check_bfs_main_t extends gm_apply {
 			has_bfs = true;
 			ast_bfs bfs = (ast_bfs) s;
 
-			String temp = new String(new char[1024]);
-			String.format(temp, "%s", proc.get_procname().get_genname());
+			String temp = String.format("%s", proc.get_procname().get_genname());
 			String suffix = bfs.is_bfs() ? "_bfs" : "_dfs";
 			// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent
 			// for pointers to value types:

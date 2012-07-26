@@ -639,7 +639,7 @@ public class gm_gps_gen extends BackendGenerator {
 				// printf("being used as reduce :%s\n",
 				// I->first->getId()->get_genname());
 				get_lib().generate_broadcast_reduce_initialize_master(key.getId(), Body, reduce_type,
-						GlobalMembersGm_giraph_gen_master.get_reduce_base_value(reduce_type, key.getType().getTypeSummary()));
+						get_reduce_base_value(reduce_type, key.getType().getTypeSummary()));
 				// [TODO] global argmax
 				continue;
 			}
@@ -650,6 +650,51 @@ public class gm_gps_gen extends BackendGenerator {
 				get_lib().generate_broadcast_send_master(key.getId(), Body);
 			}
 		}
+	}
+
+	public static String get_reduce_base_value(GM_REDUCE_T reduceType, GMTYPE_T type) {
+		switch (reduceType) {
+		case GMREDUCE_PLUS:
+			return "0";
+		case GMREDUCE_MULT:
+			return "1";
+		case GMREDUCE_AND:
+			return "true";
+		case GMREDUCE_OR:
+			return "false";
+		case GMREDUCE_MIN:
+			switch (type) {
+			case GMTYPE_INT:
+				return "Integer.MAX_VALUE";
+			case GMTYPE_LONG:
+				return "Long.MAX_VALUE";
+			case GMTYPE_FLOAT:
+				return "Float.MAX_VALUE";
+			case GMTYPE_DOUBLE:
+				return "Double.MAX_VALUE";
+			default:
+				assert (false);
+				return "0";
+			}
+		case GMREDUCE_MAX:
+			switch (type) {
+			case GMTYPE_INT:
+				return "Integer.MIN_VALUE";
+			case GMTYPE_LONG:
+				return "Long.MIN_VALUE";
+			case GMTYPE_FLOAT:
+				return "Float.MIN_VALUE";
+			case GMTYPE_DOUBLE:
+				return "Double.MIN_VALUE";
+			default:
+				assert (false);
+				return "0";
+			}
+		default:
+			assert (false);
+			break;
+		}
+		return "0";
 	}
 
 	public void do_generate_scalar_broadcast_receive(gm_gps_basic_block b) {

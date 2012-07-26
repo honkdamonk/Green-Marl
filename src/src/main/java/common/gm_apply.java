@@ -14,29 +14,29 @@ import frontend.gm_symtab_entry;
 
 // codes for traverse
 
-public class gm_apply {
-	public gm_apply() {
-		this.for_id = false;
-		this.for_symtab = false;
-		this.for_sent = false;
-		this.for_expr = false;
-		this.for_proc = false;
-		this.for_lhs = false;
-		this.for_rhs = false;
-		this.for_builtin = false;
-		this.separate_post_apply = false;
-		this.traverse_local_expr_only = false;
-		this.curr_sent_being_traversed = null;
-		this.matching_lhs = null;
-		this.matching_rhs = null;
-	}
-
+public abstract class gm_apply {
+	
+	protected boolean for_id = false;
+	protected boolean for_symtab = false;
+	protected boolean for_sent = false;
+	protected boolean for_expr = false ;
+	protected boolean for_proc = false ;
+	protected boolean for_lhs = false ;
+	protected boolean for_rhs = false ;
+	protected boolean for_builtin = false;
+	protected boolean separate_post_apply = false;
+	protected boolean traverse_local_expr_only = false ;
+	protected ast_sent curr_sent_being_traversed = null; // [xxx] who sets up this?
+	protected ast_node matching_lhs = null;
+	protected ast_expr matching_rhs = null;
+	
 	public void dispose() {
 	}
 
+	// SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
 	public boolean apply(gm_symtab_entry gm_symtab_entry, SYMTAB_TYPES symtab_type) {
 		return true;
-	} // SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
+	} 
 	
 	public boolean apply(gm_symtab e, SYMTAB_TYPES symtabType) {
 		return true;
@@ -86,13 +86,10 @@ public class gm_apply {
 		return true;
 	}
 
+	// SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
 	public boolean apply2(gm_symtab_entry gm_symtab_entry, SYMTAB_TYPES symtab_type) {
 		return true;
-	} // SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
-
-//	public boolean apply2(gm_symtab_entry e, int symtab_type) {
-//		return true;
-//	}
+	} 
 	
 	public boolean apply2(gm_symtab e, SYMTAB_TYPES symtabType) {
 		return true;
@@ -160,20 +157,6 @@ public class gm_apply {
 	public final void set_matching_rhs_top(ast_expr n) {
 		matching_rhs = n;
 	}
-
-	protected boolean for_id;
-	protected boolean for_symtab;
-	protected boolean for_sent;
-	protected boolean for_expr;
-	protected boolean for_proc;
-	protected boolean for_lhs;
-	protected boolean for_rhs;
-	protected boolean for_builtin;
-	protected boolean separate_post_apply;
-	protected boolean traverse_local_expr_only;
-	protected ast_sent curr_sent_being_traversed; // [xxx] who sets up this?
-	protected ast_node matching_lhs;
-	protected ast_expr matching_rhs;
 
 	public final boolean is_for_id() {
 		return for_id;

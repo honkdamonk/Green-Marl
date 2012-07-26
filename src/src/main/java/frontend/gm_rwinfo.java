@@ -135,7 +135,7 @@ public class gm_rwinfo {
 
 	// for debugging
 
-	private void copyFrom(gm_rwinfo source) {
+	void copyFrom(gm_rwinfo source) {
 		access_range = source.access_range;
 		driver = source.driver;
 		always = source.always;
@@ -168,5 +168,9 @@ public class gm_rwinfo {
 		}
 
 		System.out.print(")");
+	}
+	
+	public void dispose() {
+		
 	}
 }

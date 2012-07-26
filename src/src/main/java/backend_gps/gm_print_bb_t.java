@@ -15,13 +15,14 @@ import common.GlobalMembersGm_main;
 ///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
 
 public class gm_print_bb_t extends gm_compile_step {
+	
 	@Override
-	private gm_compile_step get_instance() {
+	public gm_compile_step get_instance() {
 		return new gm_print_bb_t();
 	}
 
 	@Override
-	private void process(ast_procdef p) {
+	public void process(ast_procdef p) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_backend_info(p);
 		if (info == null)
 			return;

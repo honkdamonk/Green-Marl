@@ -33,9 +33,10 @@ public class gm_builtin_def {
 		this.method_id = def.method_id;
 
 		// parse string
-		char[] temp = GlobalMembersGm_misc.gm_strdup(def.def_string).toCharArray();
+		int temp = 0;
+		char[] text = GlobalMembersGm_misc.gm_strdup(def.def_string).toCharArray();
 
-		if (temp[0] == '*') // synonym
+		if (text[0] == '*') // synonym
 		{
 
 			gm_builtin_def org_def = GlobalMembersGm_main.BUILT_IN.get_last_def();
@@ -45,7 +46,7 @@ public class gm_builtin_def {
 			this.need_strict = false;
 			this.org_def = org_def;
 			this.src_type = org_def.src_type; // need source type.
-			this.orgname = GlobalMembersGm_misc.gm_strdup("" + temp[1]);
+			this.orgname = GlobalMembersGm_misc.gm_strdup("" + text[1]);
 
 			// no need.
 			// this->res_type = org_def->res_type;
@@ -53,7 +54,7 @@ public class gm_builtin_def {
 		} else {
 			this.synonym = false;
 
-			if (temp[0] == '!') {
+			if (text[0] == '!') {
 				this.need_strict = true;
 				temp = temp + 1;
 			} else {
@@ -61,8 +62,7 @@ public class gm_builtin_def {
 			}
 
 			// parse and fill
-			String p;
-			p = tangible.StringFunctions.strTok(temp, ":");
+			String p = tangible.StringFunctions.strTok(new String(text, temp, text.length - temp), ":");
 			if (p.charAt(0) == '_')
 				src_type = GMTYPE_T.GMTYPE_VOID; // top-level
 			else

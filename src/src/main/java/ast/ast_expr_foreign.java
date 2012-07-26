@@ -1,5 +1,7 @@
 package ast;
 
+import java.util.LinkedList;
+
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 
@@ -7,6 +9,17 @@ import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
 public class ast_expr_foreign extends ast_expr {
+	public static class ForeignSyntaxParser {
+		public String orig_text;
+		public LinkedList<ast_node> parsed_gm;
+		public LinkedList<String> parsed_foreign;
+
+		public ForeignSyntaxParser(LinkedList<ast_node> parsed_gm, LinkedList<String> parsed_foreign) {
+			this.parsed_gm = parsed_gm;
+			this.parsed_foreign = parsed_foreign;
+		}
+	}
+
 	public void dispose() {
 		// java.util.Iterator<ast_node> I;
 		// for (I = parsed_gm.iterator(); I.hasNext();)
@@ -19,7 +32,7 @@ public class ast_expr_foreign extends ast_expr {
 	public static ast_expr_foreign new_expr_foreign(tangible.RefObject<String> text) {
 		ast_expr_foreign aef = new ast_expr_foreign();
 		aef.expr_class = GMEXPR_CLASS.GMEXPR_FOREIGN;
-		aef.orig_text = GlobalMembersGm_misc.gm_strdup(text.argvalue);
+		aef.data.orig_text = GlobalMembersGm_misc.gm_strdup(text.argvalue);
 		aef.type_of_expression = GMTYPE_T.GMTYPE_FOREIGN_EXPR;
 		return aef;
 	}
@@ -74,27 +87,23 @@ public class ast_expr_foreign extends ast_expr {
 	}
 
 	public final java.util.LinkedList<ast_node> get_parsed_nodes() {
-		return parsed_gm;
+		return data.parsed_gm;
 	}
 
 	public final java.util.LinkedList<String> get_parsed_text() {
-		return parsed_foreign;
+		return data.parsed_foreign;
 	}
 
 	// void parse_foreign_syntax();
 	private ast_expr_foreign() {
-		this.orig_text = null;
+		this.data.orig_text = null;
 		set_nodetype(AST_NODE_TYPE.AST_EXPR_FOREIGN);
 	}
 
-	private String orig_text;
-
-	// parsed foreign syntax
-	private java.util.LinkedList<ast_node> parsed_gm = new java.util.LinkedList<ast_node>();
-	private java.util.LinkedList<String> parsed_foreign = new java.util.LinkedList<String>();
+	private ForeignSyntaxParser data = new ForeignSyntaxParser(new java.util.LinkedList<ast_node>(), new java.util.LinkedList<String>());
 
 	public void apply_id(gm_apply a, boolean apply2) {
-		for (ast_node n : parsed_gm) {
+		for (ast_node n : data.parsed_gm) {
 			if (n == null)
 				continue;
 			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
@@ -117,7 +126,7 @@ public class ast_expr_foreign extends ast_expr {
 	}
 
 	public void apply_rhs(gm_apply a, boolean apply2) {
-		for (ast_node n : parsed_gm) {
+		for (ast_node n : data.parsed_gm) {
 			if (n == null)
 				continue;
 			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
@@ -150,7 +159,7 @@ public class ast_expr_foreign extends ast_expr {
 		int TEXT_begin = NULL;
 		int TEXT_end = NULL; // inclusive
 		int curr_ptr = NULL;
-		char[] text = orig_text.toCharArray();
+		char[] text = data.orig_text.toCharArray();
 
 		int ID_begin_line = 0;
 		int ID_begin_col = 0;
@@ -256,29 +265,29 @@ public class ast_expr_foreign extends ast_expr {
 							{
 								if (TEXT_begin == 0) {
 									String S = "";
-									parsed_foreign.addLast(S);
+									data.parsed_foreign.addLast(S);
 								} else {
 									assert (TEXT_end >= TEXT_begin);
 									String S = new String(text, TEXT_begin, (TEXT_end - TEXT_begin + 1));
-									parsed_foreign.addLast(S);
+									data.parsed_foreign.addLast(S);
 								}
 								ast_id id1 = null;
 								if (ID_begin == NULL) {
-									parsed_gm.addLast(null);
+									data.parsed_gm.addLast(null);
 								} else {
 									assert (ID_end >= ID_begin);
 									String S = new String(text, ID_begin, (ID_end - ID_begin + 1));
 									id1 = ast_id.new_id(S, ID_begin_line, ID_begin_col);
 									if (FIELD_begin == NULL) {
 										id1.set_parent(this);
-										parsed_gm.addLast(id1);
+										data.parsed_gm.addLast(id1);
 									} else {
 										assert (FIELD_end >= FIELD_begin);
 										S = new String(text, FIELD_begin, (FIELD_end - FIELD_begin + 1));
 										ast_id id2 = ast_id.new_id(S, FIELD_begin_line, FIELD_begin_col);
 										ast_field field = ast_field.new_field(id1, id2);
 										field.set_parent(this);
-										parsed_gm.addLast(field);
+										data.parsed_gm.addLast(field);
 									}
 								}
 								ID_begin = NULL;
@@ -295,29 +304,29 @@ public class ast_expr_foreign extends ast_expr {
 						{
 							if (TEXT_begin == NULL) {
 								String S = "";
-								parsed_foreign.addLast(S);
+								data.parsed_foreign.addLast(S);
 							} else {
 								assert (TEXT_end >= TEXT_begin);
 								String S = new String(text, TEXT_begin, (TEXT_end - TEXT_begin + 1));
-								parsed_foreign.addLast(S);
+								data.parsed_foreign.addLast(S);
 							}
 							ast_id id1 = null;
 							if (ID_begin == NULL) {
-								parsed_gm.addLast(null);
+								data.parsed_gm.addLast(null);
 							} else {
 								assert (ID_end >= ID_begin);
 								String S = new String(text, ID_begin, (ID_end - ID_begin + 1));
 								id1 = ast_id.new_id(S, ID_begin_line, ID_begin_col);
 								if (FIELD_begin == NULL) {
 									id1.set_parent(this);
-									parsed_gm.addLast(id1);
+									data.parsed_gm.addLast(id1);
 								} else {
 									assert (FIELD_end >= FIELD_begin);
 									S = new String(text, FIELD_begin, (FIELD_end - FIELD_begin + 1));
 									ast_id id2 = ast_id.new_id(S, FIELD_begin_line, FIELD_begin_col);
 									ast_field field = ast_field.new_field(id1, id2);
 									field.set_parent(this);
-									parsed_gm.addLast(field);
+									data.parsed_gm.addLast(field);
 								}
 							}
 							ID_begin = NULL;
@@ -366,29 +375,29 @@ public class ast_expr_foreign extends ast_expr {
 					{
 						if (TEXT_begin == NULL) {
 							String S = "";
-							parsed_foreign.addLast(S);
+							data.parsed_foreign.addLast(S);
 						} else {
 							assert (TEXT_end >= TEXT_begin);
 							String S = new String(text, TEXT_begin, (TEXT_end - TEXT_begin + 1));
-							parsed_foreign.addLast(S);
+							data.parsed_foreign.addLast(S);
 						}
 						ast_id id1 = null;
 						if (ID_begin == NULL) {
-							parsed_gm.addLast(null);
+							data.parsed_gm.addLast(null);
 						} else {
 							assert (ID_end >= ID_begin);
 							String S = new String(text, ID_begin, (ID_end - ID_begin + 1));
 							id1 = ast_id.new_id(S, ID_begin_line, ID_begin_col);
 							if (FIELD_begin == NULL) {
 								id1.set_parent(this);
-								parsed_gm.addLast(id1);
+								data.parsed_gm.addLast(id1);
 							} else {
 								assert (FIELD_end >= FIELD_begin);
 								S = new String(text, FIELD_begin, (FIELD_end - FIELD_begin + 1));
 								ast_id id2 = ast_id.new_id(S, FIELD_begin_line, FIELD_begin_col);
 								ast_field field = ast_field.new_field(id1, id2);
 								field.set_parent(this);
-								parsed_gm.addLast(field);
+								data.parsed_gm.addLast(field);
 							}
 						}
 						ID_begin = NULL;
@@ -420,29 +429,29 @@ public class ast_expr_foreign extends ast_expr {
 				{
 					if (TEXT_begin == NULL) {
 						String S = "";
-						parsed_foreign.addLast(S);
+						data.parsed_foreign.addLast(S);
 					} else {
 						assert (TEXT_end >= TEXT_begin);
 						String S = new String(text, TEXT_begin, (TEXT_end - TEXT_begin + 1));
-						parsed_foreign.addLast(S);
+						data.parsed_foreign.addLast(S);
 					}
 					ast_id id1 = null;
 					if (ID_begin == NULL) {
-						parsed_gm.addLast(null);
+						data.parsed_gm.addLast(null);
 					} else {
 						assert (ID_end >= ID_begin);
 						String S = new String(text, ID_begin, (ID_end - ID_begin + 1));
 						id1 = ast_id.new_id(S, ID_begin_line, ID_begin_col);
 						if (FIELD_begin == NULL) {
 							id1.set_parent(this);
-							parsed_gm.addLast(id1);
+							data.parsed_gm.addLast(id1);
 						} else {
 							assert (FIELD_end >= FIELD_begin);
 							S = new String(text, FIELD_begin, (FIELD_end - FIELD_begin + 1));
 							ast_id id2 = ast_id.new_id(S, FIELD_begin_line, FIELD_begin_col);
 							ast_field field = ast_field.new_field(id1, id2);
 							field.set_parent(this);
-							parsed_gm.addLast(field);
+							data.parsed_gm.addLast(field);
 						}
 					}
 					ID_begin = NULL;
@@ -459,29 +468,29 @@ public class ast_expr_foreign extends ast_expr {
 			{
 				if (TEXT_begin == NULL) {
 					String S = "";
-					parsed_foreign.addLast(S);
+					data.parsed_foreign.addLast(S);
 				} else {
 					assert (TEXT_end >= TEXT_begin);
 					String S = new String(text, TEXT_begin, (TEXT_end - TEXT_begin + 1));
-					parsed_foreign.addLast(S);
+					data.parsed_foreign.addLast(S);
 				}
 				ast_id id1 = null;
 				if (ID_begin == NULL) {
-					parsed_gm.addLast(null);
+					data.parsed_gm.addLast(null);
 				} else {
 					assert (ID_end >= ID_begin);
 					String S = new String(text, ID_begin, (ID_end - ID_begin + 1));
 					id1 = ast_id.new_id(S, ID_begin_line, ID_begin_col);
 					if (FIELD_begin == NULL) {
 						id1.set_parent(this);
-						parsed_gm.addLast(id1);
+						data.parsed_gm.addLast(id1);
 					} else {
 						assert (FIELD_end >= FIELD_begin);
 						S = new String(text, FIELD_begin, (FIELD_end - FIELD_begin + 1));
 						ast_id id2 = ast_id.new_id(S, FIELD_begin_line, FIELD_begin_col);
 						ast_field field = ast_field.new_field(id1, id2);
 						field.set_parent(this);
-						parsed_gm.addLast(field);
+						data.parsed_gm.addLast(field);
 					}
 				}
 				ID_begin = NULL;
@@ -496,29 +505,29 @@ public class ast_expr_foreign extends ast_expr {
 			{
 				if (TEXT_begin == NULL) {
 					String S = "";
-					parsed_foreign.addLast(S);
+					data.parsed_foreign.addLast(S);
 				} else {
 					assert (TEXT_end >= TEXT_begin);
 					String S = new String(text, TEXT_begin, (TEXT_end - TEXT_begin + 1));
-					parsed_foreign.addLast(S);
+					data.parsed_foreign.addLast(S);
 				}
 				ast_id id1 = null;
 				if (ID_begin == NULL) {
-					parsed_gm.addLast(null);
+					data.parsed_gm.addLast(null);
 				} else {
 					assert (ID_end >= ID_begin);
 					String S = new String(text, ID_begin, (ID_end - ID_begin + 1));
 					id1 = ast_id.new_id(S, ID_begin_line, ID_begin_col);
 					if (FIELD_begin == NULL) {
 						id1.set_parent(this);
-						parsed_gm.addLast(id1);
+						data.parsed_gm.addLast(id1);
 					} else {
 						assert (FIELD_end >= FIELD_begin);
 						S = new String(text, FIELD_begin, (FIELD_end - FIELD_begin + 1));
 						ast_id id2 = ast_id.new_id(S, FIELD_begin_line, FIELD_begin_col);
 						ast_field field = ast_field.new_field(id1, id2);
 						field.set_parent(this);
-						parsed_gm.addLast(field);
+						data.parsed_gm.addLast(field);
 					}
 				}
 				ID_begin = NULL;

@@ -16,7 +16,7 @@ public class gm_code_writer
 	{
 		indent = 0;
 		base_indent = 0;
-		_out = stdout;
+		_out = new FILE(System.out);
 		tabsz = 4;
 		col = 0;
 		max_col = MAX_COL;
@@ -76,11 +76,11 @@ public class gm_code_writer
 			}
 			if (all_white)
 			{
-				fprintf(_out, "\n");
+				FILE.fprintf(_out, "\n");
 			}
 			else
 			{
-				fwrite(_temp_buf, ptr, 1, _out);
+				FILE.fwrite(_temp_buf, ptr, 1, _out);
 			}
 		}
 

@@ -6,13 +6,8 @@ import ast.ast_if;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_while;
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import inc.*;
-import opt.*;
-import tangible.*;
+
+import common.gm_apply;
 
  //TOOD new name?
 

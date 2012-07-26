@@ -2,13 +2,13 @@ package frontend;
 
 import inc.GMTYPE_T;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_sent;
+import ast.gm_rwinfo_map;
 
 import common.gm_apply;
 
@@ -32,12 +32,12 @@ public class gm_check_conf_t extends gm_apply {
 
 			ast_sent body = fe.get_body();
 
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(fe).read_set; // body
+			gm_rwinfo_map R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(fe).read_set; // body
 																															// +
 																															// filter
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).write_set;
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).reduce_set;
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> M = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).mutate_set;
+			gm_rwinfo_map W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).write_set;
+			gm_rwinfo_map D = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).reduce_set;
+			gm_rwinfo_map M = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
 			GlobalMembersGm_rw_analysis_check2.check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W
 																												// (warning)
@@ -65,7 +65,7 @@ public class gm_check_conf_t extends gm_apply {
 			GMTYPE_T iter_type = bfs.get_iter_type(); // should be
 														// GMTYPE_NODEITER_BFS
 			gm_symtab_entry it = bfs.get_source().getSymInfo();
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R_filter = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>();
+			gm_rwinfo_map R_filter = new gm_rwinfo_map();
 			if (bfs.get_navigator() != null) {
 				range_cond_t R = new range_cond_t(gm_range_type_t.GM_RANGE_LEVEL_DOWN, true);
 				GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
@@ -92,10 +92,10 @@ public class gm_check_conf_t extends gm_apply {
 			if (bfs.get_fbody() != null) {
 				ast_sent body = bfs.get_fbody();
 
-				HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).read_set;
-				HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).write_set;
-				HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).reduce_set;
-				HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> M = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).mutate_set;
+				gm_rwinfo_map R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).read_set;
+				gm_rwinfo_map W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).write_set;
+				gm_rwinfo_map D = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).reduce_set;
+				gm_rwinfo_map M = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
 				GlobalMembersGm_rw_analysis_check2.check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W
 																													// (warning)
@@ -119,10 +119,10 @@ public class gm_check_conf_t extends gm_apply {
 			if (bfs.get_bbody() != null) {
 				ast_sent body = bfs.get_bbody();
 
-				HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).read_set;
-				HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).write_set;
-				HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).reduce_set;
-				HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> M = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).mutate_set;
+				gm_rwinfo_map R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).read_set;
+				gm_rwinfo_map W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).write_set;
+				gm_rwinfo_map D = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).reduce_set;
+				gm_rwinfo_map M = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
 				// printf("R:");gm_print_rwinfo_set(R);
 				// printf("D:");gm_print_rwinfo_set(D);

@@ -5,6 +5,11 @@ import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_backend_cpp;
 import inc.gm_assignment_t;
 import inc.nop_reduce_scalar;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
@@ -13,6 +18,7 @@ import ast.ast_extra_info;
 import ast.ast_foreach;
 import ast.ast_sent;
 import ast.ast_sentblock;
+import ast.gm_rwinfo_list;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_main;
@@ -22,7 +28,6 @@ import common.GlobalMembersGm_traverse;
 import common.gm_apply;
 
 import frontend.GlobalMembersGm_rw_analysis;
-import frontend.gm_rwinfo;
 import frontend.gm_symtab_entry;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -61,7 +66,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 			return true;
 
 		ast_foreach fe = (ast_foreach) sent;
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
+		HashMap<gm_symtab_entry, gm_rwinfo_list> B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 		if (B.size() == 0)
 			return true;
 
@@ -83,7 +88,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 
 	// iterate over targets
 	public final void transform_targets() {
-		java.util.Iterator<ast_sent> I;
+		Iterator<ast_sent> I;
 		for (I = _targets.iterator(); I.hasNext();) {
 			ast_sent s = I.next();
 			assert s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH;
@@ -96,20 +101,20 @@ public class opt_scalar_reduction_t extends gm_apply {
 		return _targets.size() > 0;
 	}
 
-	private java.util.LinkedList<ast_sent> _targets = new java.util.LinkedList<ast_sent>();
+	private LinkedList<ast_sent> _targets = new LinkedList<ast_sent>();
 
 	// ---------------------------------------------
 	// apply to each BFS
 	// ---------------------------------------------
 	private void apply_transform(ast_foreach fe) {
-		java.util.HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map = new java.util.HashMap<gm_symtab_entry, gm_symtab_entry>();
-		java.util.LinkedList<gm_symtab_entry> old_s = new java.util.LinkedList<gm_symtab_entry>();
-		java.util.LinkedList<gm_symtab_entry> new_s = new java.util.LinkedList<gm_symtab_entry>();
-		java.util.LinkedList<GM_REDUCE_T> reduce_op = new java.util.LinkedList<GM_REDUCE_T>();
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_symtab_entry>> old_supple_map = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_symtab_entry>>();
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_symtab_entry>> new_supple_map = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_symtab_entry>>();
-		java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>> old_supple = new java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>>();
-		java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>> new_supple = new java.util.LinkedList<java.util.LinkedList<gm_symtab_entry>>();
+		HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map = new HashMap<gm_symtab_entry, gm_symtab_entry>();
+		LinkedList<gm_symtab_entry> old_s = new LinkedList<gm_symtab_entry>();
+		LinkedList<gm_symtab_entry> new_s = new LinkedList<gm_symtab_entry>();
+		LinkedList<GM_REDUCE_T> reduce_op = new LinkedList<GM_REDUCE_T>();
+		HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>> old_supple_map = new HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>>();
+		HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>> new_supple_map = new HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>>();
+		LinkedList<LinkedList<gm_symtab_entry>> old_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
+		LinkedList<LinkedList<gm_symtab_entry>> new_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
 
 		// make scope
 		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock_nested(fe);
@@ -120,7 +125,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 		se.add_info(GlobalMembersGm_backend_cpp.LABEL_PAR_SCOPE, new ast_extra_info(true));
 
 		// foreach scalar boundsymbol
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
+		HashMap<gm_symtab_entry, gm_rwinfo_list> B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 		for (gm_symtab_entry e : B.keySet()) {
 			if (e.getType().is_property())
 				continue;
@@ -157,8 +162,8 @@ public class opt_scalar_reduction_t extends gm_apply {
 			symbol_map.put(e, _thread_local);
 
 			if (is_supple) {
-				java.util.LinkedList<gm_symtab_entry> L1 = old_supple_map.get(org_target);
-				java.util.LinkedList<gm_symtab_entry> L2 = new_supple_map.get(org_target);
+				LinkedList<gm_symtab_entry> L1 = old_supple_map.get(org_target);
+				LinkedList<gm_symtab_entry> L2 = new_supple_map.get(org_target);
 				L1.addLast(e);
 				L2.addLast(_thread_local);
 				// printf("%s is supplement LHS (%s)\n",
@@ -191,7 +196,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 
 		for (gm_symtab_entry e : old_s) {
 			if (!old_supple_map.containsKey(e)) {
-				java.util.LinkedList<gm_symtab_entry> L = new java.util.LinkedList<gm_symtab_entry>(); // empty
+				LinkedList<gm_symtab_entry> L = new LinkedList<gm_symtab_entry>(); // empty
 																										// list
 				old_supple.addLast(L);
 				new_supple.addLast(L);

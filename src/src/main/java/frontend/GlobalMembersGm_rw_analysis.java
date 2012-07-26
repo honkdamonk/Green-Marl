@@ -1,10 +1,15 @@
 package frontend;
 
+import static frontend.gm_range_type_t.GM_RANGE_LEVEL;
+import static frontend.gm_range_type_t.GM_RANGE_LEVEL_DOWN;
+import static frontend.gm_range_type_t.GM_RANGE_LEVEL_UP;
+import static frontend.gm_range_type_t.GM_RANGE_LINEAR;
+import static frontend.gm_range_type_t.GM_RANGE_RANDOM;
+import static frontend.gm_range_type_t.GM_RANGE_SINGLE;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;
@@ -19,6 +24,8 @@ import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
 import ast.ast_sentblock;
+import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
@@ -31,43 +38,42 @@ public class GlobalMembersGm_rw_analysis {
 		switch (itype) {
 		case GMTYPE_NODEITER_ALL:
 		case GMTYPE_EDGEITER_ALL:
-			return gm_range_type_t.GM_RANGE_LINEAR;
+			return GM_RANGE_LINEAR;
 		case GMTYPE_NODEITER_NBRS:
 		case GMTYPE_NODEITER_IN_NBRS:
 		case GMTYPE_EDGEITER_NBRS:
 		case GMTYPE_NODEITER_COMMON_NBRS:
 		case GMTYPE_EDGEITER_IN_NBRS:
-			return gm_range_type_t.GM_RANGE_RANDOM;
+			return GM_RANGE_RANDOM;
 		case GMTYPE_NODEITER_BFS:
 		case GMTYPE_EDGEITER_BFS:
-			return gm_range_type_t.GM_RANGE_LEVEL;
+			return GM_RANGE_LEVEL;
 		case GMTYPE_NODEITER_UP_NBRS:
 		case GMTYPE_EDGEITER_UP_NBRS:
-			return gm_range_type_t.GM_RANGE_LEVEL_UP;
+			return GM_RANGE_LEVEL_UP;
 		case GMTYPE_NODEITER_DOWN_NBRS:
 		case GMTYPE_EDGEITER_DOWN_NBRS:
-			return gm_range_type_t.GM_RANGE_LEVEL_DOWN;
+			return GM_RANGE_LEVEL_DOWN;
 		case GMTYPE_NODEITER_SET:
 		case GMTYPE_EDGEITER_SET:
-			return gm_range_type_t.GM_RANGE_LINEAR;
+			return GM_RANGE_LINEAR;
 		case GMTYPE_NODEITER_ORDER:
 		case GMTYPE_EDGEITER_ORDER:
-			return gm_range_type_t.GM_RANGE_LINEAR;
+			return GM_RANGE_LINEAR;
 		case GMTYPE_NODEITER_SEQ:
 		case GMTYPE_EDGEITER_SEQ:
-			return gm_range_type_t.GM_RANGE_RANDOM;
+			return GM_RANGE_RANDOM;
 		case GMTYPE_NODE:
 		case GMTYPE_EDGE:
-			return gm_range_type_t.GM_RANGE_RANDOM;
+			return GM_RANGE_RANDOM;
 		case GMTYPE_PROPERTYITER_SET:
 		case GMTYPE_PROPERTYITER_SEQ:
 		case GMTYPE_PROPERTYITER_ORDER:
-			return gm_range_type_t.GM_RANGE_LINEAR;
+			return GM_RANGE_LINEAR;
 		case GMTYPE_COLLECTIONITER_SET:
 		case GMTYPE_COLLECTIONITER_SEQ:
 		case GMTYPE_COLLECTIONITER_ORDER:
-			return gm_range_type_t.GM_RANGE_RANDOM; // TODO is there somthing
-													// more suitable?
+			return GM_RANGE_RANDOM; // TODO is there somthing more suitable?
 		default:
 			System.out.printf("type = %d\n", itype);
 			assert false;
@@ -82,7 +88,7 @@ public class GlobalMembersGm_rw_analysis {
 	// true; okay
 	// false; error
 	// -----------------------------------------------------------
-	public static boolean gm_add_rwinfo_to_set(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> info_set, gm_symtab_entry sym, gm_rwinfo new_entry) {
+	public static boolean gm_add_rwinfo_to_set(gm_rwinfo_map info_set, gm_symtab_entry sym, gm_rwinfo new_entry) {
 		return gm_add_rwinfo_to_set(info_set, sym, new_entry, false);
 	}
 
@@ -95,19 +101,18 @@ public class GlobalMembersGm_rw_analysis {
 	// ORIGINAL LINE: boolean gm_add_rwinfo_to_set(HashMap<gm_symtab_entry*,
 	// LinkedList<gm_rwinfo*>*>& info_set, gm_symtab_entry* sym, gm_rwinfo*
 	// new_entry, boolean is_reduce_ops = false)
-	public static boolean gm_add_rwinfo_to_set(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> info_set, gm_symtab_entry sym, gm_rwinfo new_entry,
-			boolean is_reduce_ops) {
+	public static boolean gm_add_rwinfo_to_set(gm_rwinfo_map info_set, gm_symtab_entry sym, gm_rwinfo new_entry, boolean is_reduce_ops) {
 		boolean is_error = false;
 
 		// find entry in the map
 		if (!info_set.containsKey(sym)) // not found --> add new;
 		{
-			LinkedList<gm_rwinfo> l = new LinkedList<gm_rwinfo>();
+			gm_rwinfo_list l = new gm_rwinfo_list();
 			l.addLast(new_entry);
 			info_set.put(sym, l);
 		} // check entries already exists
 		else {
-			LinkedList<gm_rwinfo> l = info_set.get(sym);
+			gm_rwinfo_list l = info_set.get(sym);
 			assert l != null;
 			for (gm_rwinfo e2 : l) {
 				// check reduce error
@@ -156,15 +161,15 @@ public class GlobalMembersGm_rw_analysis {
 
 	// Actual information kept for sentence
 	// Three maps. (readset, writeset, reduce-set)
-	public static void gm_delete_rwinfo_map(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> m) {
-		for (LinkedList<gm_rwinfo> l : m.values()) {
+	public static void gm_delete_rwinfo_map(gm_rwinfo_map m) {
+		for (gm_rwinfo_list l : m.values()) {
 			for (gm_rwinfo j : l) {
 				if (j != null)
 					j.dispose();
 			}
 			l.clear();
-//			if (l != null)
-//				l.dispose();
+			// if (l != null)
+			// l.dispose();
 		}
 		m.clear();
 	}
@@ -210,7 +215,7 @@ public class GlobalMembersGm_rw_analysis {
 
 	// for debug
 	// extern void gm_print_rwinfo_set(HashMap<gm_symtab_entry,
-	// LinkedList<gm_rwinfo>> m);
+	// gm_rwinfo_list> m);
 
 	// ----------------------------------------------
 	// re-do rw analysis for IR tree s.
@@ -243,20 +248,20 @@ public class GlobalMembersGm_rw_analysis {
 	// extern boolean gm_has_dependency(gm_rwinfo_sets P1, gm_rwinfo_sets Q1);
 
 	// extern boolean gm_does_intersect(HashMap<gm_symtab_entry,
-	// LinkedList<gm_rwinfo>> S1, HashMap<gm_symtab_entry,
-	// LinkedList<gm_rwinfo>> S2, boolean regard_mutate_direction); // return
+	// gm_rwinfo_list> S1, HashMap<gm_symtab_entry,
+	// gm_rwinfo_list> S2, boolean regard_mutate_direction); // return
 	// true, if any of they have same symbool table
 
-	// extern HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>
+	// extern gm_rwinfo_map
 	// gm_get_write_set(ast_sent S);
-	// extern HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>
+	// extern gm_rwinfo_map
 	// gm_get_reduce_set(ast_sent S);
 	// extern boolean gm_is_modified(ast_sent S, gm_symtab_entry e);
 	// extern boolean gm_is_modified_with_condition(ast_sent S, gm_symtab_entry
 	// e, gm_rwinfo_query q);
 	public static boolean gm_is_modified_always_linearly(ast_sent S, gm_symtab_entry e) {
 		gm_rwinfo_query Q = new gm_rwinfo_query();
-		Q.check_range(gm_range_type_t.GM_RANGE_LINEAR);
+		Q.check_range(GM_RANGE_LINEAR);
 		Q.check_always(true);
 		return GlobalMembersGm_rw_analysis_check2.gm_is_modified_with_condition(S, e, Q);
 	}
@@ -296,13 +301,12 @@ public class GlobalMembersGm_rw_analysis {
 	// in-line:
 	// /#define GM_BLTIN_FLAG_TRUE true
 
-	public static boolean merge_for_if_else(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> Target, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S1,
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S2, boolean is_reduce) {
+	public static boolean merge_for_if_else(gm_rwinfo_map Target, gm_rwinfo_map S1, gm_rwinfo_map S2, boolean is_reduce) {
 		boolean is_okay = true;
 
 		// search for all elements in then-part
 		for (gm_symtab_entry sym : S1.keySet()) {
-			LinkedList<gm_rwinfo> l1 = S1.get(sym);
+			gm_rwinfo_list l1 = S1.get(sym);
 			assert l1 != null;
 
 			// check this symbol is accessed in S2 as well
@@ -321,8 +325,8 @@ public class GlobalMembersGm_rw_analysis {
 					if (copy.always == true) {
 						boolean found = false;
 						// check if the same access happens in else part
-						LinkedList<gm_rwinfo> l2 = S2.get(sym);
-						
+						gm_rwinfo_list l2 = S2.get(sym);
+
 						assert l2 != null;
 						for (gm_rwinfo else_info : l2) {
 							if (GlobalMembersGm_rw_analysis.is_same_entry(copy, else_info)) {
@@ -347,7 +351,7 @@ public class GlobalMembersGm_rw_analysis {
 			// we can blindly add here.
 			// (If merged from the then-part, wider entry will be already in the
 			// target set.)
-			LinkedList<gm_rwinfo> l2 = S2.get(sym);
+			gm_rwinfo_list l2 = S2.get(sym);
 			for (gm_rwinfo e : l2) {
 				gm_rwinfo copy = e.copy();
 				copy.always = false; // chage it into conditional access
@@ -359,9 +363,8 @@ public class GlobalMembersGm_rw_analysis {
 	}
 
 	public static String gm_get_range_string(gm_range_type_t access_range) {
-		return (access_range == gm_range_type_t.GM_RANGE_LINEAR) ? "LINEAR" : (access_range == gm_range_type_t.GM_RANGE_RANDOM) ? "RANDOM"
-				: (access_range == gm_range_type_t.GM_RANGE_LEVEL) ? "LEVEL" : (access_range == gm_range_type_t.GM_RANGE_LEVEL_UP) ? "LEVEL_UP"
-						: (access_range == gm_range_type_t.GM_RANGE_LEVEL_DOWN) ? "LEVEL_DOWN" : "???";
+		return (access_range == GM_RANGE_LINEAR) ? "LINEAR" : (access_range == GM_RANGE_RANDOM) ? "RANDOM" : (access_range == GM_RANGE_LEVEL) ? "LEVEL"
+				: (access_range == GM_RANGE_LEVEL_UP) ? "LEVEL_UP" : (access_range == GM_RANGE_LEVEL_DOWN) ? "LEVEL_DOWN" : "???";
 	}
 
 	// ------------------------------------------------------------
@@ -438,7 +441,7 @@ public class GlobalMembersGm_rw_analysis {
 
 	public static HashMap<gm_symtab_entry, range_cond_t> Default_DriverMap = new HashMap<gm_symtab_entry, range_cond_t>();
 
-	public static void traverse_expr_for_readset_adding(ast_expr e, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> rset) {
+	public static void traverse_expr_for_readset_adding(ast_expr e, gm_rwinfo_map rset) {
 		traverse_expr_for_readset_adding(e, rset, Default_DriverMap);
 	}
 
@@ -447,8 +450,7 @@ public class GlobalMembersGm_rw_analysis {
 	// ORIGINAL LINE: void traverse_expr_for_readset_adding(ast_expr* e,
 	// HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& rset,
 	// HashMap<gm_symtab_entry*, range_cond_t>& DrvMap = Default_DriverMap)
-	public static void traverse_expr_for_readset_adding(ast_expr e, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> rset,
-			HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding(ast_expr e, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
 
 		switch (e.get_opclass()) {
 		case GMEXPR_ID: {
@@ -474,9 +476,9 @@ public class GlobalMembersGm_rw_analysis {
 			break;
 		case GMEXPR_TER: {
 			GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(e.get_cond_op(), rset, DrvMap);
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R1 = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>();
+			gm_rwinfo_map R1 = new gm_rwinfo_map();
 			GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(e.get_left_op(), R1, DrvMap);
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R2 = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>();
+			gm_rwinfo_map R2 = new gm_rwinfo_map();
 			GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(e.get_right_op(), R2, DrvMap);
 			GlobalMembersGm_rw_analysis.merge_for_if_else(rset, R1, R2, false);
 			break;
@@ -507,8 +509,7 @@ public class GlobalMembersGm_rw_analysis {
 		}
 	}
 
-	public static void traverse_expr_for_readset_adding_field(ast_expr e, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> rset,
-			HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_field(ast_expr e, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
 		gm_symtab_entry iter_sym = e.get_field().get_first().getSymInfo();
 		gm_symtab_entry field_sym = e.get_field().get_second().getSymInfo();
 		assert iter_sym != null;
@@ -534,8 +535,7 @@ public class GlobalMembersGm_rw_analysis {
 		GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(rset, field_sym, new_entry);
 	}
 
-	public static void traverse_expr_for_readset_adding_builtin(ast_expr_builtin builtin, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> rset,
-			HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_builtin(ast_expr_builtin builtin, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
 		// add every arguments in the readset
 		LinkedList<ast_expr> args = builtin.get_args();
 		for (ast_expr a : args) {
@@ -543,8 +543,7 @@ public class GlobalMembersGm_rw_analysis {
 		}
 	}
 
-	public static void traverse_expr_for_readset_adding_foreign(ast_expr_foreign f, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> rset,
-			HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_foreign(ast_expr_foreign f, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
 
 		gm_rwinfo new_entry;
 		LinkedList<ast_node> N = f.get_parsed_nodes();
@@ -575,8 +574,7 @@ public class GlobalMembersGm_rw_analysis {
 		}
 	}
 
-	public static void traverse_expr_for_readset_adding_reduce(ast_expr_reduce e2, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> rset,
-			HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_reduce(ast_expr_reduce e2, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
 		gm_symtab_entry it = e2.get_iterator().getSymInfo();
 		GMTYPE_T iter_type = e2.get_iter_type();
 		ast_expr f = e2.get_filter();
@@ -600,13 +598,12 @@ public class GlobalMembersGm_rw_analysis {
 	// declarations:
 	// class gm_builtin_def;
 
-	public static boolean merge_for_if(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> Target, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S1,
-			boolean is_reduce) {
+	public static boolean merge_for_if(gm_rwinfo_map Target, gm_rwinfo_map S1, boolean is_reduce) {
 		boolean is_okay = true;
 		// search for all elements in then-part
 		// and add a copy into the target set.
 		for (gm_symtab_entry sym : S1.keySet()) {
-			LinkedList<gm_rwinfo> l1 = S1.get(sym);
+			gm_rwinfo_list l1 = S1.get(sym);
 			assert l1 != null;
 
 			for (gm_rwinfo e : l1) {
@@ -625,8 +622,7 @@ public class GlobalMembersGm_rw_analysis {
 	// 2) remove all the acesses to the varibles defined in the local-scope
 	// return: is_okay
 	// -----------------------------------------------------------------------------
-	public static boolean merge_for_sentblock(ast_sentblock s, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> target,
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> old, boolean is_reduce) {
+	public static boolean merge_for_sentblock(ast_sentblock s, gm_rwinfo_map target, gm_rwinfo_map old, boolean is_reduce) {
 		boolean is_okay = true;
 		for (gm_symtab_entry e : old.keySet()) {
 			boolean is_current_level;
@@ -644,7 +640,7 @@ public class GlobalMembersGm_rw_analysis {
 			}
 
 			// add copy of access info to the target set
-			LinkedList<gm_rwinfo> l = old.get(e);
+			gm_rwinfo_list l = old.get(e);
 			for (gm_rwinfo info : l) {
 				gm_rwinfo copy = info.copy();
 				boolean b = GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(target, e, copy, is_reduce);
@@ -661,13 +657,12 @@ public class GlobalMembersGm_rw_analysis {
 	// 2) add expr
 	// return: is_okay
 	// -----------------------------------------------------------------------------
-	public static boolean merge_all(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> target, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> old,
-			boolean is_reduce) {
+	public static boolean merge_all(gm_rwinfo_map target, gm_rwinfo_map old, boolean is_reduce) {
 		boolean is_okay = true;
 
 		for (gm_symtab_entry e : old.keySet()) {
 			// add copy of access info to the target set
-			LinkedList<gm_rwinfo> l = old.get(e);
+			gm_rwinfo_list l = old.get(e);
 			for (gm_rwinfo info : l) {
 				gm_rwinfo copy = info.copy();
 				is_okay = GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(target, e, copy, is_reduce) && is_okay;
@@ -676,11 +671,10 @@ public class GlobalMembersGm_rw_analysis {
 		return is_okay;
 	}
 
-	public static boolean merge_body(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W,
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> M, ast_sent s, boolean is_conditional) // body
-																																						// sentence
-																																						// -
-																																						// top
+	public static boolean merge_body(gm_rwinfo_map R, gm_rwinfo_map W, gm_rwinfo_map D, gm_rwinfo_map M, ast_sent s, boolean is_conditional) // body
+																																				// sentence
+																																				// -
+																																				// top
 	{
 		gm_rwinfo_sets sets2 = GlobalMembersGm_rw_analysis.get_rwinfo_sets(s);
 		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
@@ -688,25 +682,25 @@ public class GlobalMembersGm_rw_analysis {
 		// constructor should be created if it does not yet exist:
 		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& R2
 		// = sets2->read_set;
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R2 = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets2.read_set);
+		gm_rwinfo_map R2 = new gm_rwinfo_map(sets2.read_set);
 		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
 		// be a copy constructor call - this should be verified and a copy
 		// constructor should be created if it does not yet exist:
 		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& W2
 		// = sets2->write_set;
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W2 = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets2.write_set);
+		gm_rwinfo_map W2 = new gm_rwinfo_map(sets2.write_set);
 		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
 		// be a copy constructor call - this should be verified and a copy
 		// constructor should be created if it does not yet exist:
 		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& D2
 		// = sets2->reduce_set;
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D2 = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets2.reduce_set);
+		gm_rwinfo_map D2 = new gm_rwinfo_map(sets2.reduce_set);
 		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
 		// be a copy constructor call - this should be verified and a copy
 		// constructor should be created if it does not yet exist:
 		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& M2
 		// = sets2->mutate_set;
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> M2 = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets2.mutate_set);
+		gm_rwinfo_map M2 = new gm_rwinfo_map(sets2.mutate_set);
 		boolean is_okay = true;
 
 		if (!is_conditional) {
@@ -768,8 +762,7 @@ public class GlobalMembersGm_rw_analysis {
 	// } }
 	// -----------------------------------------------------------------------------
 	//
-	public static boolean cleanup_iterator_access(ast_id iter, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> T_temp,
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> T, GMTYPE_T iter_type, boolean is_parallel) {
+	public static boolean cleanup_iterator_access(ast_id iter, gm_rwinfo_map T_temp, gm_rwinfo_map T, GMTYPE_T iter_type, boolean is_parallel) {
 		boolean is_okay = true;
 
 		gm_symtab_entry iter_sym = iter.getSymInfo();
@@ -777,7 +770,7 @@ public class GlobalMembersGm_rw_analysis {
 		// printf("iter_type = %s, range = %s\n", gm_get_type_string(iter_type),
 		// gm_get_range_string(range));
 		for (gm_symtab_entry sym : T_temp.keySet()) {
-			LinkedList<gm_rwinfo> l = T_temp.get(sym);
+			gm_rwinfo_list l = T_temp.get(sym);
 			if (sym == iter_sym) // direct reading of iterator
 				continue;
 			for (gm_rwinfo e : l) {
@@ -794,13 +787,13 @@ public class GlobalMembersGm_rw_analysis {
 						cp.driver = null;
 						cp.access_range = range;
 					} else if (cp.driver == null) {
-						if (cp.access_range == gm_range_type_t.GM_RANGE_SINGLE) {
+						if (cp.access_range == GM_RANGE_SINGLE) {
 							// scalar, do nothing
 						} else if (is_parallel) {
 							// printf("sym = %s!!! %p line:%d, col:%d\n",
 							// sym->getId()->get_genname(), e->driver,
 							// e->location->get_line(), e->location->get_col());
-							cp.access_range = gm_range_type_t.GM_RANGE_RANDOM;
+							cp.access_range = GM_RANGE_RANDOM;
 							cp.driver = null;
 						}
 					} else if (is_parallel) {
@@ -815,27 +808,26 @@ public class GlobalMembersGm_rw_analysis {
 
 	// (called after cleanup_iterator_access if called)
 	// replace LEVEL(_UP/_DOWN) -> (LINEAR + conditional)
-	public static void cleanup_iterator_access_bfs(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> T) {
+	public static void cleanup_iterator_access_bfs(gm_rwinfo_map T) {
 		// bfs iter ==> conditional, linear iteration
 		boolean new_always = false;
-		gm_range_type_t new_range = gm_range_type_t.GM_RANGE_LINEAR; // G.Nodes
-																		// or
-																		// G.Edges
+		gm_range_type_t new_range = GM_RANGE_LINEAR; // G.Nodes
+														// or
+														// G.Edges
 
 		for (gm_symtab_entry key : T.keySet()) {
 			boolean is_target = false;
 			boolean is_already = false;
 			ast_id location = null;
-			LinkedList<gm_rwinfo> l = T.get(key);
+			gm_rwinfo_list l = T.get(key);
 			// remove all items that are LEVEL_UP/DOWN
 			while (!l.isEmpty()) {
 				gm_rwinfo e = l.removeFirst();
-				if ((e.access_range == gm_range_type_t.GM_RANGE_LEVEL) || (e.access_range == gm_range_type_t.GM_RANGE_LEVEL_UP)
-						|| (e.access_range == gm_range_type_t.GM_RANGE_LEVEL_DOWN)) {
+				if ((e.access_range == GM_RANGE_LEVEL) || (e.access_range == GM_RANGE_LEVEL_UP) || (e.access_range == GM_RANGE_LEVEL_DOWN)) {
 					is_target = true;
 					location = e.location;
 					continue;
-				} else if ((e.access_range == gm_range_type_t.GM_RANGE_LINEAR) && (e.always == false)) {
+				} else if ((e.access_range == GM_RANGE_LINEAR) && (e.always == false)) {
 					is_already = true;
 				}
 			}
@@ -846,37 +838,16 @@ public class GlobalMembersGm_rw_analysis {
 		}
 	}
 
-	public static boolean cleanup_iterator_access_reduce(ast_id iter, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D_temp,
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W,
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> B, GMTYPE_T iter_type, boolean is_parallel) // Nodes
-																										// or
-																										// NBRS
-																										// -
-																										// bound-set
-																										// for
-																										// Foreach
-																										// -
-																										// write
-																										// -
-																										// reduce
-																										// map
-																										// of
-																										// the
-																										// Foreach-statement
-																										// -
-																										// reduce
-																										// map
-																										// of
-																										// the
-																										// body
-
-	{
+	// Nodes or NBRS - bound-set for Foreach - write - reduce map of the
+	// Foreach-statement - reduce map of the body
+	public static boolean cleanup_iterator_access_reduce(ast_id iter, gm_rwinfo_map D_temp, gm_rwinfo_map D, gm_rwinfo_map W, gm_rwinfo_map B,
+			GMTYPE_T iter_type, boolean is_parallel) {
 		boolean is_okay = true;
 		gm_symtab_entry iter_sym = iter.getSymInfo();
 		gm_range_type_t range = GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type);
 
 		for (gm_symtab_entry sym : D_temp.keySet()) {
-			LinkedList<gm_rwinfo> l = D_temp.get(sym);
+			gm_rwinfo_list l = D_temp.get(sym);
 			for (gm_rwinfo e : l) {
 				gm_rwinfo cp = e.copy();
 
@@ -888,15 +859,15 @@ public class GlobalMembersGm_rw_analysis {
 					cp.access_range = range;
 				} else if (is_parallel) {
 					if (cp.driver == null) {
-						if (cp.access_range != gm_range_type_t.GM_RANGE_SINGLE) {
-							cp.access_range = gm_range_type_t.GM_RANGE_RANDOM; // scalar
-																				// access
-																				// becomes
-																				// random
-																				// access
+						if (cp.access_range != GM_RANGE_SINGLE) {
+							cp.access_range = GM_RANGE_RANDOM; // scalar
+																// access
+																// becomes
+																// random
+																// access
 						}
 					} else if (!cp.driver.getType().is_node_edge_iterator()) {
-						cp.access_range = gm_range_type_t.GM_RANGE_RANDOM;
+						cp.access_range = GM_RANGE_RANDOM;
 						cp.driver = null;
 					}
 				}

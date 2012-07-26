@@ -1,13 +1,14 @@
 package frontend;
 
 import ast.ast_extra_info;
+import ast.gm_rwinfo_map;
 
 public class gm_rwinfo_sets extends ast_extra_info
 {
-	public java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> read_set = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>();
-	public java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> write_set = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>();
-	public java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> reduce_set = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>();
-	public java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> mutate_set = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>();
+	public gm_rwinfo_map read_set = new gm_rwinfo_map();
+	public gm_rwinfo_map write_set = new gm_rwinfo_map();
+	public gm_rwinfo_map reduce_set = new gm_rwinfo_map();
+	public gm_rwinfo_map mutate_set = new gm_rwinfo_map();
 
 	public void dispose()
 	{

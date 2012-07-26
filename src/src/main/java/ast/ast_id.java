@@ -9,6 +9,36 @@ import frontend.gm_symtab_entry;
 //C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
 //class ast_typedecl;
 public class ast_id extends ast_node {
+	
+	public String name;
+
+	private gm_symtab_entry info;
+	private String gen_name;
+
+	private boolean instant_assignment;	
+	
+	private ast_id() {
+		super(AST_NODE_TYPE.AST_ID);
+		this.name = null;
+		this.info = null;
+		this.gen_name = null;
+		this.instant_assignment = false;
+	}
+
+	private ast_id(String org, int l, int c) {
+		super(AST_NODE_TYPE.AST_ID);
+		this.info = null;
+		this.gen_name = null;
+		this.instant_assignment = false;
+		if (org != null) {
+			name = org;
+		} else {
+			name = null;
+		}
+		set_line(l);
+		set_col(c);
+	}
+	
 	// C++ TO JAVA CONVERTER TODO TASK: Java has no concept of a 'friend' class:
 	// friend class gm_symtab_entry;
 	public void dispose() {
@@ -23,9 +53,6 @@ public class ast_id extends ast_node {
 		return copy(false);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: ast_id* copy(boolean cp_syminfo = false)
 	public final ast_id copy(boolean cp_syminfo) {
 		ast_id cp;
 		cp = new ast_id(get_orgname(), line, col); // name can be null here.
@@ -49,10 +76,6 @@ public class ast_id extends ast_node {
 		setSymInfo(e, false);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void setSymInfo(gm_symtab_entry* e, boolean
-	// is_symtab_entry = false)
 	public final void setSymInfo(gm_symtab_entry e, boolean is_symtab_entry) {
 		info = e;
 		if (!is_symtab_entry)
@@ -80,28 +103,6 @@ public class ast_id extends ast_node {
 	public GMTYPE_T getTargetTypeSummary() {
 		assert info != null;
 		return info.getType().getTargetTypeSummary();
-	}
-
-	private ast_id() {
-		super(AST_NODE_TYPE.AST_ID);
-		this.name = null;
-		this.info = null;
-		this.gen_name = null;
-		this.instant_assignment = false;
-	}
-
-	private ast_id(String org, int l, int c) {
-		super(AST_NODE_TYPE.AST_ID);
-		this.info = null;
-		this.gen_name = null;
-		this.instant_assignment = false;
-		if (org != null) {
-			name = org;
-		} else {
-			name = null;
-		}
-		set_line(l);
-		set_col(c);
 	}
 
 	public static ast_id new_id(String org, int line, int col) {
@@ -165,13 +166,6 @@ public class ast_id extends ast_node {
 	public final void set_instant_assigned(boolean value) {
 		instant_assignment = value;
 	}
-
-	public String name;
-
-	private gm_symtab_entry info;
-	private String gen_name;
-
-	private boolean instant_assignment;
 
 	public String get_orgname_from_symbol() {
 		assert info != null;

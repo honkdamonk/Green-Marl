@@ -1,110 +1,67 @@
 package common;
 
+import java.io.File;
+
 //------------------------------------------
 // parsing path string
 //------------------------------------------
 public class gm_path_parser {
-	public gm_path_parser() {
-		create_arrays(128);
-	}
 
-	public void dispose() {
-		delete_arrays();
-	}
+	private String name;
+	private String extention;
+	private String path;
 
 	// defined in gm_misc.cc
-	public final void parsePath(String fullpath) {
-		int sz = fullpath.length();
-		if (_sz < (sz + 1)) {
-			delete_arrays();
-			create_arrays(sz + 1);
-		}
-		String _temp = fullpath;
-
-		// ----------------------------------------
-		// parse path name
-		// ----------------------------------------
-		String p_last = null;
-		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
-		// pointers to value types:
-		// ORIGINAL LINE: sbyte* p = strtok(_temp, "/");
-		String p = tangible.StringFunctions.strTok(_temp, "/"); // ignore
-																// windows for
-																// now
-		while (p != null) {
-			p_last = p;
-			p = tangible.StringFunctions.strTok(null, "/"); // not thread safe
-															// you know.
-		}
-		int index0;
-		if (p_last == null) {
-			_path = "";
-			p_last = _temp;
-			index0 = 0;
+	public final void parsePath(String fullPath) {
+		
+		File file = new File(fullPath);
+		
+		path = file.getParent();
+		String fileName = file.getName();
+		
+		String[] fileTokens = fileName.split("[.]");
+		assert fileTokens.length < 2;
+		
+		if (fileTokens.length == 1) {
+			extention = "";
+			name = fileTokens[0];
 		} else {
-
-			index0 = ((int) (p_last - _temp));
-			_path = fullpath.substring(0, index0);
-			_path = tangible.StringFunctions.changeCharacter(_path, index0, '\0');
+			extention = "." + fileTokens[fileTokens.length - 1];
+			name = fileName.substring(0, fileName.length() - extention.length());
 		}
-		String h_begin = fullpath.charAt(index0);
-
-		// ----------------------------------------
-		// parse ext name
-		// ----------------------------------------
-		String p_begin = p_last;
-		p = tangible.StringFunctions.strTok(p_begin, ".");
-		p_last = null;
-		while (p != null) {
-			p_last = p;
-			p = tangible.StringFunctions.strTok(null, "."); // strtok is not
-															// thread safe, you
-															// know.
-		}
-		if (p_last.equals(p_begin)) {
-			_ext = "";
-			_fname = h_begin;
-		} else {
-			_ext = p_last;
-
-			int index1 = ((int) (p_last - p_begin));
-			if (index1 > 1)
-				_fname = h_begin.substring(0, index1 - 1);
-			_fname = tangible.StringFunctions.changeCharacter(_fname, index1 - 1, '\0');
-		}
-
-		if (GlobalMembersGm_misc.gm_is_same_string(_path, ""))
-			String.format(_path, ".");
-
+		
+		name = (name == null) ? "" : name;
+		path = "./" + ((path == null) ? "" : path + "/");
 	}
 
 	public final String getPath() {
-		return (String) _path;
+		return path;
 	}
 
+	/**
+	 * @return Returns the filename without path and extension.
+	 */
 	public final String getFilename() {
-		return (String) _fname;
-	} // without extension
+		return name;
+	}
 
+	
 	public final String getExt() {
-		return (String) _ext;
+		return extention;
+	}
+	
+	public static void main(String[] args) {
+		gm_path_parser parser = new gm_path_parser();
+		test(parser, "data/bla.bin");
+		test(parser, "bla.bin");
+		test(parser, "data/bla");
+		test(parser, "bla");
+		test(parser, "data/");
 	}
 
-	private String _fname;
-	private String _ext;
-	private String _path;
-	private int _sz;
-
-	private void delete_arrays() {
-		_fname = null;
-		_ext = null;
-		_path = null;
+	private static void test(gm_path_parser parser, String x) {
+		parser.parsePath(x);
+		System.out.println(x + ":\t" + parser.path + "|" + parser.name + "|" + parser.extention);
 	}
 
-	private void create_arrays(int s) {
-		_sz = s;
-		// _fname = new byte[_sz];
-		// _ext = new byte[_sz];
-		// _path = new byte[_sz];
-	}
 }

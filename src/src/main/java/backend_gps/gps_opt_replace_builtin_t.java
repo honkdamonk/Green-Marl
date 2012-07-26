@@ -2,6 +2,11 @@ package backend_gps;
 
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import tangible.Pair;
 import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_expr;
@@ -12,12 +17,18 @@ import ast.ast_sentblock;
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_main;
 import common.gm_apply;
+import common.gm_method_id_t;
 
 import frontend.gm_symtab_entry;
 
 public class gps_opt_replace_builtin_t extends gm_apply {
-	public gps_opt_replace_builtin_t(gm_symtab_entry drv, ast_sentblock scope, java.util.HashMap<std.pair<ast_sentblock, Integer>, gm_symtab_entry> M) {
-		this.map = new java.util.HashMap<std.pair<ast_sentblock, Integer>, gm_symtab_entry>(M);
+	
+	private gm_symtab_entry sym;
+	private ast_sentblock sb;
+	private Map<Pair<ast_sentblock, gm_method_id_t>, gm_symtab_entry> map;
+	
+	public gps_opt_replace_builtin_t(gm_symtab_entry drv, ast_sentblock scope, HashMap<Pair<ast_sentblock, gm_method_id_t>, gm_symtab_entry> M) {
+		map = new HashMap<Pair<ast_sentblock, gm_method_id_t>, gm_symtab_entry>(M);
 		set_for_expr(true);
 		sym = drv;
 		sb = scope;
@@ -32,7 +43,7 @@ public class gps_opt_replace_builtin_t extends gm_apply {
 				// later for arguments
 
 				// see if this has been defined
-				std.pair<ast_sentblock, Integer> P = new std.pair<ast_sentblock, Integer>(sb, b.get_builtin_def().get_method_id());
+				Pair<ast_sentblock, gm_method_id_t> P = new Pair<ast_sentblock, gm_method_id_t>(sb, b.get_builtin_def().get_method_id());
 				gm_symtab_entry target = null;
 				if (!map.containsKey(P)) {
 					String temp_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("tmp");
@@ -61,8 +72,4 @@ public class gps_opt_replace_builtin_t extends gm_apply {
 		}
 		return true;
 	}
-
-	private gm_symtab_entry sym;
-	private ast_sentblock sb;
-	private java.util.HashMap<std.pair<ast_sentblock, Integer>, gm_symtab_entry> map;
 }

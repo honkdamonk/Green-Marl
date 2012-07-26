@@ -1,5 +1,10 @@
 package backend_gps;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import tangible.Pair;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr_builtin;
@@ -7,17 +12,23 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_sent;
 import ast.ast_sentblock;
-import frontend.gm_symtab_entry;
 
 import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
 import common.gm_builtin_def;
+import common.gm_method_id_t;
 
-public class gps_opt_simplify_outer_builtin_t extends gm_apply
-{
-	public gps_opt_simplify_outer_builtin_t()
-	{
+import frontend.gm_symtab_entry;
+
+public class gps_opt_simplify_outer_builtin_t extends gm_apply {
+	
+	private LinkedList<ast_sent> L1 = new LinkedList<ast_sent>();
+	private LinkedList<gm_symtab_entry> L2 = new LinkedList<gm_symtab_entry>();
+	private int depth;
+	private gm_symtab_entry outer_iter;
+	
+	public gps_opt_simplify_outer_builtin_t() {
 		set_for_sent(true);
 		set_separate_post_apply(true);
 		depth = 0;
@@ -25,44 +36,36 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply
 	}
 
 	@Override
-	public boolean apply(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
-		{
+	public boolean apply(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			depth++;
-			if (depth == 1)
-			{
+			if (depth == 1) {
 				outer_iter = ((ast_foreach) s).get_iterator().getSymInfo();
 			}
-		}
-		else if (depth == 2)
-		{
-			if (GlobalMembersGm_gps_opt_simplify_expr1.contains_built_in_through_driver(s, outer_iter))
-			{
+		} else if (depth == 2) {
+			if (GlobalMembersGm_gps_opt_simplify_expr1.contains_built_in_through_driver(s, outer_iter)) {
 				L1.addLast(s);
 				L2.addLast(outer_iter);
 			}
 		}
 		return true;
 	}
+
 	@Override
-	public boolean apply2(ast_sent s)
-	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
-		{
+	public boolean apply2(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			depth--;
 		}
 		return true;
 	}
 
-	public final void post_process()
-	{
-		java.util.Iterator<ast_sent> I = L1.iterator();
-		java.util.Iterator<gm_symtab_entry> J = L2.iterator();
-		java.util.HashMap<std.pair<ast_sentblock, Integer>, gm_symtab_entry> already_defined_map = new java.util.HashMap<std.pair<ast_sentblock, Integer>, gm_symtab_entry>();
-		java.util.HashMap<ast_sentblock, gm_symtab_entry> sent_block_driver_map = new java.util.HashMap<ast_sentblock, gm_symtab_entry>(); // sentblock <-> driver
-		for (; I.hasNext(); I++, J++)
-		{
+	public final void post_process() {
+		Iterator<ast_sent> I = L1.iterator();
+		Iterator<gm_symtab_entry> J = L2.iterator();
+		HashMap<Pair<ast_sentblock, gm_method_id_t>, gm_symtab_entry> already_defined_map = new HashMap<Pair<ast_sentblock, gm_method_id_t>, gm_symtab_entry>();
+		HashMap<ast_sentblock, gm_symtab_entry> sent_block_driver_map = new HashMap<ast_sentblock, gm_symtab_entry>(); // sentblock
+																														// <->
+		while (I.hasNext()) { // driver
 			ast_sent s = I.next();
 			gm_symtab_entry drv = J.next();
 
@@ -71,8 +74,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply
 			assert s.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 
 			ast_sentblock sb = (ast_sentblock) s.get_parent();
-			if (sent_block_driver_map.containsKey(sb))
-			{
+			if (sent_block_driver_map.containsKey(sb)) {
 				assert sent_block_driver_map.get(sb) == drv;
 			}
 			sent_block_driver_map.put(sb, drv);
@@ -80,12 +82,10 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply
 			GlobalMembersGm_gps_opt_simplify_expr1.replace_built_in(s, drv, sb, already_defined_map);
 		}
 
-		java.util.Iterator<std.pair<ast_sentblock, Integer>, gm_symtab_entry> K;
-		for (K = already_defined_map.iterator(); K.hasNext();)
-		{
-			ast_sentblock sb = K.next().getKey().first;
-			int method_id = K.next().getKey().second;
-			gm_symtab_entry target = K.next().getValue();
+		for (Pair<ast_sentblock, gm_method_id_t> key : already_defined_map.keySet()) {
+			ast_sentblock sb = key.first;
+			gm_method_id_t method_id = key.second;
+			gm_symtab_entry target = already_defined_map.get(key);
 
 			gm_symtab_entry drv = sent_block_driver_map.get(sb);
 			assert sb != null;
@@ -107,10 +107,4 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply
 
 		}
 	}
-
-	private java.util.LinkedList<ast_sent> L1 = new java.util.LinkedList<ast_sent>();
-	private java.util.LinkedList<gm_symtab_entry> L2 = new java.util.LinkedList<gm_symtab_entry>();
-	private int depth;
-	private gm_symtab_entry outer_iter;
-
 }

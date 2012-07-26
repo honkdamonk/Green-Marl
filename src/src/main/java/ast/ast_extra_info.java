@@ -2,6 +2,7 @@ package ast;
 
 // any information can be added to nodes
 public class ast_extra_info {
+
 	public int ival;
 	public boolean bval;
 	public float fval;

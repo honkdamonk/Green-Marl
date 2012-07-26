@@ -10,6 +10,7 @@ import ast.ast_if;
 import ast.ast_node;
 import ast.ast_sent;
 import ast.ast_sentblock;
+import ast.gm_rwinfo_list;
 
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_resolve_nc;
@@ -91,10 +92,10 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 
 			boolean is_target = false;
 			// check if inner loop requires flipping
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> WMAP = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(in.get_body());
+			HashMap<gm_symtab_entry, gm_rwinfo_list> WMAP = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(in.get_body());
 			for (gm_symtab_entry e : WMAP.keySet())
 			{
-				LinkedList<gm_rwinfo> LIST = WMAP.get(e);
+				gm_rwinfo_list LIST = WMAP.get(e);
 				boolean is_field = e.getType().is_property();
 				for (gm_rwinfo info : LIST)
 				{
@@ -121,9 +122,9 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 				}
 			}
 
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> DMAP = GlobalMembersGm_rw_analysis_check2.gm_get_reduce_set(in.get_body());
+			HashMap<gm_symtab_entry, gm_rwinfo_list> DMAP = GlobalMembersGm_rw_analysis_check2.gm_get_reduce_set(in.get_body());
 			for (gm_symtab_entry e : DMAP.keySet()) {
-				LinkedList<gm_rwinfo> LIST = DMAP.get(e);
+				gm_rwinfo_list LIST = DMAP.get(e);
 				for (gm_rwinfo info : LIST)
 				{
 					if ((info.driver == null) && (info.access_range == gm_range_type_t.GM_RANGE_RANDOM))
@@ -471,8 +472,8 @@ public class GlobalMembersGm_gps_opt_split_loops_for_flipping
 
 	public static void add_scalar_rw(ast_sent s, HashSet<gm_symtab_entry> TARGET)
 	{
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
+		HashMap<gm_symtab_entry, gm_rwinfo_list> W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
+		HashMap<gm_symtab_entry, gm_rwinfo_list> R = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
 		for (gm_symtab_entry e : W.keySet())
 		{
 			if (!e.getType().is_property())

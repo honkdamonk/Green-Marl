@@ -169,8 +169,8 @@ public class gm_flip_backedge_t extends gm_apply {
 		}
 
 		// now put every assignment in the candiate statement
-		for (ast_sent sent : S) {
-			ast_assign a = (ast_assign) sent;
+		for (ast_sent sent1 : S) {
+			ast_assign a = (ast_assign) sent1;
 			// add to target
 			_cands.addLast(a);
 			_tops.addLast(body);

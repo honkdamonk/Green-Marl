@@ -1,7 +1,5 @@
 package common;
 
-import java.util.Iterator;
-
 import ast.AST_NODE_TYPE;
 import ast.ast_sent;
 import ast.ast_sentblock;

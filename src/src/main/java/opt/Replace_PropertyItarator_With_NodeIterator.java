@@ -1,5 +1,10 @@
 package opt;
 
+import frontend.GlobalMembersGm_typecheck;
+import frontend.gm_symtab;
+import frontend.gm_symtab_entry;
+import inc.GMTYPE_T;
+import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -9,12 +14,11 @@ import ast.ast_id;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import inc.*;
-import tangible.*;
+
+import common.GM_ERRORS_AND_WARNINGS;
+import common.GlobalMembersGm_error;
+import common.GlobalMembersGm_main;
+import common.gm_apply;
 
 public class Replace_PropertyItarator_With_NodeIterator extends gm_apply
 {

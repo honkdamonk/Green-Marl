@@ -1,17 +1,40 @@
 package ast;
 
+import static ast.AST_NODE_TYPE.AST_BFS;
+import static ast.AST_NODE_TYPE.AST_END;
+import static ast.AST_NODE_TYPE.AST_EXPR_RDC;
+import static ast.AST_NODE_TYPE.AST_FOREACH;
+import static ast.AST_NODE_TYPE.AST_PROCDEF;
+import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
+import static frontend.SYMTAB_TYPES.GM_SYMTAB_ARG;
+import static frontend.SYMTAB_TYPES.GM_SYMTAB_FIELD;
+import static frontend.SYMTAB_TYPES.GM_SYMTAB_PROC;
+import static frontend.SYMTAB_TYPES.GM_SYMTAB_VAR;
 import frontend.SYMTAB_TYPES;
 import frontend.gm_scope;
 import frontend.gm_symtab;
 import inc.gm_code_writer;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Set;
 
 import common.GlobalMembersGm_traverse;
 import common.gm_apply;
 
 public abstract class ast_node {
 	gm_code_writer Out; // TODO stub!
+
+	protected int line;
+	protected int col;
+	protected HashMap<String, ast_extra_info> extra = new HashMap<String, ast_extra_info>();
+	protected AST_NODE_TYPE nodetype;
+	protected ast_node parent;
+	protected gm_symtab sym_vars;
+	protected gm_symtab sym_fields;
+	protected gm_symtab sym_procs;
 
 	// C++ TO JAVA CONVERTER TODO TASK: Java has no concept of a 'friend' class:
 	// friend class gm_apply;
@@ -26,7 +49,7 @@ public abstract class ast_node {
 	}
 
 	protected ast_node() {
-		this.nodetype = AST_NODE_TYPE.AST_END;
+		this.nodetype = AST_END;
 		this.parent = null;
 		this.line = 0;
 		this.col = 0;
@@ -35,20 +58,11 @@ public abstract class ast_node {
 		this.sym_fields = null;
 	}
 
-	protected AST_NODE_TYPE nodetype;
-	protected ast_node parent;
-
 	public final void set_nodetype(AST_NODE_TYPE nt) {
 		nodetype = nt;
 	}
 
 	public void dispose() {
-		// java.util.Iterator<String, ast_extra_info> i;
-		// for (i = extra.iterator(); i.hasNext();)
-		// {
-		// if (i.next().getValue() != null)
-		// i.next().getValue().dispose();
-		// }
 		extra.clear();
 	}
 
@@ -73,8 +87,7 @@ public abstract class ast_node {
 	}
 
 	public final boolean has_symtab() {
-		return (nodetype == AST_NODE_TYPE.AST_SENTBLOCK) || (nodetype == AST_NODE_TYPE.AST_FOREACH) || (nodetype == AST_NODE_TYPE.AST_PROCDEF)
-				|| (nodetype == AST_NODE_TYPE.AST_EXPR_RDC) || (nodetype == AST_NODE_TYPE.AST_BFS);
+		return (nodetype == AST_SENTBLOCK) || (nodetype == AST_FOREACH) || (nodetype == AST_PROCDEF) || (nodetype == AST_EXPR_RDC) || (nodetype == AST_BFS);
 	}
 
 	// for parser debug
@@ -102,7 +115,7 @@ public abstract class ast_node {
 	public void apply_symtabs(gm_apply a, boolean is_post) {
 		assert has_scope();
 		boolean post_apply = is_post && a.has_separate_post_apply();
-		SYMTAB_TYPES t = get_nodetype() == AST_NODE_TYPE.AST_PROCDEF ? SYMTAB_TYPES.GM_SYMTAB_ARG : SYMTAB_TYPES.GM_SYMTAB_VAR;
+		SYMTAB_TYPES t = get_nodetype() == AST_PROCDEF ? GM_SYMTAB_ARG : GM_SYMTAB_VAR;
 		if (post_apply) {
 			a.apply2(get_symtab_var(), t);
 		} else {
@@ -111,18 +124,18 @@ public abstract class ast_node {
 		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_var(), t, is_post);
 
 		if (post_apply) {
-			a.apply2(get_symtab_field(), SYMTAB_TYPES.GM_SYMTAB_FIELD);
+			a.apply2(get_symtab_field(), GM_SYMTAB_FIELD);
 		} else {
-			a.apply(get_symtab_field(), SYMTAB_TYPES.GM_SYMTAB_FIELD);
+			a.apply(get_symtab_field(), GM_SYMTAB_FIELD);
 		}
-		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_field(), SYMTAB_TYPES.GM_SYMTAB_FIELD, is_post);
+		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_field(), GM_SYMTAB_FIELD, is_post);
 
 		if (post_apply) {
-			a.apply2(get_symtab_proc(), SYMTAB_TYPES.GM_SYMTAB_PROC);
+			a.apply2(get_symtab_proc(), GM_SYMTAB_PROC);
 		} else {
-			a.apply(get_symtab_proc(), SYMTAB_TYPES.GM_SYMTAB_PROC);
+			a.apply(get_symtab_proc(), GM_SYMTAB_PROC);
 		}
-		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_proc(), SYMTAB_TYPES.GM_SYMTAB_PROC, is_post);
+		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_proc(), GM_SYMTAB_PROC, is_post);
 	}
 
 	// scoped elements
@@ -164,10 +177,6 @@ public abstract class ast_node {
 		sym_procs = p;
 	}
 
-	protected gm_symtab sym_vars;
-	protected gm_symtab sym_fields;
-	protected gm_symtab sym_procs;
-
 	public void delete_symtabs() {
 		sym_vars = null;
 		sym_fields = null;
@@ -175,9 +184,9 @@ public abstract class ast_node {
 	}
 
 	public void create_symtabs() {
-		sym_vars = new gm_symtab(SYMTAB_TYPES.GM_SYMTAB_VAR, this);
-		sym_fields = new gm_symtab(SYMTAB_TYPES.GM_SYMTAB_FIELD, this);
-		sym_procs = new gm_symtab(SYMTAB_TYPES.GM_SYMTAB_PROC, this);
+		sym_vars = new gm_symtab(GM_SYMTAB_VAR, this);
+		sym_fields = new gm_symtab(GM_SYMTAB_FIELD, this);
+		sym_procs = new gm_symtab(GM_SYMTAB_PROC, this);
 	}
 
 	public int get_line() {
@@ -289,7 +298,7 @@ public abstract class ast_node {
 	public void add_info_ptr(String id, Object ptr1) {
 		add_info_ptr(id, ptr1, null);
 	}
-	
+
 	public void add_info_ptr(String id, Object ptr1, Object ptr2) {
 		add_info(id, new ast_extra_info(ptr1, ptr2));
 	}
@@ -324,11 +333,11 @@ public abstract class ast_node {
 			ast_extra_info_set INFO = new ast_extra_info_set();
 			add_info(id, INFO);
 		}
-		java.util.HashSet<Object> S = ((ast_extra_info_set) find_info(id)).get_set();
+		Set<Object> S = ((ast_extra_info_set) find_info(id)).get_set();
 		S.add(element);
 	}
 
-	public java.util.HashSet<Object> get_info_set(String id) {
+	public HashSet<Object> get_info_set(String id) {
 		ast_extra_info_set INFO = ((ast_extra_info_set) find_info(id));
 		assert INFO != null;
 		return INFO.get_set();
@@ -343,11 +352,11 @@ public abstract class ast_node {
 			ast_extra_info_list INFO = new ast_extra_info_list();
 			add_info(id, INFO);
 		}
-		java.util.LinkedList<Object> S = ((ast_extra_info_list) find_info(id)).get_list();
+		LinkedList<Object> S = ((ast_extra_info_list) find_info(id)).get_list();
 		S.addLast(element);
 	}
 
-	public java.util.LinkedList<Object> get_info_list(String id) {
+	public LinkedList<Object> get_info_list(String id) {
 		ast_extra_info_list INFO = ((ast_extra_info_list) find_info(id));
 		assert INFO != null;
 		return INFO.get_list();
@@ -362,7 +371,7 @@ public abstract class ast_node {
 			ast_extra_info_map INFO = new ast_extra_info_map();
 			add_info(id, INFO);
 		}
-		HashMap<Object, Object> S = ((ast_extra_info_map) find_info(id)).get_map();
+		Map<Object, Object> S = ((ast_extra_info_map) find_info(id)).get_map();
 		S.put(k, v);
 	}
 
@@ -371,12 +380,7 @@ public abstract class ast_node {
 			ast_extra_info_map INFO = new ast_extra_info_map();
 			add_info(id, INFO);
 		}
-		HashMap<Object, Object> S = ((ast_extra_info_map) find_info(id)).get_map();
-
-		// if not in the map? NULL will be retuned. right?
-		if (!S.containsKey(key)) {
-			S.put(key, null);
-		}
+		Map<Object, Object> S = ((ast_extra_info_map) find_info(id)).get_map();
 		return S.get(key);
 	}
 
@@ -396,7 +400,4 @@ public abstract class ast_node {
 		}
 	}
 
-	protected int line;
-	protected int col;
-	protected HashMap<String, ast_extra_info> extra = new HashMap<String, ast_extra_info>();
 }

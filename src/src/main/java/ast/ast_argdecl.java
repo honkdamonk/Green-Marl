@@ -3,6 +3,7 @@ package ast;
 import common.GlobalMembersGm_dumptree;
 
 public class ast_argdecl extends ast_node {
+	
 	public void dispose() {
 		if (idlist != null)
 			idlist.dispose();

@@ -112,6 +112,10 @@ public class gm_gpslib extends gm_graph_library {
 		Body.push(is_first_var);
 		Body.pushln("));");
 	}
+	
+	public void generate_broadcast_variable_type(GMTYPE_T type_id, gm_code_writer Body) {
+		generate_broadcast_variable_type(type_id, Body, GM_REDUCE_T.GMREDUCE_NULL);
+	}
 
 	public void generate_broadcast_variable_type(GMTYPE_T type_id, gm_code_writer Body, GM_REDUCE_T reduce_op)
 
@@ -557,7 +561,7 @@ public class gm_gpslib extends gm_graph_library {
 	// random write
 	public void generate_message_create_for_random_write(ast_sentblock sb, gm_symtab_entry sym, gm_code_writer Body) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		int m_type = gm_gps_comm_t.GPS_COMM_RANDOM_WRITE.getValue();
+		gm_gps_comm_t m_type = gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
 
 		gm_gps_comm_unit U = new gm_gps_comm_unit(m_type, sb, sym);
 

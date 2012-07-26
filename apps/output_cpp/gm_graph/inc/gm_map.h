@@ -25,6 +25,7 @@ public:
      * Return the value that has been set for the key - if none has been specified, the defaultValue is returned
      */
     virtual Value getValue(const Key key) = 0;
+
     virtual void setValue(const Key key, Value value) = 0;
 
     /**
@@ -280,7 +281,7 @@ public:
     }
 
     bool hasKey(const Key key) {
-        return valid[key];
+        return key < size() && valid[key];
     }
 
     Value getValue(const Key key) {

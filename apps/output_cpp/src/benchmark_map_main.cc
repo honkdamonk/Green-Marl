@@ -11,7 +11,7 @@ using namespace std;
 typedef int Key;
 typedef int Value;
 
-bool debug = false;
+bool debug = true;
 int threadCount;
 size_t runSize;
 
@@ -22,6 +22,7 @@ private:
     const Value* values;
     const size_t size;
     const char* type;
+    static const int iteration = 1000;
 
     typedef pair<time_t, time_t> Time;
     typedef pair<const char*, Time> Result;
@@ -38,6 +39,7 @@ private:
         printDebug("insert...");
         insert_seq();
         printDebug("...");
+        map->clear();
         insert_par();
         printDebug("finished\n");
     }
@@ -105,8 +107,9 @@ private:
     void hasKey_seq() {
         struct timeval T1, T2;
         gettimeofday(&T1, NULL);
-        for (Key key = 0; key < size; key++) {
-            assert(map->hasKey(key));
+        for (int i = 0; i < iteration; i++) {
+            Key key = rand();
+            assert(map->hasKey(key) == (key < size));
         }
         gettimeofday(&T2, NULL);
         results.push_back(Result("hasKey_seq", Time(T2.tv_sec - T1.tv_sec, T2.tv_usec - T1.tv_usec)));
@@ -116,8 +119,9 @@ private:
         struct timeval T1, T2;
         gettimeofday(&T1, NULL);
         #pragma omp parallel for
-        for (Key key = 0; key < size; key++) {
-            assert(map->hasKey(key));
+        for (int i = 0; i < iteration; i++) {
+            Key key = rand();
+            assert(map->hasKey(key) == (key < size));
         }
         gettimeofday(&T2, NULL);
         results.push_back(Result("hasKey_par", Time(T2.tv_sec - T1.tv_sec, T2.tv_usec - T1.tv_usec)));
@@ -135,7 +139,7 @@ private:
         struct timeval T1, T2;
         gettimeofday(&T1, NULL);
         Key minKey = map->getMinKey();
-        for(Key key = 0; key < size; key++) {
+        for (int i = 0; i < iteration; i++) {
             assert(minKey == map->getMinKey());
         }
         gettimeofday(&T2, NULL);
@@ -147,7 +151,7 @@ private:
         gettimeofday(&T1, NULL);
         Key minKey = map->getMinKey();
         #pragma omp parallel for
-        for(Key key = 0; key < size; key++) {
+        for (int i = 0; i < iteration; i++) {
             assert(minKey == map->getMinKey());
         }
         gettimeofday(&T2, NULL);
@@ -166,7 +170,7 @@ private:
         struct timeval T1, T2;
         gettimeofday(&T1, NULL);
         Value minValue = map->getMinValue();
-        for(Key key = 0; key < size; key++) {
+        for (int i = 0; i < iteration; i++) {
             assert(minValue == map->getMinValue());
         }
         gettimeofday(&T2, NULL);
@@ -178,7 +182,7 @@ private:
         gettimeofday(&T1, NULL);
         Value minValue = map->getMinValue();
         #pragma omp parallel for
-        for(Key key = 0; key < size; key++) {
+        for (int i = 0; i < iteration; i++) {
             assert(minValue == map->getMinValue());
         }
         gettimeofday(&T2, NULL);
@@ -189,6 +193,7 @@ private:
 public:
     Benchmark(gm_map<Key, Value>* sut, Value* values, size_t size, const char* type) :
             map(sut), values(values), size(size), type(type) {
+        srand(1);
     }
 
     void start() {

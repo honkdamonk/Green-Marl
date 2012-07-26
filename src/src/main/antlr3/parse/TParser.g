@@ -42,7 +42,7 @@ tokens {
 //
 @header {
 
-    package ppl.greenmarl.parse;
+    package parse;
 }
 
 

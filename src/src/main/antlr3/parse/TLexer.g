@@ -22,7 +22,7 @@ options {
 //
 @header {
 
-    package ppl.greenmarl.parse;
+    package parse;
 }
 
 // This is just a simple lexer that matches the usual suspects

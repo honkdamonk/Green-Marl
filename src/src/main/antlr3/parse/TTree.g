@@ -23,7 +23,7 @@ options {
 //
 @header {
 
-    package ppl.greenmarl.parse;
+    package parse;
 }
 
 a : ^(SCRIPT stuff+)

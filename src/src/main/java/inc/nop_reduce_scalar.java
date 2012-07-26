@@ -1,6 +1,5 @@
 package inc;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.ast_assign;
@@ -15,13 +14,13 @@ import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
 
 public class nop_reduce_scalar extends ast_nop {
-	
+
 	public nop_reduce_scalar() {
 		super(nop_enum_cpp.NOP_REDUCE_SCALAR);
 	}
 
-	public void set_symbols(LinkedList<gm_symtab_entry> O, LinkedList<gm_symtab_entry> N, LinkedList<GM_REDUCE_T> R, LinkedList<LinkedList<gm_symtab_entry>> O_S,
-			LinkedList<LinkedList<gm_symtab_entry>> N_S) {
+	public void set_symbols(LinkedList<gm_symtab_entry> O, LinkedList<gm_symtab_entry> N, LinkedList<GM_REDUCE_T> R,
+			LinkedList<LinkedList<gm_symtab_entry>> O_S, LinkedList<LinkedList<gm_symtab_entry>> N_S) {
 		// shallow copy the whole list
 		old_s = O;
 		new_s = N;
@@ -65,57 +64,42 @@ public class nop_reduce_scalar extends ast_nop {
 		return true;
 	}
 
-	public void generate(gm_cpp_gen gen)
-	{
-		Iterator<gm_symtab_entry> I1;
-		Iterator<gm_symtab_entry> I2;
-		Iterator<GM_REDUCE_T> I3;
-		Iterator<LinkedList<gm_symtab_entry>> I4; // supple old
-		Iterator<LinkedList<gm_symtab_entry>> I5; // supple new
-		I1 = old_s.begin();
-		I2 = new_s.begin();
-		I3 = reduce_op.begin();
-		I4 = old_supple.begin();
-		I5 = new_supple.begin();
-		for (; I1.hasNext(); I1++, I2++, I3++)
-		{
-			gm_symtab_entry old_sym = I1.next();
-			gm_symtab_entry new_sym = I2.next();
-			GM_REDUCE_T r_type = I3.next();
-			LinkedList<gm_symtab_entry> OLD_LIST = I4.next();
-			LinkedList<gm_symtab_entry> NEW_LIST = I5.next();
-    
+	public void generate(gm_cpp_gen gen) {
+		for (int i = 0; i < old_s.size(); i++) {
+			gm_symtab_entry old_sym = old_s.get(i);
+			gm_symtab_entry new_sym = new_s.get(i);
+			GM_REDUCE_T r_type = reduce_op.get(i);
+			// supple old
+			LinkedList<gm_symtab_entry> OLD_LIST = old_supple.get(0);
+			// supple new
+			LinkedList<gm_symtab_entry> NEW_LIST = new_supple.get(0);
+
 			ast_id lhs = old_sym.getId().copy(true);
 			ast_id rhs_s = new_sym.getId().copy(true);
 			ast_expr rhs = ast_expr.new_id_expr(rhs_s);
-    
+
 			ast_assign new_assign = ast_assign.new_assign_scala(lhs, rhs, gm_assignment_t.GMASSIGN_REDUCE, null, r_type);
-    
-			if (OLD_LIST.size() > 0)
-			{
+
+			if (OLD_LIST.size() > 0) {
 				assert OLD_LIST.size() == NEW_LIST.size();
 				new_assign.set_argminmax_assign(true);
-				Iterator<gm_symtab_entry> J1 = OLD_LIST.iterator();
-				Iterator<gm_symtab_entry> J2 = NEW_LIST.iterator();
-				for (; J1.hasNext(); J1++, J2++)
-				{
-					gm_symtab_entry lhs_sym = J1.next();
-					gm_symtab_entry rhs_sym = J2.next();
+				for (int j = 0; i < OLD_LIST.size(); j++) {
+					gm_symtab_entry lhs_sym = OLD_LIST.get(j);
+					gm_symtab_entry rhs_sym = NEW_LIST.get(j);
 					assert lhs_sym != null;
 					assert rhs_sym != null;
-					ast_id lhs = lhs_sym.getId().copy(true);
-					assert(lhs != null);
-					assert lhs.getSymInfo() != null;
-					ast_id rhs_s = rhs_sym.getId().copy(true);
-					ast_expr rhs = ast_expr.new_id_expr(rhs_s);
-					//printf("Hello:%s\n", lhs->get_genname());
-					new_assign.get_lhs_list().addLast(lhs);
-					new_assign.get_rhs_list().addLast(rhs);
+					ast_id lhs_inner = lhs_sym.getId().copy(true);
+					assert (lhs_inner != null);
+					assert lhs_inner.getSymInfo() != null;
+					ast_id rhs_s_inner = rhs_sym.getId().copy(true);
+					ast_expr rhs_inner = ast_expr.new_id_expr(rhs_s_inner);
+					new_assign.get_lhs_list().addLast(lhs_inner);
+					new_assign.get_rhs_list().addLast(rhs_inner);
 				}
 			}
-    
+
 			gen.generate_sent_reduce_assign(new_assign);
-    
+
 			if (new_assign != null)
 				new_assign.dispose();
 		}

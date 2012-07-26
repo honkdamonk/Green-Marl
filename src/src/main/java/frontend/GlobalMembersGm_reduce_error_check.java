@@ -5,7 +5,9 @@ import inc.GM_REDUCE_T;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import tangible.RefObject;
 import ast.ast_id;
+import ast.gm_rwinfo_list;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
@@ -13,7 +15,7 @@ import common.GlobalMembersGm_misc;
 
 public class GlobalMembersGm_reduce_error_check {
 	public static boolean is_conflict(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type,
-			tangible.RefObject<Boolean> is_bound_error, tangible.RefObject<Boolean> is_type_error) {
+			RefObject<Boolean> is_bound_error, RefObject<Boolean> is_type_error) {
 		is_type_error.argvalue = false;
 		is_bound_error.argvalue = false;
 		for (bound_info_t db : L) {
@@ -51,16 +53,16 @@ public class GlobalMembersGm_reduce_error_check {
 	}
 
 	// returns is_okay
-	public static boolean check_add_and_report_conflicts(LinkedList<bound_info_t> L, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> B) {
+	public static boolean check_add_and_report_conflicts(LinkedList<bound_info_t> L, HashMap<gm_symtab_entry, gm_rwinfo_list> B) {
 		for (gm_symtab_entry e : B.keySet()) {
-			LinkedList<gm_rwinfo> l = B.get(e);
+			gm_rwinfo_list l = B.get(e);
 			for (gm_rwinfo jj : l) {
 				boolean is_bound_error = false;
 				boolean is_type_error = false;
 				assert jj.bound_symbol != null;
 				assert jj.reduce_op != GM_REDUCE_T.GMREDUCE_NULL;
-				tangible.RefObject<Boolean> tempRef_is_bound_error = new tangible.RefObject<Boolean>(is_bound_error);
-				tangible.RefObject<Boolean> tempRef_is_type_error = new tangible.RefObject<Boolean>(is_type_error);
+				RefObject<Boolean> tempRef_is_bound_error = new RefObject<Boolean>(is_bound_error);
+				RefObject<Boolean> tempRef_is_type_error = new RefObject<Boolean>(is_type_error);
 				boolean tempVar = GlobalMembersGm_reduce_error_check.is_conflict(L, e, jj.bound_symbol, jj.reduce_op, tempRef_is_bound_error,
 						tempRef_is_type_error);
 				is_bound_error = tempRef_is_bound_error.argvalue;
@@ -85,9 +87,9 @@ public class GlobalMembersGm_reduce_error_check {
 		return true;
 	}
 
-	public static void remove_all(LinkedList<bound_info_t> L, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> B) {
+	public static void remove_all(LinkedList<bound_info_t> L, HashMap<gm_symtab_entry, gm_rwinfo_list> B) {
 		for (gm_symtab_entry e : B.keySet()) {
-			LinkedList<gm_rwinfo> l = B.get(e);
+			gm_rwinfo_list l = B.get(e);
 			for (gm_rwinfo jj : l) {
 				GlobalMembersGm_reduce_error_check.remove_bound(L, e, jj.bound_symbol, jj.reduce_op);
 			}

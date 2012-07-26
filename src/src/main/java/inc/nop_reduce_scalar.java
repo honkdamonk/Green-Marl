@@ -1,12 +1,14 @@
 package inc;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;
 import ast.ast_nop;
+import ast.gm_rwinfo_list;
 import backend_cpp.gm_cpp_gen;
 import frontend.GlobalMembersGm_rw_analysis;
 import frontend.gm_rwinfo;
@@ -37,13 +39,13 @@ public class nop_reduce_scalar extends ast_nop {
 		// constructor should be created if it does not yet exist:
 		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& R
 		// = sets->read_set;
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets.read_set);
+		HashMap<gm_symtab_entry, gm_rwinfo_list> R = new HashMap<gm_symtab_entry, gm_rwinfo_list>(sets.read_set);
 		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
 		// be a copy constructor call - this should be verified and a copy
 		// constructor should be created if it does not yet exist:
 		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& W
 		// = sets->write_set;
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets.write_set);
+		HashMap<gm_symtab_entry, gm_rwinfo_list> W = new HashMap<gm_symtab_entry, gm_rwinfo_list>(sets.write_set);
 
 		// read all old symbols
 		for (gm_symtab_entry entry : old_s) {
@@ -76,11 +78,11 @@ public class nop_reduce_scalar extends ast_nop {
 
 	public void generate(gm_cpp_gen gen)
 	{
-		java.util.Iterator<gm_symtab_entry> I1;
-		java.util.Iterator<gm_symtab_entry> I2;
-		java.util.Iterator<GM_REDUCE_T> I3;
-		java.util.Iterator<LinkedList<gm_symtab_entry>> I4; // supple old
-		java.util.Iterator<LinkedList<gm_symtab_entry>> I5; // supple new
+		Iterator<gm_symtab_entry> I1;
+		Iterator<gm_symtab_entry> I2;
+		Iterator<GM_REDUCE_T> I3;
+		Iterator<LinkedList<gm_symtab_entry>> I4; // supple old
+		Iterator<LinkedList<gm_symtab_entry>> I5; // supple new
 		I1 = old_s.begin();
 		I2 = new_s.begin();
 		I3 = reduce_op.begin();
@@ -104,8 +106,8 @@ public class nop_reduce_scalar extends ast_nop {
 			{
 				assert OLD_LIST.size() == NEW_LIST.size();
 				new_assign.set_argminmax_assign(true);
-				java.util.Iterator<gm_symtab_entry> J1 = OLD_LIST.iterator();
-				java.util.Iterator<gm_symtab_entry> J2 = NEW_LIST.iterator();
+				Iterator<gm_symtab_entry> J1 = OLD_LIST.iterator();
+				Iterator<gm_symtab_entry> J2 = NEW_LIST.iterator();
 				for (; J1.hasNext(); J1++, J2++)
 				{
 					gm_symtab_entry lhs_sym = J1.next();

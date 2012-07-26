@@ -2,7 +2,12 @@ package frontend;
 
 import inc.GM_PROP_USAGE_T;
 import inc.gm_compile_step;
+
+import java.util.HashMap;
+import java.util.HashSet;
+
 import ast.ast_procdef;
+import ast.gm_rwinfo_list;
 
 public class gm_fe_check_property_argument_usage extends gm_compile_step {
 	private gm_fe_check_property_argument_usage() {
@@ -11,10 +16,10 @@ public class gm_fe_check_property_argument_usage extends gm_compile_step {
 
 	public void process(ast_procdef proc) {
 		gm_symtab props = proc.get_symtab_field();
-		java.util.HashSet<gm_symtab_entry> SET = props.get_entries();
-		java.util.HashSet<gm_symtab_entry> write_or_read_write = new java.util.HashSet<gm_symtab_entry>();
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(proc.get_body()).read_set;
-		java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(proc.get_body()).write_set;
+		HashSet<gm_symtab_entry> SET = props.get_entries();
+		HashSet<gm_symtab_entry> write_or_read_write = new HashSet<gm_symtab_entry>();
+		HashMap<gm_symtab_entry, gm_rwinfo_list> R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(proc.get_body()).read_set;
+		HashMap<gm_symtab_entry, gm_rwinfo_list> W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(proc.get_body()).write_set;
 		for (gm_symtab_entry e : SET) {
 			if ((!R.containsKey(e)) && (!W.containsKey(e)))
 				e.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_UNUSED.getValue());

@@ -1,13 +1,16 @@
 package frontend;
 
+import java.util.HashMap;
+
 import ast.ast_extra_info;
+import ast.gm_rwinfo_list;
 
 public class gm_rwinfo_sets extends ast_extra_info
 {
-	public java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> read_set = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>();
-	public java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> write_set = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>();
-	public java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> reduce_set = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>();
-	public java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> mutate_set = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>();
+	public HashMap<gm_symtab_entry, gm_rwinfo_list> read_set = new HashMap<gm_symtab_entry, gm_rwinfo_list>();
+	public HashMap<gm_symtab_entry, gm_rwinfo_list> write_set = new HashMap<gm_symtab_entry, gm_rwinfo_list>();
+	public HashMap<gm_symtab_entry, gm_rwinfo_list> reduce_set = new HashMap<gm_symtab_entry, gm_rwinfo_list>();
+	public HashMap<gm_symtab_entry, gm_rwinfo_list> mutate_set = new HashMap<gm_symtab_entry, gm_rwinfo_list>();
 
 	public void dispose()
 	{

@@ -24,6 +24,7 @@ test/giraph/bin
 
 src/parse/gm_grammer.output
 src/parse/gm_grammer.tab.c
+src/target
 
 apps/output_cpp/generated
 apps/output_cpp/gm_graph/src/*.o

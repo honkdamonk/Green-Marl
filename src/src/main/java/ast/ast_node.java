@@ -286,6 +286,10 @@ public abstract class ast_node {
 			e.bval = b;
 	}
 
+	public void add_info_ptr(String id, Object ptr1) {
+		add_info_ptr(id, ptr1, null);
+	}
+	
 	public void add_info_ptr(String id, Object ptr1, Object ptr2) {
 		add_info(id, new ast_extra_info(ptr1, ptr2));
 	}

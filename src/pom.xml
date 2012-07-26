@@ -64,7 +64,7 @@
 					</descriptorRefs>
 					<archive>
 						<manifest>
-							<mainClass>ppl.greenmarl.Main</mainClass>
+							<mainClass>ppl.greenmarl.gm_main</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

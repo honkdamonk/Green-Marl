@@ -43,10 +43,10 @@ public class gm_frontend {
 	// ----------------------------------------------------
 	// interface to parser
 	// ----------------------------------------------------
-	public final int start_parse(tangible.RefObject<String> fname) {
+	public final int start_parse(String fname) {
 		// start lexer
-		if (GM_start_parse(fname.argvalue) == 0) {
-			System.out.printf("Error in loading %s\n", fname.argvalue);
+		if (GM_start_parse(fname) == 0) {
+			System.out.printf("Error in loading %s\n", fname);
 			return 0;
 		}
 
@@ -103,9 +103,7 @@ public class gm_frontend {
 	// Interface to compiler main
 	public final boolean do_local_frontend_process() {
 		// create information objects for all procedures
-		java.util.Iterator<ast_procdef> I;
-		for (I = procs.iterator(); I.hasNext();) {
-			ast_procdef p = I.next();
+		for (ast_procdef p : procs) {
 			proc_info.put(p, new gm_procinfo(p));
 		}
 
@@ -118,17 +116,15 @@ public class gm_frontend {
 	// ----------------------------------------------------------------------------------------
 	public final void reproduce() {
 
-		java.util.Iterator<ast_procdef> it;
-		for (it = procs.iterator(); it.hasNext();) {
-			(it.next()).reproduce(0);
+		for (ast_procdef p : procs) {
+			p.reproduce(0);
 		}
 	}
 
 	public final void dump_tree() {
 
-		java.util.Iterator<ast_procdef> it;
-		for (it = procs.iterator(); it.hasNext();) {
-			(it.next()).dump_tree(0);
+		for (ast_procdef p : procs) {
+			p.dump_tree(0);
 		}
 	}
 
@@ -155,7 +151,7 @@ public class gm_frontend {
 
 	public final ast_procdef get_next_proc() {
 		if (I == procs.end()) {
-			GlobalMembersGm_error.gm_set_curr_procname((String) "");
+			GlobalMembersGm_error.gm_set_curr_procname("");
 			set_current_proc(null);
 			return null;
 		} else {
@@ -185,12 +181,22 @@ public class gm_frontend {
 	// -------------------------------------------------------
 	// short-cut to current procedure's vocaburary
 	// -------------------------------------------------------
+	@Deprecated
 	public final void voca_add(tangible.RefObject<String> n) {
 		proc_info.get(_curr_proc).add_voca(n);
 	}
+	
+	public final void voca_add(String value) {
+		proc_info.get(_curr_proc).add_voca(value);
+	}
 
+	@Deprecated
 	public final boolean voca_isin(tangible.RefObject<String> n) {
 		return proc_info.get(_curr_proc).isin_voca(n);
+	}
+	
+	public final boolean voca_isin(String value) {
+		return proc_info.get(_curr_proc).isin_voca(value);
 	}
 
 	public final void voca_clear() {
@@ -253,10 +259,8 @@ public class gm_frontend {
 		// ORIGINAL LINE: sbyte* c =
 		// proc_info[_curr_proc]->generate_temp_name(base, extra1,
 		// try_org_name_first);
-		byte c = proc_info.get(_curr_proc).generate_temp_name(base, extra1, try_org_name_first);
-		tangible.RefObject<String> tempRef_c = new tangible.RefObject<String>(c);
-		voca_add(tempRef_c);
-		c = tempRef_c.argvalue;
+		String c = proc_info.get(_curr_proc).generate_temp_name(base, extra1, try_org_name_first);
+		voca_add(c);
 		return c;
 	}
 

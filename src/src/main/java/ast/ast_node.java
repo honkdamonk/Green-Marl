@@ -102,7 +102,7 @@ public abstract class ast_node {
 	public void apply_symtabs(gm_apply a, boolean is_post) {
 		assert has_scope();
 		boolean post_apply = is_post && a.has_separate_post_apply();
-		SYMTAB_TYPES t = get_nodetype() == (AST_NODE_TYPE.AST_PROCDEF) != 0 ? SYMTAB_TYPES.GM_SYMTAB_ARG : SYMTAB_TYPES.GM_SYMTAB_VAR;
+		SYMTAB_TYPES t = get_nodetype() == AST_NODE_TYPE.AST_PROCDEF ? SYMTAB_TYPES.GM_SYMTAB_ARG : SYMTAB_TYPES.GM_SYMTAB_VAR;
 		if (post_apply) {
 			a.apply2(get_symtab_var(), t);
 		} else {
@@ -286,6 +286,10 @@ public abstract class ast_node {
 			e.bval = b;
 	}
 
+	public void add_info_ptr(String id, Object ptr1) {
+		add_info_ptr(id, ptr1, null);
+	}
+	
 	public void add_info_ptr(String id, Object ptr1, Object ptr2) {
 		add_info(id, new ast_extra_info(ptr1, ptr2));
 	}
@@ -383,7 +387,7 @@ public abstract class ast_node {
 	}
 
 	public void copy_info_from(ast_node n) {
-		//TODO not tested!
+		// TODO not tested!
 		for (String s : n.extra.keySet()) {
 			ast_extra_info e = n.extra.get(s);
 			if (!this.extra.containsKey(s)) {

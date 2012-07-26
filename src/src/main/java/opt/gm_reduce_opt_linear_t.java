@@ -1,25 +1,29 @@
 package opt;
 
-import ast.AST_NODE_TYPE;
+import static inc.GMTYPE_T.GMTYPE_EDGEITER_ALL;
+import static inc.GMTYPE_T.GMTYPE_EDGEITER_ORDER;
+import static inc.GMTYPE_T.GMTYPE_EDGEITER_SET;
+import static inc.GMTYPE_T.GMTYPE_NODEITER_ALL;
+import static inc.GMTYPE_T.GMTYPE_NODEITER_ORDER;
+import static inc.GMTYPE_T.GMTYPE_NODEITER_SET;
+import inc.GMTYPE_T;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+
+import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_node;
 import ast.ast_sent;
-import frontend.GlobalMembersGm_fixup_bound_symbol;
-import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
 
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
 
-import static inc.GMTYPE_T.GMTYPE_NODEITER_ALL;
-import static inc.GMTYPE_T.GMTYPE_EDGEITER_ALL;
-import static inc.GMTYPE_T.GMTYPE_NODEITER_SET;
-import static inc.GMTYPE_T.GMTYPE_EDGEITER_SET;
-import static inc.GMTYPE_T.GMTYPE_NODEITER_ORDER;
-import static inc.GMTYPE_T.GMTYPE_EDGEITER_ORDER;
+import frontend.GlobalMembersGm_fixup_bound_symbol;
+import frontend.gm_symtab_entry;
 
 // optimize reductions if every assignment is reached linearly
 //
@@ -51,10 +55,10 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 		key.is_rev_bfs = is_rev_bfs;
 
 		if (!candidates.containsKey(key)) {
-			java.util.LinkedList<ast_assign> L = new java.util.LinkedList<ast_assign>();
+			LinkedList<ast_assign> L = new LinkedList<ast_assign>();
 			candidates.put(key, L); // copy
 		}
-		candidates.get(key).push_back(a);
+		candidates.get(key).addLast(a);
 
 		// todo distinguish fw and bw
 		return true;
@@ -62,16 +66,16 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 
 	public final void post_process() {
 
-		java.util.Iterator<triple_t, java.util.LinkedList<ast_assign>, triple_comp_t> I;
-		for (I = candidates.iterator(); I.hasNext();) {
-			gm_symtab_entry target = I.next().getKey().target;
-			gm_symtab_entry bound = I.next().getKey().bound;
-			java.util.LinkedList<ast_assign> L = I.next().getValue();
+		for (triple_t key : candidates.keySet()) {
+			gm_symtab_entry target = key.target;
+			gm_symtab_entry bound = key.bound;
+			LinkedList<ast_assign> L = candidates.get(key);
 
 			// check if every write is linear
 			if (check_all_okay(L, bound)) {
 				// add list to targets
-				targets.splice(targets.end(), L);
+				targets.addAll(L);
+				L.clear();
 			}
 		}
 
@@ -79,9 +83,7 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 	}
 
 	public final void post_process2() {
-		java.util.Iterator<ast_assign> I;
-		for (I = targets.iterator(); I.hasNext();) {
-			ast_assign a = I.next();
+		for (ast_assign a : targets) {
 			assert a.is_reduce_assign();
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			GlobalMembersGm_fixup_bound_symbol.gm_make_normal_assign(a);
@@ -100,11 +102,8 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 		return true;
 	}
 
-	private boolean check_all_okay(java.util.LinkedList<ast_assign> L, gm_symtab_entry bound) {
-		java.util.Iterator<ast_assign> I;
-		for (I = L.iterator(); I.hasNext();) {
-			ast_assign a = I.next();
-
+	private boolean check_all_okay(LinkedList<ast_assign> L, gm_symtab_entry bound) {
+		for (ast_assign a : L) {
 			if (a.get_lhs_field().get_first().getSymInfo() != bound)
 				return false;
 
@@ -145,7 +144,10 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 	// map [(target, bound, is_bfs) ==> list of assign]
 	// std::map< std::pair<gm_symtab_entry*, gm_symtab_entry*>,
 	// std::list<ast_assign*> > candidates;
-	private java.util.HashMap<triple_t, java.util.LinkedList<ast_assign>, triple_comp_t> candidates = new java.util.HashMap<triple_t, java.util.LinkedList<ast_assign>, triple_comp_t>();
-	private java.util.LinkedList<ast_assign> targets = new java.util.LinkedList<ast_assign>();
+	// private HashMap<triple_t, LinkedList<ast_assign>, triple_comp_t>
+	// candidates = new HashMap<triple_t, LinkedList<ast_assign>,
+	// triple_comp_t>();
+	private HashMap<triple_t, LinkedList<ast_assign>> candidates = new HashMap<triple_t, LinkedList<ast_assign>>();
+	private LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
 	private boolean under_rev_bfs;
 }

@@ -36,18 +36,16 @@ public class gm_flat_nested_sentblock_t extends gm_apply
 
 	public final void post_process()
 	{
-		for (Iterator<ast_sentblock> I = targets.iterator(); I.hasNext();)
+		for (ast_sentblock sb : targets)
 		{
-			ast_sentblock sb = I.next();
 			ast_sentblock parent = (ast_sentblock) sb.get_parent();
 
 			java.util.LinkedList<ast_sent> parent_sents = parent.get_sents();
 			java.util.LinkedList<ast_sent> my_sents = sb.get_sents();
 
 			// prepare moving mine to parent's
-			for (Iterator<ast_sent> J = my_sents.iterator(); J.hasNext();)
+			for (ast_sent s : my_sents)
 			{
-				ast_sent s = J.next();
 				s.set_parent(parent);
 			}
 

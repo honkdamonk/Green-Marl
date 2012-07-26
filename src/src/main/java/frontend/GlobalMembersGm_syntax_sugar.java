@@ -30,11 +30,11 @@ public class GlobalMembersGm_syntax_sugar
 			{
 				for (int i = 0; i < idl.get_length(); i++)
 				{
-					ast_id I = idl.get_item(i).copy();
+					ast_id I1 = idl.get_item(i).copy();
 					ast_idlist IDL = new ast_idlist();
 //C++ TO JAVA CONVERTER WARNING: The following line was determined to be a copy constructor call - this should be verified and a copy constructor should be created if it does not yet exist:
 //ORIGINAL LINE: IDL->add_id(I);
-					IDL.add_id(new Iterator(I));
+					IDL.add_id(new Iterator(I1));
 					ast_typedecl T = t.copy();
 
 					ast_argdecl aa = ast_argdecl.new_argdecl(IDL, T);

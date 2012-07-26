@@ -2,6 +2,7 @@ package common;
 
 import ast.ast_id;
 import inc.gm_procinfo;
+import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab_entry;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -21,7 +22,7 @@ public class gm_prepare_genname_T extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab_entry e, int symtab_type) {
+	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
 		ast_id ID = e.getId();
 		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
 		// pointers to value types:
@@ -38,9 +39,7 @@ public class gm_prepare_genname_T extends gm_apply {
 		String gen_name = proc_info.generate_temp_name(org_name, lang_voca, TRY_ORG_NAME_FIRST);
 
 		// add gen_name into proc_voca
-		tangible.RefObject<String> tempRef_gen_name = new tangible.RefObject<String>(gen_name);
-		proc_info.add_voca(tempRef_gen_name);
-		gen_name = tempRef_gen_name.argvalue;
+		proc_info.add_voca(gen_name);
 		ID.set_genname(gen_name);
 		return true;
 	}

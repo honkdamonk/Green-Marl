@@ -1,5 +1,6 @@
 package frontend;
 
+import tangible.RefObject;
 import inc.GMTYPE_T;
 import ast.ast_id;
 import ast.ast_typedecl;
@@ -326,10 +327,10 @@ public static boolean gm_check_target_is_defined(ast_id target, gm_symtab vars)
 				return false;
 			}
 		}
-		gm_symtab_entry old_e;
+		RefObject<gm_symtab_entry> old_e = new RefObject<gm_symtab_entry>(null);
 		boolean is_okay = SYM.check_duplicate_and_add_symbol(id, type, old_e, is_readable, is_writeable);
 		if (!is_okay)
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DUPLICATE, id, old_e.getId());
+			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DUPLICATE, id, old_e.argvalue.getId());
 
 		GlobalMembersGm_new_typecheck_step1.gm_find_and_connect_symbol(id, SYM);
 

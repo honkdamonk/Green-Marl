@@ -88,10 +88,8 @@ public class gm_opt_optimize_single_reduction_t extends gm_apply
 
 	public final void post_process()
 	{
-		java.util.Iterator<ast_assign> I;
-		for (I = targets.iterator(); I.hasNext();)
+		for (ast_assign a : targets)
 		{
-			ast_assign a = I.next();
 			assert a.is_reduce_assign();
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			GlobalMembersGm_fixup_bound_symbol.gm_make_normal_assign(a);

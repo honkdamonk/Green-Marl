@@ -163,8 +163,8 @@ public class GlobalMembersGm_rw_analysis {
 					j.dispose();
 			}
 			l.clear();
-			if (l != null)
-				l.dispose();
+//			if (l != null)
+//				l.dispose();
 		}
 		m.clear();
 	}
@@ -558,17 +558,17 @@ public class GlobalMembersGm_rw_analysis {
 				assert sym != null;
 				GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(rset, sym, new_entry, false);
 			} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
-				ast_field f = (ast_field) n;
-				gm_symtab_entry iter_sym = f.get_first().getSymInfo();
-				gm_symtab_entry field_sym = f.get_second().getSymInfo();
+				ast_field f1 = (ast_field) n;
+				gm_symtab_entry iter_sym = f1.get_first().getSymInfo();
+				gm_symtab_entry field_sym = f1.get_second().getSymInfo();
 
 				if (!DrvMap.containsKey(iter_sym)) {
-					new_entry = gm_rwinfo.new_field_inst(iter_sym, f.get_first());
+					new_entry = gm_rwinfo.new_field_inst(iter_sym, f1.get_first());
 				} // temporary driver or vector driver
 				else {
 					gm_range_type_t range_type = DrvMap.get(iter_sym).range_type;
 					boolean always = DrvMap.get(iter_sym).is_always;
-					new_entry = gm_rwinfo.new_range_inst(range_type, always, f.get_first());
+					new_entry = gm_rwinfo.new_range_inst(range_type, always, f1.get_first());
 				}
 				GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(rset, field_sym, new_entry);
 			}

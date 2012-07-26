@@ -272,10 +272,8 @@ public class gm_gps_gen extends BackendGenerator {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
 		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
-		Iterator<gm_gps_basic_block> I;
 
-		for (I = bb_blocks.iterator(); I.hasNext();) {
-			gm_gps_basic_block b = I.next();
+		for (gm_gps_basic_block b : bb_blocks) {
 			int id = b.get_id();
 			String.format(temp, "case %d: _master_state_%d(); break;", id, id);
 			Body.pushln(temp);
@@ -310,11 +308,10 @@ public class gm_gps_gen extends BackendGenerator {
 																	// temporary
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
 
-		for (I = bb_blocks.iterator(); I.hasNext();) {
-			gm_gps_basic_block b = I.next();
+		for (gm_gps_basic_block b : bb_blocks) {
 			do_generate_master_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(stdout);
+		GlobalMembersGm_reproduce.gm_redirect_reproduce(System.out);
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
 	}
 
@@ -354,10 +351,7 @@ public class gm_gps_gen extends BackendGenerator {
 		gm_symtab args = proc.get_symtab_var();
 		assert args != null;
 		HashSet<gm_symtab_entry> syms = args.get_entries();
-		Iterator<gm_symtab_entry> I;
-		for (I = syms.iterator(); I.hasNext();) {
-			gm_symtab_entry s = I.next();
-
+		for (gm_symtab_entry s : syms) {
 			// input argument
 			if (!s.getType().is_primitive() && (!s.getType().is_node()))
 				continue;
@@ -410,9 +404,7 @@ public class gm_gps_gen extends BackendGenerator {
 			String.format(temp, "bw.write(\"%s:\\t\" + %s + \"\\n\");", GlobalMembersGm_backend_gps.GPS_RET_VALUE, GlobalMembersGm_backend_gps.GPS_RET_VALUE);
 			Body.pushln(temp);
 		}
-		for (I = syms.iterator(); I.hasNext();) {
-			gm_symtab_entry s = I.next();
-
+		for (gm_symtab_entry s : syms) {
 			// output arguments
 			if (!s.getType().is_primitive())
 				continue;
@@ -432,10 +424,8 @@ public class gm_gps_gen extends BackendGenerator {
 		String temp = new String(new char[1024]);
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
-		Iterator<gm_symtab_entry> I;
 
-		for (I = scalar.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next();
+		for (gm_symtab_entry e : scalar) {
 			gps_syminfo syminfo = (gps_syminfo) e.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 
 			// printf("%s\n", e->getId()->get_genname());
@@ -465,9 +455,8 @@ public class gm_gps_gen extends BackendGenerator {
 		// Intra-Loop Merging
 		if (proc.has_info(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL)) {
 			LinkedList<Object> L = proc.get_info_list(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL);
-			Iterator<Object> l;
-			for (l = L.iterator(); l.hasNext();) {
-				gm_gps_basic_block bb = (gm_gps_basic_block) (l.next());
+			for (Object obj : L) {
+				gm_gps_basic_block bb = (gm_gps_basic_block) obj;
 				String.format(temp, "private boolean %s%d = true;", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, bb.get_id());
 				Body.pushln(temp);
 			}
@@ -688,10 +677,8 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("// Keys for shared_variables ");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
-		Iterator<gm_symtab_entry> I;
 
-		for (I = scalar.iterator(); I.hasNext();) {
-			gm_symtab_entry sym = I.next();
+		for (gm_symtab_entry sym : scalar) {
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			assert syminfo != null;
 
@@ -744,9 +731,7 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("// properties");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> prop = is_edge_prop ? info.get_edge_prop_symbols() : info.get_node_prop_symbols();
-		Iterator<gm_symtab_entry> I;
-		for (I = prop.iterator(); I.hasNext();) {
-			gm_symtab_entry sym = I.next();
+		for (gm_symtab_entry sym : prop) {
 			// gps_syminfo* syminfo = (gps_syminfo*)
 			// sym->find_info(TAG_BB_USAGE);
 			String.format(temp, "%s %s;", get_type_string(sym.getType().get_target_type(), is_master_generate()), sym.getId().get_genname());
@@ -890,10 +875,8 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("switch(_state_vertex) { ");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
-		Iterator<gm_gps_basic_block> I;
 		int cnt = 0;
-		for (I = bb_blocks.iterator(); I.hasNext();) {
-			gm_gps_basic_block b = I.next();
+		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			int id = b.get_id();
@@ -911,13 +894,12 @@ public class gm_gps_gen extends BackendGenerator {
 		GlobalMembersGm_reproduce.gm_redirect_reproduce(f_body); // for
 																	// temporary
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
-		for (I = bb_blocks.iterator(); I.hasNext();) {
-			gm_gps_basic_block b = I.next();
+		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			do_generate_vertex_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(stdout);
+		GlobalMembersGm_reproduce.gm_redirect_reproduce(System.out);
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
 	}
 
@@ -963,9 +945,7 @@ public class gm_gps_gen extends BackendGenerator {
 			Body.pushln("for(MessageData _msg : _msgs) {");
 
 			LinkedList<gm_gps_comm_unit> R = b.get_receivers();
-			Iterator<gm_gps_comm_unit> I;
-			for (I = R.iterator(); I.hasNext();) {
-				gm_gps_comm_unit U = I.next();
+			for (gm_gps_comm_unit U : R) {
 				if (U.get_type() == gm_gps_comm_t.GPS_COMM_NESTED) {
 					ast_foreach fe = U.fe;
 					assert fe != null;
@@ -1041,10 +1021,9 @@ public class gm_gps_gen extends BackendGenerator {
 			Body.NL();
 
 			LinkedList<ast_sent> sents = b.get_sents();
-			Iterator<ast_sent> I;
+
 			int cnt = 0;
-			for (I = sents.iterator(); I.hasNext();) {
-				ast_sent s = I.next();
+			for (ast_sent s : sents) {
 				assert s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH;
 				ast_foreach fe = (ast_foreach) s;
 				ast_sent body = fe.get_body();
@@ -1547,7 +1526,7 @@ public class gm_gps_gen extends BackendGenerator {
 	public void generate_sent_assign(ast_assign a) {
 		// normal assign
 		if (is_master_generate()) {
-			this.gm_code_generator.generate_sent_assign(a);
+			generate_sent_assign(a);
 			return;
 		}
 
@@ -1586,7 +1565,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 			// normal assign
 			if (!syminfo.is_scoped_global()) {
-				this.gm_code_generator.generate_sent_assign(a);
+				generate_sent_assign(a);
 				return;
 			} else {
 				// write to global scalar
@@ -1600,29 +1579,25 @@ public class gm_gps_gen extends BackendGenerator {
 			}
 		} else {
 			ast_field f = a.get_lhs_field();
-
-			this.gm_code_generator.generate_sent_assign(a);
+			generate_sent_assign(a);
 		}
 	}
 
 	public void generate_sent_block(ast_sentblock sb, boolean need_brace) {
 		LinkedList<ast_sent> sents = sb.get_sents();
 
-		Iterator<ast_sent> i;
 		if (need_brace)
 			Body.pushln("{");
 		if (sb.has_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB)) {
 			HashSet<Object> S = sb.get_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB);
-			Iterator<Object> I;
-			for (I = S.iterator(); I.hasNext();) {
-				gm_symtab_entry sym = (gm_symtab_entry) I.next();
+			for (Object obj : S) {
+				gm_symtab_entry sym = (gm_symtab_entry) obj;
 				get_lib().generate_message_create_for_random_write(sb, sym, Body);
 			}
 			Body.NL();
 		}
 
-		for (i = sents.iterator(); i.hasNext();) {
-			ast_sent s = i.next();
+		for (ast_sent s : sents) {
 			generate_sent(s);
 		}
 
@@ -1630,9 +1605,8 @@ public class gm_gps_gen extends BackendGenerator {
 			Body.NL();
 
 			HashSet<Object> S = sb.get_info_set(GlobalMembersGm_backend_gps.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB);
-			Iterator<Object> I;
-			for (I = S.iterator(); I.hasNext();) {
-				gm_symtab_entry sym = (gm_symtab_entry) I.next();
+			for (Object obj : S) {
+				gm_symtab_entry sym = (gm_symtab_entry) obj;
 				get_lib().generate_message_send_for_random_write(sb, sym, Body);
 			}
 		}

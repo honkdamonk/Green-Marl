@@ -45,11 +45,13 @@ public class gm_print_rw_info extends gm_apply {
 			else
 				System.out.printf("{%s:", e.getId().get_orgname());
 
-			Iterator<gm_rwinfo> ii;
-			for (ii = l.iterator(); ii.hasNext();) {
-				if (ii != l.iterator())
+			boolean first = true;
+			for (gm_rwinfo info : l) {
+				if (first)
+					first = false;
+				else
 					System.out.print(",");
-				(ii.next()).print();
+				info.print();
 			}
 
 			System.out.print("}");

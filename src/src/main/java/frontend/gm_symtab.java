@@ -1,5 +1,6 @@
 package frontend;
 
+import tangible.RefObject;
 import ast.ast_id;
 import ast.ast_node;
 import ast.ast_typedecl;
@@ -22,9 +23,7 @@ public class gm_symtab {
 		 * for(int i=0;i<entries.size(); i++) { gm_symtab_entry* e = entries[i];
 		 * delete e; }
 		 */
-		java.util.Iterator<gm_symtab_entry> I;
-		for (I = entries.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next();
+		for (gm_symtab_entry e : entries) {
 			if (e != null)
 				e.dispose();
 		}
@@ -46,12 +45,12 @@ public class gm_symtab {
 
 	// if old entry is not found, copy of id and copy of typedecl is added into
 	// the table
-	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA) {
-		return check_duplicate_and_add_symbol(id, type, old_def, isRA, true);
+	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA) {
+		return check_duplicate_and_add_symbol(id, type, old_def_ref, isRA, true);
 	}
 
-	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def) {
-		return check_duplicate_and_add_symbol(id, type, old_def, true, true);
+	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref) {
+		return check_duplicate_and_add_symbol(id, type, old_def_ref, true, true);
 	}
 
 	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
@@ -59,22 +58,22 @@ public class gm_symtab {
 	// ORIGINAL LINE: boolean check_duplicate_and_add_symbol(ast_id* id,
 	// ast_typedecl* type, gm_symtab_entry*& old_def, boolean isRA = true,
 	// boolean isWA = true)
-	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA, boolean isWA) {
+	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA, boolean isWA) {
 		assert id.getSymInfo() == null;
 		// printf("check duplicate for %s\n", id->get_orgname());
-		old_def = find_symbol(id);
-		if (old_def != null)
+		old_def_ref.argvalue = find_symbol(id);
+		if (old_def_ref.argvalue != null)
 			return false;
 		add_entry(id, type, isRA, isWA); // copy is created inside
 		return true;
 	}
 
-	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA) {
-		return check_and_add_symbol(id, type, old_def, isRA, true);
+	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA) {
+		return check_and_add_symbol(id, type, old_def_ref, isRA, true);
 	}
 
-	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def) {
-		return check_and_add_symbol(id, type, old_def, true, true);
+	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref) {
+		return check_and_add_symbol(id, type, old_def_ref, true, true);
 	}
 
 	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
@@ -82,15 +81,13 @@ public class gm_symtab {
 	// ORIGINAL LINE: boolean check_and_add_symbol(ast_id* id, ast_typedecl*
 	// type, gm_symtab_entry*& old_def, boolean isRA = true, boolean isWA =
 	// true)
-	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, gm_symtab_entry old_def, boolean isRA, boolean isWA) {
-		return check_duplicate_and_add_symbol(id, type, old_def, isRA, isWA);
+	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA, boolean isWA) {
+		return check_duplicate_and_add_symbol(id, type, old_def_ref, isRA, isWA);
 	}
 
 	public final gm_symtab_entry find_symbol(ast_id id) {
 		// for(int i=0;i<entries.size(); i++) {
-		java.util.Iterator<gm_symtab_entry> I;
-		for (I = entries.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next();
+		for (gm_symtab_entry e : entries) {
 			// gm_symtab_entry* e = entries[i];
 			String c = e.getId().get_orgname();
 			String c2 = id.get_orgname();
@@ -133,10 +130,9 @@ public class gm_symtab {
 	// (assertion: name conflict has been resolved before calling this function)
 	public final void merge(gm_symtab A) {
 		assert A != null;
-		java.util.Iterator<gm_symtab_entry> i;
-		for (i = A.entries.iterator(); i.hasNext();) {
+		for (gm_symtab_entry entry : A.entries) {
 			// entries.push_back(*i);
-			entries.add(i.next());
+			entries.add(entry);
 		}
 		A.entries.clear();
 	}
@@ -162,8 +158,8 @@ public class gm_symtab {
 
 	public final int get_graph_declaration_count() {
 		int count = 0;
-		for (java.util.Iterator<gm_symtab_entry> II = entries.iterator(); II.hasNext();) {
-			ast_typedecl entryType = (II.next()).getType();
+		for (gm_symtab_entry entry : entries) {
+			ast_typedecl entryType = entry.getType();
 			if (entryType.is_graph()) {
 				count++;
 			}

@@ -60,7 +60,7 @@ import common.gm_vocabulary;
 // interface for graph library Layer
 //-----------------------------------------------------------------
 //C++ TO JAVA CONVERTER TODO TASK: Multiple inheritance is not available in Java:
-public abstract class gm_cpp_gen extends BackendGenerator {
+public class gm_cpp_gen extends BackendGenerator {
 	// C++ TO JAVA CONVERTER TODO TASK: Java has no concept of a 'friend' class:
 	// friend class nop_reduce_scalar;
 	// data structure for generation

@@ -75,9 +75,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		gm_symtab_entry out_iter = null;
 
 		// process raw property access first
-		java.util.Iterator<ast_expr> I;
-		for (I = exprs.iterator(); I.hasNext();) {
-			ast_expr e = I.next();
+		for (ast_expr e : exprs) {
 			if (e.is_field()) {
 				gm_symtab_entry p = e.get_field().get_second().getSymInfo();
 				if (!props_vars.containsKey(p)) {
@@ -94,8 +92,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		}
 
 		// process complicated sub expressions
-		for (I = exprs.iterator(); I.hasNext();) {
-			ast_expr e = I.next();
+		for (ast_expr e : exprs) {
 			if (e.is_field())
 				continue;
 
@@ -115,8 +112,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		}
 
 		// replace accesses
-		for (I = exprs.iterator(); I.hasNext();) {
-			ast_expr e = I.next();
+		for (ast_expr e : exprs) {
 			// if not is_composed_of ...
 			if (e.is_field())
 				GlobalMembersGm_gps_new_rewrite_rhs.replace_access_expr(e, props_vars.get(e.get_field().get_second().getSymInfo()), true);
@@ -152,16 +148,14 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 		// move edge-defining writes at the top
 		java.util.LinkedList<ast_sent> sents_to_move = new java.util.LinkedList<ast_sent>();
-		java.util.Iterator<ast_sent> Y;
-		for (Y = sb.get_sents().iterator(); Y.hasNext();) {
-			ast_sent s = Y.next();
+		for (ast_sent s : sb.get_sents()) {
 			if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINING_WRITE)) {
 				sents_to_move.addLast(s);
 			}
 		}
-		for (Y = sents_to_move.iterator(); Y.hasNext();) {
-			GlobalMembersGm_transform_helper.gm_ripoff_sent(Y.next());
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, Y.next());
+		for (ast_sent s : sb.get_sents()) {
+			GlobalMembersGm_transform_helper.gm_ripoff_sent(s);
+			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, s);
 		}
 
 	}

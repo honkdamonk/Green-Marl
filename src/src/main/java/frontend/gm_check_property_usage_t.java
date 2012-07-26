@@ -79,10 +79,8 @@ public class gm_check_property_usage_t extends gm_apply
 				{
 					property_is_read(f.get_second().getSymInfo(), f.get_first().getSymInfo(), true);
 					java.util.LinkedList<ast_node> L = a.get_lhs_list();
-					java.util.Iterator<ast_node> I;
-					for (I = L.iterator(); I.hasNext();)
+					for (ast_node n : L)
 					{
-						ast_node n = I.next();
 						assert n.get_nodetype() == AST_NODE_TYPE.AST_FIELD;
 						ast_field f2 = (ast_field) n;
 						property_is_read(f2.get_second().getSymInfo(), f2.get_first().getSymInfo(), true);
@@ -122,10 +120,8 @@ public class gm_check_property_usage_t extends gm_apply
 				{
 					topmost_iterator = null;
 					// finish written
-					java.util.Iterator<gm_symtab_entry> I;
-					for (I = under_current_linear_update.iterator(); I.hasNext();)
+					for (gm_symtab_entry prop : under_current_linear_update)
 					{
-						gm_symtab_entry prop = I.next();
 						if (prop.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INVALID.getValue())
 							continue;
 

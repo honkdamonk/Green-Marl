@@ -40,10 +40,8 @@ public class GlobalMembersGm_merge_loops {
 	// 3. merge two body(see gm_merge_sentlock.cc)
 	// ---------------------------------------------------------
 	public static boolean is_linear_access_only(java.util.LinkedList<gm_rwinfo> L) {
-		java.util.Iterator<gm_rwinfo> i;
 		assert L != null;
-		for (i = L.iterator(); i.hasNext();) {
-			gm_rwinfo rw = i.next();
+		for (gm_rwinfo rw : L) {
 			assert rw != null;
 			if (rw.access_range != gm_range_type_t.GM_RANGE_LINEAR)
 				return false;
@@ -62,7 +60,7 @@ public class GlobalMembersGm_merge_loops {
 			// if it does not yet exist:
 			// ORIGINAL LINE: j = S2.find(e);
 			j.copyFrom(S2.get(e));
-			if (j.hasNext()) {
+			if (S2.containsKey(e)) {
 				// found entry
 				if (!e.getType().is_property()) // scala
 				{
@@ -78,7 +76,7 @@ public class GlobalMembersGm_merge_loops {
 					// check S1, S2 is linearly accessed only.
 					if (!GlobalMembersGm_merge_loops.is_linear_access_only(S1.get(e)))
 						return true;
-					if (!GlobalMembersGm_merge_loops.is_linear_access_only(j.next().getValue()))
+					if (!GlobalMembersGm_merge_loops.is_linear_access_only(S2.get(e)))
 						return true;
 					if (check_reduce) // if e is in the reduce-set,
 					{

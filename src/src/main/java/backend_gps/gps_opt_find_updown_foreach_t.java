@@ -50,11 +50,8 @@ public class gps_opt_find_updown_foreach_t extends gm_apply
 		//  ==>
 		//  Foreach(i: n.InNbrs) If (i.lev == curr_level -1) { ... }
 		//-------------------------
-		java.util.Iterator<ast_foreach> I;
-		for (I = targets.iterator(); I.hasNext();)
+		for (ast_foreach fe : targets)
 		{
-			ast_foreach fe = I.next();
-
 			ast_sent body = fe.get_body();
 			GlobalMembersGm_transform_helper.gm_ripoff_sent(body);
 

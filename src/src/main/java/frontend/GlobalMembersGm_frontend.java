@@ -6,6 +6,7 @@ import inc.GM_REDUCE_T;
 import inc.expr_list;
 import inc.gm_assignment_t;
 import inc.lhs_list;
+import tangible.Extern;
 import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_argdecl;
@@ -64,7 +65,7 @@ public class GlobalMembersGm_frontend {
 	// gm_apply_compiler_stage(java.util.LinkedList<gm_compile_step> LIST);
 	// extern boolean gm_apply_all_proc(gm_compile_step S);
 
-	public static String GMUSAGE_PROPERTY = "X";
+	public static String GMUSAGE_PROPERTY = "GMUSAGE_PROPERTY";
 
 	// --------------------------------------------
 	// Functions called from gm_grammer.y
@@ -134,7 +135,7 @@ public class GlobalMembersGm_frontend {
 		ast_sentblock b = GlobalMembersGm_main.FE.get_current_sentblock();
 		assert b != null;
 		b.add_sent(sent);
-		sent.set_empty_lines_before(GM_get_empty_lines());
+		sent.set_empty_lines_before(Extern.GM_get_empty_lines());
 	}
 
 	public static ast_node GM_expr_id_access(ast_node id) {

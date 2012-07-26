@@ -53,9 +53,8 @@ public class ss2_reduce_op extends gm_apply {
 	}
 
 	public final void post_process() {
-		java.util.Iterator<ast_expr_reduce> i;
-		for (i = targets.iterator(); i.hasNext();) {
-			post_process_body(i.next());
+		for (ast_expr_reduce reduce : targets) {
+			post_process_body(reduce);
 		}
 	}
 

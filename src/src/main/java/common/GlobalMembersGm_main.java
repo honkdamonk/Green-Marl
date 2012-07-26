@@ -1,6 +1,9 @@
 package common;
 
 import inc.gm_backend;
+
+import java.util.LinkedList;
+
 import opt.gm_independent_optimize;
 import backend_cpp.gm_cpp_gen;
 import backend_giraph.gm_giraph_gen;
@@ -50,13 +53,11 @@ public class GlobalMembersGm_main {
 	public static gm_gps_gen PREGEL_BE; // TODO
 	public static gm_backend BACK_END;
 	public static gm_userargs OPTIONS = new gm_userargs();
-	public static gm_independent_optimize IND_OPT = new gm_independent_optimize(); // extern
-																					// defined
-																					// in
-																					// gm_ind_opt.h
+	// extern defined in gm_ind_opt.h
+	public static gm_independent_optimize IND_OPT = new gm_independent_optimize();
 	public static gm_builtin_manager BUILT_IN = new gm_builtin_manager();
 
-	public static java.util.LinkedList<Byte> GM_input_lists = new java.util.LinkedList<Byte>();
+	static LinkedList<String> GM_input_lists = new LinkedList<String>();
 
 	// -------------------------------------------------------------
 	// For debug
@@ -189,7 +190,7 @@ public class GlobalMembersGm_main {
 		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
 		// pointers to value types:
 		// ORIGINAL LINE: sbyte* fname = GM_input_lists.front();
-		byte fname = GM_input_lists.getFirst();
+		String fname = GM_input_lists.getFirst();
 		Path.parsePath(fname);
 
 		String name = OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_TARGET);
@@ -231,13 +232,8 @@ public class GlobalMembersGm_main {
 			// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent
 			// for pointers to value types:
 			// ORIGINAL LINE: sbyte* fname = GM_input_lists.front();
-			byte fname = GM_input_lists.getFirst();
-			tangible.RefObject<String> tempRef_fname = new tangible.RefObject<String>(fname);
-			GlobalMembersGm_error.gm_set_current_filename(tempRef_fname);
-			fname = tempRef_fname.argvalue;
-			tangible.RefObject<String> tempRef_fname2 = new tangible.RefObject<String>(fname);
-			FE.start_parse(tempRef_fname2);
-			fname = tempRef_fname2.argvalue;
+			String fname1 = GM_input_lists.getFirst();
+			GlobalMembersGm_error.gm_set_current_filename(fname1);
 			if (GlobalMembersGm_error.GM_is_parse_error())
 				System.exit(1);
 		}

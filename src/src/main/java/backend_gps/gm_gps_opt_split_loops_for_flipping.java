@@ -31,10 +31,9 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step
 		//-------------------------------------
 		//  - Now split the loops
 		//-------------------------------------
-		java.util.Iterator<ast_foreach> I;
-		for (I = SET.iterator(); I.hasNext();)
+		for (ast_foreach fe : SET)
 		{
-			GlobalMembersGm_gps_opt_split_loops_for_flipping.split_the_loop(I.next());
+			GlobalMembersGm_gps_opt_split_loops_for_flipping.split_the_loop(fe);
 		}
     
 		GlobalMembersGm_flat_nested_sentblock.gm_flat_nested_sentblock(p);

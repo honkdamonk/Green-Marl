@@ -34,13 +34,11 @@ public abstract class gm_hoist_normal_sent_t extends gm_apply
 		ast_sentblock sb = (ast_sentblock) s;
 
 		java.util.LinkedList<ast_sent> sents = sb.get_sents(); // make a copy of sentence list (right?)
-		java.util.Iterator<ast_sent> i_out;
-		for (i_out = sents.iterator(); i_out.hasNext();)
+		for (ast_sent target : sents)
 		{
 			//--------------------------------------
 			// find target assign sentence
 			//--------------------------------------
-			ast_sent target = i_out.next();
 			if (!check_target((ast_assign) target))
 				continue;
 
@@ -51,10 +49,8 @@ public abstract class gm_hoist_normal_sent_t extends gm_apply
 			//--------------------------------------
 			// now find the possible upmost position
 			//--------------------------------------
-			java.util.Iterator<ast_sent> i_in;
-			for (i_in = sents2.iterator(); i_in.hasNext();)
+			for (ast_sent S : sents2)
 			{
-				ast_sent S = i_in.next();
 				if (S == target)
 					break;
 				if (stack.size() == 0)

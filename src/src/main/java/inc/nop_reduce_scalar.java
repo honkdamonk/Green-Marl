@@ -1,6 +1,5 @@
 package inc;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -8,7 +7,7 @@ import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;
 import ast.ast_nop;
-import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 import backend_cpp.gm_cpp_gen;
 import frontend.GlobalMembersGm_rw_analysis;
 import frontend.gm_rwinfo;
@@ -34,18 +33,8 @@ public class nop_reduce_scalar extends ast_nop {
 	public boolean do_rw_analysis() {
 
 		gm_rwinfo_sets sets = GlobalMembersGm_rw_analysis.get_rwinfo_sets(this);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& R
-		// = sets->read_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> R = new HashMap<gm_symtab_entry, gm_rwinfo_list>(sets.read_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& W
-		// = sets->write_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> W = new HashMap<gm_symtab_entry, gm_rwinfo_list>(sets.write_set);
+		gm_rwinfo_map R = new gm_rwinfo_map(sets.read_set);
+		gm_rwinfo_map W = new gm_rwinfo_map(sets.write_set);
 
 		// read all old symbols
 		for (gm_symtab_entry entry : old_s) {

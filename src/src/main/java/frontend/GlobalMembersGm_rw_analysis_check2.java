@@ -19,13 +19,13 @@ import static frontend.gm_range_type_t.GM_RANGE_LEVEL_UP;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_sent;
 import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
@@ -35,7 +35,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// required in Java:
 	// extern HashMap<gm_symtab_entry*, range_cond_t> Default_DriverMap;
 	// extern void traverse_expr_for_readset_adding(ast_expr e,
-	// HashMap<gm_symtab_entry, gm_rwinfo_list> rset,
+	// gm_rwinfo_map rset,
 	// HashMap<gm_symtab_entry, range_cond_t> DrvMap);
 	public static boolean is_reported(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, gm_conflict_t y) {
 		for (conf_info_t db : errors) {
@@ -167,8 +167,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// check if two sets may conflict with each other
 	// return is_okay.
 	// ------------------------------------------------------------
-	public static boolean check_rw_conf_error(HashMap<gm_symtab_entry, gm_rwinfo_list> S1, HashMap<gm_symtab_entry, gm_rwinfo_list> S2,
-			gm_conflict_t conf_type, LinkedList<conf_info_t> Report) {
+	public static boolean check_rw_conf_error(gm_rwinfo_map S1, gm_rwinfo_map S2, gm_conflict_t conf_type, LinkedList<conf_info_t> Report) {
 		boolean is_okay = true;
 		boolean is_warning;
 		GM_ERRORS_AND_WARNINGS error_code;
@@ -251,12 +250,11 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// ==================================================================
 	// For depenendcy detection
 	// ==================================================================
-	public static boolean gm_does_intersect(HashMap<gm_symtab_entry, gm_rwinfo_list> S1, HashMap<gm_symtab_entry, gm_rwinfo_list> S2) {
+	public static boolean gm_does_intersect(gm_rwinfo_map S1, gm_rwinfo_map S2) {
 		return gm_does_intersect(S1, S2, false);
 	}
 
-	public static boolean gm_does_intersect(HashMap<gm_symtab_entry, gm_rwinfo_list> S1, HashMap<gm_symtab_entry, gm_rwinfo_list> S2,
-			boolean regard_mutate_direction) {
+	public static boolean gm_does_intersect(gm_rwinfo_map S1, gm_rwinfo_map S2, boolean regard_mutate_direction) {
 
 		for (gm_symtab_entry e : S1.keySet()) {
 			if (S2.containsKey(e)) {
@@ -296,42 +294,13 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	}
 
 	public static boolean gm_has_dependency(gm_rwinfo_sets P_SET, gm_rwinfo_sets Q_SET) {
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>&
-		// P_R = P_SET->read_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> P_R = new HashMap<gm_symtab_entry, gm_rwinfo_list>(P_SET.read_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>&
-		// P_W = P_SET->write_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> P_W = new HashMap<gm_symtab_entry, gm_rwinfo_list>(P_SET.write_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>&
-		// P_M = P_SET->mutate_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> P_M = new HashMap<gm_symtab_entry, gm_rwinfo_list>(P_SET.mutate_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>&
-		// Q_R = Q_SET->read_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> Q_R = new HashMap<gm_symtab_entry, gm_rwinfo_list>(Q_SET.read_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>&
-		// Q_W = Q_SET->write_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> Q_W = new HashMap<gm_symtab_entry, gm_rwinfo_list>(Q_SET.write_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>&
-		// Q_M = Q_SET->mutate_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> Q_M = new HashMap<gm_symtab_entry, gm_rwinfo_list>(Q_SET.mutate_set);
+
+		gm_rwinfo_map P_R = new gm_rwinfo_map(P_SET.read_set);
+		gm_rwinfo_map P_W = new gm_rwinfo_map(P_SET.write_set);
+		gm_rwinfo_map P_M = new gm_rwinfo_map(P_SET.mutate_set);
+		gm_rwinfo_map Q_R = new gm_rwinfo_map(Q_SET.read_set);
+		gm_rwinfo_map Q_W = new gm_rwinfo_map(Q_SET.write_set);
+		gm_rwinfo_map Q_M = new gm_rwinfo_map(Q_SET.mutate_set);
 
 		// true dependency
 		if (GlobalMembersGm_rw_analysis_check2.gm_does_intersect(P_W, Q_R, false))
@@ -359,19 +328,19 @@ public class GlobalMembersGm_rw_analysis_check2 {
 		return false;
 	}
 
-	public static HashMap<gm_symtab_entry, gm_rwinfo_list> gm_get_reduce_set(ast_sent S) {
+	public static gm_rwinfo_map gm_get_reduce_set(ast_sent S) {
 		assert S != null;
 		return GlobalMembersGm_rw_analysis.get_rwinfo_sets(S).reduce_set;
 	}
 
-	public static HashMap<gm_symtab_entry, gm_rwinfo_list> gm_get_write_set(ast_sent S) {
+	public static gm_rwinfo_map gm_get_write_set(ast_sent S) {
 		assert S != null;
 		return GlobalMembersGm_rw_analysis.get_rwinfo_sets(S).write_set;
 	}
 
 	public static boolean gm_is_modified(ast_sent S, gm_symtab_entry e) {
 
-		HashMap<gm_symtab_entry, gm_rwinfo_list> W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
+		gm_rwinfo_map W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
 		for (gm_symtab_entry w_sym : W.keySet()) {
 			if (e == w_sym)
 				return true;
@@ -381,7 +350,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 
 	public static boolean gm_is_modified_with_condition(ast_sent S, gm_symtab_entry e, gm_rwinfo_query Q) {
 		assert Q != null;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
+		gm_rwinfo_map W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
 		for (gm_symtab_entry w_sym : W.keySet()) {
 			if (e != w_sym)
 				continue;
@@ -415,7 +384,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// -----------------------------------------------------
 	// For debug
 	// -----------------------------------------------------
-	public static void gm_print_rwinfo_set(HashMap<gm_symtab_entry, gm_rwinfo_list> m) {
+	public static void gm_print_rwinfo_set(gm_rwinfo_map m) {
 		boolean first = true;
 		for (gm_symtab_entry e : m.keySet()) {
 			gm_rwinfo_list l = m.get(e);

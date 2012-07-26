@@ -1,11 +1,11 @@
 package opt;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 
 import common.GlobalMembersGm_resolve_nc;
 
@@ -49,8 +49,8 @@ public class GlobalMembersGm_merge_loops {
 		return true;
 	}
 
-	public static boolean intersect_check_for_merge(HashMap<gm_symtab_entry, gm_rwinfo_list> S1,
-			HashMap<gm_symtab_entry, gm_rwinfo_list> S2, HashMap<gm_symtab_entry, gm_rwinfo_list> S1_reduce,
+	public static boolean intersect_check_for_merge(gm_rwinfo_map S1,
+			gm_rwinfo_map S2, gm_rwinfo_map S1_reduce,
 			boolean check_reduce) {
 		Map.Entry<gm_symtab_entry, gm_rwinfo_list> j; //TODO argl...shoot me -.-
 		for (gm_symtab_entry e : S1.keySet()) {
@@ -131,50 +131,15 @@ public class GlobalMembersGm_merge_loops {
 		gm_rwinfo_sets P_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(P);
 		gm_rwinfo_sets Q_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(Q);
 
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*,
-		// LinkedList<gm_rwinfo*>*>& P_R = P_SET->read_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> P_R = new HashMap<gm_symtab_entry, gm_rwinfo_list>(P_SET.read_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*,
-		// LinkedList<gm_rwinfo*>*>& P_W = P_SET->write_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> P_W = new HashMap<gm_symtab_entry, gm_rwinfo_list>(P_SET.write_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*,
-		// LinkedList<gm_rwinfo*>*>& Q_R = Q_SET->read_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> Q_R = new HashMap<gm_symtab_entry, gm_rwinfo_list>(Q_SET.read_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*,
-		// LinkedList<gm_rwinfo*>*>& Q_W = Q_SET->write_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> Q_W = new HashMap<gm_symtab_entry, gm_rwinfo_list>(Q_SET.write_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*,
-		// LinkedList<gm_rwinfo*>*>& P_M = P_SET->mutate_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> P_M = new HashMap<gm_symtab_entry, gm_rwinfo_list>(P_SET.mutate_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*,
-		// LinkedList<gm_rwinfo*>*>& Q_M = Q_SET->mutate_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> Q_M = new HashMap<gm_symtab_entry, gm_rwinfo_list>(Q_SET.mutate_set);
+		gm_rwinfo_map P_R = new gm_rwinfo_map(P_SET.read_set);
+		gm_rwinfo_map P_W = new gm_rwinfo_map(P_SET.write_set);
+		gm_rwinfo_map Q_R = new gm_rwinfo_map(Q_SET.read_set);
+		gm_rwinfo_map Q_W = new gm_rwinfo_map(Q_SET.write_set);
+		gm_rwinfo_map P_M = new gm_rwinfo_map(P_SET.mutate_set);
+		gm_rwinfo_map Q_M = new gm_rwinfo_map(Q_SET.mutate_set);
 
 		gm_rwinfo_sets P_BODY_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(P.get_body());
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*,
-		// LinkedList<gm_rwinfo*>*>& P_D = P_BODY_SET->reduce_set;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> P_D = new HashMap<gm_symtab_entry, gm_rwinfo_list>(P_BODY_SET.reduce_set);
+		gm_rwinfo_map P_D = new gm_rwinfo_map(P_BODY_SET.reduce_set);
 
 		boolean b;
 		// ---------------------------------------------------

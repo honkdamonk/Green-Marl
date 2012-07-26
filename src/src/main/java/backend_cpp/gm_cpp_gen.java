@@ -1,5 +1,42 @@
 package backend_cpp;
 
+import static inc.GlobalMembersGm_backend_cpp.ALLOCATE_BOOL;
+import static inc.GlobalMembersGm_backend_cpp.ALLOCATE_COLLECTION;
+import static inc.GlobalMembersGm_backend_cpp.ALLOCATE_DOUBLE;
+import static inc.GlobalMembersGm_backend_cpp.ALLOCATE_EDGE;
+import static inc.GlobalMembersGm_backend_cpp.ALLOCATE_FLOAT;
+import static inc.GlobalMembersGm_backend_cpp.ALLOCATE_INT;
+import static inc.GlobalMembersGm_backend_cpp.ALLOCATE_LONG;
+import static inc.GlobalMembersGm_backend_cpp.ALLOCATE_NODE;
+import static inc.GlobalMembersGm_backend_cpp.BFS_TEMPLATE;
+import static inc.GlobalMembersGm_backend_cpp.CLEANUP_PTR;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_LIST;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_NAME;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_SYMBOLS;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_HAS_BFS;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_HAS_PROPDECL;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_IS_PROC_ENTRY;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_NEED_FROM_INFO;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_NEED_SEMI_SORT;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_USE_DOWN_NBR;
+import static inc.GlobalMembersGm_backend_cpp.CPPBE_INFO_USE_REVERSE_EDGE;
+import static inc.GlobalMembersGm_backend_cpp.DEALLOCATE;
+import static inc.GlobalMembersGm_backend_cpp.DFS_TEMPLATE;
+import static inc.GlobalMembersGm_backend_cpp.DO_BFS_FORWARD;
+import static inc.GlobalMembersGm_backend_cpp.DO_BFS_REVERSE;
+import static inc.GlobalMembersGm_backend_cpp.DO_DFS;
+import static inc.GlobalMembersGm_backend_cpp.FREEZE;
+import static inc.GlobalMembersGm_backend_cpp.IS_SEMI_SORTED;
+import static inc.GlobalMembersGm_backend_cpp.LABEL_PAR_SCOPE;
+import static inc.GlobalMembersGm_backend_cpp.MAKE_REVERSE;
+import static inc.GlobalMembersGm_backend_cpp.MAX_THREADS;
+import static inc.GlobalMembersGm_backend_cpp.PREPARE;
+import static inc.GlobalMembersGm_backend_cpp.PREPARE_FROM_INFO;
+import static inc.GlobalMembersGm_backend_cpp.RT_INCLUDE;
+import static inc.GlobalMembersGm_backend_cpp.RT_INIT;
+import static inc.GlobalMembersGm_backend_cpp.SEMI_SORT;
+import static inc.GlobalMembersGm_backend_cpp.THREAD_ID;
 import frontend.gm_fe_fixup_bound_symbol;
 import frontend.gm_fe_restore_vardecl;
 import frontend.gm_symtab;
@@ -9,7 +46,6 @@ import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_backend_cpp;
 import inc.gm_assignment_location_t;
 import inc.gm_code_writer;
 import inc.gm_compile_step;
@@ -64,31 +100,37 @@ public class gm_cpp_gen extends BackendGenerator {
 	// C++ TO JAVA CONVERTER TODO TASK: Java has no concept of a 'friend' class:
 	// friend class nop_reduce_scalar;
 	// data structure for generation
-	protected String fname; // current source file (without extension)
-	protected String dname; // output directory
+	protected String fname = null; // current source file (without extension)
+	protected String dname = null; // output directory
 
 	protected gm_code_writer Header = new gm_code_writer();
 	// protected gm_code_writer _Body = new gm_code_writer();
 
 	protected FILE f_header = null;
 	protected FILE f_body = null;
+	
+	protected String i_temp; // temporary variable name
+	protected String temp = new String(new char[2048]);
+	
+	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
+	protected LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
+	
+	protected boolean _target_omp = false;
+	protected gm_cpplib glib; // graph library
+	
+	protected int _ptr;
+	protected int _indent;
+	
+	protected boolean _pblock = false;
 
 	public gm_cpp_gen() {
 		super();
-		this.fname = null;
-		this.dname = null;
-		this._target_omp = false;
-		this._pblock = false;
 		glib = new gm_cpplib(this);
 		init();
 	}
 
 	public gm_cpp_gen(gm_cpplib l) {
 		super();
-		this.fname = null;
-		this.dname = null;
-		this._target_omp = false;
-		this._pblock = false;
 		assert l != null;
 		glib = l;
 		glib.set_main(this);
@@ -155,7 +197,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		add_include("algorithm", Header);
 		add_include("omp.h", Header);
 		// add_include(get_lib()->get_header_info(), Header, false);
-		add_include(GlobalMembersGm_backend_cpp.RT_INCLUDE, Header, false);
+		add_include(RT_INCLUDE, Header, false);
 		Header.NL();
 
 		// ----------------------------------------
@@ -170,12 +212,6 @@ public class gm_cpp_gen extends BackendGenerator {
 		Header.NL();
 		Header.pushln("#endif");
 	}
-
-	/*
-	 */
-
-	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
-	protected LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
 
 	public void build_up_language_voca() {
 		gm_vocabulary V = get_language_voca();
@@ -256,9 +292,6 @@ public class gm_cpp_gen extends BackendGenerator {
 			_Body.pushln("#pragma omp parallel for");
 	}
 
-	protected int _ptr;
-	protected int _indent;
-
 	public final gm_cpplib get_lib() {
 		return glib;
 	}
@@ -274,11 +307,11 @@ public class gm_cpp_gen extends BackendGenerator {
 	}
 
 	public boolean open_output_files() {
-		String temp = new String(new char[1024]);
+		String temp;
 		assert dname != null;
 		assert fname != null;
 
-		String.format(temp, "%s/%s.h", dname, fname);
+		temp = String.format("%s/%s.h", dname, fname);
 		f_header = FILE.fopen(temp, "w");
 		if (f_header == null) {
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
@@ -286,7 +319,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		}
 		Header.set_output_file(f_header);
 
-		String.format(temp, "%s/%s.cc", dname, fname);
+		temp = String.format("%s/%s.cc", dname, fname);
 		f_body = FILE.fopen(temp, "w");
 		if (f_body == null) {
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
@@ -311,9 +344,6 @@ public class gm_cpp_gen extends BackendGenerator {
 			f_body = null;
 		}
 	}
-
-	protected boolean _target_omp;
-	protected gm_cpplib glib; // graph library
 
 	public void add_include(String string, gm_code_writer out) {
 		add_include(string, out, true, "");
@@ -499,12 +529,10 @@ public class gm_cpp_gen extends BackendGenerator {
 					break;
 				}
 			} else if (t2.is_nodeedge()) {
-				String temp = new String(new char[128]);
-				String.format(temp, "%s*", get_lib().get_type_string(t2));
+				String temp = String.format("%s*", get_lib().get_type_string(t2));
 				return GlobalMembersGm_misc.gm_strdup(temp);
 			} else if (t2.is_collection()) {
-				String temp = new String(new char[128]);
-				String.format(temp, "%s<%s>&", GlobalMembersGm_cpplib_words.PROP_OF_COL, get_lib().get_type_string(t2));
+				String temp = String.format("%s<%s>&", GlobalMembersGm_cpplib_words.PROP_OF_COL, get_lib().get_type_string(t2));
 				return GlobalMembersGm_misc.gm_strdup(temp);
 			} else {
 				assert false;
@@ -523,7 +551,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		_Body.push(f.get_second().get_genname());
 		_Body.push('[');
 		if (f.is_rarrow()) {
-			String alias_name = f.get_first().getSymInfo().find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR);
+			String alias_name = f.get_first().getSymInfo().find_info_string(CPPBE_INFO_NEIGHBOR_ITERATOR);
 			assert alias_name != null;
 			assert alias_name.length() > 0;
 			_Body.push(alias_name);
@@ -587,11 +615,11 @@ public class gm_cpp_gen extends BackendGenerator {
 		_Body.pushln("// reduction");
 		_Body.pushln("{ ");
 
-		String.format(temp, "%s %s, %s;", get_type_string(lhs_target_type), temp_var_old, temp_var_new);
+		String temp = String.format("%s %s, %s;", get_type_string(lhs_target_type), temp_var_old, temp_var_new);
 		_Body.pushln(temp);
 
 		_Body.pushln("do {");
-		String.format(temp, "%s = ", temp_var_old);
+		temp = String.format("%s = ", temp_var_old);
 		_Body.push(temp);
 		if (is_scalar)
 			generate_rhs_id(a.get_lhs_scala());
@@ -600,10 +628,10 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		_Body.pushln(";");
 		if (r_type == GM_REDUCE_T.GMREDUCE_PLUS) {
-			String.format(temp, "%s = %s + (", temp_var_new, temp_var_old);
+			temp = String.format("%s = %s + (", temp_var_new, temp_var_old);
 			_Body.push(temp);
 		} else if (r_type == GM_REDUCE_T.GMREDUCE_MULT) {
-			String.format(temp, "%s = %s * (", temp_var_new, temp_var_old);
+			temp = String.format("%s = %s * (", temp_var_new, temp_var_old);
 			_Body.push(temp);
 		} else if (r_type == GM_REDUCE_T.GMREDUCE_MAX) {
 			String.format(temp, "%s = std::max (%s, ", temp_var_new, temp_var_old);
@@ -728,7 +756,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		// -------------------------------------------
 		// (1) create BFS object
 		// -------------------------------------------
-		String bfs_name = bfs.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_NAME);
+		String bfs_name = bfs.find_info_string(CPPBE_INFO_BFS_NAME);
 		String bfs_inst_name = bfs.is_bfs() ? GlobalMembersGm_main.FE.voca_temp_name_and_add("_BFS", "") : GlobalMembersGm_main.FE.voca_temp_name_and_add(
 				"_DFS", "");
 		String.format(temp, "%s %s", bfs_name, bfs_inst_name);
@@ -738,7 +766,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		// -------------------------------------------
 		// give every entry that are used
 		// -------------------------------------------
-		ast_extra_info_set syms = (ast_extra_info_set) bfs.find_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_SYMBOLS);
+		ast_extra_info_set syms = (ast_extra_info_set) bfs.find_info(CPPBE_INFO_BFS_SYMBOLS);
 		assert syms != null;
 		HashSet<Object> S = syms.get_set();
 		boolean is_first = true;
@@ -756,21 +784,20 @@ public class gm_cpp_gen extends BackendGenerator {
 		// (2) Make a call to it
 		// -------------------------------------------
 		if (bfs.is_bfs()) {
-			String.format(temp, "%s.%s(%s, %s());", bfs_inst_name, GlobalMembersGm_backend_cpp.PREPARE, bfs.get_root().get_genname(),
-					GlobalMembersGm_backend_cpp.MAX_THREADS);
+			String.format(temp, "%s.%s(%s, %s());", bfs_inst_name, PREPARE, bfs.get_root().get_genname(), MAX_THREADS);
 			_Body.pushln(temp);
-			String.format(temp, "%s.%s();", bfs_inst_name, GlobalMembersGm_backend_cpp.DO_BFS_FORWARD);
+			String.format(temp, "%s.%s();", bfs_inst_name, DO_BFS_FORWARD);
 			_Body.pushln(temp);
 
 			if (bfs.get_bbody() != null) {
-				String.format(temp, "%s.%s();", bfs_inst_name, GlobalMembersGm_backend_cpp.DO_BFS_REVERSE);
+				String.format(temp, "%s.%s();", bfs_inst_name, DO_BFS_REVERSE);
 				_Body.pushln(temp);
 			}
 		} // DFS
 		else {
-			String.format(temp, "%s.%s(%s);", bfs_inst_name, GlobalMembersGm_backend_cpp.PREPARE, bfs.get_root().get_genname());
+			String.format(temp, "%s.%s(%s);", bfs_inst_name, PREPARE, bfs.get_root().get_genname());
 			_Body.pushln(temp);
-			String.format(temp, "%s.%s();", bfs_inst_name, GlobalMembersGm_backend_cpp.DO_DFS);
+			String.format(temp, "%s.%s();", bfs_inst_name, DO_DFS);
 			_Body.pushln(temp);
 		}
 
@@ -784,7 +811,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 	public void generate_sent_block(ast_sentblock sb, boolean need_br) {
 		if (is_target_omp()) {
-			boolean is_par_scope = sb.find_info_bool(GlobalMembersGm_backend_cpp.LABEL_PAR_SCOPE);
+			boolean is_par_scope = sb.find_info_bool(LABEL_PAR_SCOPE);
 			if (is_par_scope) {
 				assert is_under_parallel_sentblock() == false;
 				set_under_parallel_sentblock(true);
@@ -831,8 +858,8 @@ public class gm_cpp_gen extends BackendGenerator {
 	}
 
 	public void generate_sent_return(ast_return r) {
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_HAS_PROPDECL)) {
-			_Body.push(GlobalMembersGm_backend_cpp.CLEANUP_PTR);
+		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(CPPBE_INFO_HAS_PROPDECL)) {
+			_Body.push(CLEANUP_PTR);
 			_Body.pushln("();");
 		}
 
@@ -874,9 +901,9 @@ public class gm_cpp_gen extends BackendGenerator {
 	}
 
 	public void generate_sent_block_enter(ast_sentblock sb) {
-		if (sb.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_IS_PROC_ENTRY) && !GlobalMembersGm_main.FE.get_current_proc().is_local()) {
+		if (sb.find_info_bool(CPPBE_INFO_IS_PROC_ENTRY) && !GlobalMembersGm_main.FE.get_current_proc().is_local()) {
 			_Body.pushln("//Initializations");
-			String.format(temp, "%s();", GlobalMembersGm_backend_cpp.RT_INIT);
+			String.format(temp, "%s();", RT_INIT);
 			_Body.pushln(temp);
 
 			// ----------------------------------------------------
@@ -891,15 +918,15 @@ public class gm_cpp_gen extends BackendGenerator {
 			HashSet<gm_symtab_entry> E = vars.get_entries();
 			for (gm_symtab_entry e : E) {
 				if (e.getType().is_graph()) {
-					String.format(temp, "%s.%s();", e.getId().get_genname(), GlobalMembersGm_backend_cpp.FREEZE);
+					String.format(temp, "%s.%s();", e.getId().get_genname(), FREEZE);
 					_Body.pushln(temp);
 
 					// currrently every graph is an argument
-					if (e.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_USE_REVERSE_EDGE)) {
-						String.format(temp, "%s.%s();", e.getId().get_genname(), GlobalMembersGm_backend_cpp.MAKE_REVERSE);
+					if (e.find_info_bool(CPPBE_INFO_USE_REVERSE_EDGE)) {
+						String.format(temp, "%s.%s();", e.getId().get_genname(), MAKE_REVERSE);
 						_Body.pushln(temp);
 					}
-					if (e.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEED_SEMI_SORT)) {
+					if (e.find_info_bool(CPPBE_INFO_NEED_SEMI_SORT)) {
 						boolean has_edge_prop = false;
 						// Semi-sorting must be done before edge-property
 						// creation
@@ -914,16 +941,16 @@ public class gm_cpp_gen extends BackendGenerator {
 						}
 						if (has_edge_prop) {
 							_Body.pushln("//[xxx] edge property must be created before semi-sorting");
-							String.format(temp, "assert(%s.%s());", e.getId().get_genname(), GlobalMembersGm_backend_cpp.IS_SEMI_SORTED);
+							String.format(temp, "assert(%s.%s());", e.getId().get_genname(), IS_SEMI_SORTED);
 							_Body.pushln(temp);
 						} else {
-							String.format(temp, "%s.%s();", e.getId().get_genname(), GlobalMembersGm_backend_cpp.SEMI_SORT);
+							String.format(temp, "%s.%s();", e.getId().get_genname(), SEMI_SORT);
 							_Body.pushln(temp);
 						}
 					}
 
-					if (e.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEED_FROM_INFO)) {
-						String.format(temp, "%s.%s();", e.getId().get_genname(), GlobalMembersGm_backend_cpp.PREPARE_FROM_INFO);
+					if (e.find_info_bool(CPPBE_INFO_NEED_FROM_INFO)) {
+						String.format(temp, "%s.%s();", e.getId().get_genname(), PREPARE_FROM_INFO);
 						_Body.pushln(temp);
 					}
 				}
@@ -934,14 +961,14 @@ public class gm_cpp_gen extends BackendGenerator {
 	}
 
 	public void generate_sent_block_exit(ast_sentblock sb) {
-		boolean has_prop_decl = sb.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_HAS_PROPDECL);
-		boolean is_proc_entry = sb.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_IS_PROC_ENTRY);
+		boolean has_prop_decl = sb.find_info_bool(CPPBE_INFO_HAS_PROPDECL);
+		boolean is_proc_entry = sb.find_info_bool(CPPBE_INFO_IS_PROC_ENTRY);
 		boolean has_return_ahead = GlobalMembersGm_transform_helper.gm_check_if_end_with_return(sb);
 
 		if (has_prop_decl && !has_return_ahead) {
 			if (is_proc_entry) {
 				_Body.NL();
-				String.format(temp, "%s();", GlobalMembersGm_backend_cpp.CLEANUP_PTR);
+				String.format(temp, "%s();", CLEANUP_PTR);
 				_Body.pushln(temp);
 			} else {
 				_Body.NL();
@@ -950,7 +977,7 @@ public class gm_cpp_gen extends BackendGenerator {
 				// std::vector<gm_symtab_entry*>::iterator I;
 				HashSet<gm_symtab_entry> entries = tab.get_entries();
 				for (gm_symtab_entry e : entries) {
-					String.format(temp, "%s(%s,%s());", GlobalMembersGm_backend_cpp.DEALLOCATE, e.getId().get_genname(), GlobalMembersGm_backend_cpp.THREAD_ID);
+					String.format(temp, "%s(%s,%s());", DEALLOCATE, e.getId().get_genname(), THREAD_ID);
 					_Body.pushln(temp);
 				}
 			}
@@ -977,8 +1004,8 @@ public class gm_cpp_gen extends BackendGenerator {
 		// -------------------------------
 		// BFS definitions
 		// -------------------------------
-		if (proc.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_HAS_BFS)) {
-			ast_extra_info_list L = (ast_extra_info_list) proc.find_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_LIST);
+		if (proc.find_info_bool(CPPBE_INFO_HAS_BFS)) {
+			ast_extra_info_list L = (ast_extra_info_list) proc.find_info(CPPBE_INFO_BFS_LIST);
 			assert L != null;
 			_Body.NL();
 			_Body.pushln("// BFS/DFS definitions for the procedure");
@@ -1083,25 +1110,25 @@ public class gm_cpp_gen extends BackendGenerator {
 		_Body.push(" = ");
 		switch (t2.getTypeSummary()) {
 		case GMTYPE_INT:
-			_Body.push(GlobalMembersGm_backend_cpp.ALLOCATE_INT);
+			_Body.push(ALLOCATE_INT);
 			break;
 		case GMTYPE_LONG:
-			_Body.push(GlobalMembersGm_backend_cpp.ALLOCATE_LONG);
+			_Body.push(ALLOCATE_LONG);
 			break;
 		case GMTYPE_BOOL:
-			_Body.push(GlobalMembersGm_backend_cpp.ALLOCATE_BOOL);
+			_Body.push(ALLOCATE_BOOL);
 			break;
 		case GMTYPE_DOUBLE:
-			_Body.push(GlobalMembersGm_backend_cpp.ALLOCATE_DOUBLE);
+			_Body.push(ALLOCATE_DOUBLE);
 			break;
 		case GMTYPE_FLOAT:
-			_Body.push(GlobalMembersGm_backend_cpp.ALLOCATE_FLOAT);
+			_Body.push(ALLOCATE_FLOAT);
 			break;
 		case GMTYPE_NODE:
-			_Body.push(GlobalMembersGm_backend_cpp.ALLOCATE_NODE);
+			_Body.push(ALLOCATE_NODE);
 			break;
 		case GMTYPE_EDGE:
-			_Body.push(GlobalMembersGm_backend_cpp.ALLOCATE_EDGE);
+			_Body.push(ALLOCATE_EDGE);
 			break;
 		case GMTYPE_NSET:
 		case GMTYPE_ESET:
@@ -1109,12 +1136,9 @@ public class gm_cpp_gen extends BackendGenerator {
 		case GMTYPE_ESEQ:
 		case GMTYPE_NORDER:
 		case GMTYPE_EORDER: {
-			String temp = new String(new char[128]);
-			boolean lazyInitialization = false; // TODO: get some information
-												// here to check if lazy init is
-												// better
-			String.format(temp, "%s<%s, %s>", GlobalMembersGm_backend_cpp.ALLOCATE_COLLECTION, get_lib().get_type_string(t2), (lazyInitialization ? "true"
-					: "false"));
+			// TODO: get some information here to check if lazy init is better
+			boolean lazyInitialization = false;
+			String temp = String.format("%s<%s, %s>", ALLOCATE_COLLECTION, get_lib().get_type_string(t2), (lazyInitialization ? "true" : "false"));
 			_Body.push(temp);
 			break;
 		}
@@ -1130,7 +1154,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			_Body.push(get_lib().max_edge_index(t.get_target_graph_id()));
 		}
 		_Body.push(',');
-		_Body.push(GlobalMembersGm_backend_cpp.THREAD_ID);
+		_Body.push(THREAD_ID);
 		_Body.pushln("());");
 
 		/*
@@ -1379,13 +1403,11 @@ public class gm_cpp_gen extends BackendGenerator {
 		temp_var_new = null;
 	}
 
-	protected boolean _pblock;
-
 	public void generate_bfs_def(ast_bfs bfs) {
-		String bfs_name = bfs.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_NAME);
+		String bfs_name = bfs.find_info_string(CPPBE_INFO_BFS_NAME);
 		String level_t = "short";
 		String use_multithread = GlobalMembersGm_cpp_gen_bfs.bool_string(is_target_omp());
-		String save_child = GlobalMembersGm_cpp_gen_bfs.bool_string(bfs.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_USE_DOWN_NBR));
+		String save_child = GlobalMembersGm_cpp_gen_bfs.bool_string(bfs.find_info_bool(CPPBE_INFO_USE_DOWN_NBR));
 		String use_reverse_edge = GlobalMembersGm_cpp_gen_bfs.bool_string(bfs.is_transpose());
 		String has_navigator = GlobalMembersGm_cpp_gen_bfs.bool_string(bfs.get_navigator() != null);
 
@@ -1393,10 +1415,10 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		String has_post_visit = GlobalMembersGm_cpp_gen_bfs.bool_string((bfs.get_bbody() != null) && (bfs.get_bbody().get_sents().size() >= 1));
 
-		ast_extra_info_set info = (ast_extra_info_set) bfs.find_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_SYMBOLS);
+		ast_extra_info_set info = (ast_extra_info_set) bfs.find_info(CPPBE_INFO_BFS_SYMBOLS);
 		HashSet<Object> SET = info.get_set();
 		gm_symtab_entry graph_sym = (gm_symtab_entry) (SET.iterator().next());
-		String template_name = (bfs.is_bfs() ? GlobalMembersGm_backend_cpp.BFS_TEMPLATE : GlobalMembersGm_backend_cpp.DFS_TEMPLATE);
+		String template_name = (bfs.is_bfs() ? BFS_TEMPLATE : DFS_TEMPLATE);
 
 		String.format(temp, "class %s : public %s", bfs_name, template_name);
 		_Body.pushln(temp);
@@ -1495,7 +1517,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		ast_id iter = bfs.get_iterator();
 		String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(iter.get_orgname(), "_idx");
-		iter.getSymInfo().add_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR, a_name);
+		iter.getSymInfo().add_info_string(CPPBE_INFO_NEIGHBOR_ITERATOR, a_name);
 		a_name = null;
 
 		generate_bfs_body_fw(bfs);
@@ -1563,7 +1585,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		_Body.push(", ");
 		_Body.push(get_lib().get_type_string(GMTYPE_T.GMTYPE_EDGE));
 		_Body.SPC();
-		String alias_name = bfs.get_iterator().getSymInfo().find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR);
+		String alias_name = bfs.get_iterator().getSymInfo().find_info_string(CPPBE_INFO_NEIGHBOR_ITERATOR);
 		assert alias_name != null;
 		assert alias_name.length() > 0;
 		_Body.push(alias_name);
@@ -1581,9 +1603,6 @@ public class gm_cpp_gen extends BackendGenerator {
 			_Body.pushln("}");
 		}
 	}
-
-	protected String i_temp; // temporary variable name
-	protected String temp = new String(new char[2048]);
 
 	public String get_function_name(gm_method_id_t methodId, tangible.RefObject<Boolean> addThreadId) {
 		switch (methodId) {

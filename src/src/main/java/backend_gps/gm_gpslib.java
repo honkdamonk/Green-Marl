@@ -1,14 +1,28 @@
 package backend_gps;
-
-import tangible.RefObject;
+import static backend_gps.gm_gps_comm_t.GPS_COMM_INIT;
+import static backend_gps.gm_gps_comm_t.GPS_COMM_NESTED;
+import static backend_gps.gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
+import static inc.GlobalMembersGm_backend_gps.GPS_DUMMY_ID;
+import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_COMM_DEF_ASSIGN;
+import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINING_INNER;
+import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_NODE_VALUE_INIT;
+import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN;
+import static inc.GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE;
+import static inc.GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE;
+import static inc.GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS;
+import static inc.GlobalMembersGm_backend_gps.GPS_REV_NODE_ID;
+import static inc.GlobalMembersGm_backend_gps.STATE_SHORT_CUT;
 import frontend.GlobalMembersGm_frontend;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_PROP_USAGE_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_backend_gps;
 import inc.gm_code_writer;
 import inc.gm_graph_library;
+
+import java.util.LinkedList;
+
+import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -98,7 +112,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	public void generate_broadcast_state_master(String state_var, gm_code_writer Body) {
 		Body.push("getGlobalObjectsMap().putOrUpdateGlobalObject(");
-		Body.push(GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
+		Body.push(GPS_KEY_FOR_STATE);
 		Body.push(",");
 		Body.push("new IntOverwriteGlobalObject(");
 		Body.push(state_var);
@@ -113,7 +127,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.push(is_first_var);
 		Body.pushln("));");
 	}
-	
+
 	public void generate_broadcast_variable_type(GMTYPE_T type_id, gm_code_writer Body) {
 		generate_broadcast_variable_type(type_id, Body, GM_REDUCE_T.GMREDUCE_NULL);
 	}
@@ -365,8 +379,7 @@ public class gm_gpslib extends gm_graph_library {
 		boolean firstProperty = true;
 		for (gm_symtab_entry sym : prop) {
 			// this property is set to procedure argument only
-			if (sym.find_info(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == null) 
-			{
+			if (sym.find_info(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == null) {
 				// printf("no argument property :%s\n",
 				// sym->getId()->get_genname());
 				continue;
@@ -392,7 +405,7 @@ public class gm_gpslib extends gm_graph_library {
 		// Edge Property is read-only
 		// if (is_edge_prop && prop.size() > 0) {
 		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
-		if ((is_edge_prop && prop.size() > 0) || (!is_edge_prop && proc.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_NODE_VALUE_INIT))) {
+		if ((is_edge_prop && prop.size() > 0) || (!is_edge_prop && proc.find_info_bool(GPS_FLAG_NODE_VALUE_INIT))) {
 			Body.pushln("//Input Data Parsing");
 			Body.pushln("@Override");
 			Body.pushln("public void read(String inputString) {");
@@ -422,7 +435,9 @@ public class gm_gpslib extends gm_graph_library {
 				}
 			} else {
 				Body.pushln("String[] split = inputString.split(\"###\");");
-				boolean firstProperty = true;
+				boolean firstProperty1 = true; // FIXME: was firstProperty -
+												// seems to be a bug in the cpp
+												// gm-compiler
 				int cnt = 0;
 				for (gm_symtab_entry sym : prop) {
 					if (!is_edge_prop && (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
@@ -446,7 +461,7 @@ public class gm_gpslib extends gm_graph_library {
 		String temp = new String(new char[1024]);
 		String.format(temp, "int %s = ((IntOverwriteGlobalObject) getGlobalObjectsMap().getGlobalObject(", state_var);
 		Body.push(temp);
-		Body.push(GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
+		Body.push(GPS_KEY_FOR_STATE);
 		Body.pushln(")).getValue().getValue();");
 	}
 
@@ -472,7 +487,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	public void generate_vertex_prop_access_lhs(ast_id id, gm_code_writer Body) {
 		String temp = new String(new char[1024]);
-		String.format(temp, "%s.%s", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, id.get_genname());
+		String.format(temp, "%s.%s", STATE_SHORT_CUT, id.get_genname());
 		Body.push(temp);
 	}
 
@@ -508,7 +523,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	public void generate_vertex_prop_access_prepare(gm_code_writer Body) {
 		String temp = new String(new char[1024]);
-		String.format(temp, "VertexData %s = getValue();", GlobalMembersGm_backend_gps.STATE_SHORT_CUT);
+		String.format(temp, "VertexData %s = getValue();", STATE_SHORT_CUT);
 		Body.pushln(temp);
 	}
 
@@ -559,7 +574,7 @@ public class gm_gpslib extends gm_graph_library {
 	// random write
 	public void generate_message_create_for_random_write(ast_sentblock sb, gm_symtab_entry sym, gm_code_writer Body) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		gm_gps_comm_t m_type = gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
+		gm_gps_comm_t m_type = GPS_COMM_RANDOM_WRITE;
 
 		gm_gps_comm_unit U = new gm_gps_comm_unit(m_type, sb, sym);
 
@@ -578,7 +593,7 @@ public class gm_gpslib extends gm_graph_library {
 		assert !a.is_argminmax_assign();
 		assert !a.is_target_scalar();
 
-		ast_sentblock sb = (ast_sentblock) a.find_info_ptr(GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN);
+		ast_sentblock sb = (ast_sentblock) a.find_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN);
 		assert sb != null;
 
 		// driver
@@ -826,7 +841,7 @@ public class gm_gpslib extends gm_graph_library {
 			assert false;
 			throw new AssertionError();
 		}
-		
+
 		name1_ref.argvalue = name1;
 		name2_ref.argvalue = name2;
 	}
@@ -909,259 +924,249 @@ public class gm_gpslib extends gm_graph_library {
 	private static boolean generate_message_class_get_size_is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {
 	}
 
-	public static void generate_message_class_get_size(gm_gps_beinfo info, gm_code_writer Body)
-    {
-        Body.pushln("@Override");
-        Body.pushln("public int numBytes() {");
-        String str_buf = new String(new char[1024]);
+	public static void generate_message_class_get_size(gm_gps_beinfo info, gm_code_writer Body) {
+		Body.pushln("@Override");
+		Body.pushln("public int numBytes() {");
+		String str_buf;
 
-        java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        boolean is_single = info.is_single_message();
-        boolean is_first = true;
-        for (gm_gps_congruent_msg_class c : LOOPS) {
-        {
-            gm_gps_communication_size_info SYMS = c.sz_info;
-            int sz = get_total_size(SYMS);
-            if (!is_single && is_first)
-            {
-                is_first = false;
-                String.format(str_buf,"if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            else if (!is_single)
-            {
-                String.format(str_buf,"else if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            };
-            if (info.is_single_message())
-            {
-                if (get_total_size(SYMS) == 0)
-                    String.format(str_buf, "return 1; // empty message ");
-                else
-                    String.format(str_buf, "return %d; // data", get_total_size(SYMS));
-            }
-            else
-                String.format(str_buf, "return (1+%d); // type + data", get_total_size(SYMS));
-            Body.pushln(str_buf);
-        () } if (!is_single) Body.pushln("//for empty messages (signaling only)");() if(!info.is_single_message()) Body.pushln("return 1; ");
-        else if (info.is_empty_message())
-            Body.pushln("return 0; ");
-        Body.pushln("}");
-    }
+		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
+		boolean is_single = info.is_single_message();
+		boolean is_first = true;
+		for (gm_gps_congruent_msg_class c : LOOPS) {
 
-	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
-	// allowed in Java) has been moved just prior to the method:
-	static void generate_message_class_write(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body)
-    {
-        Body.pushln("@Override");
-        Body.pushln("public void write(IoBuffer IOB) {");
-        if (!info.is_single_message())
-            Body.pushln("IOB.put(m_type);");
-        String str_buf = new String(new char[1024]);
-        java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        boolean is_single = info.is_single_message();
-        boolean is_first = true;
-        for (gm_gps_congruent_msg_class c : LOOPS)
-        {
-            gm_gps_communication_size_info SYMS = c.sz_info;
-            int sz = get_total_size(SYMS);
-            if (!is_single && is_first)
-            {
-                is_first = false;
-                String.format(str_buf,"if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            else if (!is_single)
-            {
-                String.format(str_buf,"else if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            if(!info.is_single_message())
-                Body.pushln("{");
-            if (info.is_single_message() && get_total_size(SYMS) == 0)
-                Body.pushln("IOB.put((byte)0); // empty message");
-            generate_message_write_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
-            generate_message_write_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
-            generate_message_write_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
-            generate_message_write_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
-            generate_message_write_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
-            if (!info.is_single_message())
-                Body.pushln("}");
-        () } if (!is_single) Body.pushln("//for empty messages (signaling only)");() Body.pushln("}");
-    }
+			gm_gps_communication_size_info SYMS = c.sz_info;
+			int sz = get_total_size(SYMS);
+			if (!is_single && is_first) {
+				is_first = false;
+				str_buf = String.format("if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			} else if (!is_single) {
+				str_buf = String.format("else if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			}
+			;
+			if (info.is_single_message()) {
+				if (get_total_size(SYMS) == 0)
+					str_buf = String.format("return 1; // empty message ");
+				else
+					str_buf = String.format("return %d; // data", get_total_size(SYMS));
+			} else
+				str_buf = String.format("return (1+%d); // type + data", get_total_size(SYMS));
+			Body.pushln(str_buf);
+		}
+		if (!is_single)
+			Body.pushln("//for empty messages (signaling only)");
+		if (!info.is_single_message())
+			Body.pushln("return 1; ");
+		else if (info.is_empty_message())
+			Body.pushln("return 0; ");
+		Body.pushln("}");
+	}
 
 	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
 	// allowed in Java) has been moved just prior to the method:
-	static void generate_message_class_read1(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body)
-    {
-        Body.pushln("@Override");
-        Body.pushln("public void read(IoBuffer IOB) {");
-        if (!info.is_single_message())
-            Body.pushln("m_type = IOB.get();");
-        String str_buf = new String(new char[1024]);
-        java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        boolean is_single = info.is_single_message();
-        boolean is_first = true;
-        for (gm_gps_congruent_msg_class c : LOOPS) {
-            gm_gps_communication_size_info SYMS = c.sz_info;
-            int sz = get_total_size(SYMS);
-            if (!is_single && is_first)
-            {
-                is_first = false;
-                String.format(str_buf,"if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            else if (!is_single)
-            {
-                String.format(str_buf,"else if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            if(!info.is_single_message())
-                Body.pushln("{");
-            if (info.is_single_message() && get_total_size(SYMS) == 0)
-                Body.pushln("IOB.get(); // consume empty message byte");
-            generate_message_read1_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
-            generate_message_read1_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
-            generate_message_read1_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
-            generate_message_read1_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
-            generate_message_read1_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
-            if (!info.is_single_message())
-                Body.pushln("}");
-        () } if (!is_single) Body.pushln("//for empty messages (signaling only)");() Body.pushln("}");
-    }
+	static void generate_message_class_write(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
+		Body.pushln("@Override");
+		Body.pushln("public void write(IoBuffer IOB) {");
+		if (!info.is_single_message())
+			Body.pushln("IOB.put(m_type);");
+		String str_buf;
+		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
+		boolean is_single = info.is_single_message();
+		boolean is_first = true;
+		for (gm_gps_congruent_msg_class c : LOOPS) {
+			gm_gps_communication_size_info SYMS = c.sz_info;
+			int sz = get_total_size(SYMS);
+			if (!is_single && is_first) {
+				is_first = false;
+				str_buf = String.format("if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			} else if (!is_single) {
+				str_buf = String.format("else if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			}
+			if (!info.is_single_message())
+				Body.pushln("{");
+			if (info.is_single_message() && get_total_size(SYMS) == 0)
+				Body.pushln("IOB.put((byte)0); // empty message");
+			generate_message_write_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
+			generate_message_write_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
+			generate_message_write_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
+			generate_message_write_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
+			generate_message_write_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
+			if (!info.is_single_message())
+				Body.pushln("}");
+		}
+		if (!is_single)
+			Body.pushln("//for empty messages (signaling only)");
+		Body.pushln("}");
+	}
 
 	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
 	// allowed in Java) has been moved just prior to the method:
-	static void generate_message_class_read2(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body)
-    {
-        Body.pushln("@Override");
-        Body.pushln("public int read(byte[] _BA, int _idx) {");
-        if (!info.is_single_message())
-            Body.pushln("m_type = _BA[_idx];");
-        String str_buf = new String(new char[1024]);
-        java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        boolean is_single = info.is_single_message();
-        boolean is_first = true;
-        for (gm_gps_congruent_msg_class c : LOOPS) {
-            gm_gps_communication_size_info SYMS = c.sz_info;
-            int sz = get_total_size(SYMS);
-            if (!is_single && is_first)
-            {
-                is_first = false;
-                String.format(str_buf,"if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            else if (!is_single)
-            {
-                String.format(str_buf,"else if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            int offset;
-            if (info.is_single_message())
-                offset = 0;
-            else
-                offset = 1;
-            if (!info.is_single_message())
-                Body.pushln("{");
-            if (info.is_single_message() && (get_total_size(SYMS) == 0))
-                Body.pushln("_idx++; // consume empty message byte");
-		tangible.RefObject<Integer> tempRef_offset = new tangible.RefObject<Integer>(offset);
-            generate_message_read2_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body, tempRef_offset);
-            offset = tempRef_offset.argvalue;
-		tangible.RefObject<Integer> tempRef_offset2 = new tangible.RefObject<Integer>(offset);
-            generate_message_read2_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body, tempRef_offset2);
-            offset = tempRef_offset2.argvalue;
-		tangible.RefObject<Integer> tempRef_offset3 = new tangible.RefObject<Integer>(offset);
-            generate_message_read2_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body, tempRef_offset3);
-            offset = tempRef_offset3.argvalue;
-		tangible.RefObject<Integer> tempRef_offset4 = new tangible.RefObject<Integer>(offset);
-            generate_message_read2_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body, tempRef_offset4);
-            offset = tempRef_offset4.argvalue;
-		tangible.RefObject<Integer> tempRef_offset5 = new tangible.RefObject<Integer>(offset);
-            generate_message_read2_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body, tempRef_offset5);
-            offset = tempRef_offset5.argvalue;
-            if (info.is_single_message())
-            {
-                if (get_total_size(SYMS) == 0)
-                    String.format(str_buf, "return 1;");
-                else
-                    String.format(str_buf, "return %d;", get_total_size(SYMS));
-            }
-            else
-                String.format(str_buf, "return 1 + %d;", get_total_size(SYMS));
-            Body.pushln(str_buf);
-            if (!info.is_single_message())
-                Body.pushln("}");
-        () } if (!is_single) Body.pushln("//for empty messages (signaling only)");() if(!info.is_single_message()) Body.pushln("return 1;");
-        else if (info.is_empty_message())
-            Body.pushln("return 0;");
-        Body.pushln("}");
-    }
+	static void generate_message_class_read1(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
+		Body.pushln("@Override");
+		Body.pushln("public void read(IoBuffer IOB) {");
+		if (!info.is_single_message())
+			Body.pushln("m_type = IOB.get();");
+		String str_buf;
+		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
+		boolean is_single = info.is_single_message();
+		boolean is_first = true;
+		for (gm_gps_congruent_msg_class c : LOOPS) {
+			gm_gps_communication_size_info SYMS = c.sz_info;
+			int sz = get_total_size(SYMS);
+			if (!is_single && is_first) {
+				is_first = false;
+				str_buf = String.format("if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			} else if (!is_single) {
+				str_buf = String.format("else if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			}
+			if (!info.is_single_message())
+				Body.pushln("{");
+			if (info.is_single_message() && get_total_size(SYMS) == 0)
+				Body.pushln("IOB.get(); // consume empty message byte");
+			generate_message_read1_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
+			generate_message_read1_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
+			generate_message_read1_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
+			generate_message_read1_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
+			generate_message_read1_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
+			if (!info.is_single_message())
+				Body.pushln("}");
+		}
+		if (!is_single)
+			Body.pushln("//for empty messages (signaling only)");
+		Body.pushln("}");
+	}
 
 	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
 	// allowed in Java) has been moved just prior to the method:
-	static void generate_message_class_read3(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body)
-    {
-        Body.pushln("@Override");
-        Body.pushln("public int read(IoBuffer IOB, byte[] _BA, int _idx) {");
-        if (!info.is_single_message())
-            Body.pushln("byte m_type; IOB.get(_BA, _idx, 1); m_type = _BA[_idx];");
-        String str_buf = new String(new char[1024]);
-        java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        boolean is_single = info.is_single_message();
-        boolean is_first = true;
-        for (gm_gps_congruent_msg_class c : LOOPS) {
-        gm_gps_communication_size_info SYMS = c.sz_info;
-            int sz = get_total_size(SYMS);
-            if (!is_single && is_first)
-            {
-                is_first = false;
-                String.format(str_buf,"if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            else if (!is_single)
-            {
-                String.format(str_buf,"else if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            int offset;
-            if (!info.is_single_message())
-                offset = 1;
-            else
-                offset = 0;
-            if (!info.is_single_message())
-                Body.pushln("{");
-            int sz2 = get_total_size(SYMS);
-            if (info.is_single_message() && (get_total_size(SYMS) == 0))
-            {
-                Body.pushln("//empty message(dummy byte)");
-                sz2 = 1;
-            }
-            if (sz2 == 0)
-            {
-                String.format(str_buf, "//empty message");
-            }
-            else
-            {
-                String.format(str_buf, "IOB.get(_BA, _idx+%d, %d);", offset, sz2);
-            }
-            Body.pushln(str_buf);
+	static void generate_message_class_read2(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
+		Body.pushln("@Override");
+		Body.pushln("public int read(byte[] _BA, int _idx) {");
+		if (!info.is_single_message())
+			Body.pushln("m_type = _BA[_idx];");
+		String str_buf;
+		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
+		boolean is_single = info.is_single_message();
+		boolean is_first = true;
+		for (gm_gps_congruent_msg_class c : LOOPS) {
+			gm_gps_communication_size_info SYMS = c.sz_info;
+			int sz = get_total_size(SYMS);
+			if (!is_single && is_first) {
+				is_first = false;
+				str_buf = String.format("if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			} else if (!is_single) {
+				str_buf = String.format("else if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			}
+			int offset;
+			if (info.is_single_message())
+				offset = 0;
+			else
+				offset = 1;
+			if (!info.is_single_message())
+				Body.pushln("{");
+			if (info.is_single_message() && (get_total_size(SYMS) == 0))
+				Body.pushln("_idx++; // consume empty message byte");
+			tangible.RefObject<Integer> tempRef_offset = new tangible.RefObject<Integer>(offset);
+			generate_message_read2_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body, tempRef_offset);
+			offset = tempRef_offset.argvalue;
+			tangible.RefObject<Integer> tempRef_offset2 = new tangible.RefObject<Integer>(offset);
+			generate_message_read2_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body, tempRef_offset2);
+			offset = tempRef_offset2.argvalue;
+			tangible.RefObject<Integer> tempRef_offset3 = new tangible.RefObject<Integer>(offset);
+			generate_message_read2_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body, tempRef_offset3);
+			offset = tempRef_offset3.argvalue;
+			tangible.RefObject<Integer> tempRef_offset4 = new tangible.RefObject<Integer>(offset);
+			generate_message_read2_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body, tempRef_offset4);
+			offset = tempRef_offset4.argvalue;
+			tangible.RefObject<Integer> tempRef_offset5 = new tangible.RefObject<Integer>(offset);
+			generate_message_read2_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body, tempRef_offset5);
+			offset = tempRef_offset5.argvalue;
+			if (info.is_single_message()) {
+				if (get_total_size(SYMS) == 0)
+					str_buf = "return 1;";
+				else
+					str_buf = String.format("return %d;", get_total_size(SYMS));
+			} else
+				str_buf = String.format("return 1 + %d;", get_total_size(SYMS));
+			Body.pushln(str_buf);
+			if (!info.is_single_message())
+				Body.pushln("}");
+		}
+		if (!is_single)
+			Body.pushln("//for empty messages (signaling only)");
+		if (!info.is_single_message())
+			Body.pushln("return 1;");
+		else if (info.is_empty_message())
+			Body.pushln("return 0;");
+		Body.pushln("}");
+	}
 
-            if (info.is_single_message())
-                if (get_total_size(SYMS) == 0)
-                    String.format(str_buf, "return 1;");
-                else
-                    String.format(str_buf, "return %d;", sz2);
-            else
-                String.format(str_buf, "return 1 + %d;", sz2);
-            Body.pushln(str_buf);
-            if (!info.is_single_message())
-                Body.pushln("}");
-        () } if (!is_single) Body.pushln("//for empty messages (signaling only)");() if(!info.is_single_message()) Body.pushln("return 1;");
-        else if (info.is_empty_message())
-            Body.pushln("return 0;");
-        Body.pushln("}");
-    }
+	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
+	// allowed in Java) has been moved just prior to the method:
+	static void generate_message_class_read3(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
+		Body.pushln("@Override");
+		Body.pushln("public int read(IoBuffer IOB, byte[] _BA, int _idx) {");
+		if (!info.is_single_message())
+			Body.pushln("byte m_type; IOB.get(_BA, _idx, 1); m_type = _BA[_idx];");
+		String str_buf;
+		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
+		boolean is_single = info.is_single_message();
+		boolean is_first = true;
+		for (gm_gps_congruent_msg_class c : LOOPS) {
+			gm_gps_communication_size_info SYMS = c.sz_info;
+			int sz = get_total_size(SYMS);
+			if (!is_single && is_first) {
+				is_first = false;
+				str_buf = String.format("if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			} else if (!is_single) {
+				str_buf = String.format("else if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			}
+			int offset;
+			if (!info.is_single_message())
+				offset = 1;
+			else
+				offset = 0;
+			if (!info.is_single_message())
+				Body.pushln("{");
+			int sz2 = get_total_size(SYMS);
+			if (info.is_single_message() && (get_total_size(SYMS) == 0)) {
+				Body.pushln("//empty message(dummy byte)");
+				sz2 = 1;
+			}
+			if (sz2 == 0) {
+				str_buf = "//empty message";
+			} else {
+				str_buf = String.format("IOB.get(_BA, _idx+%d, %d);", offset, sz2);
+			}
+			Body.pushln(str_buf);
+
+			if (info.is_single_message())
+				if (get_total_size(SYMS) == 0)
+					str_buf = "return 1;";
+				else
+					str_buf = String.format("return %d;", sz2);
+			else
+				str_buf = String.format("return 1 + %d;", sz2);
+			Body.pushln(str_buf);
+			if (!info.is_single_message())
+				Body.pushln("}");
+		}
+		if (!is_single)
+			Body.pushln("//for empty messages (signaling only)");
+		if (!info.is_single_message())
+			Body.pushln("return 1;");
+		else if (info.is_empty_message())
+			Body.pushln("return 0;");
+		Body.pushln("}");
+	}
 
 	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
 	// allowed in Java) has been moved just prior to the method:
@@ -1195,25 +1200,24 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	void generate_message_send(ast_foreach fe, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
 
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
-		gm_gps_comm_t m_type = (fe == null) ? gm_gps_comm_t.GPS_COMM_INIT : gm_gps_comm_t.GPS_COMM_NESTED;
+		gm_gps_comm_t m_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
 
 		gm_gps_comm_unit U = new gm_gps_comm_unit(m_type, fe);
 
-		java.util.LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
+		LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
 
 		gm_gps_communication_size_info SINFO = info.find_communication_size_info(U);
 
-		boolean need_separate_message = (fe == null) ? false : fe.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINING_INNER);
+		boolean need_separate_message = (fe == null) ? false : fe.find_info_bool(GPS_FLAG_EDGE_DEFINING_INNER);
 		boolean is_in_neighbors = (fe != null) && (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS);
 
 		if (!need_separate_message) {
 			Body.pushln("// Sending messages to all neighbors (if there is a neighbor)");
 			if (is_in_neighbors) {
-				String.format(temp, "if (%s.%s.length > 0) {", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
+				String temp = String.format("if (%s.%s.length > 0) {", STATE_SHORT_CUT, GPS_REV_NODE_ID);
 				Body.pushln(temp);
 			} else {
 				Body.pushln("if (getNeighborsSize() > 0) {");
@@ -1225,10 +1229,10 @@ public class gm_gpslib extends gm_graph_library {
 		}
 
 		// check if any edge updates that should be done before message sending
-		java.util.LinkedList<ast_sent> sents_after_message = new java.util.LinkedList<ast_sent>();
+		LinkedList<ast_sent> sents_after_message = new LinkedList<ast_sent>();
 
-		if ((fe != null) && (fe.has_info_list(GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE))) {
-			java.util.LinkedList<Object> L = fe.get_info_list(GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE);
+		if ((fe != null) && (fe.has_info_list(GPS_LIST_EDGE_PROP_WRITE))) {
+			LinkedList<Object> L = fe.get_info_list(GPS_LIST_EDGE_PROP_WRITE);
 
 			for (Object obj : L) {
 				ast_sent s = (ast_sent) obj;
@@ -1236,11 +1240,7 @@ public class gm_gpslib extends gm_graph_library {
 				ast_assign a = (ast_assign) s;
 				assert !a.is_target_scalar();
 				gm_symtab_entry e = a.get_lhs_field().get_second().getSymInfo();
-				// C++ TO JAVA CONVERTER TODO TASK: Java does not have an
-				// equivalent for pointers to value types:
-				// ORIGINAL LINE: int* i = (int*)
-				// fe->find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
-				Integer i = (Integer) fe.find_info_map_value(GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS, e);
+				Integer i = (Integer) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
 				assert i != null;
 
 				if (i == gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_SENT_WRITE.getValue()) {
@@ -1265,7 +1265,7 @@ public class gm_gpslib extends gm_graph_library {
 			assert fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 			ast_sentblock sb = (ast_sentblock) fe.get_body();
 			for (ast_sent s : sb.get_sents()) {
-				if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_COMM_DEF_ASSIGN)) {
+				if (s.find_info_bool(GPS_FLAG_COMM_DEF_ASSIGN)) {
 					get_main().generate_sent(s);
 				}
 			}
@@ -1290,7 +1290,7 @@ public class gm_gpslib extends gm_graph_library {
 
 		if (!need_separate_message) {
 			if (is_in_neighbors) {
-				String.format(temp, "sendMessages(%s.%s, _msg);", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
+				String temp = String.format("sendMessages(%s.%s, _msg);", STATE_SHORT_CUT, GPS_REV_NODE_ID);
 				Body.pushln(temp);
 			} else {
 				Body.pushln("sendMessages(getNeighborIds(), _msg);");
@@ -1323,14 +1323,14 @@ public class gm_gpslib extends gm_graph_library {
 
 	void generate_message_receive_begin(ast_foreach fe, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		gm_gps_comm_t comm_type = (fe == null) ? gm_gps_comm_t.GPS_COMM_INIT : gm_gps_comm_t.GPS_COMM_NESTED;
+		gm_gps_comm_t comm_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, fe);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
 
 	void generate_message_receive_begin(ast_sentblock sb, gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		gm_gps_comm_t comm_type = gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
+		gm_gps_comm_t comm_type = GPS_COMM_RANDOM_WRITE;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, sb, drv);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
@@ -1338,13 +1338,12 @@ public class gm_gpslib extends gm_graph_library {
 	void generate_message_receive_begin(gm_gps_comm_unit U, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
-		java.util.LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
+		LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
 		// int comm_id = info->find_communication_size_info(fe).id;
 		int comm_id = (info.find_communication_size_info(U)).msg_class.id;
 
-		String temp = new String(new char[1024]);
 		if (!is_only_comm && !info.is_single_message()) {
-			String.format(temp, "if (_msg.m_type == %d) {", comm_id);
+			String temp = String.format("if (_msg.m_type == %d) {", comm_id);
 			Body.pushln(temp);
 		}
 
@@ -1384,7 +1383,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	void generate_expr_builtin(ast_expr_builtin be, gm_code_writer Body, boolean is_master) {
 		gm_builtin_def def = be.get_builtin_def();
-		java.util.LinkedList<ast_expr> ARGS = be.get_args();
+		LinkedList<ast_expr> ARGS = be.get_args();
 
 		switch (def.get_method_id()) {
 		case GM_BLTIN_TOP_DRAND: // rand function
@@ -1412,9 +1411,9 @@ public class gm_gpslib extends gm_graph_library {
 			Body.push("getNeighborsSize()");
 			break;
 		case GM_BLTIN_NODE_IN_DEGREE:
-			Body.push(GlobalMembersGm_backend_gps.STATE_SHORT_CUT);
+			Body.push(STATE_SHORT_CUT);
 			Body.push(".");
-			Body.push(GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
+			Body.push(GPS_REV_NODE_ID);
 			Body.push(".length");
 			break;
 
@@ -1425,11 +1424,10 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block bb) {
-		String temp = new String(new char[1024]);
 
 		if (bb.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) {
 			Body.pushln("// Preperation: creating reverse edges");
-			String.format(temp, "%s %s = getId();", main.get_type_string(GMTYPE_T.GMTYPE_NODE), GlobalMembersGm_backend_gps.GPS_DUMMY_ID);
+			String temp = String.format("%s %s = getId();", main.get_type_string(GMTYPE_T.GMTYPE_NODE), GPS_DUMMY_ID);
 			Body.pushln(temp);
 
 			generate_message_send(null, Body);
@@ -1439,16 +1437,14 @@ public class gm_gpslib extends gm_graph_library {
 			Body.pushln("int i = 0; // iterable does not have length(), so we have to count it");
 			Body.pushln("for(MessageData _msg : _msgs) i++;");
 
-			String.format(temp, "%s.%s = new %s[i];", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID,
-					main.get_type_string(GMTYPE_T.GMTYPE_NODE));
+			String temp = String.format("%s.%s = new %s[i];", STATE_SHORT_CUT, GPS_REV_NODE_ID, main.get_type_string(GMTYPE_T.GMTYPE_NODE));
 			Body.pushln(temp);
 			Body.NL();
 
 			Body.pushln("i=0;");
 			Body.pushln("for(MessageData _msg : _msgs) {");
-			generate_message_receive_begin(null, Body, bb, true);
-			String.format(temp, "%s.%s[i] = %s;", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID,
-					GlobalMembersGm_backend_gps.GPS_DUMMY_ID);
+			generate_message_receive_begin((ast_foreach) null, Body, bb, true);
+			temp = String.format("%s.%s[i] = %s;", STATE_SHORT_CUT, GPS_REV_NODE_ID, GPS_DUMMY_ID);
 			Body.pushln(temp);
 			generate_message_receive_end(Body, true);
 			Body.pushln("i++;");

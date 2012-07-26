@@ -359,7 +359,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 
 			// find exact match
 			LinkedList<gm_rwinfo> list = W.get(w_sym);
-			for (gm_rwinfo : R : list) {
+			for (gm_rwinfo R : list) {
 				if (Q._check_range && (Q.range != R.access_range)) {
 					continue;
 				}

@@ -1,5 +1,6 @@
 package backend_gps;
 
+import tangible.RefObject;
 import frontend.GlobalMembersGm_frontend;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
@@ -363,14 +364,8 @@ public class gm_gpslib extends gm_graph_library {
 		Body.push("return \"\"");
 		boolean firstProperty = true;
 		for (gm_symtab_entry sym : prop) {
-			if (sym.find_info(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == null) // this
-																					// property
-																					// is
-																					// set
-																					// to
-																					// procedure
-																					// argument
-																					// only
+			// this property is set to procedure argument only
+			if (sym.find_info(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == null) 
 			{
 				// printf("no argument property :%s\n",
 				// sym->getId()->get_genname());
@@ -417,9 +412,11 @@ public class gm_gpslib extends gm_graph_library {
 					if (!is_edge_prop && (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
 							&& (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
 						continue;
-					String name1;
-					String name2;
-					get_java_parse_string(this, sym.getType().getTargetTypeSummary(), name1, name2);
+					RefObject<String> name1_ref = new RefObject<String>(null);
+					RefObject<String> name2_ref = new RefObject<String>(null);
+					get_java_parse_string(this, sym.getType().getTargetTypeSummary(), name1_ref, name2_ref);
+					String name1 = name1_ref.argvalue;
+					String name2 = name2_ref.argvalue;
 					String.format(temp, "this.%s = %s.%s(inputString);", sym.getId().get_genname(), name1, name2);
 					Body.pushln(temp);
 				}
@@ -428,13 +425,14 @@ public class gm_gpslib extends gm_graph_library {
 				boolean firstProperty = true;
 				int cnt = 0;
 				for (gm_symtab_entry sym : prop) {
-					String name1;
-					String name2;
 					if (!is_edge_prop && (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
 							&& (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
 						continue;
-
-					get_java_parse_string(this, sym.getType().getTargetTypeSummary(), name1, name2);
+					RefObject<String> name1_ref = new RefObject<String>(null);
+					RefObject<String> name2_ref = new RefObject<String>(null);
+					get_java_parse_string(this, sym.getType().getTargetTypeSummary(), name1_ref, name2_ref);
+					String name1 = name1_ref.argvalue;
+					String name2 = name2_ref.argvalue;
 					String.format(temp, "this.%s = %s.%s((split[%d]==null)?\"0\":split[%d]);", sym.getId().get_genname(), name1, name2, cnt, cnt);
 					Body.pushln(temp);
 					cnt++;
@@ -779,7 +777,10 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	// TODO set output vars?
-	public static void get_java_parse_string(gm_gpslib L, GMTYPE_T gm_type, String name1, String name2) {
+	public static void get_java_parse_string(gm_gpslib L, GMTYPE_T gm_type, RefObject<String> name1_ref, RefObject<String> name2_ref) {
+		String name1;
+		String name2;
+
 		switch (gm_type) {
 		case GMTYPE_INT:
 			name1 = "Integer";
@@ -823,9 +824,11 @@ public class gm_gpslib extends gm_graph_library {
 			}
 		default:
 			assert false;
-			break;
+			throw new AssertionError();
 		}
-
+		
+		name1_ref.argvalue = name1;
+		name2_ref.argvalue = name2;
 	}
 
 	public static int get_total_size(gm_gps_communication_size_info I) {

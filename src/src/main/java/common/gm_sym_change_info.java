@@ -15,6 +15,9 @@ public class gm_sym_change_info {
 		t_drv = info.t_drv;
 	}
 
+	public gm_sym_change_info() {
+	}
+
 	public boolean change_lhs;
 	public boolean change_rhs;
 	public boolean src_scalar;

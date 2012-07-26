@@ -10,6 +10,7 @@ import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
 import common.gm_apply;
 
+import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab_entry;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -90,7 +91,7 @@ public class gps_check_synth_t extends gm_apply {
 
 	// visit entry
 	@Override
-	public boolean apply(gm_symtab_entry e, int symtab_type) {
+	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
 		GMTYPE_T type_id = e.getType().get_typeid();
 		if (type_id.is_collection_type()) {
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_COLLECTION, e.getId().get_line(), e.getId().get_col(), e

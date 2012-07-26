@@ -1,5 +1,9 @@
 package opt;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
+import tangible.Pair;
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_foreach;
@@ -59,13 +63,13 @@ public class gm_moveup_propdecl_t extends gm_apply {
 	// <-----+ +
 	// <------------+
 
-	private java.util.LinkedList<Integer> stack_state = new java.util.LinkedList<Integer>();
-	private java.util.LinkedList<gm_symtab> stack_top_scope = new java.util.LinkedList<gm_symtab>();
-	private java.util.LinkedList<ast_sent> stack_pushed_node = new java.util.LinkedList<ast_sent>();
-	private java.util.HashMap<gm_symtab_entry, std.pair<gm_symtab, gm_symtab>> movements = new java.util.HashMap<gm_symtab_entry, std.pair<gm_symtab, gm_symtab>>(); // entry
-																																										// ->
-																																										// (from_symtab,
-																																										// to_symtab)
+	private LinkedList<Integer> stack_state = new LinkedList<Integer>();
+	private LinkedList<gm_symtab> stack_top_scope = new LinkedList<gm_symtab>();
+	private LinkedList<ast_sent> stack_pushed_node = new LinkedList<ast_sent>();
+	private HashMap<gm_symtab_entry, Pair<gm_symtab, gm_symtab>> movements = new HashMap<gm_symtab_entry, Pair<gm_symtab, gm_symtab>>(); // entry
+																																			// ->
+																																			// (from_symtab,
+																																			// to_symtab)
 
 	private int curr_state;
 	private gm_symtab curr_top_scope;
@@ -96,7 +100,7 @@ public class gm_moveup_propdecl_t extends gm_apply {
 	@Override
 	public boolean apply(ast_sent s) {
 		boolean to_push = false;
-		int new_state;
+		int new_state = curr_state;
 		gm_symtab new_top_scope = null;
 
 		boolean to_nil = false;
@@ -188,8 +192,8 @@ public class gm_moveup_propdecl_t extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab tab, int type) {
-		if (type != SYMTAB_TYPES.GM_SYMTAB_FIELD.getValue())
+	public boolean apply(gm_symtab tab, SYMTAB_TYPES type) {
+		if (type != SYMTAB_TYPES.GM_SYMTAB_FIELD)
 			return true;
 		this_scope = tab;
 		return true;
@@ -206,25 +210,20 @@ public class gm_moveup_propdecl_t extends gm_apply {
 	}
 
 	public final void save_target(gm_symtab_entry t, gm_symtab from, gm_symtab to) {
-		std.pair<gm_symtab, gm_symtab> T = new std.pair<gm_symtab, gm_symtab>();
-		T.first = from;
-		T.second = to;
+		Pair<gm_symtab, gm_symtab> T = new Pair<gm_symtab, gm_symtab>(from, to);
 		movements.put(t, T);
 	}
 
 	public final void post_process() {
-		java.util.Iterator<gm_symtab_entry, std.pair<gm_symtab, gm_symtab>> I;
-		for (I = movements.iterator(); I.hasNext();) {
-			gm_symtab_entry e = I.next().getKey();
-			gm_symtab from = I.next().getValue().first;
-			gm_symtab to = I.next().getValue().second;
+		for (gm_symtab_entry e : movements.keySet()) {
+			gm_symtab from = movements.get(e).first;
+			gm_symtab to = movements.get(e).second;
 
 			assert !to.is_entry_in_the_tab(e);
 			assert from.is_entry_in_the_tab(e);
 
 			from.remove_entry_in_the_tab(e);
 			to.add_symbol(e);
-
 		}
 	}
 }

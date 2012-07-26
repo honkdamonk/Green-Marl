@@ -311,7 +311,7 @@ public class gm_gps_gen extends BackendGenerator {
 		for (gm_gps_basic_block b : bb_blocks) {
 			do_generate_master_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(System.out);
+		GlobalMembersGm_reproduce.gm_redirect_reproduce(new FILE(System.out));
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
 	}
 
@@ -899,7 +899,7 @@ public class gm_gps_gen extends BackendGenerator {
 				continue;
 			do_generate_vertex_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(System.out);
+		GlobalMembersGm_reproduce.gm_redirect_reproduce(new FILE(System.out));
 		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
 	}
 

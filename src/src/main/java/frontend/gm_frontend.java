@@ -6,6 +6,7 @@ import inc.gm_procinfo;
 
 import java.util.LinkedList;
 
+import tangible.Extern;
 import ast.ast_idlist;
 import ast.ast_procdef;
 import ast.ast_sentblock;
@@ -45,13 +46,13 @@ public class gm_frontend {
 	// ----------------------------------------------------
 	public final int start_parse(String fname) {
 		// start lexer
-		if (GM_start_parse(fname) == 0) {
+		if (Extern.GM_start_parse(fname) == 0) {
 			System.out.printf("Error in loading %s\n", fname);
 			return 0;
 		}
 
 		// start parser
-		return yyparse();
+		return Extern.yyparse();
 	}
 
 	// void clean_up(); // clean-up intermediate structures (for iterative mode)

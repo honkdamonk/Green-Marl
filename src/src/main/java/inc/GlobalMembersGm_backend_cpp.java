@@ -10,21 +10,21 @@ public class GlobalMembersGm_backend_cpp
 	//-----------------------------------
 	// define labels, which is nothing but a string 
 	//-----------------------------------
-	public static String LABEL_PAR_SCOPE = "X";
-	public static String CPPBE_INFO_HAS_BFS = "X";
-	public static String CPPBE_INFO_IS_PROC_ENTRY = "X";
-	public static String CPPBE_INFO_HAS_PROPDECL = "X";
-	public static String CPPBE_INFO_BFS_SYMBOLS = "X";
-	public static String CPPBE_INFO_BFS_NAME = "X";
-	public static String CPPBE_INFO_BFS_LIST = "X";
-	public static String CPPBE_INFO_COLLECTION_LIST = "X";
-	public static String CPPBE_INFO_COLLECTION_ITERATOR = "X";
-	public static String CPPBE_INFO_COMMON_NBR_ITERATOR = "X";
-	public static String CPPBE_INFO_NEIGHBOR_ITERATOR = "X";
-	public static String CPPBE_INFO_USE_REVERSE_EDGE = "X";
-	public static String CPPBE_INFO_USE_DOWN_NBR = "X";
-	public static String CPPBE_INFO_NEED_SEMI_SORT = "X";
-	public static String CPPBE_INFO_NEED_FROM_INFO = "X";
+	public static String LABEL_PAR_SCOPE = "LABEL_PAR_SCOPE";
+	public static String CPPBE_INFO_HAS_BFS = "CPPBE_INFO_HAS_BFS";
+	public static String CPPBE_INFO_IS_PROC_ENTRY = "CPPBE_INFO_IS_PROC_ENTRY";
+	public static String CPPBE_INFO_HAS_PROPDECL = "CPPBE_INFO_HAS_PROPDECL";
+	public static String CPPBE_INFO_BFS_SYMBOLS = "CPPBE_INFO_BFS_SYMBOLS";
+	public static String CPPBE_INFO_BFS_NAME = "CPPBE_INFO_BFS_NAME";
+	public static String CPPBE_INFO_BFS_LIST = "CPPBE_INFO_BFS_LIST";
+	public static String CPPBE_INFO_COLLECTION_LIST = "CPPBE_INFO_COLLECTION_LIST";
+	public static String CPPBE_INFO_COLLECTION_ITERATOR = "CPPBE_INFO_COLLECTION_ITERATOR";
+	public static String CPPBE_INFO_COMMON_NBR_ITERATOR = "CPPBE_INFO_COMMON_NBR_ITERATOR";
+	public static String CPPBE_INFO_NEIGHBOR_ITERATOR = "CPPBE_INFO_NEIGHBOR_ITERATOR";
+	public static String CPPBE_INFO_USE_REVERSE_EDGE = "CPPBE_INFO_USE_REVERSE_EDGE";
+	public static String CPPBE_INFO_USE_DOWN_NBR = "CPPBE_INFO_USE_DOWN_NBR";
+	public static String CPPBE_INFO_NEED_SEMI_SORT = "CPPBE_INFO_NEED_SEMI_SORT";
+	public static String CPPBE_INFO_NEED_FROM_INFO = "CPPBE_INFO_NEED_FROM_INFO";
 
 	//----------------------------------------
 	// For runtime

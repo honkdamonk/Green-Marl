@@ -9,7 +9,6 @@ import static inc.GMTYPE_T.GMTYPE_NODEITER_SET;
 import inc.GMTYPE_T;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;

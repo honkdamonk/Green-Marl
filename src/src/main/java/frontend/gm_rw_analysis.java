@@ -1,14 +1,10 @@
 package frontend;
 
 import inc.GMTYPE_T;
-
-import backend_cpp.DefineConstants;
-
 import inc.GM_REDUCE_T;
 import inc.gm_assignment_location_t;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;
@@ -29,6 +25,7 @@ import ast.ast_return;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_while;
+import backend_cpp.DefineConstants;
 
 import common.gm_apply;
 import common.gm_builtin_def;

@@ -2,7 +2,6 @@ package ast;
 
 import inc.lhs_list;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import common.gm_apply;

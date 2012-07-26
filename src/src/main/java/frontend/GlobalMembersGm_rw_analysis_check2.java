@@ -1,12 +1,28 @@
 package frontend;
 
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_MUTATE_MUTATE_CONFLICT;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_MUTATE_CONFLICT;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_REDUCE_CONFLICT;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_WRITE_CONFLICT;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_MUTATE_CONFLICT;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_REDUCE_CONFLICT;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_WRITE_CONFLICT;
+import static frontend.gm_conflict_t.MM_CONFLICT;
+import static frontend.gm_conflict_t.RD_CONFLICT;
+import static frontend.gm_conflict_t.RM_CONFLICT;
+import static frontend.gm_conflict_t.RW_CONFLICT;
+import static frontend.gm_conflict_t.WM_CONFLICT;
+import static frontend.gm_conflict_t.WW_CONFLICT;
+import static frontend.gm_range_type_t.GM_RANGE_LEVEL;
+import static frontend.gm_range_type_t.GM_RANGE_LEVEL_DOWN;
+import static frontend.gm_range_type_t.GM_RANGE_LEVEL_UP;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 
+import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_sent;
 
@@ -92,19 +108,22 @@ public class GlobalMembersGm_rw_analysis_check2 {
 			a_range = GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(t);
 		}
 
-		if (a_range == gm_range_type_t.GM_RANGE_LEVEL)
+		if (a_range == GM_RANGE_LEVEL)
 			lev = 1;
-		else if (a_range == gm_range_type_t.GM_RANGE_LEVEL_UP)
+		else if (a_range == GM_RANGE_LEVEL_UP)
 			lev = 2;
-		else if (a_range == gm_range_type_t.GM_RANGE_LEVEL_DOWN)
+		else if (a_range == GM_RANGE_LEVEL_DOWN)
 			lev = 0;
 
 		return lev;
 	}
 
-	public static boolean check_if_conflict(LinkedList<gm_rwinfo> l1, LinkedList<gm_rwinfo> l2, gm_rwinfo e1, gm_rwinfo e2, gm_conflict_t conf_type) {
+	public static boolean check_if_conflict(LinkedList<gm_rwinfo> l1, LinkedList<gm_rwinfo> l2, RefObject<gm_rwinfo> e1_ref, RefObject<gm_rwinfo> e2_ref,
+			gm_conflict_t conf_type) {
 		java.util.Iterator<gm_rwinfo> i1;
 		java.util.Iterator<gm_rwinfo> i2;
+		gm_rwinfo e1 = null;
+		gm_rwinfo e2 = null;
 		for (i1 = l1.iterator(); i1.hasNext();) {
 			e1 = i1.next();
 			for (i2 = l2.iterator(); i2.hasNext();) {
@@ -116,26 +135,29 @@ public class GlobalMembersGm_rw_analysis_check2 {
 																	// level
 					continue;
 
-				if ((conf_type == gm_conflict_t.RW_CONFLICT) || (conf_type == gm_conflict_t.WW_CONFLICT) || (conf_type == gm_conflict_t.RM_CONFLICT)
-						|| (conf_type == gm_conflict_t.WM_CONFLICT)) {
+				if ((conf_type == RW_CONFLICT) || (conf_type == WW_CONFLICT) || (conf_type == RM_CONFLICT) || (conf_type == WM_CONFLICT)) {
 					if ((e1.driver != null) && (e1.driver == e2.driver))
 						continue;
 				}
-				if (conf_type == gm_conflict_t.RD_CONFLICT) {
+				if (conf_type == RD_CONFLICT) {
 					if (e2.reduce_op == GM_REDUCE_T.GMREDUCE_DEFER)
 						continue;
 					System.out.printf("%d lev1 = %d, %d lev2 = %d\n", e1.access_range, lev1, e2.access_range, lev2);
 					assert false;
 				}
-				if (conf_type == gm_conflict_t.MM_CONFLICT) {
+				if (conf_type == MM_CONFLICT) {
 					if (e1.mutate_direction == e2.mutate_direction)
 						continue;
 				}
 
 				// printf("lev1 = %d, lev2 = %d\n", lev1, lev2);
+				e1_ref.argvalue = e1;
+				e2_ref.argvalue = e2;
 				return true; // found conflict!
 			}
 		}
+		e1_ref.argvalue = e1;
+		e2_ref.argvalue = e2;
 		return false; // no conflict
 	}
 
@@ -151,31 +173,31 @@ public class GlobalMembersGm_rw_analysis_check2 {
 		GM_ERRORS_AND_WARNINGS error_code;
 		switch (conf_type) {
 		case RW_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_WRITE_CONFLICT;
+			error_code = GM_ERROR_READ_WRITE_CONFLICT;
 			is_warning = true;
 			break;
 		case WW_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_WRITE_CONFLICT;
+			error_code = GM_ERROR_WRITE_WRITE_CONFLICT;
 			is_warning = true;
 			break;
 		case RD_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_REDUCE_CONFLICT;
+			error_code = GM_ERROR_READ_REDUCE_CONFLICT;
 			is_warning = false;
 			break;
 		case WD_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_REDUCE_CONFLICT;
+			error_code = GM_ERROR_WRITE_REDUCE_CONFLICT;
 			is_warning = false;
 			break;
 		case RM_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_MUTATE_CONFLICT;
+			error_code = GM_ERROR_READ_MUTATE_CONFLICT;
 			is_warning = true;
 			break;
 		case WM_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_MUTATE_CONFLICT;
+			error_code = GM_ERROR_WRITE_MUTATE_CONFLICT;
 			is_warning = false;
 			break;
 		case MM_CONFLICT:
-			error_code = GM_ERRORS_AND_WARNINGS.GM_ERROR_MUTATE_MUTATE_CONFLICT;
+			error_code = GM_ERROR_MUTATE_MUTATE_CONFLICT;
 			is_warning = true;
 			break;
 		default:
@@ -199,7 +221,11 @@ public class GlobalMembersGm_rw_analysis_check2 {
 					continue;
 
 				// find if they conflict
-				boolean is_error_or_warn = GlobalMembersGm_rw_analysis_check2.check_if_conflict(list1, list2, e1, e2, conf_type);
+				RefObject<gm_rwinfo> e1_ref = new RefObject<gm_rwinfo>(e1);
+				RefObject<gm_rwinfo> e2_ref = new RefObject<gm_rwinfo>(e2);
+				boolean is_error_or_warn = GlobalMembersGm_rw_analysis_check2.check_if_conflict(list1, list2, e1_ref, e2_ref, conf_type);
+				e1 = e1_ref.argvalue;
+				e2 = e2_ref.argvalue;
 				if (!is_warning)
 					is_okay = is_okay && !is_error_or_warn;
 
@@ -224,6 +250,10 @@ public class GlobalMembersGm_rw_analysis_check2 {
 	// ==================================================================
 	// For depenendcy detection
 	// ==================================================================
+	public static boolean gm_does_intersect(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S1, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S2) {
+		return gm_does_intersect(S1, S2, false);
+	}
+
 	public static boolean gm_does_intersect(HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S1, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> S2,
 			boolean regard_mutate_direction) {
 

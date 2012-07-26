@@ -4,7 +4,6 @@ import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;

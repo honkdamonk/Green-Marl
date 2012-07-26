@@ -35,4 +35,14 @@ public class FILE extends OutputStream {
 	public void write(int b) throws IOException {
 	}
 
+	public static void fprintf(FILE _out, String string) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public static void fwrite(String _temp_buf, int ptr, int i, FILE _out) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -166,8 +166,8 @@ public class gps_check_edge_value_t extends gm_apply {
 
 		// checking of (case 2)
 		if (target_is_edge_prop) {
-			if ((e.find_info_bool(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN)
-					|| (e.find_info_bool(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_RANDOM)) {
+			if ((e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue())
+					|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_RANDOM.getValue())) {
 				if (e.is_field()) {
 					ast_field f = e.get_field();
 					GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_EDGE_WRITE_RHS, f.get_line(), f.get_col(), f.get_first().get_orgname());

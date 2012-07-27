@@ -13,6 +13,8 @@ import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
+import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_main;
@@ -28,22 +30,6 @@ import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
 public class GlobalMembersGm_cpp_opt_defer {
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define TO_STR(X) #X
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define DEF_STRING(X) static const char *X = "X"
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public
-	// gm_compile_step { private: CLASS() {set_description(DESC);}public:
-	// virtual void process(ast_procdef*p); virtual gm_compile_step*
-	// get_instance(){return new CLASS();} static gm_compile_step*
-	// get_factory(){return new CLASS();} };
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
 
 	public static boolean find_deferred_writes(ast_procdef proc, java.util.LinkedList<gm_symtab_entry> target_syms,
 			java.util.LinkedList<ast_foreach> target_foreach) {
@@ -105,19 +91,10 @@ public class GlobalMembersGm_cpp_opt_defer {
 			boolean need_initializer = true;
 			if (fe.get_iter_type().is_all_graph_iter_type()) {
 				gm_rwinfo_sets sets = GlobalMembersGm_rw_analysis.gm_get_rwinfo_sets(fe);
-				// C++ TO JAVA CONVERTER WARNING: The following line was
-				// determined to be a copy constructor call - this should be
-				// verified and a copy constructor should be created if it does
-				// not yet exist:
-				// ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*,
-				// java.util.LinkedList<gm_rwinfo*>*>& W = sets->write_set;
-				java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> W = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>(
-						sets.write_set);
+				gm_rwinfo_map W = sets.write_set;
 				assert W.containsKey(old_dest);
-				java.util.LinkedList<gm_rwinfo> L = W.get(old_dest);
-				java.util.Iterator<gm_rwinfo> I;
-				for (I = L.iterator(); I.hasNext();) {
-					gm_rwinfo info = I.next();
+				gm_rwinfo_list L = W.get(old_dest);
+				for(gm_rwinfo info : L) {
 					if ((info.access_range == gm_range_type_t.GM_RANGE_LINEAR) && (info.always)) {
 						need_initializer = false;
 						break;

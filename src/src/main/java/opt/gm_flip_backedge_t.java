@@ -17,6 +17,8 @@ import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
 import ast.ast_sentblock;
+import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_resolve_nc;
@@ -28,15 +30,6 @@ import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
-
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
 
 //-------------------------------------------------------------------
 // Currently, this optimization is too specialized.
@@ -55,13 +48,13 @@ import frontend.gm_symtab_entry;
 //        u.X += ... @ t
 //--------------------------------------------------------------------
 public class gm_flip_backedge_t extends gm_apply {
-	public gm_flip_backedge_t() {
-		this.set_for_sent(true);
-	}
 
-	// C++ TO JAVA CONVERTER NOTE: Access declarations are not available in
-	// Java:
-	// ;
+	private LinkedList<ast_sentblock> _tops = new LinkedList<ast_sentblock>();
+	private LinkedList<ast_assign> _cands = new LinkedList<ast_assign>();
+
+	public gm_flip_backedge_t() {
+		set_for_sent(true);
+	}
 
 	@Override
 	public boolean apply(ast_sent sent) {
@@ -130,18 +123,13 @@ public class gm_flip_backedge_t extends gm_apply {
 
 		for (ast_sent s : sb.get_sents()) {
 			gm_rwinfo_sets RW = GlobalMembersGm_rw_analysis.gm_get_rwinfo_sets(s);
-			// C++ TO JAVA CONVERTER WARNING: The following line was determined
-			// to be a copy constructor call - this should be verified and a
-			// copy constructor should be created if it does not yet exist:
-			// ORIGINAL LINE: HashMap<gm_symtab_entry*,
-			// LinkedList<gm_rwinfo*>*>& W = RW->write_set;
-			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(RW.write_set);
+			gm_rwinfo_map W = RW.write_set;
 
 			// check if this sentence initializes any target
 			for (gm_symtab_entry t : targets) {
 				if (!W.containsKey(t))
 					continue;
-				LinkedList<gm_rwinfo> lst = W.get(t);
+				gm_rwinfo_list lst = W.get(t);
 				for (gm_rwinfo info : lst) {
 					if (info.driver != null) {
 						if (info.driver != root) // other than thru root, init
@@ -179,8 +167,7 @@ public class gm_flip_backedge_t extends gm_apply {
 		return true;
 	}
 
-	public final boolean post_process() // return true if something changed
-	{
+	public final boolean post_process() { // return true if something changed
 		if (_cands.size() > 0) {
 			java.util.Iterator<ast_sentblock> P;
 			java.util.Iterator<ast_assign> A;
@@ -257,24 +244,10 @@ public class gm_flip_backedge_t extends gm_apply {
 		// now put new foreach in place of old assignment.
 		// rip-off and delete old assignment
 		GlobalMembersGm_transform_helper.gm_add_sent_before(a, fe_new);
-		GlobalMembersGm_transform_helper.gm_ripoff_sent(a, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB); // no
-																												// need
-																												// to
-																												// fix
-																												// symtab
-																												// for
-																												// a
-																												// --
-																												// it
-																												// will
-																												// be
-																												// deleted.
-		if (a != null)
-			a.dispose();
+		// no need to fix symtab for a -- it will be deleted.
+		GlobalMembersGm_transform_helper.gm_ripoff_sent(a, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB);
 	}
 
-	private LinkedList<ast_sentblock> _tops = new LinkedList<ast_sentblock>();
-	private LinkedList<ast_assign> _cands = new LinkedList<ast_assign>();
 }
 // bool gm_independent_optimize::do_flip_edges(ast_procdef* p)
 

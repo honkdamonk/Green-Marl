@@ -104,7 +104,7 @@ public class GlobalMembersGm_argopts {
 			bin_name.argvalue = tempRef_bin_name.argvalue;
 			System.exit(0);
 		} else if (c.argvalue.equals("v")) {
-			System.out.printf("version %s\n", GlobalMembersGm_version_string.gm_version_string);
+			System.out.printf("version %s\n", GlobalMembersGm_main.gm_version_string);
 			System.exit(0);
 		}
 		// add here

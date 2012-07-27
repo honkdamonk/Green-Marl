@@ -30,6 +30,7 @@ public class GlobalMembersGm_main {
 	private static final int GMSTAGE_CODEGEN = 6;
 
 	// const char* GM_version_info = "0.1"; // moved to common/gm_verion_string
+	public static String gm_version_string = "0.3.0";
 
 	public static gm_frontend FE = new gm_frontend();
 	public static gm_cpp_gen CPP_BE = new gm_cpp_gen(); // CPP Backend

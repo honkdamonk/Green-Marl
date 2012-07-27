@@ -797,7 +797,8 @@ public class gm_giraphlib extends gm_gpslib {
             generate_message_write_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
             if (!info.is_single_message())
                 Body.pushln("}");
-        () }() Body.pushln("}");
+        }
+        Body.pushln("}");
     }
 
 	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
@@ -838,7 +839,8 @@ public class gm_giraphlib extends gm_gpslib {
             generate_message_read1_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
             if (!info.is_single_message())
                 Body.pushln("}");
-        () }() Body.pushln("}");
+        }
+        Body.pushln("}");
     }
 
 	void generate_message_class_details(gm_gps_beinfo info, gm_code_writer Body) {

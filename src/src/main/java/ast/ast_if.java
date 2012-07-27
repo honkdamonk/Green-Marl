@@ -46,9 +46,9 @@ public class ast_if extends ast_sent
 		}
 		else
 		{
-			Out.push_indent();
+			Out.pushIndent();
 			then_part.reproduce(ind_level + 1);
-			Out.pop_indent();
+			Out.popIndent();
 		}
     
 		if (else_part != null)
@@ -61,9 +61,9 @@ public class ast_if extends ast_sent
 			}
 			else
 			{
-				Out.push_indent();
+				Out.pushIndent();
 				else_part.reproduce(ind_level + 1);
-				Out.pop_indent();
+				Out.popIndent();
 			}
 		}
 	}

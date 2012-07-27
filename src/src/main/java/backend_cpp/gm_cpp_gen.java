@@ -317,7 +317,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
-		Header.set_output_file(f_header);
+		Header.setOutputFile(f_header);
 
 		temp = String.format("%s/%s.cc", dname, fname);
 		f_body = FILE.fopen(temp, "w");
@@ -325,7 +325,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
-		_Body.set_output_file(f_body);
+		_Body.setOutputFile(f_body);
 
 		get_lib().set_code_writer(_Body);
 		return true;
@@ -371,10 +371,10 @@ public class gm_cpp_gen extends BackendGenerator {
 
 	public void add_ifdef_protection(String s) {
 		Header.push("#ifndef GM_GENERATED_CPP_");
-		Header.push_to_upper(s);
+		Header.pushToUpper(s);
 		Header.pushln("_H");
 		Header.push("#define GM_GENERATED_CPP_");
-		Header.push_to_upper(s);
+		Header.pushToUpper(s);
 		Header.pushln("_H");
 		Header.NL();
 	}
@@ -692,7 +692,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			return;
 		}
 
-		_Body.push_spc(get_type_string(t));
+		_Body.pushSpace(get_type_string(t));
 
 		if (t.is_property()) {
 			ast_idlist idl = v.get_idlist();
@@ -743,9 +743,9 @@ public class gm_cpp_gen extends BackendGenerator {
 		} else if (f.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
 			generate_sent(f.get_body());
 		} else {
-			_Body.push_indent();
+			_Body.pushIndent();
 			generate_sent(f.get_body());
-			_Body.pop_indent();
+			_Body.popIndent();
 			_Body.NL();
 		}
 	}
@@ -1036,7 +1036,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			Out.push("static ");
 
 		// return type
-		Out.push_spc(get_type_string(proc.get_return_type()));
+		Out.pushSpace(get_type_string(proc.get_return_type()));
 		Out.push(proc.get_procname().get_genname());
 		Out.push('(');
 
@@ -1075,7 +1075,7 @@ public class gm_cpp_gen extends BackendGenerator {
 				arg_curr++;
 
 				Out.push(get_type_string(decl.get_type()));
-				Out.push_spc("&");
+				Out.pushSpace("&");
 				Out.push(decl.get_idlist().get_item(0).get_genname());
 				if (remain_args > 0) {
 					Out.push(", ");
@@ -1371,13 +1371,13 @@ public class gm_cpp_gen extends BackendGenerator {
 			else
 				generate_rhs_field(a.get_lhs_field());
 			_Body.pushln("))");
-			_Body.push_indent();
+			_Body.pushIndent();
 			if (is_scalar)
 				generate_rhs_id(a.get_lhs_scala());
 			else
 				generate_rhs_field(a.get_lhs_field());
 			_Body.pushln(" = false;");
-			_Body.pop_indent();
+			_Body.popIndent();
 		} else if (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_OR) {
 			_Body.pushln("// or-reduction");
 			temp = String.format("if ((%s) ", temp_var_new);
@@ -1389,13 +1389,13 @@ public class gm_cpp_gen extends BackendGenerator {
 			else
 				generate_rhs_field(a.get_lhs_field());
 			_Body.pushln("))");
-			_Body.push_indent();
+			_Body.pushIndent();
 			if (is_scalar)
 				generate_rhs_id(a.get_lhs_scala());
 			else
 				generate_rhs_field(a.get_lhs_field());
 			_Body.pushln(" = true;");
-			_Body.pop_indent();
+			_Body.popIndent();
 		} else {
 			assert false;
 		}
@@ -1422,7 +1422,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		temp = String.format("class %s : public %s", bfs_name, template_name);
 		_Body.pushln(temp);
-		_Body.push_indent();
+		_Body.pushIndent();
 		if (bfs.is_bfs()) {
 			temp = String.format("<%s, %s, %s, %s, %s>", level_t, use_multithread, has_navigator, use_reverse_edge, save_child);
 		} else {
@@ -1430,12 +1430,12 @@ public class gm_cpp_gen extends BackendGenerator {
 		}
 
 		_Body.pushln(temp);
-		_Body.pop_indent();
+		_Body.popIndent();
 		_Body.pushln("{");
 
-		_Body.pop_indent();
+		_Body.popIndent();
 		_Body.pushln("public:");
-		_Body.push_indent();
+		_Body.pushIndent();
 
 		temp = String.format("%s(", bfs_name);
 		_Body.push(temp);
@@ -1497,9 +1497,9 @@ public class gm_cpp_gen extends BackendGenerator {
 		// -------------------------------------------------
 		// list of scope variables
 		// -------------------------------------------------
-		_Body.pop_indent();
+		_Body.popIndent();
 		_Body.pushln("private:  // list of varaibles");
-		_Body.push_indent();
+		_Body.pushIndent();
 		for (Object tmp : SET) {
 			gm_symtab_entry sym = (gm_symtab_entry) tmp;
 			ast_typedecl t = sym.getType();
@@ -1511,9 +1511,9 @@ public class gm_cpp_gen extends BackendGenerator {
 		}
 		_Body.NL();
 
-		_Body.pop_indent();
+		_Body.popIndent();
 		_Body.pushln("protected:");
-		_Body.push_indent();
+		_Body.pushIndent();
 
 		ast_id iter = bfs.get_iterator();
 		String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(iter.get_orgname(), "_idx");
@@ -1641,14 +1641,14 @@ public class gm_cpp_gen extends BackendGenerator {
 		case GMTYPE_SHORT:
 		case GMTYPE_INT:
 		case GMTYPE_LONG:
-			_Body.push_spc(" = 0");
+			_Body.pushSpace(" = 0");
 			break;
 		case GMTYPE_FLOAT:
 		case GMTYPE_DOUBLE:
-			_Body.push_spc(" = 0.0");
+			_Body.pushSpace(" = 0.0");
 			break;
 		case GMTYPE_BOOL:
-			_Body.push_spc(" = false");
+			_Body.pushSpace(" = false");
 			break;
 		default:
 			assert false;

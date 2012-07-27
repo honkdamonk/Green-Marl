@@ -770,7 +770,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("//----------------------------------------------");
 		temp = String.format("public static class %sVertex", proc_name);
 		Body.pushln(temp);
-		Body.push_indent();
+		Body.pushIndent();
 		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP))
 		{
 			temp = String.format("extends EdgeListVertex< %s, VertexData, EdgeData, MessageData > {", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
@@ -780,7 +780,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			temp = String.format("extends EdgeListVertex< %s, VertexData, NullWritable, MessageData > {", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
 		}
 		Body.pushln(temp);
-		Body.pop_indent();
+		Body.popIndent();
     
 		do_generate_vertex_states();
     

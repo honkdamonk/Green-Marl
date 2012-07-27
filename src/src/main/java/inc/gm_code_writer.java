@@ -19,20 +19,20 @@ public class gm_code_writer {
 	// (to implement 'inserting codes'
 	public StringBuffer file_buf = new StringBuffer();
 
-	public final void push_indent() {
+	public final void setBaseIndent(int i) {
+		base_indent = i;
+	}
+
+	public final void pushIndent() {
 		indent++;
 	}
 
-	public final void pop_indent() {
+	public final void popIndent() {
 		indent--;
 	}
 
-	public final void set_output_file(FILE f) {
+	public final void setOutputFile(FILE f) {
 		_out = f;
-	}
-
-	public final void set_base_indent(int i) {
-		base_indent = i;
 	}
 
 	public final void flush() {
@@ -55,7 +55,7 @@ public class gm_code_writer {
 		}
 	}
 
-	public final void push_to_upper(String s) {
+	public final void pushToUpper(String s) {
 		for (char c : s.toCharArray()) {
 			push(Character.toUpperCase(c));
 		}
@@ -66,12 +66,12 @@ public class gm_code_writer {
 		NL();
 	}
 
-	public final void push_spc(String s) {
+	public final void pushSpace(String s) {
 		push(s);
 		SPC();
 	}
 
-	public final void push_spc(char s) {
+	public final void pushSpace(char s) {
 		push(s);
 		SPC();
 	}
@@ -84,7 +84,7 @@ public class gm_code_writer {
 		push(' ');
 	}
 
-	public final void set_tab_size(int i) {
+	public final void setTabSize(int i) {
 		tabSize = i;
 	}
 
@@ -114,16 +114,17 @@ public class gm_code_writer {
 			if (_buf.charAt(0) == '}')
 				indent++;
 			for (int i = 0; i < col; i++) {
-				if (_buf.charAt(i) == '{')
+				switch (_buf.charAt(i)) {
+				case '{':
+				case '(':
 					indent++;
-				else if (_buf.charAt(i) == '(')
-					indent++;
-				else if (_buf.charAt(i) == '}')
+					break;
+				case '}':
+				case ')':
 					indent--;
-				else if (_buf.charAt(i) == ')')
-					indent--;
+					break;
+				}
 			}
-
 			col = 0;
 		}
 	}
@@ -136,8 +137,8 @@ public class gm_code_writer {
 	}
 
 	/**
-	 * assumption1: str is one line that ends with '\n' 
-	 * assumption2: str does not begins a new code-block
+	 * assumption1: str is one line that ends with '\n' assumption2: str does
+	 * not begins a new code-block
 	 **/
 	public final void insert_at(int ptr, int then_indent, String str) {
 		assert str != null;

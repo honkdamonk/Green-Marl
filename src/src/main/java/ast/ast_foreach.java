@@ -85,9 +85,9 @@ public class ast_foreach extends ast_sent {
 		if (body.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK)
 			body.reproduce(0);
 		else {
-			Out.push_indent();
+			Out.pushIndent();
 			body.reproduce(0);
-			Out.pop_indent();
+			Out.popIndent();
 		}
 	}
 

@@ -223,7 +223,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		// check body of reduce
 		if (a.is_reduce_assign()) {
 
-			GMTYPE_T summary_rhs = a.get_rhs().get_type_summary();
+			a.get_rhs().get_type_summary();
 			// SUM/MULT/MAX/MIN ==> numeirc
 			// AND/OR ==> boolean
 			GM_REDUCE_T reduce_op = a.get_reduce_type();

@@ -291,12 +291,12 @@ public class GlobalMembersGm_rw_analysis_check2 {
 
 	public static boolean gm_has_dependency(gm_rwinfo_sets P_SET, gm_rwinfo_sets Q_SET) {
 
-		gm_rwinfo_map P_R = new gm_rwinfo_map(P_SET.read_set);
-		gm_rwinfo_map P_W = new gm_rwinfo_map(P_SET.write_set);
-		gm_rwinfo_map P_M = new gm_rwinfo_map(P_SET.mutate_set);
-		gm_rwinfo_map Q_R = new gm_rwinfo_map(Q_SET.read_set);
-		gm_rwinfo_map Q_W = new gm_rwinfo_map(Q_SET.write_set);
-		gm_rwinfo_map Q_M = new gm_rwinfo_map(Q_SET.mutate_set);
+		gm_rwinfo_map P_R = P_SET.read_set;
+		gm_rwinfo_map P_W = P_SET.write_set;
+		gm_rwinfo_map P_M = P_SET.mutate_set;
+		gm_rwinfo_map Q_R = Q_SET.read_set;
+		gm_rwinfo_map Q_W = Q_SET.write_set;
+		gm_rwinfo_map Q_M = Q_SET.mutate_set;
 
 		// true dependency
 		if (GlobalMembersGm_rw_analysis_check2.gm_does_intersect(P_W, Q_R, false))

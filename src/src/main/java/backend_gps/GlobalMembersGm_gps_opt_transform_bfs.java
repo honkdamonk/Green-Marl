@@ -293,10 +293,6 @@ public class GlobalMembersGm_gps_opt_transform_bfs {
 		//
 		String lev_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("level", null, true);
 		String curr_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("curr_level", null, true);
-		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
-		// pointers to value types:
-		// ORIGINAL LINE: sbyte* fin_name =
-		// FE.voca_temp_name_and_add("bfs_finished", null, true);
 		String fin_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("bfs_finished", null, true);
 		RefObject<String> tempRef_lev_name = new RefObject<String>(lev_name);
 		gm_symtab_entry lev_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, b.get_source().getSymInfo(),
@@ -309,20 +305,15 @@ public class GlobalMembersGm_gps_opt_transform_bfs {
 		gm_symtab_entry fin_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_BOOL, tempRef_fin_name);
 		fin_name = tempRef_fin_name.argvalue;
 
-		lev_name = null;
-		curr_name = null;
+		create_initializer(sb, b, lev_sym, curr_sym, fin_sym);
 
-		GlobalMembersGm_cpp_opt_defer.create_initializer(sb, b, lev_sym, curr_sym, fin_sym);
-
-		GlobalMembersGm_gps_opt_transform_bfs.create_fw_iteration(sb, b, lev_sym, curr_sym, fin_sym);
+		create_fw_iteration(sb, b, lev_sym, curr_sym, fin_sym);
 
 		if (b.get_bbody() != null)
-			GlobalMembersGm_gps_opt_transform_bfs.create_bw_iteration(sb, b, lev_sym, curr_sym, fin_sym);
+			create_bw_iteration(sb, b, lev_sym, curr_sym, fin_sym);
 
 		// replace bfs with sb
-
 		GlobalMembersGm_transform_helper.gm_ripoff_sent(b);
-		if (b != null)
-			b.dispose();
+
 	}
 }

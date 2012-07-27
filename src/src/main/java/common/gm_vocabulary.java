@@ -12,19 +12,9 @@ public class gm_vocabulary {
 		words.clear();
 	}
 
-	@Deprecated
-	public final void add_word(tangible.RefObject<String> w) {
-		String dup = GlobalMembersGm_misc.gm_strdup(w.argvalue);
-		words.add(dup);
-	}
-
 	public final void add_word(String word) {
+		assert word != null;
 		words.add(word);
-	}
-
-	@Deprecated
-	public final boolean has_word(tangible.RefObject<String> w) {
-		return words.contains(w);
 	}
 
 	public final boolean has_word(String word) {

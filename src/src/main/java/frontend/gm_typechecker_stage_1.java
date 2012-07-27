@@ -175,6 +175,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			if (i != null)
 				is_okay = find_symbol_id(i);
 			if (is_okay) {
+				@SuppressWarnings("unused")
 				GMTYPE_T source_type = (i == null) ? GMTYPE_T.GMTYPE_VOID : i.getTypeSummary();
 			}
 			break;

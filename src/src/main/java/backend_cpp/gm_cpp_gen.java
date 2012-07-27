@@ -86,7 +86,6 @@ import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_apply_compiler_stage;
 import common.GlobalMembersGm_error;
 import common.GlobalMembersGm_main;
-import common.GlobalMembersGm_misc;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
@@ -529,11 +528,9 @@ public class gm_cpp_gen extends BackendGenerator {
 					break;
 				}
 			} else if (t2.is_nodeedge()) {
-				String temp = String.format("%s*", get_lib().get_type_string(t2));
-				return GlobalMembersGm_misc.gm_strdup(temp);
+				return String.format("%s*", get_lib().get_type_string(t2));
 			} else if (t2.is_collection()) {
-				String temp = String.format("%s<%s>&", GlobalMembersGm_cpplib_words.PROP_OF_COL, get_lib().get_type_string(t2));
-				return GlobalMembersGm_misc.gm_strdup(temp);
+				return String.format("%s<%s>&", GlobalMembersGm_cpplib_words.PROP_OF_COL, get_lib().get_type_string(t2));
 			} else {
 				assert false;
 			}

@@ -186,11 +186,6 @@ public class gm_frontend {
 		proc_info.get(_curr_proc).add_voca(value);
 	}
 
-	@Deprecated
-	public final boolean voca_isin(tangible.RefObject<String> n) {
-		return proc_info.get(_curr_proc).isin_voca(n);
-	}
-	
 	public final boolean voca_isin(String value) {
 		return proc_info.get(_curr_proc).isin_voca(value);
 	}

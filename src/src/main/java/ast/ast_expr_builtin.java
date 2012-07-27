@@ -5,7 +5,6 @@ import inc.GMTYPE_T;
 import inc.expr_list;
 
 import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_misc;
 import common.gm_apply;
 import common.gm_builtin_def;
 
@@ -142,7 +141,8 @@ public class ast_expr_builtin extends ast_expr {
 		E.driver = id;
 		if (id != null) // type unknown yet.
 			id.set_parent(E);
-		E.orgname = GlobalMembersGm_misc.gm_strdup(orgname);
+		assert orgname != null;
+		E.orgname = orgname;
 		if (t != null) {
 			E.args = new java.util.LinkedList<ast_expr>(t.LIST); // shallow copy
 																	// LIST
@@ -161,7 +161,8 @@ public class ast_expr_builtin extends ast_expr {
 		if (id != null) // type unknown yet.
 			id.set_parent(E);
 		E.def = d;
-		E.orgname = GlobalMembersGm_misc.gm_strdup(d.get_orgname());
+		assert d.get_orgname() != null;
+		E.orgname = d.get_orgname();
 		if (t != null) {
 			E.args = t.LIST; // shallow copy LIST
 			// but not set 'up' pointer.

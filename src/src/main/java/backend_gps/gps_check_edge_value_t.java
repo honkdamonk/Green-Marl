@@ -1,4 +1,5 @@
 package backend_gps;
+
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_READ_RANDOM;
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_SEND_VERSIONS;
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_WRITE_CONDITIONAL;
@@ -26,6 +27,12 @@ import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab_entry;
 
 public class gps_check_edge_value_t extends gm_apply {
+	
+	private gm_symtab_entry inner_iter;
+	private ast_foreach inner_loop;
+	private boolean target_is_edge_prop;
+	private boolean _error;
+	
 	public gps_check_edge_value_t() {
 		set_separate_post_apply(true);
 		set_for_symtab(true);
@@ -216,8 +223,4 @@ public class gps_check_edge_value_t extends gm_apply {
 		return true;
 	}
 
-	private gm_symtab_entry inner_iter;
-	private ast_foreach inner_loop;
-	private boolean target_is_edge_prop;
-	private boolean _error;
 }

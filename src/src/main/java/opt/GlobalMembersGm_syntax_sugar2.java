@@ -1,5 +1,6 @@
 package opt;
 
+import tangible.RefObject;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
@@ -172,48 +173,57 @@ public class GlobalMembersGm_syntax_sugar2 {
 		return false;
 	}
 
-	public static boolean check_has_nested(ast_expr body, GM_REDUCE_T rtype, tangible.RefObject<Boolean> has_other_rhs, ast_expr_reduce b1, ast_expr_reduce b2) {
-		if (rtype == GM_REDUCE_T.GMREDUCE_AVG)
-			return false;
+	public static boolean check_has_nested(ast_expr body, GM_REDUCE_T rtype, RefObject<Boolean> has_other_rhs, RefObject<ast_expr_reduce> b1_ref,
+			RefObject<ast_expr_reduce> b2_ref) {
+		ast_expr_reduce b1 = null;
+		ast_expr_reduce b2 = null;
+		try {
+			if (rtype == GM_REDUCE_T.GMREDUCE_AVG)
+				return false;
 
-		// ---------------------------------
-		// case 1
-		// SUM ( SUM)
-		// case 2
-		// SUM ( SUM + SUM)
-		// case 3
-		// SUM ( SUM + alpha)
-		// ---------------------------------
-		has_other_rhs.argvalue = false;
-		b1 = null;
-		b2 = null;
-		// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-		// in-line:
-		// /#define CHECK_SAME_REDUCTION(expr, rtype) ((expr)->is_reduction() &&
-		// (((ast_expr_reduce*)(expr))->get_reduce_type() == rtype))
-		if (((body).is_reduction() && (((ast_expr_reduce) (body)).get_reduce_type() == rtype))) {
-			b1 = (ast_expr_reduce) body;
-			return true;
-		} else if (body.is_biop()) {
-			GM_OPS_T op = body.get_optype();
-			if (GlobalMembersGm_syntax_sugar2.check_is_reduce_op(rtype, op)) {
-				// check each argument
-				if (((body.get_left_op()).is_reduction() && (((ast_expr_reduce) (body.get_left_op())).get_reduce_type() == rtype))) {
-					b1 = (ast_expr_reduce) body.get_left_op();
+			// ---------------------------------
+			// case 1
+			// SUM ( SUM)
+			// case 2
+			// SUM ( SUM + SUM)
+			// case 3
+			// SUM ( SUM + alpha)
+			// ---------------------------------
+			has_other_rhs.argvalue = false;
+
+			// C++ TO JAVA CONVERTER NOTE: The following #define macro was
+			// replaced
+			// in-line:
+			// /#define CHECK_SAME_REDUCTION(expr, rtype)
+			// ((expr)->is_reduction() &&
+			// (((ast_expr_reduce*)(expr))->get_reduce_type() == rtype))
+			if (((body).is_reduction() && (((ast_expr_reduce) (body)).get_reduce_type() == rtype))) {
+				b1 = (ast_expr_reduce) body;
+				return true;
+			} else if (body.is_biop()) {
+				GM_OPS_T op = body.get_optype();
+				if (GlobalMembersGm_syntax_sugar2.check_is_reduce_op(rtype, op)) {
+					// check each argument
+					if (((body.get_left_op()).is_reduction() && (((ast_expr_reduce) (body.get_left_op())).get_reduce_type() == rtype))) {
+						b1 = (ast_expr_reduce) body.get_left_op();
+					}
+					if (((body.get_right_op()).is_reduction() && (((ast_expr_reduce) (body.get_right_op())).get_reduce_type() == rtype))) {
+						b2 = (ast_expr_reduce) body.get_right_op();
+					}
+
+					boolean is_nested = (b1 != null) || (b2 != null);
+					has_other_rhs.argvalue = is_nested && ((b1 == null) || (b2 == null));
+
+					return is_nested;
 				}
-				if (((body.get_right_op()).is_reduction() && (((ast_expr_reduce) (body.get_right_op())).get_reduce_type() == rtype))) {
-					b2 = (ast_expr_reduce) body.get_right_op();
-				}
 
-				boolean is_nested = (b1 != null) || (b2 != null);
-				has_other_rhs.argvalue = is_nested && ((b1 == null) || (b2 == null));
-
-				return is_nested;
+				return false;
 			}
 
 			return false;
+		} finally {
+			b1_ref.argvalue = b1;
+			b2_ref.argvalue = b2;
 		}
-
-		return false;
 	}
 }

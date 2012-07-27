@@ -3,7 +3,6 @@ package ast;
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.expr_list;
-import common.GlobalMembersGm_misc;
 
 public class ast_expr_builtin_field extends ast_expr_builtin {
 
@@ -39,7 +38,8 @@ public class ast_expr_builtin_field extends ast_expr_builtin {
 		ast_expr_builtin_field newExpression = new ast_expr_builtin_field();
 		newExpression.expr_class = GMEXPR_CLASS.GMEXPR_BUILTIN_FIELD;
 		newExpression.field_driver = field;
-		newExpression.orgname = GlobalMembersGm_misc.gm_strdup(orgname);
+		assert orgname != null;
+		newExpression.orgname = orgname;
 
 		if (field != null) {
 			field.set_parent(newExpression); // type unknown yet.

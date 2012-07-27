@@ -767,6 +767,7 @@ public class gm_giraphlib extends gm_gpslib {
 		Body.pushln("public void write(DataOutput out) throws IOException {");
 		if (!info.is_single_message())
 			Body.pushln("out.writeByte(m_type);");
+		String str_buf = new String(new char[1024]);
 		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
 		boolean is_single = info.is_single_message();
 		boolean is_first = true;
@@ -775,10 +776,10 @@ public class gm_giraphlib extends gm_gpslib {
 			int sz = get_total_size(SYMS);
 			if (!is_single && is_first) {
 				is_first = false;
-				String str_buf = String.format("if (m_type == %d) ", SYMS.id);
+				str_buf = String.format("if (m_type == %d) ", SYMS.id);
 				Body.push(str_buf);
 			} else if (!is_single) {
-				String str_buf = String.format("else if (m_type == %d) ", SYMS.id);
+				str_buf = String.format("else if (m_type == %d) ", SYMS.id);
 				Body.push(str_buf);
 			}
 			if (!info.is_single_message())
@@ -804,7 +805,7 @@ public class gm_giraphlib extends gm_gpslib {
 		if (!info.is_single_message())
 			Body.pushln("m_type = in.readByte();");
 		String str_buf = new String(new char[1024]);
-		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
+		java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
 		boolean is_single = info.is_single_message();
 		boolean is_first = true;
 		for (gm_gps_congruent_msg_class c : LOOPS) {
@@ -812,10 +813,10 @@ public class gm_giraphlib extends gm_gpslib {
 			int sz = get_total_size(SYMS);
 			if (!is_single && is_first) {
 				is_first = false;
-				String.format(str_buf, "if (m_type == %d) ", SYMS.id);
+				str_buf = String.format("if (m_type == %d) ", SYMS.id);
 				Body.push(str_buf);
 			} else if (!is_single) {
-				String.format(str_buf, "else if (m_type == %d) ", SYMS.id);
+				str_buf = String.format("else if (m_type == %d) ", SYMS.id);
 				Body.push(str_buf);
 			}
 			if (!info.is_single_message())
@@ -833,7 +834,7 @@ public class gm_giraphlib extends gm_gpslib {
 		Body.pushln("}");
 	}
 
-	void generate_message_class_details(gm_gps_beinfo info, gm_code_writer Body) {
+	public void generate_message_class_details(gm_gps_beinfo info, gm_code_writer Body) {
 
 		Body.pushln("// union of all message fields  ");
 		gm_gps_communication_size_info size_info = info.get_max_communication_size();
@@ -849,7 +850,7 @@ public class gm_giraphlib extends gm_gpslib {
 		generate_message_class_write_generate_message_class_read1(this, info, Body);
 	}
 
-	void generate_message_send(ast_foreach fe, gm_code_writer Body) {
+	public void generate_message_send(ast_foreach fe, gm_code_writer Body) {
 		String temp = new String(new char[1024]);
 
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
@@ -986,21 +987,21 @@ public class gm_giraphlib extends gm_gpslib {
 			return true;
 	}
 
-	void generate_message_receive_begin(ast_foreach fe, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
+	public void generate_message_receive_begin(ast_foreach fe, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		gm_gps_comm_t comm_type = (fe == null) ? gm_gps_comm_t.GPS_COMM_INIT : gm_gps_comm_t.GPS_COMM_NESTED;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, fe);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
 
-	void generate_message_receive_begin(ast_sentblock sb, gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
+	public void generate_message_receive_begin(ast_sentblock sb, gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		gm_gps_comm_t comm_type = gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, sb, drv);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
 
-	void generate_message_receive_begin(gm_gps_comm_unit U, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
+	public void generate_message_receive_begin(gm_gps_comm_unit U, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
 		java.util.LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
@@ -1037,13 +1038,13 @@ public class gm_giraphlib extends gm_gpslib {
 		}
 	}
 
-	void generate_message_receive_end(gm_code_writer Body, boolean is_only_comm) {
+	public void generate_message_receive_end(gm_code_writer Body, boolean is_only_comm) {
 		if (!is_only_comm) {
 			Body.pushln("}");
 		}
 	}
 
-	void generate_expr_builtin(ast_expr_builtin be, gm_code_writer Body, boolean is_master) {
+	public void generate_expr_builtin(ast_expr_builtin be, gm_code_writer Body, boolean is_master) {
 		gm_builtin_def def = be.get_builtin_def();
 		java.util.LinkedList<ast_expr> ARGS = be.get_args();
 
@@ -1077,7 +1078,7 @@ public class gm_giraphlib extends gm_gpslib {
 		}
 	}
 
-	void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block bb) {
+	public void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block bb) {
 		String temp = new String(new char[1024]);
 
 		if (bb.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) {
@@ -1105,6 +1106,7 @@ public class gm_giraphlib extends gm_gpslib {
 			Body.pushln("while (_msgs.hasNext()) {");
 			Body.pushln("_msg = _msgs.next();");
 
+			// TODO hope this is correct!
 			generate_message_receive_begin((ast_foreach) null, Body, bb, true);
 			temp = String.format("%s.%s[i] = new %s(%s);", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID,
 

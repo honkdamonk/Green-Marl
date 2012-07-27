@@ -901,28 +901,28 @@ public class gm_gpslib extends gm_graph_library {
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	private static void generate_message_class_get_size_generate_message_class_read1(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
-	}
+	//private static void generate_message_class_get_size_generate_message_class_read1(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
+	//}
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	private static void generate_message_class_get_size_generate_message_class_read2(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
-	}
+	//private static void generate_message_class_get_size_generate_message_class_read2(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
+	//}
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	private static void generate_message_class_get_size_generate_message_class_read3(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
-	}
+	//private static void generate_message_class_get_size_generate_message_class_read3(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
+	//}
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	private static void generate_message_class_get_size_generate_message_class_combine(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
-	}
+	//private static void generate_message_class_get_size_generate_message_class_combine(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
+	//}
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	private static boolean generate_message_class_get_size_is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {
-	}
+	//private static boolean generate_message_class_get_size_is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {
+	//}
 
 	public static void generate_message_class_get_size(gm_gps_beinfo info, gm_code_writer Body) {
 		Body.pushln("@Override");
@@ -1178,7 +1178,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("}");
 	}
 
-	void generate_message_class_details(gm_gps_beinfo info, gm_code_writer Body) {
+	public void generate_message_class_details(gm_gps_beinfo info, gm_code_writer Body) {
 
 		Body.pushln("// union of all message fields  ");
 		gm_gps_communication_size_info size_info = info.get_max_communication_size();
@@ -1192,14 +1192,14 @@ public class gm_gpslib extends gm_graph_library {
 
 		generate_message_class_get_size(info, Body);
 		generate_message_class_write(this, info, Body);
-		generate_message_class_get_size_generate_message_class_read1(this, info, Body);
-		generate_message_class_get_size_generate_message_class_read2(this, info, Body);
-		generate_message_class_get_size_generate_message_class_read3(this, info, Body);
-		generate_message_class_get_size_generate_message_class_combine(this, info, Body);
+		generate_message_class_read1(this, info, Body);
+		generate_message_class_read2(this, info, Body);
+		generate_message_class_read3(this, info, Body);
+		generate_message_class_combine(this, info, Body);
 		Body.NL();
 	}
 
-	void generate_message_send(ast_foreach fe, gm_code_writer Body) {
+	public void generate_message_send(ast_foreach fe, gm_code_writer Body) {
 
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
@@ -1321,21 +1321,21 @@ public class gm_gpslib extends gm_graph_library {
 			return true;
 	}
 
-	void generate_message_receive_begin(ast_foreach fe, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
+	public void generate_message_receive_begin(ast_foreach fe, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		gm_gps_comm_t comm_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, fe);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
 
-	void generate_message_receive_begin(ast_sentblock sb, gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
+	public void generate_message_receive_begin(ast_sentblock sb, gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		gm_gps_comm_t comm_type = GPS_COMM_RANDOM_WRITE;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, sb, drv);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
 
-	void generate_message_receive_begin(gm_gps_comm_unit U, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
+	public void generate_message_receive_begin(gm_gps_comm_unit U, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
 		LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
@@ -1352,7 +1352,7 @@ public class gm_gpslib extends gm_graph_library {
 
 			// check it once again later
 			if (e.getType().is_property() || e.getType().is_node_compatible() || e.getType().is_edge_compatible()
-					|| !generate_message_class_get_size_is_symbol_defined_in_bb(b, e)) {
+					|| !is_symbol_defined_in_bb(b, e)) {
 				String str = main.get_type_string(SYM.gm_type);
 				Body.push(str);
 				Body.SPC();
@@ -1371,7 +1371,7 @@ public class gm_gpslib extends gm_graph_library {
 		}
 	}
 
-	void generate_message_receive_end(gm_code_writer Body, boolean is_only_comm) {
+	public void generate_message_receive_end(gm_code_writer Body, boolean is_only_comm) {
 		if (!is_only_comm) {
 			Body.pushln("}");
 		}
@@ -1381,7 +1381,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.push("(-1)");
 	}
 
-	void generate_expr_builtin(ast_expr_builtin be, gm_code_writer Body, boolean is_master) {
+	public void generate_expr_builtin(ast_expr_builtin be, gm_code_writer Body, boolean is_master) {
 		gm_builtin_def def = be.get_builtin_def();
 		LinkedList<ast_expr> ARGS = be.get_args();
 
@@ -1423,7 +1423,7 @@ public class gm_gpslib extends gm_graph_library {
 		}
 	}
 
-	void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block bb) {
+	public void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block bb) {
 
 		if (bb.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) {
 			Body.pushln("// Preperation: creating reverse edges");

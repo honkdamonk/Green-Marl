@@ -49,10 +49,10 @@ public class GlobalMembersGm_merge_loops {
 		return true;
 	}
 
-	public static boolean intersect_check_for_merge(gm_rwinfo_map S1,
-			gm_rwinfo_map S2, gm_rwinfo_map S1_reduce,
-			boolean check_reduce) {
-		Map.Entry<gm_symtab_entry, gm_rwinfo_list> j; //TODO argl...shoot me -.-
+	public static boolean intersect_check_for_merge(gm_rwinfo_map S1, gm_rwinfo_map S2, gm_rwinfo_map S1_reduce, boolean check_reduce) {
+		
+		Map.Entry<gm_symtab_entry, gm_rwinfo_list> j; // TODO argl...shoot me
+														// -.-
 		for (gm_symtab_entry e : S1.keySet()) {
 			// C++ TO JAVA CONVERTER WARNING: The following line was determined
 			// to be a copy assignment (rather than a reference assignment) -

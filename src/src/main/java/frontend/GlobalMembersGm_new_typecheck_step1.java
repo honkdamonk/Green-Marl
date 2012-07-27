@@ -1,14 +1,13 @@
 package frontend;
 
-import tangible.RefObject;
 import inc.GMTYPE_T;
+import tangible.RefObject;
 import ast.ast_id;
 import ast.ast_typedecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
 import common.GlobalMembersGm_main;
-import common.GlobalMembersGm_misc;
 
 public class GlobalMembersGm_new_typecheck_step1 {
 
@@ -256,7 +255,7 @@ public class GlobalMembersGm_new_typecheck_step1 {
 			// node->getTypeInfo()->get_target_graph_id()->get_orgname());
 			type.set_target_graph_id(node.getTypeInfo().get_target_graph_id().copy(true));
 		} else {
-			System.out.printf("%s", GlobalMembersGm_misc.gm_get_type_string(type.getTypeSummary()));
+			System.out.println(type.getTypeSummary().get_type_string());
 			assert false;
 		}
 

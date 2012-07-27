@@ -109,7 +109,7 @@ public class gm_cpp_gen extends BackendGenerator {
 	protected FILE f_body = null;
 	
 	protected String i_temp; // temporary variable name
-	protected String temp = new String(new char[2048]);
+	protected String temp;
 	
 	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
 	protected LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();

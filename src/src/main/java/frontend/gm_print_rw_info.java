@@ -7,7 +7,6 @@ import ast.AST_NODE_TYPE;
 import ast.ast_node;
 import ast.ast_sent;
 
-import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
 //----------------------------------------------------------------------
@@ -94,7 +93,7 @@ public class gm_print_rw_info extends gm_apply {
 		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets.reduce_set);
 
 		print_tab(_tab);
-		System.out.printf("[%s]\n", GlobalMembersGm_misc.gm_get_nodetype_string(s.get_nodetype()));
+		System.out.printf("[%s]\n", s.get_nodetype().get_nodetype_string());
 		if (R.size() > 0)
 			print_set("R", R);
 		if (W.size() > 0)

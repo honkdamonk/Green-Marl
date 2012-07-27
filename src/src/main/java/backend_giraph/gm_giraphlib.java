@@ -34,7 +34,6 @@ import backend_gps.gm_gpslib;
 import backend_gps.gps_syminfo;
 
 import common.GlobalMembersGm_main;
-import common.GlobalMembersGm_misc;
 import common.gm_builtin_def;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -573,7 +572,7 @@ public class gm_giraphlib extends gm_gpslib {
 		case GMTYPE_BOOL:
 			return 1;
 		default:
-			System.out.printf("type = %s\n", GlobalMembersGm_misc.gm_get_type_string(gm_type));
+			System.out.println("type = " + gm_type.get_type_string());
 			assert false;
 			return 0;
 		}

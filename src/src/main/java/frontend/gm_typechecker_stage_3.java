@@ -189,7 +189,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		else if (op_type.is_boolean_op()) {
 			if (!exp_type.is_boolean_type()) {
 				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
-						GlobalMembersGm_misc.gm_get_type_string(exp_type));
+						exp_type.get_type_string());
 				return false;
 			}
 
@@ -199,7 +199,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		else if (op_type.is_numeric_op()) {
 			if (!exp_type.is_numeric_type()) {
 				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
-						GlobalMembersGm_misc.gm_get_type_string(exp_type));
+						exp_type.get_type_string());
 				return false;
 			}
 
@@ -256,7 +256,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		RefObject<Boolean> tempRef_w2_warn = new RefObject<Boolean>(null);
 		boolean okay = GlobalMembersGm_typecheck_oprules.gm_is_compatible_type(op_type, l_type, r_type, tempRef_result_type, tempRef_l_new, tempRef_r_new,
 				tempRef_w1_warn, tempRef_w2_warn);
-		
+
 		GMTYPE_T result_type = tempRef_result_type.argvalue;
 		GMTYPE_T l_new = tempRef_l_new.argvalue;
 		GMTYPE_T r_new = tempRef_r_new.argvalue;
@@ -265,7 +265,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 
 		if (!okay) {
 			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH2, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
-					GlobalMembersGm_misc.gm_get_type_string(l_type), GlobalMembersGm_misc.gm_get_type_string(r_type));
+					l_type.get_type_string(), r_type.get_type_string());
 
 			return false;
 		}
@@ -298,16 +298,14 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		if (w1_warn && l_type.is_prim_type()) {
 			// adding explicit coercions
 			if (!e.get_left_op().is_literal()) {
-				System.out.printf("warning: adding type conversion %s->%s\n", GlobalMembersGm_misc.gm_get_type_string(l_type),
-						GlobalMembersGm_misc.gm_get_type_string(l_new));
+				System.out.printf("warning: adding type conversion %s->%s\n", l_type.get_type_string(), l_new.get_type_string());
 				coercion_targets.put(e.get_left_op(), l_new);
 			}
 		}
 		if (w2_warn && r_type.is_prim_type()) {
 			// adding explicit coercions
 			if (!e.get_right_op().is_literal()) {
-				System.out.printf("warning: adding type conversion %s->%s\n", GlobalMembersGm_misc.gm_get_type_string(r_type),
-						GlobalMembersGm_misc.gm_get_type_string(r_new));
+				System.out.printf("warning: adding type conversion %s->%s\n", r_type.get_type_string(), r_new.get_type_string());
 				coercion_targets.put(e.get_right_op(), r_new);
 			}
 		}

@@ -35,7 +35,6 @@ import ast.ast_sentblock;
 import ast.ast_typedecl;
 
 import common.GlobalMembersGm_main;
-import common.GlobalMembersGm_misc;
 import common.gm_builtin_def;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -649,7 +648,7 @@ public class gm_gpslib extends gm_graph_library {
 		case GMTYPE_BOOL:
 			return 1;
 		default:
-			System.out.printf("type = %s\n", GlobalMembersGm_misc.gm_get_type_string(gm_type));
+			System.out.println("type = " + gm_type.get_type_string());
 			assert false;
 			return 0;
 		}

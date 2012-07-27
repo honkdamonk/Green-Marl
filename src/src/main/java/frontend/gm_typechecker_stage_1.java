@@ -24,7 +24,6 @@ import ast.ast_vardecl;
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
 import common.GlobalMembersGm_main;
-import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -349,7 +348,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			break;
 
 		default:
-			System.out.printf("type = %s\n", GlobalMembersGm_misc.gm_get_nodetype_string(s.get_nodetype()));
+			System.out.printf("type = %s\n", s.get_nodetype().get_nodetype_string());
 			assert false;
 			break;
 		}
@@ -551,7 +550,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				}
 			}
 		} else {
-			System.out.printf("%s\n", GlobalMembersGm_misc.gm_get_type_string(iter_type));
+			System.out.println(iter_type.get_type_string());
 			assert false;
 		}
 

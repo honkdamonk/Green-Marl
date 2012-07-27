@@ -35,7 +35,6 @@ import ast.ast_sent;
 import ast.ast_typedecl;
 
 import common.GlobalMembersGm_main;
-import common.GlobalMembersGm_misc;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
@@ -45,9 +44,11 @@ import common.gm_vocabulary;
 // interface for graph library Layer
 //  ==> will be deprecated
 //-----------------------------------------------------------------
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class gm_cpp_gen;
 public class gm_cpplib extends gm_graph_library {
+	
+	private String str_buf;
+	private gm_cpp_gen main;
+		
 	public gm_cpplib() {
 		main = null;
 	}
@@ -102,7 +103,7 @@ public class gm_cpplib extends gm_graph_library {
 		} else if (type.is_collection_of_collection_type()) {
 			return QUEUE_T;
 		} else {
-			System.out.printf("type = %d %s\n", type, GlobalMembersGm_misc.gm_get_type_string(type));
+			System.out.printf("type = %d %s\n", type, type.get_type_string());
 			assert false;
 			return "ERROR";
 		}
@@ -134,9 +135,6 @@ public class gm_cpplib extends gm_graph_library {
 
 	public boolean do_local_optimize() {
 		String[] NAMES = { "[(nothing)]" };
-		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
-		// a direct reference to the array length:
-		// ORIGINAL LINE: const int COUNT = sizeof(NAMES) / sizeof(String);
 		final int COUNT = NAMES.length;
 
 		boolean is_okay = true;
@@ -640,6 +638,4 @@ public class gm_cpplib extends gm_graph_library {
 		body.push(")");
 	}
 
-	private String str_buf = new String(new char[1024 * 8]);
-	private gm_cpp_gen main;
 }

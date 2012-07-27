@@ -194,17 +194,17 @@ public class GlobalMembersGm_main {
 		Path.parsePath(fname);
 
 		String name = OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_TARGET);
-		if (GlobalMembersGm_misc.gm_is_same_string(name, "cpp_seq")) {
+		if (name.equals("cpp_seq")) {
 			CPP_BE.set_target_omp(false);
 			BACK_END = CPP_BE;
-		} else if (GlobalMembersGm_misc.gm_is_same_string(name, "cpp_omp")) {
+		} else if (name.equals("cpp_omp")) {
 			CPP_BE.set_target_omp(true);
 			BACK_END = CPP_BE;
-		} else if (GlobalMembersGm_misc.gm_is_same_string(name, "gps")) {
+		} else if (name.equals("gps")) {
 			BACK_END = GPS_BE;
 			PREGEL_BE = GPS_BE;
 			OPTIONS.set_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_PULL, true);
-		} else if (GlobalMembersGm_misc.gm_is_same_string(name, "giraph")) {
+		} else if (name.equals("giraph")) {
 			BACK_END = GIRAPH_BE;
 			PREGEL_BE = GIRAPH_BE;
 			OPTIONS.set_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_PULL, true);

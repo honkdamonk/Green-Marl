@@ -287,7 +287,7 @@ public abstract class gm_code_generator {
 	}
 
 	public boolean check_need_para(GM_OPS_T optype, GM_OPS_T up_optype, boolean is_right) {
-		return GlobalMembersGm_misc.gm_need_paranthesis(optype, up_optype, is_right);
+		return optype.gm_need_paranthesis(up_optype, is_right);
 	}
 
 	public abstract void generate_lhs_id(ast_id i);

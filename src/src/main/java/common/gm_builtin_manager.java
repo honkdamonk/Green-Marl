@@ -40,7 +40,7 @@ public class gm_builtin_manager {
 	public final gm_builtin_def find_builtin_def(GMTYPE_T source_type, String orgname) {
 		for (gm_builtin_def d : defs) {
 			GMTYPE_T def_src = d.get_source_type_summary();
-			if (GlobalMembersGm_misc.gm_is_same_string(orgname, d.get_orgname())) {
+			if (orgname.equals(d.get_orgname())) {
 				if (def_src == source_type) {
 					if (d.is_synonym_def())
 						return d.get_org_def();

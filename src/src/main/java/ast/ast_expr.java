@@ -66,7 +66,7 @@ public class ast_expr extends ast_node {
 				Out.push(" | ");
 			} else if (op_type == GM_OPS_T.GMOP_TYPEC) {
 				Out.push(" (");
-				Out.push(GlobalMembersGm_misc.gm_get_type_string(type_of_expression));
+				Out.push(type_of_expression.get_type_string());
 				Out.push(" ) ");
 				left.reproduce(0);
 			} else {
@@ -95,7 +95,7 @@ public class ast_expr extends ast_node {
 			if (up == null)
 				need_para = false;
 			else
-				need_para = GlobalMembersGm_misc.gm_need_paranthesis(get_optype(), up.get_optype(), is_right_op());
+				need_para = get_optype().gm_need_paranthesis(up.get_optype(), is_right_op());
 			if (need_para)
 				Out.push('(');
 			cond.reproduce(0);
@@ -128,7 +128,7 @@ public class ast_expr extends ast_node {
 		else if (is_comp()) {
 			need_para = true;
 		} else if (up.is_biop() || up.is_comp()) {
-			need_para = GlobalMembersGm_misc.gm_need_paranthesis(get_optype(), up.get_optype(), is_right_op());
+			need_para = get_optype().gm_need_paranthesis(up.get_optype(), is_right_op());
 		} else
 			need_para = true;
 
@@ -175,7 +175,7 @@ public class ast_expr extends ast_node {
 			} else if (op_type == GM_OPS_T.GMOP_ABS) {
 				System.out.print("abs \n");
 			} else if (op_type == GM_OPS_T.GMOP_TYPEC) {
-				System.out.printf("( %s )\n", GlobalMembersGm_misc.gm_get_type_string(type_of_expression));
+				System.out.printf("( %s )\n", type_of_expression.get_type_string());
 			}
 			left.dump_tree(ind_level + 1);
 			System.out.print("\n");

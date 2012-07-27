@@ -66,7 +66,7 @@ public class ast_expr_reduce extends ast_expr
 		Out.push(": ");
 		src.reproduce(0);
 		Out.push(".");
-		Out.push(GlobalMembersGm_misc.gm_get_iter_type_string(iter_type));
+		Out.push(iter_type.get_iter_type_string());
 		if (iter_type.is_common_nbr_iter_type())
 		{
 			Out.push('(');
@@ -93,7 +93,7 @@ public class ast_expr_reduce extends ast_expr
 		System.out.print(":");
 		src.dump_tree(0);
 		System.out.print(".");
-		System.out.printf("%s)\n", GlobalMembersGm_misc.gm_get_iter_type_string(iter_type));
+		System.out.println(iter_type.get_iter_type_string());
 		if (filter != null)
 		{
 			GlobalMembersGm_dumptree.IND(ind_level + 1);

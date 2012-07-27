@@ -4,7 +4,6 @@ import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 
 import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_misc;
 
 //==========================================================================
 
@@ -333,7 +332,7 @@ public class ast_typedecl extends ast_node { // property or type
 
 	public void reproduce(int ind_level) {
 		if (is_primitive()) {
-			Out.push(GlobalMembersGm_misc.gm_get_type_string(type_id));
+			Out.push(type_id.get_type_string());
 		} else if (is_graph()) {
 			switch (type_id) {
 			case GMTYPE_GRAPH:
@@ -371,7 +370,7 @@ public class ast_typedecl extends ast_node { // property or type
 			Out.push(')');
 		} else if (is_collection()) {
 			assert target_graph != null;
-			Out.push(GlobalMembersGm_misc.gm_get_type_string(type_id));
+			Out.push(type_id.get_type_string());
 			Out.push('(');
 			target_graph.reproduce(0);
 			Out.push(')');
@@ -386,7 +385,7 @@ public class ast_typedecl extends ast_node { // property or type
 		assert parent != null;
 		GlobalMembersGm_dumptree.IND(ind_level);
 		System.out.print("<TYPE ");
-		System.out.printf(" type:%s", GlobalMembersGm_misc.gm_get_type_string(type_id));
+		System.out.printf(" type:%s", type_id.get_type_string());
 		if (is_property()) {
 			System.out.print("\n");
 			target_type.dump_tree(ind_level + 1);
@@ -415,7 +414,7 @@ public class ast_typedecl extends ast_node { // property or type
 			assert target_graph.getSymInfo() != null;
 			return target_graph.getSymInfo();
 		} else {
-			System.out.printf("type = %s\n", GlobalMembersGm_misc.gm_get_type_string(type_id));
+			System.out.println("type = " + type_id.get_type_string());
 			assert false;
 			return null;
 		}

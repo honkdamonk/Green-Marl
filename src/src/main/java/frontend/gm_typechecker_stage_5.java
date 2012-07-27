@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -24,7 +23,6 @@ import ast.ast_while;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -106,8 +104,8 @@ public class gm_typechecker_stage_5 extends gm_apply {
 				break;
 
 			if (r.get_expr() == null) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(),
-						GlobalMembersGm_misc.gm_get_type_string(summary_lhs), GlobalMembersGm_misc.gm_get_type_string(GMTYPE_T.GMTYPE_VOID));
+				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
+						GMTYPE_T.GMTYPE_VOID.get_type_string());
 				break;
 			}
 
@@ -118,15 +116,14 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			boolean test = GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 			boolean warn = warn_ref.argvalue;
 			if (!test) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(),
-						GlobalMembersGm_misc.gm_get_type_string(summary_lhs), GlobalMembersGm_misc.gm_get_type_string(summary_rhs));
+				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
+						summary_rhs.get_type_string());
 
 				okay = false;
 			}
 
 			if (warn && summary_lhs.is_prim_type()) {
-				System.out.printf("warning: adding type conversion %s->%s\n", GlobalMembersGm_misc.gm_get_type_string(summary_rhs),
-						GlobalMembersGm_misc.gm_get_type_string(summary_lhs));
+				System.out.printf("warning: adding type conversion %s->%s\n", summary_rhs.get_type_string(), summary_lhs.get_type_string());
 				coercion_targets.put(r.get_expr(), summary_lhs);
 			}
 			break;
@@ -181,13 +178,12 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		boolean test = GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 		boolean warn = warn_ref.argvalue;
 		if (!test) {
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c,
-					GlobalMembersGm_misc.gm_get_type_string(summary_lhs), GlobalMembersGm_misc.gm_get_type_string(summary_rhs));
+			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(),
+					summary_rhs.get_type_string());
 			return false;
 		}
 		if (warn && summary_lhs.is_prim_type()) {
-			System.out.printf("warning: adding type conversion %s->%s\n", GlobalMembersGm_misc.gm_get_type_string(summary_rhs),
-					GlobalMembersGm_misc.gm_get_type_string(summary_lhs));
+			System.out.printf("warning: adding type conversion %s->%s\n", summary_rhs.get_type_string(), summary_lhs.get_type_string());
 			coercion_targets.put(rhs, summary_lhs);
 		}
 

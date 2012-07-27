@@ -93,10 +93,10 @@ public class gm_builtin_def {
 			String p2 = tangible.StringFunctions.strTok(null, ":");
 			while ((p != null) && (p2 != null)) {
 				String key = p;
-				if (GlobalMembersGm_misc.gm_is_same_string(p2, "true")) {
+				if (p2.equals("true")) {
 					add_info_bool(key, true);
 					assert find_info_bool(key) == true;
-				} else if (GlobalMembersGm_misc.gm_is_same_string(p2, "false")) {
+				} else if (p2.equals("false")) {
 					add_info_bool(key, false);
 				} else {
 					add_info_int(key, Integer.parseInt(p2));

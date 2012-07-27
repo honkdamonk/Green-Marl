@@ -1,39 +1,23 @@
 package inc;
 
+import tangible.RefObject;
 import backend_cpp.FILE;
 
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-
 public class gm_code_writer {
+
 	public static final int MAX_COL = 1024;
 
-	public FILE _out = new FILE(System.out);
+	private FILE _out = new FILE(System.out);
 	public int indent = 0;
-	public int tabsz = 4;
+	public int tabSize = 4;
 	public int col = 0;
 	public int max_col = MAX_COL;
-	public String _buf;
+	public StringBuffer _buf = new StringBuffer();
 	public int base_indent = 0;
 
 	// buffered file write.
 	// (to implement 'inserting codes'
-	public int file_ptr = 0;
-	// char file_buf[8*1024*1024]; // source code should be
-	public String file_buf;
-
-	public gm_code_writer() {
-		// _buf = new byte[MAX_COL * 2]; // one line buffer
-		// file_buf = new byte[32 * 1024 * 1024]; // 32MB. should be enough for
-		// a file
-	}
-
-	public void dispose() {
-		_buf = null;
-		file_buf = null;
-	}
+	public StringBuffer file_buf = new StringBuffer();
 
 	public final void push_indent() {
 		indent++;
@@ -45,7 +29,6 @@ public class gm_code_writer {
 
 	public final void set_output_file(FILE f) {
 		_out = f;
-		file_ptr = 0;
 	}
 
 	public final void set_base_indent(int i) {
@@ -54,7 +37,7 @@ public class gm_code_writer {
 
 	public final void flush() {
 
-		String[] lines = file_buf.split("\n");
+		String[] lines = file_buf.toString().split("\n");
 		for (String line : lines) {
 			if (line.matches("\\p{Space}*")) {// consists of whitespaces
 				FILE.fprintf(_out, "\n");
@@ -63,23 +46,18 @@ public class gm_code_writer {
 			}
 		}
 		col = 0;
-		file_ptr = 0;
+		file_buf = new StringBuffer();
 	}
 
 	public final void push(String s) {
-		int l = s.length();
-		for (int i = 0; i < l; i++) {
-			push(s.charAt(i));
+		for (char c : s.toCharArray()) {
+			push(c);
 		}
 	}
 
 	public final void push_to_upper(String s) {
-		int l = s.length();
-		for (int i = 0; i < l; i++) {
-			if (Character.isLowerCase(s.charAt(i)))
-				push(Character.toUpperCase(s.charAt(i)));
-			else
-				push(s.charAt(i));
+		for (char c : s.toCharArray()) {
+			push(Character.toUpperCase(c));
 		}
 	}
 
@@ -107,15 +85,14 @@ public class gm_code_writer {
 	}
 
 	public final void set_tab_size(int i) {
-		tabsz = i;
+		tabSize = i;
 	}
 
 	public final void push(char s) {
-
-		_buf += s;
+		_buf.append(s);
 		col++;
 
-		assert col > MAX_COL * 2;
+		assert col < MAX_COL * 2;
 
 		if (s == '\n') {
 			// First count if this sentence starts or closes an indentention
@@ -123,22 +100,16 @@ public class gm_code_writer {
 				indent--;
 
 			// print this line with previous indent
-			_buf += '\0';
+			_buf.append('\0');
 			col++;
 
 			if ((col != 1) || (_buf.charAt(0) != '\n')) {
-				for (int i = 0; i < tabsz * (indent + base_indent); i++) {
-					file_buf += ' ';
-					file_ptr++;
+				for (int i = 0; i < tabSize * (indent + base_indent); i++) {
+					file_buf.append(' ');
 				}
 			}
 
-			// fprintf(_out, "%s", _buf);
-			// file_ptr += sprintf(&file_buf[file_ptr], "[indent:%d]\n",
-			// indent);
-			file_ptr += _buf.length();
-			file_buf += _buf;
-
+			file_buf.append(_buf);
 			// compute next indent
 			if (_buf.charAt(0) == '}')
 				indent++;
@@ -157,42 +128,39 @@ public class gm_code_writer {
 		}
 	}
 
-	public final int get_write_ptr(tangible.RefObject<Integer> curr_indent) {
+	public final int get_write_ptr(RefObject<Integer> curr_indent) {
 		if (col != 0)
 			push('\n');
 		curr_indent.argvalue = indent;
-		return file_ptr;
+		return file_buf.length();
 	}
 
-	// assumption1: str is one line that ends with '\n'
-	// assumption2: str does not begins a new code-block
+	/**
+	 * assumption1: str is one line that ends with '\n' 
+	 * assumption2: str does not begins a new code-block
+	 **/
 	public final void insert_at(int ptr, int then_indent, String str) {
 		assert str != null;
-		assert ptr < file_ptr;
-		if (ptr == file_ptr)
+		assert ptr < file_buf.length();
+		if (ptr == file_buf.length())
 			return;
 		if (col != 0)
 			push('\n');
 
 		int len = str.length();
-		int to_move = len + tabsz * then_indent;
-		// memmove( &file_buf[ptr + to_move], &file_buf[ptr], to_move);
-		for (int i = file_ptr + to_move - 1; i >= (ptr + to_move); i--) {
-			// printf("%c", file_buf[i-to_move]);
-			file_buf = tangible.StringFunctions.changeCharacter(file_buf, i, file_buf.charAt(i - to_move));
+		int to_move = len + tabSize * then_indent;
+
+		int size = file_buf.length();
+		for (int i = size + to_move - 1; i >= (ptr + to_move); i--) {
+			file_buf.setCharAt(i, file_buf.charAt(i - to_move));
 		}
 
-		for (int i = 0; i < tabsz * then_indent; i++) {
-			file_buf = tangible.StringFunctions.changeCharacter(file_buf, ptr++, ' ');
+		for (int i = 0; i < tabSize * then_indent; i++) {
+			file_buf.setCharAt(ptr++, ' ');
 		}
 		for (int i = 0; i < len; i++) {
-			file_buf = tangible.StringFunctions.changeCharacter(file_buf, ptr++, str.charAt(i));
+			file_buf.setCharAt(ptr++, str.charAt(i));
 		}
-		// printf("ptr= %d\n", ptr);
-		// printf("file_ptr= %d\n", file_ptr);
-		// printf("to_move = %d\n", to_move);
-
-		file_ptr += to_move;
 	}
 
 }

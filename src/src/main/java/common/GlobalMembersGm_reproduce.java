@@ -32,11 +32,11 @@ public class GlobalMembersGm_reproduce {
 	}
 
 	public static void gm_redirect_reproduce(FILE f) {
-		Out.set_output_file(f);
+		Out.setOutputFile(f);
 	}
 
 	public static void gm_baseindent_reproduce(int i) {
-		Out.set_base_indent(i);
+		Out.setBaseIndent(i);
 	}
 
 	public static void gm_push_reproduce(tangible.RefObject<String> s) {

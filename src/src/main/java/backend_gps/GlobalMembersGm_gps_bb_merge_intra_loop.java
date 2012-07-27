@@ -3,11 +3,10 @@ package backend_gps;
 import frontend.gm_symtab_entry;
 import inc.GlobalMembersGm_backend_gps;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import ast.ast_sent;
-import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 
 import common.GlobalMembersGm_main;
 
@@ -177,7 +176,7 @@ public class GlobalMembersGm_gps_bb_merge_intra_loop {
 			s_1.dispose();
 	}
 
-	public static boolean check_if_argument_is_modified(HashMap<gm_symtab_entry, gm_rwinfo_list> M) {
+	public static boolean check_if_argument_is_modified(gm_rwinfo_map M) {
 		for (gm_symtab_entry e : M.keySet()) {
 			if (e.isArgument())
 				return true;

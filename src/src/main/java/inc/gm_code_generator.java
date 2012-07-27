@@ -261,7 +261,7 @@ public abstract class gm_code_generator {
 		generate_expr(e.get_left_op());
 		_Body.SPC();
 		String opstr = GlobalMembersGm_misc.gm_get_op_string(e.get_optype());
-		_Body.push_spc(opstr);
+		_Body.pushSpace(opstr);
 		generate_expr(e.get_right_op());
 
 		if (need_para)
@@ -279,7 +279,7 @@ public abstract class gm_code_generator {
 		generate_expr(e.get_left_op());
 		_Body.SPC();
 		String opstr = GlobalMembersGm_misc.gm_get_op_string(e.get_optype());
-		_Body.push_spc(opstr);
+		_Body.pushSpace(opstr);
 		generate_expr(e.get_right_op());
 
 		if (need_para)
@@ -377,13 +377,13 @@ public abstract class gm_code_generator {
 		_Body.pushln(")");
 		ast_sent s = i.get_then();
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
-			_Body.push_indent();
+			_Body.pushIndent();
 		}
 
 		generate_sent(s);
 
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
-			_Body.pop_indent();
+			_Body.popIndent();
 		}
 
 		s = i.get_else();
@@ -392,13 +392,13 @@ public abstract class gm_code_generator {
 
 		_Body.pushln("else");
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
-			_Body.push_indent();
+			_Body.pushIndent();
 		}
 
 		generate_sent(s);
 
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
-			_Body.pop_indent();
+			_Body.popIndent();
 		}
 
 	}

@@ -230,7 +230,7 @@ public class gm_gps_gen extends BackendGenerator {
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
-		Body.set_output_file(f_body);
+		Body.setOutputFile(f_body);
 
 		get_lib().set_code_writer(Body);
 		return true;
@@ -806,14 +806,14 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("//----------------------------------------------");
 		temp = String.format("public static class %sVertex", proc_name);
 		Body.pushln(temp);
-		Body.push_indent();
+		Body.pushIndent();
 		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP)) {
 			temp = String.format("extends Vertex< %s.VertexData, %s.EdgeData, %s.MessageData > {", proc_name, proc_name, proc_name);
 		} else {
 			temp = String.format("extends NullEdgeVertex< %s.VertexData, %s.MessageData > {", proc_name, proc_name);
 		}
 		Body.pushln(temp);
-		Body.pop_indent();
+		Body.popIndent();
 
 		do_generate_vertex_constructor();
 		do_generate_vertex_get_initial_state_method();
@@ -827,14 +827,14 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("//----------------------------------------------");
 		temp = String.format("public static class %sVertexFactory", proc_name);
 		Body.pushln(temp);
-		Body.push_indent();
+		Body.pushIndent();
 		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP)) {
 			temp = String.format("extends VertexFactory< %s.VertexData, %s.EdgeData, %s.MessageData > {", proc_name, proc_name, proc_name);
 		} else {
 			temp = String.format("extends NullEdgeVertexFactory< %s.VertexData, %s.MessageData > {", proc_name, proc_name);
 		}
 		Body.pushln(temp);
-		Body.pop_indent();
+		Body.popIndent();
 		Body.pushln("@Override");
 		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP)) {
 			temp = String.format("public Vertex< %s.VertexData, %s.EdgeData, %s.MessageData > newInstance(CommandLine line) {", proc_name, proc_name, proc_name);

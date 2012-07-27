@@ -18,7 +18,7 @@ import ast.ast_extra_info;
 import ast.ast_foreach;
 import ast.ast_sent;
 import ast.ast_sentblock;
-import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_main;
@@ -66,7 +66,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 			return true;
 
 		ast_foreach fe = (ast_foreach) sent;
-		HashMap<gm_symtab_entry, gm_rwinfo_list> B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
+		gm_rwinfo_map B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 		if (B.size() == 0)
 			return true;
 
@@ -125,7 +125,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 		se.add_info(GlobalMembersGm_backend_cpp.LABEL_PAR_SCOPE, new ast_extra_info(true));
 
 		// foreach scalar boundsymbol
-		HashMap<gm_symtab_entry, gm_rwinfo_list> B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
+		gm_rwinfo_map B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 		for (gm_symtab_entry e : B.keySet()) {
 			if (e.getType().is_property())
 				continue;
@@ -197,7 +197,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 		for (gm_symtab_entry e : old_s) {
 			if (!old_supple_map.containsKey(e)) {
 				LinkedList<gm_symtab_entry> L = new LinkedList<gm_symtab_entry>(); // empty
-																										// list
+																					// list
 				old_supple.addLast(L);
 				new_supple.addLast(L);
 			} else {

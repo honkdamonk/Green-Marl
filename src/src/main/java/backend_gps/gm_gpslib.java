@@ -14,6 +14,7 @@ import static inc.GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE;
 import static inc.GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS;
 import static inc.GlobalMembersGm_backend_gps.GPS_REV_NODE_ID;
 import static inc.GlobalMembersGm_backend_gps.STATE_SHORT_CUT;
+import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_PROP_USAGE_T;
@@ -38,24 +39,9 @@ import ast.ast_typedecl;
 import common.GlobalMembersGm_main;
 import common.gm_builtin_def;
 
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-
 //-----------------------------------------------------------------
 // interface for graph library Layer
 //-----------------------------------------------------------------
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class gm_gps_beinfo;
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class gm_gps_communication_size_info;
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class gm_gps_gen;
 
 // Nothing happens in this class
 public class gm_gpslib extends gm_graph_library {
@@ -352,7 +338,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("@Override");
 		Body.pushln("public int read(byte[] _BA, int _idx) {");
 		for (gm_symtab_entry sym : prop) {
-			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 			int base = syminfo.get_start_byte();
 			genReadByte(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), base, Body, this);
 		}

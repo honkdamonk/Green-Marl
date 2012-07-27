@@ -16,6 +16,7 @@ import static inc.GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL;
 import static inc.GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1;
 import static inc.GlobalMembersGm_backend_gps.GPS_RET_VALUE;
 import static inc.GlobalMembersGm_backend_gps.GPS_REV_NODE_ID;
+import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import inc.BackendGenerator;
@@ -440,7 +441,7 @@ public class gm_gps_gen extends BackendGenerator {
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry e : scalar) {
-			gps_syminfo syminfo = (gps_syminfo) e.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) e.find_info(GPS_TAG_BB_USAGE);
 
 			// printf("%s\n", e->getId()->get_genname());
 			if (!syminfo.is_used_in_master() && !syminfo.is_used_in_vertex() && !syminfo.is_argument()) {
@@ -521,7 +522,7 @@ public class gm_gps_gen extends BackendGenerator {
 				// TODO: why is sym->isArgument() != local_info->is_argument()?
 				if (!local_info.is_scalar() || sym.isArgument())
 					continue;
-				gps_syminfo global_info = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+				gps_syminfo global_info = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 
 				if (!global_info.is_used_in_multiple_BB()) {
 					generate_scalar_var_def(sym, true);
@@ -639,7 +640,7 @@ public class gm_gps_gen extends BackendGenerator {
 		HashMap<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
 		for (gm_symtab_entry key : syms.keySet()) {
 			gps_syminfo local_info = syms.get(key);
-			gps_syminfo global_info = (gps_syminfo) key.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo global_info = (gps_syminfo) key.find_info(GPS_TAG_BB_USAGE);
 			if (!global_info.is_scalar())
 				continue;
 			if (local_info.is_used_as_reduce()) {
@@ -715,7 +716,7 @@ public class gm_gps_gen extends BackendGenerator {
 		HashMap<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
 		for (gm_symtab_entry key : syms.keySet()) {
 			gps_syminfo local_info = syms.get(key);
-			gps_syminfo global_info = (gps_syminfo) key.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo global_info = (gps_syminfo) key.find_info(GPS_TAG_BB_USAGE);
 			if (!global_info.is_scalar())
 				continue;
 			if (!global_info.is_used_in_master())
@@ -733,7 +734,7 @@ public class gm_gps_gen extends BackendGenerator {
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry sym : scalar) {
-			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 			assert syminfo != null;
 
 			/*
@@ -1113,7 +1114,7 @@ public class gm_gps_gen extends BackendGenerator {
 			if (!local_info.is_scalar())
 				continue;
 
-			gps_syminfo global_info = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo global_info = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 			assert global_info != null;
 
 			if (sym.getType().is_node_iterator()) {
@@ -1609,7 +1610,7 @@ public class gm_gps_gen extends BackendGenerator {
 		if (a.is_target_scalar()) {
 			ast_id i = a.get_lhs_scala();
 
-			gps_syminfo syminfo = (gps_syminfo) i.getSymInfo().find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) i.getSymInfo().find_info(GPS_TAG_BB_USAGE);
 
 			// normal assign
 			if (!syminfo.is_scoped_global()) {

@@ -11,6 +11,7 @@ import static inc.GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL;
 import static inc.GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1;
 import static inc.GlobalMembersGm_backend_gps.GPS_RET_VALUE;
 import static inc.GlobalMembersGm_backend_gps.GPS_REV_NODE_ID;
+import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
@@ -29,7 +30,6 @@ import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_while;
 import backend_cpp.FILE;
-import backend_gps.GlobalMembersGps_syminfo;
 import backend_gps.gm_gps_basic_block;
 import backend_gps.gm_gps_bbtype_t;
 import backend_gps.gm_gps_beinfo;
@@ -237,7 +237,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 
 		for (gm_symtab_entry sym : scalar) {
-			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 			assert syminfo != null;
 
 			if ((syminfo.is_used_in_vertex() || syminfo.is_used_in_receiver()) && syminfo.is_used_in_master()) {
@@ -254,7 +254,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		java.util.HashSet<gm_symtab_entry> syms = args.get_entries();
 		for (gm_symtab_entry s : syms) {
 			// check if used in master
-			gps_syminfo syminfo = (gps_syminfo) s.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) s.find_info(GPS_TAG_BB_USAGE);
 			if (!syminfo.is_used_in_master())
 				continue;
 
@@ -338,7 +338,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry e : scalar) {
-			gps_syminfo syminfo = (gps_syminfo) e.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) e.find_info(GPS_TAG_BB_USAGE);
 			if (!syminfo.is_used_in_master())
 				continue;
 
@@ -418,7 +418,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 																	// local_info->is_argument()
 																	// ?
 					continue;
-				gps_syminfo global_info = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+				gps_syminfo global_info = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 
 				if (!global_info.is_used_in_multiple_BB()) {
 					generate_scalar_var_def(sym, true);
@@ -525,7 +525,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		java.util.HashMap<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
 		for (gm_symtab_entry entry : syms.keySet()) {
 			gps_syminfo local_info = syms.get(entry);
-			gps_syminfo global_info = (gps_syminfo) entry.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo global_info = (gps_syminfo) entry.find_info(GPS_TAG_BB_USAGE);
 			if (!global_info.is_scalar())
 				continue;
 			if (local_info.is_used_as_reduce()) {
@@ -556,7 +556,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		java.util.HashMap<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
 		for (gm_symtab_entry entry : syms.keySet()) {
 			gps_syminfo local_info = syms.get(entry);
-			gps_syminfo global_info = (gps_syminfo) entry.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo global_info = (gps_syminfo) entry.find_info(GPS_TAG_BB_USAGE);
 			if (!global_info.is_scalar())
 				continue;
 			if (!global_info.is_used_in_master())
@@ -574,7 +574,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry sym : scalar) {
-			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 			assert syminfo != null;
 
 			// if the symbol is used in vertex and master
@@ -633,7 +633,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 
 		for (gm_symtab_entry sym : scalar) {
-			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 			assert syminfo != null;
 
 			if ((syminfo.is_used_in_vertex() || syminfo.is_used_in_receiver()) && syminfo.is_used_in_master()) {
@@ -667,7 +667,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 
 		for (gm_symtab_entry sym : scalar) {
-			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 			assert syminfo != null;
 
 			if ((syminfo.is_used_in_vertex() || syminfo.is_used_in_receiver()) && syminfo.is_used_in_master()) {
@@ -969,7 +969,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			if (!local_info.is_scalar())
 				continue;
 
-			gps_syminfo global_info = (gps_syminfo) sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+			gps_syminfo global_info = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 			assert global_info != null;
 
 			if (sym.getType().is_node_iterator()) {

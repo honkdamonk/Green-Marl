@@ -1,20 +1,12 @@
 package backend_gps;
 
+import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import ast.ast_extra_info;
 
 import common.gm_apply;
 
 import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab_entry;
-
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
 
 //-----------------------------------------------------------------------------------
 // Create a flat table, for the generation of fields in master/vertex class
@@ -30,7 +22,7 @@ public class gps_flat_symbol_t extends gm_apply {
 
 	@Override
 	public boolean apply(gm_symtab_entry sym, SYMTAB_TYPES symtab_type) {
-		ast_extra_info info = sym.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
+		ast_extra_info info = sym.find_info(GPS_TAG_BB_USAGE);
 		if (info == null) // no information
 			return true;
 

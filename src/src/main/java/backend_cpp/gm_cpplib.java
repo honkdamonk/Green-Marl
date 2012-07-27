@@ -188,13 +188,13 @@ public class gm_cpplib extends gm_graph_library {
 			switch (method_id) {
 			case GM_BLTIN_NODE_DEGREE:
 				assert i.getTypeInfo().get_target_graph_id() != null;
-				String.format(str_buf, "(%s.%s[%s+1] - %s.%s[%s])", i.getTypeInfo().get_target_graph_id().get_genname(), BEGIN, i.get_genname(), i
+				str_buf = String.format("(%s.%s[%s+1] - %s.%s[%s])", i.getTypeInfo().get_target_graph_id().get_genname(), BEGIN, i.get_genname(), i
 						.getTypeInfo().get_target_graph_id().get_genname(), BEGIN, i.get_genname());
 				Body.push(str_buf);
 				break;
 			case GM_BLTIN_NODE_IN_DEGREE:
 				assert i.getTypeInfo().get_target_graph_id() != null;
-				String.format(str_buf, "(%s.%s[%s+1] - %s.%s[%s])", i.getTypeInfo().get_target_graph_id().get_genname(), R_BEGIN, i.get_genname(), i
+				str_buf = String.format("(%s.%s[%s+1] - %s.%s[%s])", i.getTypeInfo().get_target_graph_id().get_genname(), R_BEGIN, i.get_genname(), i
 						.getTypeInfo().get_target_graph_id().get_genname(), R_BEGIN, i.get_genname());
 				Body.push(str_buf);
 				break;

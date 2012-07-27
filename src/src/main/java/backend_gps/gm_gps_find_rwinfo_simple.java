@@ -79,7 +79,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 		// }
 		// }
 		// -----------------------------------------------------
-		gps_syminfo syminfo = GlobalMembersGps_syminfo.gps_get_global_syminfo(id);
+		gps_syminfo syminfo = gps_get_global_syminfo(id);
 		if (syminfo == null) {
 			return true;
 		}
@@ -159,7 +159,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 		// }
 		// }
 		// -----------------------------------------------------
-		gps_syminfo syminfo = GlobalMembersGps_syminfo.gps_get_global_syminfo(id);
+		gps_syminfo syminfo = gps_get_global_syminfo(id);
 		if (syminfo == null) {
 			return true;
 		}
@@ -256,4 +256,5 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 	protected final boolean is_outer_loop_only() {
 		return is_outer_loop_or_inner() && !is_inner_loop();
 	}
+
 }

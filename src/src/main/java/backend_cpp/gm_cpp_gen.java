@@ -1412,14 +1412,14 @@ public class gm_cpp_gen extends BackendGenerator {
 	public void generate_bfs_def(ast_bfs bfs) {
 		String bfs_name = bfs.find_info_string(CPPBE_INFO_BFS_NAME);
 		String level_t = "short";
-		String use_multithread = GlobalMembersGm_cpp_gen_bfs.bool_string(is_target_omp());
-		String save_child = GlobalMembersGm_cpp_gen_bfs.bool_string(bfs.find_info_bool(CPPBE_INFO_USE_DOWN_NBR));
-		String use_reverse_edge = GlobalMembersGm_cpp_gen_bfs.bool_string(bfs.is_transpose());
-		String has_navigator = GlobalMembersGm_cpp_gen_bfs.bool_string(bfs.get_navigator() != null);
+		String use_multithread = "" + is_target_omp();
+		String save_child = ""+ bfs.find_info_bool(CPPBE_INFO_USE_DOWN_NBR);
+		String use_reverse_edge = "" +bfs.is_transpose();
+		String has_navigator = Boolean.toString(bfs.get_navigator() != null);
 
-		String has_pre_visit = GlobalMembersGm_cpp_gen_bfs.bool_string((bfs.get_fbody() != null) && (bfs.get_fbody().get_sents().size() >= 1));
+		String has_pre_visit = Boolean.toString((bfs.get_fbody() != null) && (bfs.get_fbody().get_sents().size() >= 1));
 
-		String has_post_visit = GlobalMembersGm_cpp_gen_bfs.bool_string((bfs.get_bbody() != null) && (bfs.get_bbody().get_sents().size() >= 1));
+		String has_post_visit = Boolean.toString((bfs.get_bbody() != null) && (bfs.get_bbody().get_sents().size() >= 1));
 
 		ast_extra_info_set info = (ast_extra_info_set) bfs.find_info(CPPBE_INFO_BFS_SYMBOLS);
 		HashSet<Object> SET = info.get_set();

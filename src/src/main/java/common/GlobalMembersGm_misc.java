@@ -17,11 +17,6 @@ public class GlobalMembersGm_misc {
 	// Misc Utility Routines and Classes
 	// ------------------------------------------------------
 
-	public static String gm_strdup(String c) {
-		assert c != null;
-		return c;
-	}
-
 	public static String gm_get_nodetype_string(AST_NODE_TYPE t) {
 		switch (t) {
 		case AST_ID:

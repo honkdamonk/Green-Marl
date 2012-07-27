@@ -2,7 +2,7 @@ package inc;
 
 import ast.ast_extra_info;
 import ast.ast_procdef;
-import common.GlobalMembersGm_misc;
+
 import common.gm_vocabulary;
 
 // empty class
@@ -39,11 +39,6 @@ public class gm_procinfo {
 		flat.clear();
 	}
 
-	@Deprecated
-	public final boolean isin_voca(tangible.RefObject<String> n) {
-		return flat.has_word(n);
-	}
-
 	public final boolean isin_voca(String value) {
 		return flat.has_word(value);
 	}
@@ -61,12 +56,8 @@ public class gm_procinfo {
 		return generate_temp_name(base, null, false);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: sbyte* generate_temp_name(String base, gm_vocabulary*
-	// extra = null, boolean try_org_name_first = false)
 	public final String generate_temp_name(String base, gm_vocabulary extra, boolean try_org_name_first) {
-		String temp = new String(new char[2048]); // should be enough
+		String temp;
 		if (try_org_name_first)
 			temp = String.format("%s", base); // try base name first
 		else
@@ -85,7 +76,7 @@ public class gm_procinfo {
 			}
 
 		} while (true);
-		return GlobalMembersGm_misc.gm_strdup(temp);
+		return temp;
 	}
 
 	// -------------------------------------------------------------------

@@ -25,7 +25,8 @@ public class gm_builtin_def {
 
 		// parse string
 		int temp = 0;
-		char[] text = GlobalMembersGm_misc.gm_strdup(def.def_string).toCharArray();
+		assert def.def_string != null;
+		char[] text = def.def_string.toCharArray();
 
 		if (text[0] == '*') // synonym
 		{
@@ -37,7 +38,7 @@ public class gm_builtin_def {
 			this.need_strict = false;
 			this.org_def = org_def;
 			this.src_type = org_def.src_type; // need source type.
-			this.orgname = GlobalMembersGm_misc.gm_strdup("" + text[1]);
+			this.orgname = "" + text[1];
 
 			// no need.
 			// this->res_type = org_def->res_type;
@@ -60,7 +61,8 @@ public class gm_builtin_def {
 				this.src_type = GlobalMembersGm_builtin.gm_get_type_from_string(p);
 
 			p = tangible.StringFunctions.strTok(null, ":");
-			this.orgname = GlobalMembersGm_misc.gm_strdup(p);
+			assert p != null;
+			this.orgname = p;
 			p = tangible.StringFunctions.strTok(null, ":");
 			this.res_type = GlobalMembersGm_builtin.gm_get_type_from_string(p);
 			p = tangible.StringFunctions.strTok(null, ":");

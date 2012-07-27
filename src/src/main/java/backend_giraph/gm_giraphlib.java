@@ -526,11 +526,9 @@ public class gm_giraphlib extends gm_gpslib {
 
 	// caller should delete var_name later
 	public String get_message_field_var_name(GMTYPE_T gm_type, int index) {
-
-		String temp = new String(new char[1024]);
+		
 		String str = main.get_type_string(gm_type);
-		temp = String.format("%c%d", str.charAt(0), index);
-		return GlobalMembersGm_misc.gm_strdup(temp);
+		return String.format("%c%d", str.charAt(0), index);
 	}
 
 	// virtual void generate_message_send(ast_foreach fe, gm_code_writer Body);

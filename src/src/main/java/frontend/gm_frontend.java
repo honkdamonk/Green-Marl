@@ -236,9 +236,9 @@ public class gm_frontend {
 	public final String voca_temp_name_and_add(String base, String suffix, gm_vocabulary extra1, boolean insert_underscore_prefix_if_not_already) {
 		String temp = new String(new char[1024]);
 		if (insert_underscore_prefix_if_not_already && (base.charAt(0) != '_'))
-			String.format(temp, "_%s%s", base, suffix);
+			temp = String.format("_%s%s", base, suffix);
 		else
-			String.format(temp, "%s%s", base, suffix);
+			temp = String.format("%s%s", base, suffix);
 		return voca_temp_name_and_add(temp, extra1, true);
 	}
 

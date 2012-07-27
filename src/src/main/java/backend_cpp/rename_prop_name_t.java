@@ -37,7 +37,7 @@ public class rename_prop_name_t extends gm_apply {
 
 		// rename A(G) => G_A
 		String buf = new String(new char[1024]);
-		String.format(buf, "%s_%s", graph.get_orgname(), id.get_genname());
+		buf = String.format("%s_%s", graph.get_orgname(), id.get_genname());
 		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
 		// pointers to value types:
 		// ORIGINAL LINE: sbyte* new_name = FE.voca_temp_name(buf, null, true);

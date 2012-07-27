@@ -6,6 +6,7 @@ import inc.GM_REDUCE_T;
 
 import java.util.LinkedList;
 
+import tangible.RefObject;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_reduce;
@@ -248,24 +249,19 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			}
 		}
 
-		GMTYPE_T result_type;
-		GMTYPE_T l_new;
-		GMTYPE_T r_new;
-		boolean w1_warn;
-		boolean w2_warn;
-
-		tangible.RefObject<GMTYPE_T> tempRef_result_type = new tangible.RefObject<GMTYPE_T>(result_type);
-		tangible.RefObject<GMTYPE_T> tempRef_l_new = new tangible.RefObject<GMTYPE_T>(l_new);
-		tangible.RefObject<GMTYPE_T> tempRef_r_new = new tangible.RefObject<GMTYPE_T>(r_new);
-		tangible.RefObject<Boolean> tempRef_w1_warn = new tangible.RefObject<Boolean>(w1_warn);
-		tangible.RefObject<Boolean> tempRef_w2_warn = new tangible.RefObject<Boolean>(w2_warn);
+		RefObject<GMTYPE_T> tempRef_result_type = new RefObject<GMTYPE_T>(null);
+		RefObject<GMTYPE_T> tempRef_l_new = new RefObject<GMTYPE_T>(null);
+		RefObject<GMTYPE_T> tempRef_r_new = new RefObject<GMTYPE_T>(null);
+		RefObject<Boolean> tempRef_w1_warn = new RefObject<Boolean>(null);
+		RefObject<Boolean> tempRef_w2_warn = new RefObject<Boolean>(null);
 		boolean okay = GlobalMembersGm_typecheck_oprules.gm_is_compatible_type(op_type, l_type, r_type, tempRef_result_type, tempRef_l_new, tempRef_r_new,
 				tempRef_w1_warn, tempRef_w2_warn);
-		result_type = tempRef_result_type.argvalue;
-		l_new = tempRef_l_new.argvalue;
-		r_new = tempRef_r_new.argvalue;
-		w1_warn = tempRef_w1_warn.argvalue;
-		w2_warn = tempRef_w2_warn.argvalue;
+		
+		GMTYPE_T result_type = tempRef_result_type.argvalue;
+		GMTYPE_T l_new = tempRef_l_new.argvalue;
+		GMTYPE_T r_new = tempRef_r_new.argvalue;
+		boolean w1_warn = tempRef_w1_warn.argvalue;
+		boolean w2_warn = tempRef_w2_warn.argvalue;
 
 		if (!okay) {
 			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH2, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
@@ -373,17 +369,20 @@ public class gm_typechecker_stage_3 extends gm_apply {
 				position++;
 				continue;
 			}
-			boolean warning;
-			int coerced_type;
 			boolean isCompatible;
+			RefObject<Boolean> warning_ref = new RefObject<Boolean>(null);
+			RefObject<GMTYPE_T> coerced_type_ref = new RefObject<GMTYPE_T>(null);
 			if (b.get_source_type().is_collection_of_collection_type())
 				isCompatible = GlobalMembersGm_new_typecheck_step3.gm_is_compatible_type_collection_of_collection(b.get_driver().getTargetTypeSummary(),
 						currentType, def.get_method_id());
 			else
-				isCompatible = GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(def_type, currentType, coerced_type, warning);
+				isCompatible = GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(def_type, currentType, coerced_type_ref, warning_ref);
+
+			boolean warning = warning_ref.argvalue;
+
 			if (!isCompatible) {
 				String temp = new String(new char[20]);
-				String.format(temp, "%d", position + 1);
+				temp = String.format("%d", position + 1);
 				GlobalMembersGm_error
 						.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN_ARG_TYPE, b.get_line(), b.get_col(), b.get_callname(), temp);
 				okay = false;

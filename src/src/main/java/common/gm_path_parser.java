@@ -26,12 +26,12 @@ public class gm_path_parser {
 			extention = "";
 			name = fileTokens[0];
 		} else {
-			extention = "." + fileTokens[fileTokens.length - 1];
-			name = fileName.substring(0, fileName.length() - extention.length());
+			extention = fileTokens[fileTokens.length - 1];
+			name = fileName.substring(0, fileName.length() - extention.length() - 1);
 		}
 		
 		name = (name == null) ? "" : name;
-		path = "./" + ((path == null) ? "" : path + "/");
+		path = ((path == null) ? "." : path + "/");
 	}
 
 	public final String getPath() {
@@ -48,20 +48,6 @@ public class gm_path_parser {
 	
 	public final String getExt() {
 		return extention;
-	}
-	
-	public static void main(String[] args) {
-		gm_path_parser parser = new gm_path_parser();
-		test(parser, "data/bla.bin");
-		test(parser, "bla.bin");
-		test(parser, "data/bla");
-		test(parser, "bla");
-		test(parser, "data/");
-	}
-
-	private static void test(gm_path_parser parser, String x) {
-		parser.parsePath(x);
-		System.out.println(x + ":\t" + parser.path + "|" + parser.name + "|" + parser.extention);
 	}
 
 }

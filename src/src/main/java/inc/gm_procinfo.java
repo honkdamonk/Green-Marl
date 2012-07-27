@@ -67,17 +67,17 @@ public class gm_procinfo {
 	public final String generate_temp_name(String base, gm_vocabulary extra, boolean try_org_name_first) {
 		String temp = new String(new char[2048]); // should be enough
 		if (try_org_name_first)
-			String.format(temp, "%s", base); // try base name first
+			temp = String.format("%s", base); // try base name first
 		else
-			String.format(temp, "%s%d", base, temp_no++); // try base name first
+			temp = String.format("%s%d", base, temp_no++); // try base name first
 		do {
 			boolean tempVar = flat.has_word(temp);
 			if (tempVar) {
-				String.format(temp, "%s%d", base, temp_no++);
+				temp = String.format("%s%d", base, temp_no++);
 			} else {
 				boolean tempVar2 = (extra != null) && (extra.has_word(temp));
 				if (tempVar2) {
-					String.format(temp, "%s%d", base, temp_no++);
+					temp = String.format("%s%d", base, temp_no++);
 				} else {
 					break;
 				}

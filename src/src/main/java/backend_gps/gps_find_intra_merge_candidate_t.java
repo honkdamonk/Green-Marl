@@ -1,14 +1,22 @@
 package backend_gps;
 
-import tangible.RefObject;
 import frontend.GlobalMembersGm_rw_analysis_check2;
 import frontend.gm_rwinfo_sets;
 import inc.GlobalMembersGm_backend_gps;
 import inc.gps_apply_bb;
 
+import java.util.LinkedList;
+
 public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
-	public gps_find_intra_merge_candidate_t(java.util.LinkedList<gps_intra_merge_candidate_t> L) {
-		this.cands = new java.util.LinkedList<gps_intra_merge_candidate_t>(L);
+	
+	private LinkedList<gps_intra_merge_candidate_t> cands;
+	private LinkedList<gm_gps_basic_block> stack = new LinkedList<gm_gps_basic_block>();
+	private int current_trace_head;
+	private gm_gps_basic_block curr_head;
+	private gm_gps_basic_block curr_tail;
+	
+	public gps_find_intra_merge_candidate_t(LinkedList<gps_intra_merge_candidate_t> L) {
+		this.cands = new LinkedList<gps_intra_merge_candidate_t>(L);
 		this.curr_head = null;
 		this.curr_tail = null;
 		current_trace_head = -1;
@@ -55,21 +63,21 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 			gm_gps_basic_block s0 = null;
 			if (stack.size() >= 4) {
 
-				java.util.Iterator<gm_gps_basic_block> I;
-				I = stack.iterator();
-				p1 = I.next();
-				if (!p1.is_vertex()) {
+				int i = 0;
+				p1 = stack.get(i);
+				if(!p1.is_vertex()) {
 					s0 = p1;
-					p1 = I.next();
+					i++;
+					p1 = stack.get(i);
 				}
-
-				s1 = I.next();
-				I = stack.end();
-				I--;
-				s2 = I.next();
-				I--;
-				p2 = I.next();
-
+				
+				i++;
+				s1 = stack.get(i);
+				i = stack.size() - 1;
+				s2 = stack.get(i);
+				i--;
+				p2 = stack.get(i);
+				
 				boolean is_okay = false;
 				if (p1.is_vertex() && p2.is_vertex() && !s1.is_vertex() && !s2.is_vertex() && ((s0 == null) || (!s0.is_vertex()))) {
 					is_okay = true;
@@ -193,11 +201,5 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 		current_trace_head = -1;
 		curr_head = null;
 	}
-
-	private java.util.LinkedList<gps_intra_merge_candidate_t> cands;
-	private java.util.LinkedList<gm_gps_basic_block> stack = new java.util.LinkedList<gm_gps_basic_block>();
-	private int current_trace_head;
-	private gm_gps_basic_block curr_head;
-	private gm_gps_basic_block curr_tail;
 
 }

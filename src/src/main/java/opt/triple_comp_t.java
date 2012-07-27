@@ -1,11 +1,5 @@
 package opt;
 
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import inc.*;
-import tangible.*;
 
 public class triple_comp_t
 {
@@ -15,19 +9,20 @@ public class triple_comp_t
 	@Deprecated
 	boolean operator /*()*/(triple_t lhs, triple_t rhs)
 	{
-		if (lhs.bound < rhs.bound)
-			return true;
-		else if (lhs.bound > rhs.bound)
-			return false;
-		else if (lhs.target < rhs.target)
-			return true;
-		else if (lhs.target > rhs.target)
-			return false;
-		else if (lhs.is_rev_bfs < rhs.is_rev_bfs)
-			return true;
-		else if (lhs.is_rev_bfs > rhs.is_rev_bfs)
-			return false;
-		else
+		//TODO: do we need that in Java?
+//		if (lhs.bound < rhs.bound)
+//			return true;
+//		else if (lhs.bound > rhs.bound)
+//			return false;
+//		else if (lhs.target < rhs.target)
+//			return true;
+//		else if (lhs.target > rhs.target)
+//			return false;
+//		else if (lhs.is_rev_bfs < rhs.is_rev_bfs)
+//			return true;
+//		else if (lhs.is_rev_bfs > rhs.is_rev_bfs)
+//			return false;
+//		else
 			return false;
 	}
 }

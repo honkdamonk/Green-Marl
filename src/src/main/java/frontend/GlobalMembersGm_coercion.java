@@ -12,9 +12,9 @@ import ast.ast_return;
 
 public class GlobalMembersGm_coercion {
 
-	public static void gm_insert_explicit_type_conversion_for_op(HashMap<ast_expr, Integer> targets) {
-		for (ast_expr t : targets.keySet()) {
-			GMTYPE_T dest_type = GMTYPE_T.forValue(targets.get(t)); // FIXME
+	public static void gm_insert_explicit_type_conversion_for_op(HashMap<ast_expr, GMTYPE_T> coercion_targets) {
+		for (ast_expr t : coercion_targets.keySet()) {
+			GMTYPE_T dest_type = coercion_targets.get(t);
 
 			ast_expr up = t.get_up_op();
 			assert up != null;
@@ -35,14 +35,12 @@ public class GlobalMembersGm_coercion {
 			}
 			tc.set_parent(up);
 			tc.set_up_op(up);
-
 		}
-
 	}
 
-	public static void gm_insert_explicit_type_conversion_for_assign_or_return(HashMap<ast_expr, Integer> targets) {
-		for (ast_expr t : targets.keySet()) {
-			GMTYPE_T dest_type = GMTYPE_T.forValue(targets.get(t)); // FIXME
+	public static void gm_insert_explicit_type_conversion_for_assign_or_return(HashMap<ast_expr, GMTYPE_T> coercion_targets) {
+		for (ast_expr t : coercion_targets.keySet()) {
+			GMTYPE_T dest_type = coercion_targets.get(t);
 
 			assert t.get_up_op() == null;
 			ast_node n = t.get_parent();

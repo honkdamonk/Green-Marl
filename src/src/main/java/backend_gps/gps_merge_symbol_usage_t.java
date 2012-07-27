@@ -57,7 +57,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)
 		{
 			gm_gps_symbol_usage_location_t context = get_current_context(); // GPS_CONTEXT_ (MASTER, VERTEX, RECEIVER)
-			int scope = s.find_info_bool(GlobalMembersGm_backend_gps.GPS_INT_SYNTAX_CONTEXT); // GPS_NEW_SCOPE_GLOBAL/OUT/IN
+			boolean scope = s.find_info_bool(GlobalMembersGm_backend_gps.GPS_INT_SYNTAX_CONTEXT); // GPS_NEW_SCOPE_GLOBAL/OUT/IN
 
 			ast_assign a = (ast_assign) s;
 

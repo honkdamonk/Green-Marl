@@ -30,7 +30,6 @@ public class ast_expr extends ast_node {
 
 	public void reproduce(int ind_level) {
 
-		String buf = new String(new char[1024]);
 		switch (expr_class) {
 		case GMEXPR_NIL:
 			Out.push("NIL");
@@ -40,12 +39,10 @@ public class ast_expr extends ast_node {
 			Out.push("INF");
 			return;
 		case GMEXPR_IVAL:
-			String.format(buf, "%ld", ival);
-			Out.push(buf);
+			Out.push(String.format("%ld", ival));
 			return;
 		case GMEXPR_FVAL:
-			String.format(buf, "%lf", fval);
-			Out.push(buf);
+			Out.push(String.format("%lf", fval));
 			return;
 		case GMEXPR_BVAL:
 			if (bval)

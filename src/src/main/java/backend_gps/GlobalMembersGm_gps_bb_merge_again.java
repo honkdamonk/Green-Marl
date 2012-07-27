@@ -1,13 +1,9 @@
 package backend_gps;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+
 import ast.ast_sent;
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import inc.*;
-import opt.*;
-import tangible.*;
 
 public class GlobalMembersGm_gps_bb_merge_again {
 	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
@@ -72,13 +68,13 @@ public class GlobalMembersGm_gps_bb_merge_again {
 			 */
 
 			// add all the sentences
-			java.util.LinkedList<ast_sent> P1 = par1.get_sents();
-			java.util.LinkedList<ast_sent> S1 = seq1.get_sents();
-			java.util.LinkedList<ast_sent> P2 = par2.get_sents();
-			java.util.LinkedList<ast_sent> S2 = seq2.get_sents();
+			LinkedList<ast_sent> P1 = par1.get_sents();
+			LinkedList<ast_sent> S1 = seq1.get_sents();
+			LinkedList<ast_sent> P2 = par2.get_sents();
+			LinkedList<ast_sent> S2 = seq2.get_sents();
 
-			S1.splice(S1.end(), S2);
-			P1.splice(P1.end(), P2);
+			S1.addAll(S2);
+			P1.addAll(P2);
 
 			// now re-arrange basic blocks
 			if (seq2.get_num_exits() == 1) {
@@ -111,7 +107,7 @@ public class GlobalMembersGm_gps_bb_merge_again {
 		}
 	}
 
-	public static void find_pattern_and_merge_bb(java.util.LinkedList<gm_gps_basic_block> current_list) {
+	public static void find_pattern_and_merge_bb(LinkedList<gm_gps_basic_block> current_list) {
 		if (current_list.size() < 4)
 			return;
 
@@ -182,8 +178,8 @@ public class GlobalMembersGm_gps_bb_merge_again {
 		}
 	}
 
-	public static void find_linear_segments(gm_gps_basic_block current, java.util.LinkedList<gm_gps_basic_block> current_list,
-			java.util.LinkedList<java.util.LinkedList<gm_gps_basic_block>> all_lists, java.util.HashSet<gm_gps_basic_block> visited) {
+	public static void find_linear_segments(gm_gps_basic_block current, LinkedList<gm_gps_basic_block> current_list,
+			LinkedList<LinkedList<gm_gps_basic_block>> all_lists, HashSet<gm_gps_basic_block> visited) {
 
 		if (visited.contains(current)) {
 			if (current_list.size() > 0) {
@@ -214,7 +210,7 @@ public class GlobalMembersGm_gps_bb_merge_again {
 
 			for (int i = 0; i < current.get_num_exits(); i++) {
 				gm_gps_basic_block next = current.get_nth_exit(i);
-				java.util.LinkedList<gm_gps_basic_block> new_list = new java.util.LinkedList<gm_gps_basic_block>();
+				LinkedList<gm_gps_basic_block> new_list = new LinkedList<gm_gps_basic_block>();
 				GlobalMembersGm_gps_bb_merge_again.find_linear_segments(next, new_list, all_lists, visited);
 			}
 		}

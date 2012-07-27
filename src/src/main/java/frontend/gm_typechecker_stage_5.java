@@ -6,6 +6,8 @@ import inc.GM_REDUCE_T;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import tangible.RefObject;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -111,9 +113,11 @@ public class gm_typechecker_stage_5 extends gm_apply {
 
 			GMTYPE_T summary_rhs = r.get_expr().get_type_summary();
 
-			boolean warn;
-			int coed;
-			if (!GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed, warn)) {
+			RefObject<GMTYPE_T> coed_ref = new RefObject<GMTYPE_T>(null);
+			RefObject<Boolean> warn_ref = new RefObject<Boolean>(null);
+			boolean test = GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
+			boolean warn = warn_ref.argvalue;
+			if (!test) {
 				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(),
 						GlobalMembersGm_misc.gm_get_type_string(summary_lhs), GlobalMembersGm_misc.gm_get_type_string(summary_rhs));
 
@@ -172,9 +176,11 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		// check assignable
 		summary_rhs = rhs.get_type_summary();
 
-		boolean warn;
-		int coed;
-		if (!GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed, warn)) {
+		RefObject<GMTYPE_T> coed_ref = new RefObject<GMTYPE_T>(null);
+		RefObject<Boolean> warn_ref = new RefObject<Boolean>(null);
+		boolean test = GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
+		boolean warn = warn_ref.argvalue;
+		if (!test) {
 			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c,
 					GlobalMembersGm_misc.gm_get_type_string(summary_lhs), GlobalMembersGm_misc.gm_get_type_string(summary_rhs));
 			return false;
@@ -235,7 +241,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		}
 
 		if (a.is_argminmax_assign()) {
-			boolean okay = true;
+			boolean okay1 = true;
 			LinkedList<ast_node> L = a.get_lhs_list();
 			LinkedList<ast_expr> R = a.get_rhs_list();
 
@@ -245,10 +251,10 @@ public class gm_typechecker_stage_5 extends gm_apply {
 				ast_node n = I.next();
 				ast_expr e = J.next();
 				boolean b = check_assign_lhs_rhs(n, e, n.get_line(), n.get_col());
-				okay = b && okay;
+				okay1 = b && okay1;
 			}
 
-			if (!okay)
+			if (!okay1)
 				return false;
 		}
 

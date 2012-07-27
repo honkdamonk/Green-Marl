@@ -1,45 +1,45 @@
 package opt;
 
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_foreach;
 import ast.ast_sent;
 import ast.ast_sentblock;
-import backend_cpp.*;
-import backend_giraph.*;
-import common.*;
-import frontend.*;
-import inc.*;
-import tangible.*;
 
-public class gm_merge_loop_t extends gm_apply
-{
+import common.GlobalMembersGm_merge_sentblock;
+import common.GlobalMembersGm_transform_helper;
+import common.gm_apply;
+
+import frontend.GlobalMembersGm_rw_analysis;
+
+public class gm_merge_loop_t extends gm_apply {
+	
+	protected boolean _changed;
+	protected LinkedList<ast_sent> to_be_deleted = new LinkedList<ast_sent>();
+	
 	@Override
-	public boolean apply(ast_sent s)
-	{
+	public boolean apply(ast_sent s) {
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
 			return true;
 
 		ast_sentblock sb = (ast_sentblock) s;
-		java.util.LinkedList<ast_sent> sents = sb.get_sents(); // work with a copyed list TODO it's not a copy!
+		// work with a copyed list TODO it's not a copy!
+		LinkedList<ast_sent> sents = sb.get_sents(); 
+		
 		ast_foreach prev = null;
-		for (ast_sent sent : sents)
-		{
-			if (prev == null)
-			{
+		for (ast_sent sent : sents) {
+			if (prev == null) {
 				if (sent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
 					prev = (ast_foreach) sent;
 				continue;
-			}
-			else
-			{
+			} else {
 				// pick two consecutive foreach blocks.
 				// check they are mergeable.
 				// If so, merge. delete the second one.
-				if (sent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
-				{
+				if (sent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 					ast_foreach curr = (ast_foreach) sent;
-					if (GlobalMembersGm_merge_loops.gm_is_mergeable_loops(prev, curr))
-					{
+					if (GlobalMembersGm_merge_loops.gm_is_mergeable_loops(prev, curr)) {
 
 						// replace curr's iterator with prev's
 						GlobalMembersGm_merge_loops.replace_iterator_sym(prev, curr);
@@ -55,31 +55,30 @@ public class gm_merge_loop_t extends gm_apply
 						// redo-rw-analysis
 						GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(prev);
 
-						GlobalMembersGm_transform_helper.gm_ripoff_sent(curr, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB); // it will be deleted
+						GlobalMembersGm_transform_helper.gm_ripoff_sent(curr, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB); // it
+																																	// will
+																																	// be
+																																	// deleted
 						if (curr != null)
 							curr.dispose();
 
 						_changed = true;
-					}
-					else
-					{
+					} else {
 						prev = curr;
 					}
-				}
-				else
-				{
+				} else {
 					prev = null;
 				}
 			}
 		}
 		return true;
 	}
-	public final boolean is_changed()
-	{
+
+	public final boolean is_changed() {
 		return _changed;
 	}
-	public final void do_loop_merge(ast_sentblock top)
-	{
+
+	public final void do_loop_merge(ast_sentblock top) {
 		set_all(false);
 		set_for_sent(true);
 		_changed = false;
@@ -87,7 +86,5 @@ public class gm_merge_loop_t extends gm_apply
 
 		to_be_deleted.clear();
 	}
-	protected boolean _changed;
-	protected java.util.LinkedList<ast_sent> to_be_deleted = new java.util.LinkedList<ast_sent>();
+
 }
-//bool gm_independent_optimize::do_merge_foreach(ast_procdef* proc) 

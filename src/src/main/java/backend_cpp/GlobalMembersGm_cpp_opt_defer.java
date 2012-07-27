@@ -228,19 +228,14 @@ public class GlobalMembersGm_cpp_opt_defer {
 		// } while
 		// }
 		// --------------------------------------------
-		gm_symtab upup_symtab_v = upup.get_symtab_var();
+		upup.get_symtab_var(); // to assert it has scope
 		String flag_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("is_first");
 		gm_symtab_entry flag_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(upup, GMTYPE_T.GMTYPE_BOOL, new RefObject<String>(flag_name)); // symbol
 		ast_id lhs = flag_sym.getId().copy(true);
 		ast_expr rhs = ast_expr.new_bval_expr(true);
 		ast_assign a_init = ast_assign.new_assign_scala(lhs, rhs); // "is_first = true"
-		GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(upup, a_init, false); // no
-																							// need
-																							// to
-																							// fix
-																							// symtab
-																							// for
-																							// assign.
+		// no need to fix symtab for assign.
+		GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(upup, a_init, false);
 
 		// -------------------------------------------
 		// create conditional init:

@@ -377,10 +377,10 @@ public class ss2_reduce_op extends gm_apply {
 			assert bound_sym != null;
 			if (left_nested != null) {
 				{
-					(left_nested).add_info_bool(OPT_FLAG_NESTED_REDUCTION, true);
-					(left_nested).add_info_ptr(OPT_SB_NESTED_REDUCTION_SCOPE, nested_sentblock);
-					(left_nested).add_info_ptr(OPT_SYM_NESTED_REDUCTION_TARGET, lhs_symbol);
-					(left_nested).add_info_ptr(OPT_SYM_NESTED_REDUCTION_BOUND, bound_sym);
+					left_nested.add_info_bool(OPT_FLAG_NESTED_REDUCTION, true);
+					left_nested.add_info_ptr(OPT_SB_NESTED_REDUCTION_SCOPE, nested_sentblock);
+					left_nested.add_info_ptr(OPT_SYM_NESTED_REDUCTION_TARGET, lhs_symbol);
+					left_nested.add_info_ptr(OPT_SYM_NESTED_REDUCTION_BOUND, bound_sym);
 				}
 				;
 			}

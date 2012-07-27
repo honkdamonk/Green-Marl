@@ -203,7 +203,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		// ----------------------------------------
 		// _Body
 		// ----------------------------------------
-		String.format(temp, "%s.h", fname);
+		temp = String.format("%s.h", fname);
 		add_include(temp, _Body, false);
 		_Body.NL();
 	}
@@ -446,21 +446,21 @@ public class gm_cpp_gen extends BackendGenerator {
 		switch (t) {
 		case GMTYPE_INF:
 		case GMTYPE_INF_INT:
-			String.format(temp, "%s", e.is_plus_inf() ? "INT_MAX" : "INT_MIN");
+			temp = String.format("%s", e.is_plus_inf() ? "INT_MAX" : "INT_MIN");
 			break;
 		case GMTYPE_INF_LONG:
-			String.format(temp, "%s", e.is_plus_inf() ? "LLONG_MAX" : "LLONG_MIN");
+			temp = String.format("%s", e.is_plus_inf() ? "LLONG_MAX" : "LLONG_MIN");
 			break;
 		case GMTYPE_INF_FLOAT:
-			String.format(temp, "%s", e.is_plus_inf() ? "FLT_MAX" : "FLT_MIN");
+			temp = String.format("%s", e.is_plus_inf() ? "FLT_MAX" : "FLT_MIN");
 			break;
 		case GMTYPE_INF_DOUBLE:
-			String.format(temp, "%s", e.is_plus_inf() ? "DBL_MAX" : "DBL_MIN");
+			temp = String.format("%s", e.is_plus_inf() ? "DBL_MAX" : "DBL_MIN");
 			break;
 		default:
 			System.out.printf("what type is it? %d", t);
 			assert false;
-			String.format(temp, "%s", e.is_plus_inf() ? "INT_MAX" : "INT_MIN");
+			temp = String.format("%s", e.is_plus_inf() ? "INT_MAX" : "INT_MIN");
 			break;
 		}
 		_Body.push(temp);
@@ -634,16 +634,16 @@ public class gm_cpp_gen extends BackendGenerator {
 			temp = String.format("%s = %s * (", temp_var_new, temp_var_old);
 			_Body.push(temp);
 		} else if (r_type == GM_REDUCE_T.GMREDUCE_MAX) {
-			String.format(temp, "%s = std::max (%s, ", temp_var_new, temp_var_old);
+			temp = String.format("%s = std::max (%s, ", temp_var_new, temp_var_old);
 			_Body.push(temp);
 		} else if (r_type == GM_REDUCE_T.GMREDUCE_OR) {
-			String.format(temp, "%s = %s || (", temp_var_new, temp_var_old);
+			temp = String.format("%s = %s || (", temp_var_new, temp_var_old);
 			_Body.push(temp);
 		} else if (r_type == GM_REDUCE_T.GMREDUCE_AND) {
-			String.format(temp, "%s = %s && (", temp_var_new, temp_var_old);
+			temp = String.format("%s = %s && (", temp_var_new, temp_var_old);
 			_Body.push(temp);
 		} else if (r_type == GM_REDUCE_T.GMREDUCE_MIN) {
-			String.format(temp, "%s = std::min (%s, ", temp_var_new, temp_var_old);
+			temp = String.format("%s = std::min (%s, ", temp_var_new, temp_var_old);
 			_Body.push(temp);
 		} else {
 			assert false;
@@ -652,7 +652,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		generate_expr(a.get_rhs());
 		_Body.pushln(");");
 		if ((r_type == GM_REDUCE_T.GMREDUCE_MAX) || (r_type == GM_REDUCE_T.GMREDUCE_MIN)) {
-			String.format(temp, "if (%s == %s) break;", temp_var_old, temp_var_new);
+			temp = String.format("if (%s == %s) break;", temp_var_old, temp_var_new);
 			_Body.pushln(temp);
 		}
 		_Body.push("} while (_gm_atomic_compare_and_swap(&(");
@@ -661,7 +661,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		else
 			generate_rhs_field(a.get_lhs_field());
 
-		String.format(temp, "), %s, %s)==false); ", temp_var_old, temp_var_new);
+		temp = String.format("), %s, %s)==false); ", temp_var_old, temp_var_new);
 		_Body.pushln(temp);
 		_Body.pushln("}");
 
@@ -759,7 +759,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		String bfs_name = bfs.find_info_string(CPPBE_INFO_BFS_NAME);
 		String bfs_inst_name = bfs.is_bfs() ? GlobalMembersGm_main.FE.voca_temp_name_and_add("_BFS", "") : GlobalMembersGm_main.FE.voca_temp_name_and_add(
 				"_DFS", "");
-		String.format(temp, "%s %s", bfs_name, bfs_inst_name);
+		temp = String.format("%s %s", bfs_name, bfs_inst_name);
 		_Body.push(temp);
 		_Body.push('(');
 
@@ -784,20 +784,20 @@ public class gm_cpp_gen extends BackendGenerator {
 		// (2) Make a call to it
 		// -------------------------------------------
 		if (bfs.is_bfs()) {
-			String.format(temp, "%s.%s(%s, %s());", bfs_inst_name, PREPARE, bfs.get_root().get_genname(), MAX_THREADS);
+			temp = String.format("%s.%s(%s, %s());", bfs_inst_name, PREPARE, bfs.get_root().get_genname(), MAX_THREADS);
 			_Body.pushln(temp);
-			String.format(temp, "%s.%s();", bfs_inst_name, DO_BFS_FORWARD);
+			temp = String.format("%s.%s();", bfs_inst_name, DO_BFS_FORWARD);
 			_Body.pushln(temp);
 
 			if (bfs.get_bbody() != null) {
-				String.format(temp, "%s.%s();", bfs_inst_name, DO_BFS_REVERSE);
+				temp = String.format("%s.%s();", bfs_inst_name, DO_BFS_REVERSE);
 				_Body.pushln(temp);
 			}
 		} // DFS
 		else {
-			String.format(temp, "%s.%s(%s);", bfs_inst_name, PREPARE, bfs.get_root().get_genname());
+			temp = String.format("%s.%s(%s);", bfs_inst_name, PREPARE, bfs.get_root().get_genname());
 			_Body.pushln(temp);
-			String.format(temp, "%s.%s();", bfs_inst_name, DO_DFS);
+			temp = String.format("%s.%s();", bfs_inst_name, DO_DFS);
 			_Body.pushln(temp);
 		}
 
@@ -903,7 +903,7 @@ public class gm_cpp_gen extends BackendGenerator {
 	public void generate_sent_block_enter(ast_sentblock sb) {
 		if (sb.find_info_bool(CPPBE_INFO_IS_PROC_ENTRY) && !GlobalMembersGm_main.FE.get_current_proc().is_local()) {
 			_Body.pushln("//Initializations");
-			String.format(temp, "%s();", RT_INIT);
+			temp = String.format("%s();", RT_INIT);
 			_Body.pushln(temp);
 
 			// ----------------------------------------------------
@@ -918,12 +918,12 @@ public class gm_cpp_gen extends BackendGenerator {
 			HashSet<gm_symtab_entry> E = vars.get_entries();
 			for (gm_symtab_entry e : E) {
 				if (e.getType().is_graph()) {
-					String.format(temp, "%s.%s();", e.getId().get_genname(), FREEZE);
+					temp = String.format("%s.%s();", e.getId().get_genname(), FREEZE);
 					_Body.pushln(temp);
 
 					// currrently every graph is an argument
 					if (e.find_info_bool(CPPBE_INFO_USE_REVERSE_EDGE)) {
-						String.format(temp, "%s.%s();", e.getId().get_genname(), MAKE_REVERSE);
+						temp = String.format("%s.%s();", e.getId().get_genname(), MAKE_REVERSE);
 						_Body.pushln(temp);
 					}
 					if (e.find_info_bool(CPPBE_INFO_NEED_SEMI_SORT)) {
@@ -941,16 +941,16 @@ public class gm_cpp_gen extends BackendGenerator {
 						}
 						if (has_edge_prop) {
 							_Body.pushln("//[xxx] edge property must be created before semi-sorting");
-							String.format(temp, "assert(%s.%s());", e.getId().get_genname(), IS_SEMI_SORTED);
+							temp = String.format("assert(%s.%s());", e.getId().get_genname(), IS_SEMI_SORTED);
 							_Body.pushln(temp);
 						} else {
-							String.format(temp, "%s.%s();", e.getId().get_genname(), SEMI_SORT);
+							temp = String.format("%s.%s();", e.getId().get_genname(), SEMI_SORT);
 							_Body.pushln(temp);
 						}
 					}
 
 					if (e.find_info_bool(CPPBE_INFO_NEED_FROM_INFO)) {
-						String.format(temp, "%s.%s();", e.getId().get_genname(), PREPARE_FROM_INFO);
+						temp = String.format("%s.%s();", e.getId().get_genname(), PREPARE_FROM_INFO);
 						_Body.pushln(temp);
 					}
 				}
@@ -968,7 +968,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		if (has_prop_decl && !has_return_ahead) {
 			if (is_proc_entry) {
 				_Body.NL();
-				String.format(temp, "%s();", CLEANUP_PTR);
+				temp = String.format("%s();", CLEANUP_PTR);
 				_Body.pushln(temp);
 			} else {
 				_Body.NL();
@@ -977,7 +977,7 @@ public class gm_cpp_gen extends BackendGenerator {
 				// std::vector<gm_symtab_entry*>::iterator I;
 				HashSet<gm_symtab_entry> entries = tab.get_entries();
 				for (gm_symtab_entry e : entries) {
-					String.format(temp, "%s(%s,%s());", DEALLOCATE, e.getId().get_genname(), THREAD_ID);
+					temp = String.format("%s(%s,%s());", DEALLOCATE, e.getId().get_genname(), THREAD_ID);
 					_Body.pushln(temp);
 				}
 			}
@@ -1353,18 +1353,18 @@ public class gm_cpp_gen extends BackendGenerator {
 		_Body.pushln("// boolean reduction (no need CAS)");
 		_Body.pushln("{ ");
 
-		String.format(temp, "bool %s;", temp_var_new);
+		temp = String.format("bool %s;", temp_var_new);
 		_Body.pushln(temp);
-		String.format(temp, "%s = ", temp_var_new);
+		temp = String.format("%s = ", temp_var_new);
 		_Body.push(temp);
 		generate_expr(a.get_rhs());
 		_Body.pushln(";");
 
 		if (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_AND) {
 			_Body.pushln("// and-reduction");
-			String.format(temp, "if ((!%s) ", temp_var_new);
+			temp = String.format("if ((!%s) ", temp_var_new);
 			_Body.push(temp); // new value is false
-			String.format(temp, "&& ( ");
+			temp = String.format("&& ( ");
 			_Body.push(temp); // old value is true
 			if (is_scalar)
 				generate_rhs_id(a.get_lhs_scala());
@@ -1380,9 +1380,9 @@ public class gm_cpp_gen extends BackendGenerator {
 			_Body.pop_indent();
 		} else if (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_OR) {
 			_Body.pushln("// or-reduction");
-			String.format(temp, "if ((%s) ", temp_var_new);
+			temp = String.format("if ((%s) ", temp_var_new);
 			_Body.push(temp); // new value is true
-			String.format(temp, "&& (! ");
+			temp = String.format("&& (! ");
 			_Body.push(temp); // old value is false
 			if (is_scalar)
 				generate_rhs_id(a.get_lhs_scala());
@@ -1420,13 +1420,13 @@ public class gm_cpp_gen extends BackendGenerator {
 		gm_symtab_entry graph_sym = (gm_symtab_entry) (SET.iterator().next());
 		String template_name = (bfs.is_bfs() ? BFS_TEMPLATE : DFS_TEMPLATE);
 
-		String.format(temp, "class %s : public %s", bfs_name, template_name);
+		temp = String.format("class %s : public %s", bfs_name, template_name);
 		_Body.pushln(temp);
 		_Body.push_indent();
 		if (bfs.is_bfs()) {
-			String.format(temp, "<%s, %s, %s, %s, %s>", level_t, use_multithread, has_navigator, use_reverse_edge, save_child);
+			temp = String.format("<%s, %s, %s, %s, %s>", level_t, use_multithread, has_navigator, use_reverse_edge, save_child);
 		} else {
-			String.format(temp, "<%s, %s, %s, %s>", has_pre_visit, has_post_visit, has_navigator, use_reverse_edge);
+			temp = String.format("<%s, %s, %s, %s>", has_pre_visit, has_post_visit, has_navigator, use_reverse_edge);
 		}
 
 		_Body.pushln(temp);
@@ -1437,7 +1437,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		_Body.pushln("public:");
 		_Body.push_indent();
 
-		String.format(temp, "%s(", bfs_name);
+		temp = String.format("%s(", bfs_name);
 		_Body.push(temp);
 
 		// ------------------------------------------
@@ -1462,15 +1462,15 @@ public class gm_cpp_gen extends BackendGenerator {
 			i++;
 		}
 		_Body.pushln(")");
-		String.format(temp, ": %s", template_name);
+		temp = String.format(": %s", template_name);
 		_Body.push(temp);
 		if (bfs.is_bfs()) {
-			String.format(temp, "<%s, %s, %s, %s, %s>", level_t, use_multithread, has_navigator, use_reverse_edge, save_child);
+			temp = String.format("<%s, %s, %s, %s, %s>", level_t, use_multithread, has_navigator, use_reverse_edge, save_child);
 		} else {
-			String.format(temp, "<%s, %s, %s, %s>", has_pre_visit, has_post_visit, has_navigator, use_reverse_edge);
+			temp = String.format("<%s, %s, %s, %s>", has_pre_visit, has_post_visit, has_navigator, use_reverse_edge);
 		}
 		_Body.push(temp);
-		String.format(temp, "(_%s),", graph_sym.getId().get_genname());
+		temp = String.format("(_%s),", graph_sym.getId().get_genname());
 		_Body.pushln(temp);
 
 		// init list

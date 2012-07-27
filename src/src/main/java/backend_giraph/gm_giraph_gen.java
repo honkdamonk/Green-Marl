@@ -113,7 +113,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
 		String temp = new String(new char[1024]);
 		Body.pushln("// Class logger");
-		String.format(temp, "private static final Logger LOG = Logger.getLogger(%s.class);", proc.get_procname().get_genname());
+		temp = String.format("private static final Logger LOG = Logger.getLogger(%s.class);", proc.get_procname().get_genname());
 		Body.pushln(temp);
 		Body.NL();
 		Body.pushln("// Configuration");
@@ -152,7 +152,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		for (gm_gps_basic_block b : bb_blocks)
 		{
 			int id = b.get_id();
-			String.format(temp, "case %d: _master_state_%d(); break;", id, id);
+			temp = String.format("case %d: _master_state_%d(); break;", id, id);
 			Body.pushln(temp);
 		}
 		Body.pushln("}");
@@ -198,13 +198,13 @@ public class gm_giraph_gen extends gm_gps_gen
 		// create master class
 		//--------------------------------------------------------------------
 		String temp = new String(new char[1024]);
-		String.format(temp, "public static class %sMaster extends MasterCompute {", proc.get_procname().get_genname());
+		temp = String.format("public static class %sMaster extends MasterCompute {", proc.get_procname().get_genname());
 		Body.pushln(temp);
 		Body.pushln("// Control fields");
 		boolean prep = GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE);
-		String.format(temp, "private int     _master_state                = %d;", !prep ? 0 : GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1);
+		temp = String.format("private int     _master_state                = %d;", !prep ? 0 : GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1);
 		Body.pushln(temp);
-		String.format(temp, "private int     _master_state_nxt            = %d;", !prep ? 0 : GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1);
+		temp = String.format("private int     _master_state_nxt            = %d;", !prep ? 0 : GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1);
 		Body.pushln(temp);
 		Body.pushln("private boolean _master_should_start_workers = false;");
 		Body.pushln("private boolean _master_should_finish        = false;");
@@ -219,7 +219,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		java.util.LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
 		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
     
-		String.format(temp, "registerAggregator(%s, IntOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
+		temp = String.format("registerAggregator(%s, IntOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
 		for (gm_gps_basic_block b : bb_blocks)
 		{
@@ -229,7 +229,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL))
 			{
 				int cond_bb_no = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-				String.format(temp, "registerAggregator(\"%s%d\", BooleanOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
+				temp = String.format("registerAggregator(\"%s%d\", BooleanOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 				Body.pushln(temp);
 			}
 		}
@@ -241,7 +241,7 @@ public class gm_giraph_gen extends gm_gps_gen
     
 			if ((syminfo.is_used_in_vertex() || syminfo.is_used_in_receiver()) && syminfo.is_used_in_master())
 			{
-				String.format(temp, "registerAggregator(%s, ", get_lib().create_key_string(sym.getId()));
+				temp = String.format("registerAggregator(%s, ", get_lib().create_key_string(sym.getId()));
 				Body.push(temp);
 				get_lib().generate_broadcast_variable_type(sym.getId().getTypeSummary(), Body, syminfo.get_reduce_type());
 				Body.pushln(".class);");
@@ -268,32 +268,32 @@ public class gm_giraph_gen extends gm_gps_gen
 	//C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
 	//ORIGINAL LINE: sbyte* argname = s->getId()->get_genname();
 				String argname = s.getId().get_genname();
-				String.format(temp, "%s = getContext().getConfiguration().", argname);
+				temp = String.format("%s = getContext().getConfiguration().", argname);
 				Body.push(temp);
 				switch (s.getType().getTypeSummary())
 				{
 					case GMTYPE_BOOL:
-						String.format(temp, "getBoolean(\"%s\", false);", argname);
+						temp = String.format("getBoolean(\"%s\", false);", argname);
 						break;
 					case GMTYPE_INT:
-						String.format(temp, "getInt(\"%s\", -1);", argname);
+						temp = String.format("getInt(\"%s\", -1);", argname);
 						break;
 					case GMTYPE_LONG:
-						String.format(temp, "getLong(\"%s\", -1L);", argname);
+						temp = String.format("getLong(\"%s\", -1L);", argname);
 						break;
 					case GMTYPE_FLOAT:
-						String.format(temp, "getFloat(\"%s\", -1.0f);", argname);
+						temp = String.format("getFloat(\"%s\", -1.0f);", argname);
 						break;
 						//TODO Waiting for https://issues.apache.org/jira/browse/HADOOP-8415 to be accepted
 						//case GMTYPE_DOUBLE: sprintf(temp, "getDouble(\"%s\", -1.0);", argname); break;
 					case GMTYPE_DOUBLE:
-						String.format(temp, "getFloat(\"%s\", -1.0f);", argname);
+						temp = String.format("getFloat(\"%s\", -1.0f);", argname);
 						break;
 					case GMTYPE_NODE:
 						if (get_lib().is_node_type_int()) {
-							String.format(temp, "getInteger(\"%s\", -1);", argname);
+							temp = String.format("getInteger(\"%s\", -1);", argname);
 						} else {
-							String.format(temp, "getLong(\"%s\", -1L);", argname);
+							temp = String.format("getLong(\"%s\", -1L);", argname);
 						}
 						break;
 					default:
@@ -314,7 +314,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		ast_typedecl t = proc.get_return_type();
 		if ((t != null) && (!t.is_void()))
 		{
-			String.format(temp, "System.out.println(\"%s:\\t\" + %s + \"\\n\");", GlobalMembersGm_backend_gps.GPS_RET_VALUE, GlobalMembersGm_backend_gps.GPS_RET_VALUE);
+			temp = String.format("System.out.println(\"%s:\\t\" + %s + \"\\n\");", GlobalMembersGm_backend_gps.GPS_RET_VALUE, GlobalMembersGm_backend_gps.GPS_RET_VALUE);
 			Body.pushln(temp);
 		}
 		for (gm_symtab_entry s : syms)
@@ -324,7 +324,7 @@ public class gm_giraph_gen extends gm_gps_gen
 				continue;
 			if (s.isWriteable())
 			{
-				String.format(temp, "System.out.println(\"%s:\\t\" + %s + \"\\n\");", s.getId().get_genname(), s.getId().get_genname());
+				temp = String.format("System.out.println(\"%s:\\t\" + %s + \"\\n\");", s.getId().get_genname(), s.getId().get_genname());
 				Body.pushln(temp);
 			}
 		}
@@ -346,7 +346,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			if (!syminfo.is_used_in_master())
 				continue;
     
-			String.format(temp, "private %s %s;", get_type_string(e.getType(), true), e.getId().get_genname());
+			temp = String.format("private %s %s;", get_type_string(e.getType(), true), e.getId().get_genname());
 			Body.pushln(temp);
 		}
     
@@ -354,7 +354,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		ast_typedecl t = proc.get_return_type();
 		if ((t != null) && (!t.is_void()))
 		{
-			String.format(temp, "private %s %s; // the final return value of the procedure", get_type_string(t, true), GlobalMembersGm_backend_gps.GPS_RET_VALUE);
+			temp = String.format("private %s %s; // the final return value of the procedure", get_type_string(t, true), GlobalMembersGm_backend_gps.GPS_RET_VALUE);
 			Body.pushln(temp);
 		}
     
@@ -365,7 +365,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			for (Object obj : L)
 			{
 				gm_gps_basic_block bb = (gm_gps_basic_block)(obj);
-				String.format(temp, "private boolean %s%d = true;", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, bb.get_id());
+				temp = String.format("private boolean %s%d = true;", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, bb.get_id());
 				Body.pushln(temp);
 			}
 		}
@@ -384,13 +384,13 @@ public class gm_giraph_gen extends gm_gps_gen
 		gm_gps_bbtype_t type = b.get_type();
     
 		String temp = new String(new char[1024]);
-		String.format(temp, "private void _master_state_%d() {", id);
+		temp = String.format("private void _master_state_%d() {", id);
 		Body.pushln(temp);
 		Body.pushln("/*------");
 		Body.flush();
 		b.reproduce_sents();
 		Body.pushln("-----*/");
-		String.format(temp, "LOG.info(\"Running _master_state %d\");", id);
+		temp = String.format("LOG.info(\"Running _master_state %d\");", id);
 		Body.pushln(temp);
 		if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX)
 		{
@@ -401,7 +401,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL))
 			{
 				int cond_bb_no = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-				String.format(temp, "%s%d", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
+				temp = String.format("%s%d", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 				get_lib().generate_broadcast_isFirst_master(temp, Body);
 			}
 			Body.NL();
@@ -409,7 +409,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			// generate next statement
 			assert b.get_num_exits() == 1;
 			int n = b.get_nth_exit(0).get_id();
-			String.format(temp, "_master_state_nxt = %d;", n);
+			temp = String.format("_master_state_nxt = %d;", n);
 			Body.pushln(temp);
 			Body.pushln("_master_should_start_workers = true;");
 		}
@@ -445,7 +445,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			{
 				if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL))
 				{
-					String.format(temp, "if (!%s%d) {", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
+					temp = String.format("if (!%s%d) {", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 					Body.pushln(temp);
 				}
     
@@ -466,7 +466,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			else
 			{
 				int n = b.get_nth_exit(0).get_id();
-				String.format(temp, "_master_state_nxt = %d;", n);
+				temp = String.format("_master_state_nxt = %d;", n);
 				Body.pushln(temp);
 			}
 		}
@@ -483,7 +483,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			generate_expr(i.get_cond());
 			Body.pushln(";");
     
-			String.format(temp, "if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;", b.get_nth_exit(0).get_id(), b.get_nth_exit(1).get_id());
+			temp = String.format("if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;", b.get_nth_exit(0).get_id(), b.get_nth_exit(1).get_id());
 			Body.pushln(temp);
 		}
 		else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND)
@@ -502,12 +502,12 @@ public class gm_giraph_gen extends gm_gps_gen
 			generate_expr(i.get_cond());
 			Body.pushln(";");
     
-			String.format(temp, "if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;\n", b.get_nth_exit(0).get_id(), b.get_nth_exit(1).get_id()); // exit -  continue while
+			temp = String.format("if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;\n", b.get_nth_exit(0).get_id(), b.get_nth_exit(1).get_id()); // exit -  continue while
 			Body.pushln(temp);
     
 			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL))
 			{
-				String.format(temp, "if (!_expression_result) %s%d=true; // reset is_first\n\n", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, b.get_id());
+				temp = String.format("if (!_expression_result) %s%d=true; // reset is_first\n\n", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, b.get_id());
 				Body.pushln(temp);
 			}
     
@@ -522,7 +522,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			Body.pushln("// Preparation Step;");
 			assert b.get_num_exits() == 1;
 			int n = b.get_nth_exit(0).get_id();
-			String.format(temp, "_master_state_nxt = %d;", n);
+			temp = String.format("_master_state_nxt = %d;", n);
 			Body.pushln(temp);
 			Body.pushln("_master_should_start_workers = true;");
 		}
@@ -530,11 +530,11 @@ public class gm_giraph_gen extends gm_gps_gen
 		{
 			Body.pushln("// Intra-Loop Merged");
 			int source_id = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-			String.format(temp, "if (%s%d) _master_state_nxt = %d;", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, source_id, b.get_nth_exit(0).get_id());
+			temp = String.format("if (%s%d) _master_state_nxt = %d;", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, source_id, b.get_nth_exit(0).get_id());
 			Body.pushln(temp);
-			String.format(temp, "else _master_state_nxt = %d;", b.get_nth_exit(1).get_id());
+			temp = String.format("else _master_state_nxt = %d;", b.get_nth_exit(1).get_id());
 			Body.pushln(temp);
-			String.format(temp, "%s%d = false;\n", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, source_id);
+			temp = String.format("%s%d = false;\n", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, source_id);
 			Body.pushln(temp);
 		}
 		else
@@ -643,12 +643,12 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("//----------------------------------------------");
 		Body.pushln("// Worker Context Class");
 		Body.pushln("//----------------------------------------------");
-		String.format(temp, "public static class %sWorkerContext extends WorkerContext {", proc_name);
+		temp = String.format("public static class %sWorkerContext extends WorkerContext {", proc_name);
 		Body.pushln(temp);
 		Body.NL();
 		Body.pushln("@Override");
 		Body.pushln("public void preApplication() throws InstantiationException, IllegalAccessException {");
-		String.format(temp, "registerAggregator(%s, IntOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
+		temp = String.format("registerAggregator(%s, IntOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
     
 		for (gm_gps_basic_block b : bb_blocks) {
@@ -658,7 +658,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL))
 			{
 				int cond_bb_no = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-				String.format(temp, "registerAggregator(\"%s%d\", BooleanOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
+				temp = String.format("registerAggregator(\"%s%d\", BooleanOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 				Body.pushln(temp);
 			}
 		}
@@ -670,7 +670,7 @@ public class gm_giraph_gen extends gm_gps_gen
     
 			if ((syminfo.is_used_in_vertex() || syminfo.is_used_in_receiver()) && syminfo.is_used_in_master())
 			{
-				String.format(temp, "registerAggregator(%s, ", get_lib().create_key_string(sym.getId()));
+				temp = String.format("registerAggregator(%s, ", get_lib().create_key_string(sym.getId()));
 				Body.push(temp);
 				get_lib().generate_broadcast_variable_type(sym.getId().getTypeSummary(), Body, syminfo.get_reduce_type());
 				Body.pushln(".class);");
@@ -685,7 +685,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.NL();
 		Body.pushln("@Override");
 		Body.pushln("public void preSuperstep() {");
-		String.format(temp, "useAggregator(%s);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
+		temp = String.format("useAggregator(%s);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
     
 		for (gm_gps_basic_block b : bb_blocks)
@@ -696,7 +696,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL))
 			{
 				int cond_bb_no = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-				String.format(temp, "useAggregator(\"%s%d\");", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
+				temp = String.format("useAggregator(\"%s%d\");", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 				Body.pushln(temp);
 			}
 		}
@@ -708,7 +708,7 @@ public class gm_giraph_gen extends gm_gps_gen
     
 			if ((syminfo.is_used_in_vertex() || syminfo.is_used_in_receiver()) && syminfo.is_used_in_master())
 			{
-				String.format(temp, "useAggregator(%s);", get_lib().create_key_string(sym.getId()));
+				temp = String.format("useAggregator(%s);", get_lib().create_key_string(sym.getId()));
 				Body.pushln(temp);
 			}
 		}
@@ -733,7 +733,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		String temp = new String(new char[1024]);
 		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
 		assert proc != null;
-		String.format(temp, "public static class %s implements Writable {", is_edge_prop ? "EdgeData" : "VertexData");
+		temp = String.format("public static class %s implements Writable {", is_edge_prop ? "EdgeData" : "VertexData");
 		Body.pushln(temp);
     
 		// list out property
@@ -743,14 +743,14 @@ public class gm_giraph_gen extends gm_gps_gen
 		for (gm_symtab_entry sym : prop)
 		{
 			//gps_syminfo* syminfo = (gps_syminfo*) sym->find_info(TAG_BB_USAGE);
-			String.format(temp, "%s %s;", get_type_string(sym.getType().get_target_type(), is_master_generate()), sym.getId().get_genname());
+			temp = String.format("%s %s;", get_type_string(sym.getType().get_target_type(), is_master_generate()), sym.getId().get_genname());
     
 			Body.pushln(temp);
 		}
     
 		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE))
 		{
-			String.format(temp, "%s[] %s; //reverse edges (node IDs)", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable", GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
+			temp = String.format("%s[] %s; //reverse edges (node IDs)", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable", GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
 			Body.pushln(temp);
 		}
     
@@ -768,16 +768,16 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("//----------------------------------------------");
 		Body.pushln("// Main Vertex Class");
 		Body.pushln("//----------------------------------------------");
-		String.format(temp, "public static class %sVertex", proc_name);
+		temp = String.format("public static class %sVertex", proc_name);
 		Body.pushln(temp);
 		Body.push_indent();
 		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP))
 		{
-			String.format(temp, "extends EdgeListVertex< %s, VertexData, EdgeData, MessageData > {", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
+			temp = String.format("extends EdgeListVertex< %s, VertexData, EdgeData, MessageData > {", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
 		}
 		else
 		{
-			String.format(temp, "extends EdgeListVertex< %s, VertexData, NullWritable, MessageData > {", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
+			temp = String.format("extends EdgeListVertex< %s, VertexData, NullWritable, MessageData > {", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
 		}
 		Body.pushln(temp);
 		Body.pop_indent();
@@ -836,7 +836,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			int id = b.get_id();
-			String.format(temp, "case %d: _vertex_state_%d(_msgs); break;", id, id);
+			temp = String.format("case %d: _vertex_state_%d(_msgs); break;", id, id);
 			Body.pushln(temp);
 			cnt++;
 		}
@@ -865,7 +865,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		gm_gps_bbtype_t type = b.get_type();
     
 		String temp = new String(new char[1024]);
-		String.format(temp, "private void _vertex_state_%d(Iterator<MessageData> _msgs) {", id);
+		temp = String.format("private void _vertex_state_%d(Iterator<MessageData> _msgs) {", id);
 		Body.pushln(temp);
     
 		get_lib().generate_vertex_prop_access_prepare(Body);
@@ -883,7 +883,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		boolean is_conditional = b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL);
 		String cond_var = new String(new char[128]);
 		if (is_conditional)
-			String.format(cond_var, "%s%d", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO));
+			cond_var = String.format("%s%d", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO));
     
 		//---------------------------------------------------------
 		// Generate Receiver Routine
@@ -895,7 +895,7 @@ public class gm_giraph_gen extends gm_gps_gen
     
 			if (is_conditional)
 			{
-				String.format(temp, "if (!%s) {", cond_var);
+				temp = String.format("if (!%s) {", cond_var);
 				Body.pushln(temp);
 			}
     
@@ -1001,7 +1001,7 @@ public class gm_giraph_gen extends gm_gps_gen
 				cnt++;
 				if (fe.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL))
 				{
-					String.format(temp, "if (!%s)", cond_var);
+					temp = String.format("if (!%s)", cond_var);
 					Body.push(temp);
 					if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
 						Body.pushln(" {");
@@ -1068,7 +1068,7 @@ public class gm_giraph_gen extends gm_gps_gen
 		if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL))
 		{
 			String temp = new String(new char[1024]);
-			String.format(temp, "%s%d", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO));
+			temp = String.format("%s%d", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO));
 			get_lib().generate_receive_isFirst_vertex(temp, Body);
 		}
 	}
@@ -1086,31 +1086,31 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("// Vertex Input format");
 		Body.pushln("//----------------------------------------------");
     
-		String.format(temp, "static class %sVertexInputFormat extends TextVertexInputFormat<%s, VertexData, %s, MessageData> {", proc_name, vertex_id, edge_data);
+		temp = String.format("static class %sVertexInputFormat extends TextVertexInputFormat<%s, VertexData, %s, MessageData> {", proc_name, vertex_id, edge_data);
 		Body.pushln(temp);
 		Body.pushln("@Override");
-		String.format(temp, "public VertexReader<%s, VertexData, %s, MessageData>", vertex_id, edge_data);
+		temp = String.format("public VertexReader<%s, VertexData, %s, MessageData>", vertex_id, edge_data);
 		Body.pushln(temp);
 		Body.pushln("createVertexReader(InputSplit split, TaskAttemptContext context) throws IOException {");
-		String.format(temp, "return new %sVertexReader(textInputFormat.createRecordReader(split, context));", proc_name);
+		temp = String.format("return new %sVertexReader(textInputFormat.createRecordReader(split, context));", proc_name);
 		Body.pushln(temp);
 		Body.pushln("}");
 		Body.NL();
     
-		String.format(temp, "static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, VertexData, %s, MessageData> {", proc_name, vertex_id, edge_data);
+		temp = String.format("static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, VertexData, %s, MessageData> {", proc_name, vertex_id, edge_data);
 		Body.pushln(temp);
-		String.format(temp, "public %sVertexReader(RecordReader<LongWritable, Text> lineRecordReader) {", proc_name);
+		temp = String.format("public %sVertexReader(RecordReader<LongWritable, Text> lineRecordReader) {", proc_name);
 		Body.pushln(temp);
 		Body.pushln("super(lineRecordReader);");
 		Body.pushln("}");
 		Body.NL();
     
 		Body.pushln("@Override");
-		String.format(temp, "public BasicVertex<%s, VertexData, %s, MessageData> getCurrentVertex() throws IOException, InterruptedException {", vertex_id, edge_data);
+		temp = String.format("public BasicVertex<%s, VertexData, %s, MessageData> getCurrentVertex() throws IOException, InterruptedException {", vertex_id, edge_data);
 		Body.pushln(temp);
-		String.format(temp, "BasicVertex<%s, VertexData, %s, MessageData> vertex =", vertex_id, edge_data);
+		temp = String.format("BasicVertex<%s, VertexData, %s, MessageData> vertex =", vertex_id, edge_data);
 		Body.pushln(temp);
-		String.format(temp, "    BspUtils.<%s, VertexData, %s, MessageData> createVertex(getContext().getConfiguration());", vertex_id, edge_data);
+		temp = String.format("    BspUtils.<%s, VertexData, %s, MessageData> createVertex(getContext().getConfiguration());", vertex_id, edge_data);
 		Body.pushln(temp);
 		Body.NL();
     
@@ -1125,7 +1125,7 @@ public class gm_giraph_gen extends gm_gps_gen
 			Body.pushln("LongWritable vertexId = new LongWritable(Long.parseLong(values[0]));");
 		}
 		Body.pushln("double vertexValue = Double.parseDouble(values[1]);");
-		String.format(temp, "Map<%s, %s> edges = Maps.newHashMap();", vertex_id, edge_data);
+		temp = String.format("Map<%s, %s> edges = Maps.newHashMap();", vertex_id, edge_data);
 		Body.pushln(temp);
 		Body.pushln("for (int i = 2; i < values.length; i += 2) {");
 		if (GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int())
@@ -1162,24 +1162,24 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.pushln("// ----------------------------------------------");
 		Body.pushln("// Vertex Output format");
 		Body.pushln("// ----------------------------------------------");
-		String.format(temp, "static class %sVertexOutputFormat extends", proc_name);
+		temp = String.format("static class %sVertexOutputFormat extends", proc_name);
 		Body.pushln(temp);
-		String.format(temp, "TextVertexOutputFormat<%s, VertexData, %s> {", vertex_id, edge_data);
+		temp = String.format("TextVertexOutputFormat<%s, VertexData, %s> {", vertex_id, edge_data);
 		Body.pushln(temp);
 		Body.pushln("@Override");
-		String.format(temp, "public VertexWriter<%s, VertexData, %s> createVertexWriter(", vertex_id, edge_data);
+		temp = String.format("public VertexWriter<%s, VertexData, %s> createVertexWriter(", vertex_id, edge_data);
 		Body.pushln(temp);
 		Body.pushln("TaskAttemptContext context) throws IOException, InterruptedException {");
-		String.format(temp, "return new %sVertexWriter(textOutputFormat.getRecordWriter(context));", proc_name);
+		temp = String.format("return new %sVertexWriter(textOutputFormat.getRecordWriter(context));", proc_name);
 		Body.pushln(temp);
 		Body.pushln("}");
 		Body.NL();
     
-		String.format(temp, "static class %sVertexWriter", proc_name);
+		temp = String.format("static class %sVertexWriter", proc_name);
 		Body.pushln(temp);
-		String.format(temp, "extends TextVertexOutputFormat.TextVertexWriter<%s, VertexData, %s> {", vertex_id, edge_data);
+		temp = String.format("extends TextVertexOutputFormat.TextVertexWriter<%s, VertexData, %s> {", vertex_id, edge_data);
 		Body.pushln(temp);
-		String.format(temp, "public %sVertexWriter(RecordWriter<Text, Text> lineRecordReader) {", proc_name);
+		temp = String.format("public %sVertexWriter(RecordWriter<Text, Text> lineRecordReader) {", proc_name);
 		Body.pushln(temp);
 		Body.pushln("super(lineRecordReader);");
 		Body.pushln("}");
@@ -1187,19 +1187,19 @@ public class gm_giraph_gen extends gm_gps_gen
     
 		Body.pushln("@Override");
 		Body.pushln("public void writeVertex(");
-		String.format(temp, "BasicVertex<%s, VertexData, %s, ?> vertex)", vertex_id, edge_data);
+		temp = String.format("BasicVertex<%s, VertexData, %s, ?> vertex)", vertex_id, edge_data);
 		Body.pushln(temp);
 		Body.pushln("throws IOException, InterruptedException {");
 		Body.pushln("StringBuffer sb = new StringBuffer(vertex.getVertexId().toString());");
 		Body.pushln("sb.append('\\t').append(vertex.getVertexValue());");
 		Body.NL();
     
-		String.format(temp, "Iterator<%s> outEdges = vertex.getOutEdgesIterator();", vertex_id);
+		temp = String.format("Iterator<%s> outEdges = vertex.getOutEdgesIterator();", vertex_id);
 		Body.pushln(temp);
 		Body.pushln("while (outEdges.hasNext()) {");
 		if (proc.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP))
 		{
-			String.format(temp, "%s neighbor = outEdges.next();", vertex_id);
+			temp = String.format("%s neighbor = outEdges.next();", vertex_id);
 			Body.pushln(temp);
 			Body.pushln("sb.append('\\t').append(neighbor);");
 			Body.pushln("sb.append('\\t').append(vertex.getEdgeValue(neighbor));");
@@ -1244,7 +1244,7 @@ public class gm_giraph_gen extends gm_gps_gen
 				continue;
 			if (s.isReadable())
 			{
-				String.format(temp, "options.addOption(\"_%s\", \"%s\", true, \"%s\");", s.getId().get_genname(), s.getId().get_genname(), s.getId().get_genname());
+				temp = String.format("options.addOption(\"_%s\", \"%s\", true, \"%s\");", s.getId().get_genname(), s.getId().get_genname(), s.getId().get_genname());
 				Body.pushln(temp);
 			}
 		}
@@ -1272,9 +1272,9 @@ public class gm_giraph_gen extends gm_gps_gen
 				continue;
 			if (s.isReadable())
 			{
-				String.format(temp, "if (!cmd.hasOption(\"%s\")) {", s.getId().get_genname());
+				temp = String.format("if (!cmd.hasOption(\"%s\")) {", s.getId().get_genname());
 				Body.pushln(temp);
-				String.format(temp, "LOG.info(\"Need to set procedure argument (--%s)\");", s.getId().get_genname());
+				temp = String.format("LOG.info(\"Need to set procedure argument (--%s)\");", s.getId().get_genname());
 				Body.pushln(temp);
 				Body.pushln("return -1;");
 				Body.pushln("}");
@@ -1283,17 +1283,17 @@ public class gm_giraph_gen extends gm_gps_gen
 		Body.NL();
 		Body.pushln("GiraphJob job = new GiraphJob(getConf(), getClass().getName());");
 		Body.pushln("job.getConfiguration().setInt(GiraphJob.CHECKPOINT_FREQUENCY, 0);");
-		String.format(temp, "job.setMasterComputeClass(%sMaster.class);", proc.get_procname().get_genname());
+		temp = String.format("job.setMasterComputeClass(%sMaster.class);", proc.get_procname().get_genname());
 		Body.pushln(temp);
-		String.format(temp, "job.setVertexClass(%sVertex.class);", proc.get_procname().get_genname());
+		temp = String.format("job.setVertexClass(%sVertex.class);", proc.get_procname().get_genname());
 		Body.pushln(temp);
-		String.format(temp, "job.setWorkerContextClass(%sWorkerContext.class);", proc.get_procname().get_genname());
+		temp = String.format("job.setWorkerContextClass(%sWorkerContext.class);", proc.get_procname().get_genname());
 		Body.pushln(temp);
-		String.format(temp, "job.setVertexInputFormatClass(%sVertexInputFormat.class);", proc.get_procname().get_genname());
+		temp = String.format("job.setVertexInputFormatClass(%sVertexInputFormat.class);", proc.get_procname().get_genname());
 		Body.pushln(temp);
 		Body.pushln("FileInputFormat.addInputPath(job.getInternalJob(), new Path(cmd.getOptionValue('i')));");
 		Body.pushln("if (cmd.hasOption('o')) {");
-		String.format(temp, "job.setVertexOutputFormatClass(%sVertexOutputFormat.class);", proc.get_procname().get_genname());
+		temp = String.format("job.setVertexOutputFormatClass(%sVertexOutputFormat.class);", proc.get_procname().get_genname());
 		Body.pushln(temp);
 		Body.pushln("FileOutputFormat.setOutputPath(job.getInternalJob(), new Path(cmd.getOptionValue('o')));");
 		Body.pushln("}");
@@ -1305,32 +1305,32 @@ public class gm_giraph_gen extends gm_gps_gen
 			if (s.isReadable())
 			{
 				String argname = s.getId().get_genname();
-				String.format(temp, "job.getConfiguration().");
+				temp = String.format("job.getConfiguration().");
 				Body.push(temp);
 				switch (s.getType().getTypeSummary())
 				{
 					case GMTYPE_BOOL:
-						String.format(temp, "setBoolean(\"%s\", Boolean.parseBoolean(cmd.getOptionValue(\"%s\")));", argname, argname);
+						temp = String.format("setBoolean(\"%s\", Boolean.parseBoolean(cmd.getOptionValue(\"%s\")));", argname, argname);
 						break;
 					case GMTYPE_INT:
-						String.format(temp, "setInt(\"%s\", Integer.parseInt(cmd.getOptionValue(\"%s\")));", argname, argname);
+						temp = String.format("setInt(\"%s\", Integer.parseInt(cmd.getOptionValue(\"%s\")));", argname, argname);
 						break;
 					case GMTYPE_LONG:
-						String.format(temp, "setLong(\"%s\", Long.parseLong(cmd.getOptionValue(\"%s\")));", argname, argname);
+						temp = String.format("setLong(\"%s\", Long.parseLong(cmd.getOptionValue(\"%s\")));", argname, argname);
 						break;
 					case GMTYPE_FLOAT:
-						String.format(temp, "setFloat(\"%s\", Float.parseFloat(cmd.getOptionValue(\"%s\")));", argname, argname);
+						temp = String.format("setFloat(\"%s\", Float.parseFloat(cmd.getOptionValue(\"%s\")));", argname, argname);
 						break;
 						//TODO Waiting for https://issues.apache.org/jira/browse/HADOOP-8415 to be accepted
 						//case GMTYPE_DOUBLE: sprintf(temp, "setDouble(\"%s\", Double.parseDouble(cmd.getOptionValue(\"%s\")));", argname, argname); break;
 					case GMTYPE_DOUBLE:
-						String.format(temp, "setFloat(\"%s\", Float.parseFloat(cmd.getOptionValue(\"%s\")));", argname, argname);
+						temp = String.format("setFloat(\"%s\", Float.parseFloat(cmd.getOptionValue(\"%s\")));", argname, argname);
 						break;
 					case GMTYPE_NODE:
 						if (get_lib().is_node_type_int()) {
-							String.format(temp, "setInt(\"%s\", Integer.parseInt(cmd.getOptionValue(\"%s\")));", argname, argname);
+							temp = String.format("setInt(\"%s\", Integer.parseInt(cmd.getOptionValue(\"%s\")));", argname, argname);
 						} else {
-							String.format(temp, "setLong(\"%s\", Long.parseLong(cmd.getOptionValue(\"%s\")));", argname, argname);
+							temp = String.format("setLong(\"%s\", Long.parseLong(cmd.getOptionValue(\"%s\")));", argname, argname);
 						}
 						break;
 					default:
@@ -1363,7 +1363,7 @@ public class gm_giraph_gen extends gm_gps_gen
     
 		Body.NL();
 		Body.pushln("public static void main(final String[] args) throws Exception {");
-		String.format(temp, "System.exit(ToolRunner.run(new %s(), args));", proc.get_procname().get_genname());
+		temp = String.format("System.exit(ToolRunner.run(new %s(), args));", proc.get_procname().get_genname());
 		Body.pushln(temp);
 		Body.pushln("}");
 	}

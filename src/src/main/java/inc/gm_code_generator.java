@@ -149,21 +149,21 @@ public abstract class gm_code_generator {
 		String temp = temp_str;
 		switch (e.get_opclass()) {
 		case GMEXPR_IVAL:
-			String.format(temp, "%ld", e.get_ival()); // to be changed
+			temp = String.format("%ld", e.get_ival()); // to be changed
 			_Body.push(temp);
 			return;
 		case GMEXPR_FVAL:
 			if (e.get_type_summary() == GMTYPE_T.GMTYPE_FLOAT) {
-				String.format(temp, "(float)(%lf)", e.get_fval()); // to be
+				temp = String.format("(float)(%lf)", e.get_fval()); // to be
 																	// changed
 				_Body.push(temp);
 			} else {
-				String.format(temp, "%lf", e.get_fval()); // to be changed
+				temp = String.format("%lf", e.get_fval()); // to be changed
 				_Body.push(temp);
 			}
 			return;
 		case GMEXPR_BVAL:
-			String.format(temp, "%s", e.get_bval() ? "true" : "false");
+			temp = String.format("%s", e.get_bval() ? "true" : "false");
 			_Body.push(temp);
 			return;
 
@@ -180,19 +180,19 @@ public abstract class gm_code_generator {
 		switch (t) {
 		case GMTYPE_INF:
 		case GMTYPE_INF_INT:
-			String.format(temp, "%s", e.is_plus_inf() ? "INT_MAX" : "INT_MIN"); // temporary
+			temp = String.format("%s", e.is_plus_inf() ? "INT_MAX" : "INT_MIN"); // temporary
 			break;
 		case GMTYPE_INF_LONG:
-			String.format(temp, "%s", e.is_plus_inf() ? "LLONG_MAX" : "LLONG_MIN"); // temporary
+			temp = String.format("%s", e.is_plus_inf() ? "LLONG_MAX" : "LLONG_MIN"); // temporary
 			break;
 		case GMTYPE_INF_FLOAT:
-			String.format(temp, "%s", e.is_plus_inf() ? "FLT_MAX" : "FLT_MIN"); // temporary
+			temp = String.format("%s", e.is_plus_inf() ? "FLT_MAX" : "FLT_MIN"); // temporary
 			break;
 		case GMTYPE_INF_DOUBLE:
-			String.format(temp, "%s", e.is_plus_inf() ? "DBL_MAX" : "DBL_MIN"); // temporary
+			temp = String.format("%s", e.is_plus_inf() ? "DBL_MAX" : "DBL_MIN"); // temporary
 			break;
 		default:
-			String.format(temp, "%s", e.is_plus_inf() ? "INT_MAX" : "INT_MIN"); // temporary
+			temp = String.format("%s", e.is_plus_inf() ? "INT_MAX" : "INT_MIN"); // temporary
 			break;
 		}
 		_Body.push(temp);

@@ -103,12 +103,12 @@ public class gm_cpplib extends gm_graph_library {
 	}
 
 	public String max_node_index(ast_id graph) {
-		String.format(str_buf, "%s.%s()", graph.get_genname(), GlobalMembersGm_cpplib_words.NUM_NODES);
+		str_buf = String.format("%s.%s()", graph.get_genname(), GlobalMembersGm_cpplib_words.NUM_NODES);
 		return str_buf;
 	}
 
 	public String max_edge_index(ast_id graph) {
-		String.format(str_buf, "%s.%s()", graph.get_genname(), GlobalMembersGm_cpplib_words.NUM_EDGES);
+		str_buf = String.format("%s.%s()", graph.get_genname(), GlobalMembersGm_cpplib_words.NUM_EDGES);
 		return str_buf;
 	}
 
@@ -193,23 +193,23 @@ public class gm_cpplib extends gm_graph_library {
 				break;
 			case GM_BLTIN_NODE_IS_NBR:
 				assert i.getTypeInfo().get_target_graph_id() != null;
-				String.format(str_buf, "%s.is_neighbor(", i.getTypeInfo().get_target_graph_id().get_genname());
+				str_buf = String.format("%s.is_neighbor(", i.getTypeInfo().get_target_graph_id().get_genname());
 				Body.push(str_buf);
 				main.generate_expr(e.get_args().getFirst());
-				String.format(str_buf, ",%s)", i.get_genname());
+				str_buf = String.format(",%s)", i.get_genname());
 				Body.push(str_buf);
 				break;
 			case GM_BLTIN_NODE_HAS_EDGE_TO:
 				assert i.getTypeInfo().get_target_graph_id() != null;
-				String.format(str_buf, "%s.has_edge_to(", i.getTypeInfo().get_target_graph_id().get_genname());
+				str_buf = String.format("%s.has_edge_to(", i.getTypeInfo().get_target_graph_id().get_genname());
 				Body.push(str_buf);
 				main.generate_expr(e.get_args().getFirst());
-				String.format(str_buf, ",%s)", i.get_genname());
+				str_buf = String.format(",%s)", i.get_genname());
 				Body.push(str_buf);
 				break;
 			case GM_BLTIN_NODE_RAND_NBR:
 				assert i.getTypeInfo().get_target_graph_id() != null;
-				String.format(str_buf, "%s.pick_random_out_neighbor(%s)", i.getTypeInfo().get_target_graph_id().get_genname(), i.get_genname());
+				str_buf = String.format("%s.pick_random_out_neighbor(%s)", i.getTypeInfo().get_target_graph_id().get_genname(), i.get_genname());
 				Body.push(str_buf);
 				break;
 			default:
@@ -226,7 +226,7 @@ public class gm_cpplib extends gm_graph_library {
 				String alias_name = i.getSymInfo().find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR);
 				assert alias_name != null;
 				assert alias_name.length() > 0;
-				String.format(str_buf, "%s", alias_name);
+				str_buf = String.format("%s", alias_name);
 			}
 				break;
 			default:
@@ -238,11 +238,11 @@ public class gm_cpplib extends gm_graph_library {
 		case GMTYPE_EDGE:
 			switch (method_id) {
 			case GM_BLTIN_EDGE_FROM: {
-				String.format(str_buf, "%s.%s[%s]", i.getTypeInfo().get_target_graph_id().get_genname(), GlobalMembersGm_cpplib_words.FROM_IDX, i.get_genname());
+				str_buf = String.format("%s.%s[%s]", i.getTypeInfo().get_target_graph_id().get_genname(), GlobalMembersGm_cpplib_words.FROM_IDX, i.get_genname());
 			}
 				break;
 			case GM_BLTIN_EDGE_TO: {
-				String.format(str_buf, "%s.%s[%s]", i.getTypeInfo().get_target_graph_id().get_genname(), GlobalMembersGm_cpplib_words.NODE_IDX, i.get_genname());
+				str_buf = String.format("%s.%s[%s]", i.getTypeInfo().get_target_graph_id().get_genname(), GlobalMembersGm_cpplib_words.NODE_IDX, i.get_genname());
 			}
 				break;
 			default:
@@ -265,7 +265,7 @@ public class gm_cpplib extends gm_graph_library {
 			throw new AssertionError();
 		}
 
-		String.format(str_buf, "%s.%s(", i.get_genname(), func_name);
+		str_buf = String.format("%s.%s(", i.get_genname(), func_name);
 		Body.push(str_buf);
 		add_arguments_and_thread(Body, e, add_thread_id);
 	}
@@ -369,18 +369,18 @@ public class gm_cpplib extends gm_graph_library {
 			// get a list
 			String typeString = null;
 			if (source.getTypeSummary().is_collection_of_collection_type())
-				String.format(str_buf, "%s<%s>::%s", get_type_string(source.getTypeInfo()), get_type_string(source.getTargetTypeInfo()), iter_type_str);
+				str_buf = String.format("%s<%s>::%s", get_type_string(source.getTypeInfo()), get_type_string(source.getTargetTypeInfo()), iter_type_str);
 			else
-				String.format(str_buf, "%s::%s", get_type_string(source.getTypeInfo()), iter_type_str);
+				str_buf = String.format("%s::%s", get_type_string(source.getTypeInfo()), iter_type_str);
 			Body.push(str_buf);
 
 			String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(f.get_iterator().get_orgname(), "_I");
 			f.add_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_COLLECTION_ITERATOR, a_name);
-			String.format(str_buf, " %s", a_name);
+			str_buf = String.format(" %s", a_name);
 			Body.push(str_buf);
 			a_name = null;
 
-			String.format(str_buf, " = %s.%s();", source.get_genname(), prep_str);
+			str_buf = String.format(" = %s.%s();", source.get_genname(), prep_str);
 			Body.pushln(str_buf);
 		} else if (iter_type.is_common_nbr_iter_type()) {
 			ast_id graph = source.getTypeInfo().get_target_graph_id();
@@ -389,7 +389,7 @@ public class gm_cpplib extends gm_graph_library {
 			String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(f.get_iterator().get_orgname(), "_I");
 			f.add_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_COMMON_NBR_ITERATOR, a_name);
 			Body.pushln("// Iterate over Common neighbors");
-			String.format(str_buf, "gm_common_neighbor_iter %s(%s, %s, %s);", a_name, graph.get_genname(), source.get_genname(), source2.get_genname());
+			str_buf = String.format("gm_common_neighbor_iter %s(%s, %s, %s);", a_name, graph.get_genname(), source.get_genname(), source2.get_genname());
 			Body.pushln(str_buf);
 		}
 	}
@@ -408,7 +408,7 @@ public class gm_cpplib extends gm_graph_library {
 			else
 				type_name = source.getTypeInfo().is_node_collection() ? GlobalMembersGm_cpplib_words.NODE_T : GlobalMembersGm_cpplib_words.EDGE_T;
 
-			String.format(str_buf, "%s %s = %s.get_next();", type_name, f.get_iterator().get_genname(), lst_iter_name);
+			str_buf = String.format("%s %s = %s.get_next();", type_name, f.get_iterator().get_genname(), lst_iter_name);
 			Body.pushln(str_buf);
 		} else if (iter_type.is_iteration_on_neighbors_compatible()) {
 			String alias_name = f.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR);
@@ -424,20 +424,20 @@ public class gm_cpplib extends gm_graph_library {
 			array_name = iter_type.is_iteration_use_reverse() ? GlobalMembersGm_cpplib_words.R_NODE_IDX : GlobalMembersGm_cpplib_words.NODE_IDX;
 
 			if (iter_type.is_iteration_on_down_neighbors()) {
-				String.format(str_buf, "if (!is_down_edge(%s)) continue;", alias_name);
+				str_buf = String.format("if (!is_down_edge(%s)) continue;", alias_name);
 				Body.pushln(str_buf);
 
-				String.format(str_buf, "%s %s = %s.%s [%s];", type_name, var_name, graph_name, array_name, alias_name);
+				str_buf = String.format("%s %s = %s.%s [%s];", type_name, var_name, graph_name, array_name, alias_name);
 				Body.pushln(str_buf);
 			} else if (iter_type.is_iteration_on_updown_levels()) {
-				String.format(str_buf, "%s %s = %s.%s [%s];", type_name, var_name, graph_name, array_name, alias_name);
+				str_buf = String.format("%s %s = %s.%s [%s];", type_name, var_name, graph_name, array_name, alias_name);
 				Body.pushln(str_buf);
 
-				String.format(str_buf, "if (get_level(%s) != (get_curr_level() %c 1)) continue;", iter.get_genname(),
+				str_buf = String.format("if (get_level(%s) != (get_curr_level() %c 1)) continue;", iter.get_genname(),
 						iter_type.is_iteration_on_up_neighbors() ? '-' : '+');
 				Body.pushln(str_buf);
 			} else {
-				String.format(str_buf, "%s %s = %s.%s [%s];", type_name, var_name, graph_name, array_name, alias_name);
+				str_buf = String.format("%s %s = %s.%s [%s];", type_name, var_name, graph_name, array_name, alias_name);
 				Body.pushln(str_buf);
 			}
 		}
@@ -457,7 +457,7 @@ public class gm_cpplib extends gm_graph_library {
 			// for pointers to value types:
 			// ORIGINAL LINE: sbyte* it_name = iter->get_genname();
 			String it_name = iter.get_genname();
-			String.format(str_buf, "for (%s %s = 0; %s < %s.%s(); %s ++) ", get_type_string(type), it_name, it_name, graph_name,
+			str_buf = String.format("for (%s %s = 0; %s < %s.%s(); %s ++) ", get_type_string(type), it_name, it_name, graph_name,
 					type.is_iteration_on_nodes() ? GlobalMembersGm_cpplib_words.NUM_NODES : GlobalMembersGm_cpplib_words.NUM_EDGES, it_name);
 
 			Body.pushln(str_buf);
@@ -472,7 +472,7 @@ public class gm_cpplib extends gm_graph_library {
 			// for pointers to value types:
 			// ORIGINAL LINE: sbyte* it_name = iter->get_genname();
 			String it_name = iter.get_genname();
-			String.format(str_buf, "for (%s %s = %s.get_next(); %s != gm_graph::NIL_NODE ; %s = %s.get_next()) ", GlobalMembersGm_cpplib_words.NODE_T, it_name,
+			str_buf = String.format("for (%s %s = %s.get_next(); %s != gm_graph::NIL_NODE ; %s = %s.get_next()) ", GlobalMembersGm_cpplib_words.NODE_T, it_name,
 					iter_name, it_name, it_name, iter_name);
 
 			Body.pushln(str_buf);
@@ -497,9 +497,9 @@ public class gm_cpplib extends gm_graph_library {
 			String array_name = type.is_iteration_use_reverse() ? GlobalMembersGm_cpplib_words.R_BEGIN : GlobalMembersGm_cpplib_words.BEGIN;
 			String src_name = source.get_genname();
 
-			String.format(str_buf, "for (%s %s = %s.%s[%s];", GlobalMembersGm_cpplib_words.EDGE_T, alias_name, graph_name, array_name, src_name);
+			str_buf = String.format("for (%s %s = %s.%s[%s];", GlobalMembersGm_cpplib_words.EDGE_T, alias_name, graph_name, array_name, src_name);
 			Body.push(str_buf);
-			String.format(str_buf, "%s < %s.%s[%s+1] ; %s ++) ", alias_name, graph_name, array_name, src_name, alias_name);
+			str_buf = String.format("%s < %s.%s[%s+1] ; %s ++) ", alias_name, graph_name, array_name, src_name, alias_name);
 			Body.pushln(str_buf);
 
 			// SET_TYPE
@@ -509,7 +509,7 @@ public class gm_cpplib extends gm_graph_library {
 			assert type.is_node_collection_iter_type() || type.is_collection_of_collection_iter_type();
 
 			String iter_name = fe.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_COLLECTION_ITERATOR);
-			String.format(str_buf, "while (%s.has_next())", iter_name);
+			str_buf = String.format("while (%s.has_next())", iter_name);
 			Body.pushln(str_buf);
 
 		} else {
@@ -550,7 +550,7 @@ public class gm_cpplib extends gm_graph_library {
 			break;
 		}
 
-		String.format(str_buf, "%s[%s].%s(", driver.get_second().get_genname(), driver.get_first().get_genname(), functionName);
+		str_buf = String.format("%s[%s].%s(", driver.get_second().get_genname(), driver.get_first().get_genname(), functionName);
 		body.push(str_buf);
 		add_arguments_and_thread(body, builtinExpr, addThreadId);
 

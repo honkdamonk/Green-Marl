@@ -1,5 +1,8 @@
 package common;
 
+import tangible.RefObject;
+import tangible.StringFunctions;
+
 public class GlobalMembersGm_argopts {
 
 	public static final int GMARG_NULL = 0;
@@ -59,7 +62,7 @@ public class GlobalMembersGm_argopts {
 	// required in Java:
 	// extern java.util.LinkedList<sbyte*> GM_input_lists;
 
-	public static void print_help(tangible.RefObject<String> bin_name) {
+	public static void print_help(RefObject<String> bin_name) {
 		System.out.printf("Usage: %s [options] input_file\n", bin_name.argvalue);
 		System.out.print("Options:\n");
 		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
@@ -94,9 +97,9 @@ public class GlobalMembersGm_argopts {
 		}
 	}
 
-	public static void process_nullargs(tangible.RefObject<String> c, tangible.RefObject<String> bin_name) {
+	public static void process_nullargs(RefObject<String> c, RefObject<String> bin_name) {
 		if (GlobalMembersGm_misc.gm_is_same_string(c.argvalue, "h")) {
-			tangible.RefObject<String> tempRef_bin_name = bin_name;
+			RefObject<String> tempRef_bin_name = bin_name;
 			GlobalMembersGm_argopts.print_help(tempRef_bin_name);
 			bin_name.argvalue = tempRef_bin_name.argvalue;
 			System.exit(0);
@@ -107,7 +110,7 @@ public class GlobalMembersGm_argopts {
 		// add here
 	}
 
-	public static void parse_arg(tangible.RefObject<String> argv, tangible.RefObject<String> bin_name) {
+	public static void parse_arg(RefObject<String> argv, RefObject<String> bin_name) {
 		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
 		// a direct reference to the array length:
 		// ORIGINAL LINE: int s = sizeof(GM_compiler_options) /
@@ -120,7 +123,7 @@ public class GlobalMembersGm_argopts {
 			String val_begin = null;
 			for (int i = 1; i <= z; i++) {
 				if (argv.argvalue.charAt(i) == '=') {
-					argv.argvalue = tangible.StringFunctions.changeCharacter(argv.argvalue, i, '\0');
+					argv.argvalue = StringFunctions.changeCharacter(argv.argvalue, i, '\0');
 					val_begin = argv.argvalue.charAt(i + 1) + "";
 					break;
 				}
@@ -135,8 +138,8 @@ public class GlobalMembersGm_argopts {
 					continue;
 
 				if (t.arg_type == GMARG_NULL) {
-					tangible.RefObject<String> tempRef_key_begin = new tangible.RefObject<String>(key_begin);
-					tangible.RefObject<String> tempRef_bin_name = bin_name;
+					RefObject<String> tempRef_key_begin = new RefObject<String>(key_begin);
+					RefObject<String> tempRef_bin_name = bin_name;
 					GlobalMembersGm_argopts.process_nullargs(tempRef_key_begin, tempRef_bin_name);
 					key_begin = tempRef_key_begin.argvalue;
 					bin_name.argvalue = tempRef_bin_name.argvalue;
@@ -168,7 +171,7 @@ public class GlobalMembersGm_argopts {
 		}
 	}
 
-	public static void process_args(int argc, tangible.RefObject<String[]> argv) {
+	public static void process_args(int argc, RefObject<String[]> argv) {
 		// set default values
 		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
 		// a direct reference to the array length:
@@ -195,14 +198,16 @@ public class GlobalMembersGm_argopts {
 		// process arguments
 		String bin_name = argv.argvalue[0];
 		for (int i = 1; i < argc; i++) {
-			tangible.RefObject<String> tempRef_bin_name = new tangible.RefObject<String>(bin_name);
-			GlobalMembersGm_argopts.parse_arg(argv.argvalue[i], tempRef_bin_name);
+			RefObject<String> tempRef_bin_name = new RefObject<String>(bin_name);
+			RefObject<String> argvalue = new RefObject<String>(argv.argvalue[i]);
+			GlobalMembersGm_argopts.parse_arg(argvalue, tempRef_bin_name);
+			argv.argvalue[i] = argvalue.argvalue;
 			bin_name = tempRef_bin_name.argvalue;
 		}
 
 		// check num files
 		if (GlobalMembersGm_main.GM_input_lists.size() == 0) {
-			tangible.RefObject<String> tempRef_bin_name2 = new tangible.RefObject<String>(bin_name);
+			RefObject<String> tempRef_bin_name2 = new RefObject<String>(bin_name);
 			GlobalMembersGm_argopts.print_help(tempRef_bin_name2);
 			bin_name = tempRef_bin_name2.argvalue;
 			System.exit(0);

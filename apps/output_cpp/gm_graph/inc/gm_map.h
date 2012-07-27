@@ -26,7 +26,9 @@ public:
      */
     virtual Value getValue(const Key key) = 0;
 
-    virtual void setValue(const Key key, Value value) = 0;
+    virtual void setValue_par(const Key key, Value value) = 0;
+
+    virtual void setValue_seq(const Key key, Value value) = 0;
 
     /**
      * Returns true if the key corresponds to the highest value in the map.
@@ -76,6 +78,14 @@ protected:
 
     static bool compare_greater(Value a, Value b) {
         return a > b;
+    }
+
+    static Value max(Value a, Value b) {
+        return std::max<Value>(a, b);
+    }
+
+    static Value min(Value a, Value b) {
+        return std::min<Value>(a, b);
     }
 
 };
@@ -145,10 +155,14 @@ public:
             return defaultValue;
     }
 
-    void setValue(const Key key, Value value) {
+    void setValue_par(const Key key, Value value) {
         gm_spinlock_acquire(&lock);
-        data[key] = value;
+        setValue_seq(key, value);
         gm_spinlock_release(&lock);
+    }
+
+    void setValue_seq(const Key key, Value value) {
+        data[key] = value;
     }
 
     bool hasMaxValue(const Key key) {
@@ -291,9 +305,13 @@ public:
             return defaultValue;
     }
 
-    void setValue(const Key key, Value value) {
-        data[key] = value;
-        valid[key] = true;
+    void setValue_par(const Key key, Value value) {
+        setValue_seq(key, value);
+    }
+
+    void setValue_seq(const Key key, Value value) {
+            data[key] = value;
+            valid[key] = true;
     }
 
     bool hasMaxValue(const Key key) {
@@ -313,11 +331,11 @@ public:
     }
 
     Value getMaxValue() {
-        return getValue_generic(&std::max<Value>, gm_get_min<Value>());
+        return getValue_generic(&gm_map<Key, Value>::max, gm_get_min<Value>());
     }
 
     Value getMinValue() {
-        return getValue_generic(&std::min<Value>, gm_get_max<Value>());
+        return getValue_generic(&gm_map<Key, Value>::min, gm_get_max<Value>());
     }
 
     size_t size() {
@@ -328,6 +346,205 @@ public:
         #pragma omp parallel for
         for (Key key = 0; key < size(); key++) {
             valid[key] = false;
+        }
+    }
+
+};
+
+
+template<class Key, class Value, Value defaultValue>
+class gm_map_medium : public gm_map<Key, Value>
+{
+private:
+    int innerSize;
+    map<Key, Value>* innerMaps;
+    gm_spinlock_t* locks;
+    typedef typename map<Key, Value>::iterator Iterator;
+
+    template<class FunctionCompare, class FunctionMinMax>
+    inline Value getValue_generic(FunctionCompare compare, FunctionMinMax func, const Value initialValue) {
+        assert(size() > 0);
+
+        Value value = initialValue;
+        #pragma omp parallel
+        {
+            Value value_private = initialValue;
+
+            #pragma omp for nowait
+            for (int i = 0; i < innerSize; i++) {
+                if (innerMaps[i].size() > 0) value_private = getValueAtPosition_generic(i, compare);
+            }
+            // reduction
+            {
+                Value value_old;
+                Value value_new;
+                do {
+                    value_old = value;
+                    value_new = func(value_old, value_private);
+                    if (value_old == value_new) break;
+                } while (_gm_atomic_compare_and_swap(&(value), value_old, value_new) == false);
+            }
+        }
+        return value;
+    }
+
+    template<class Function>
+    inline Value getValueAtPosition_generic(int position, Function compare) {
+        Iterator iter = innerMaps[position].begin();
+        Value value = iter->second;
+        for (iter++; iter != innerMaps[position].end(); iter++) {
+            if (compare(iter->second, value)) {
+                value = iter->second;
+            }
+        }
+        return value;
+    }
+
+    template<class Function>
+    inline Key getKey_generic(Function compare, const Value initialValue) {
+        assert(size() > 0);
+        Key key = 0;
+        Value value = initialValue;
+
+        #pragma omp parallel for
+        for(int i = 0; i < innerSize; i++) {
+            if(innerMaps[i].size() > 0) {
+                Iterator iter = getKeyAtPosition_generic(i, compare);
+                Key privateKey = iter->first;
+                Value privateValue = iter->second;
+                if(compare(privateValue, value)) {
+                    #pragma omp critical
+                    if(compare(privateValue, value)) {
+                        value = privateValue;
+                        key = privateKey;
+                    }
+                }
+            }
+        }
+        return key;
+    }
+
+    template<class Function>
+    inline Iterator getKeyAtPosition_generic(int position, Function compare) {
+        Iterator iter = innerMaps[position].begin();
+        Iterator currentBest = iter;
+        for (iter++; iter != innerMaps[position].end(); iter++) {
+            if (compare(iter->second, currentBest->second)) {
+                currentBest = iter;
+            }
+        }
+        return currentBest;
+    }
+
+    template<class Function>
+    inline bool hasValue_generic(Function compare, const Key key) {
+        bool result = true;
+        Value reference = getValueFromPosition(key % innerSize, key);
+        #pragma omp parallel for
+        for(int i = 0; i < innerSize; i++) {
+            bool tmp = hasValueAtPosition_generic(i, compare, reference);
+            if(!tmp) result = false;
+        }
+        return result;
+    }
+
+    template<class Function>
+    inline bool hasValueAtPosition_generic(int position, Function compare, const Value reference) {
+        map<Key, Value>& currentMap = innerMaps[position];
+        if (currentMap.size() == 0) return false;
+        for (Iterator iter = currentMap.begin(); iter != currentMap.end(); iter++) {
+            if (compare(iter->second, reference)) return false;
+        }
+    }
+
+    bool positionHasKey(int position, const Key key) {
+        return innerMaps[position].find(key) != innerMaps[position].end();
+    }
+
+    Value getValueFromPosition(int position, const Key key) {
+        Iterator iter = innerMaps[position].find(key);
+        if(iter != innerMaps[position].end())
+            return iter->second;
+        else
+            return defaultValue;
+    }
+
+    void setValueAtPosition(int position, const Key key, Value value) {
+        innerMaps[position][key] = value;
+    }
+
+public:
+    gm_map_medium(int threadCount) : innerSize(threadCount) {
+        locks = new gm_spinlock_t[innerSize];
+        innerMaps = new map<Key, Value>[innerSize];
+        #pragma omp parallel for
+        for(int i = 0; i < innerSize; i++) {
+            locks[i] = 0;
+        }
+    }
+
+    ~gm_map_medium() {
+        delete[] innerMaps;
+        delete[] locks;
+    }
+
+    bool hasKey(const Key key) {
+        return positionHasKey(key % innerSize, key);
+    }
+
+    Value getValue(const Key key) {
+        return getValueFromPosition(key % innerSize, key);
+    }
+
+    void setValue_par(const Key key, Value value) {
+        int position = key % innerSize;
+        gm_spinlock_acquire(locks + position);
+        setValueAtPosition(position, key, value);
+        gm_spinlock_release(locks + position);
+    }
+
+    void setValue_seq(const Key key, Value value) {
+        int position = key % innerSize;
+        setValueAtPosition(position, key, value);
+    }
+
+    bool hasMaxValue(const Key key) {
+        return hasValue_generic(&gm_map<Key, Value>::compare_greater, key);
+    }
+
+    bool hasMinValue(const Key key) {
+        return hasValue_generic(&gm_map<Key, Value>::compare_smaller, key);
+    }
+
+    Key getMaxKey() {
+        return getKey_generic(&gm_map<Key, Value>::compare_greater, gm_get_min<Value>());
+    }
+
+    Key getMinKey() {
+        return getKey_generic(&gm_map<Key, Value>::compare_smaller, gm_get_max<Value>());
+    }
+
+    Value getMaxValue() {
+        return getValue_generic(&gm_map<Key, Value>::compare_greater, &gm_map<Key, Value>::max, gm_get_min<Value>());
+    }
+
+    Value getMinValue() {
+        return getValue_generic(&gm_map<Key, Value>::compare_smaller, &gm_map<Key, Value>::min, gm_get_max<Value>());
+    }
+
+    size_t size() {
+        size_t size = 0;
+        #pragma omp parallel for reduction(+ : size)
+        for(int i = 0; i < innerSize; i++) {
+            size += innerMaps[i].size();
+        }
+        return size;
+    }
+
+    void clear() {
+        #pragma omp parallel for
+        for(int i = 0; i < innerSize; i++) {
+            innerMaps[i].clear();
         }
     }
 

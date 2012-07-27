@@ -48,7 +48,7 @@ private:
         struct timeval T1, T2;
         gettimeofday(&T1, NULL);
         for (Key key = 0; key < size; key++) {
-            map->setValue(key, values[key]);
+            map->setValue_seq(key, values[key]);
         }
         gettimeofday(&T2, NULL);
         results.push_back(Result("insert_seq", Time(T2.tv_sec - T1.tv_sec, T2.tv_usec - T1.tv_usec)));
@@ -59,7 +59,7 @@ private:
         gettimeofday(&T1, NULL);
         #pragma omp parallel for
         for (Key key = 0; key < size; key++) {
-            map->setValue(key, values[key]);
+            map->setValue_par(key, values[key]);
         }
         gettimeofday(&T2, NULL);
         results.push_back(Result("insert_par", Time(T2.tv_sec - T1.tv_sec, T2.tv_usec - T1.tv_usec)));
@@ -193,6 +193,8 @@ private:
 public:
     Benchmark(gm_map<Key, Value>* sut, Value* values, size_t size, const char* type) :
             map(sut), values(values), size(size), type(type) {
+        printf("size: %li\n", size);
+        assert(size > 0);
         srand(1);
     }
 
@@ -242,6 +244,11 @@ int main(int argc, char** argv) {
     benchmarkLarge.start();
     benchmarkLarge.printResults();
     printf("finished large\n");
+    gm_map_medium<Key, Value, 0> mediumMap(threadCount);
+    Benchmark benchmarkMedium(((gm_map<Key, Value>*)(&mediumMap)), values, runSize, "medium");
+    benchmarkMedium.start();
+    benchmarkMedium.printResults();
+    printf("finished medium\n");
 
     return 0;
 }

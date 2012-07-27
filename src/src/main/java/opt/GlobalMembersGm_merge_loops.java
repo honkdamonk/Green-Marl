@@ -50,25 +50,13 @@ public class GlobalMembersGm_merge_loops {
 	}
 
 	public static boolean intersect_check_for_merge(gm_rwinfo_map S1, gm_rwinfo_map S2, gm_rwinfo_map S1_reduce, boolean check_reduce) {
-		
-		Map.Entry<gm_symtab_entry, gm_rwinfo_list> j; // TODO argl...shoot me
-														// -.-
 		for (gm_symtab_entry e : S1.keySet()) {
-			// C++ TO JAVA CONVERTER WARNING: The following line was determined
-			// to be a copy assignment (rather than a reference assignment) -
-			// this should be verified and a 'copyFrom' method should be created
-			// if it does not yet exist:
-			// ORIGINAL LINE: j = S2.find(e);
-			j.copyFrom(S2.get(e));
 			if (S2.containsKey(e)) {
 				// found entry
 				if (!e.getType().is_property()) // scala
 				{
 					if (e.getType().is_collection()) {
-						boolean isSeq1 = e.getType().is_sequential_collection();
-						boolean isSeq2 = j.next().getKey().getType().is_sequential_collection();
-
-						if (!(isSeq1 || isSeq2))
+						if (!e.getType().is_sequential_collection())
 							return false;
 					}
 					return true;

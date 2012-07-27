@@ -250,7 +250,9 @@ public:
 
         // checking of (case 2)
         if (target_is_edge_prop) {
-            if ((e->find_info_bool(GPS_INT_EXPR_SCOPE) == GPS_NEW_SCOPE_IN) || (e->find_info_bool(GPS_INT_EXPR_SCOPE) == GPS_NEW_SCOPE_RANDOM)) {
+          //TODO was this a bug?
+          //if ((e->find_info_bool(GPS_INT_EXPR_SCOPE) == GPS_NEW_SCOPE_IN) || (e->find_info_bool(GPS_INT_EXPR_SCOPE) == GPS_NEW_SCOPE_RANDOM)) {
+        	if ((e->find_info_int(GPS_INT_EXPR_SCOPE) == GPS_NEW_SCOPE_IN) || (e->find_info_int(GPS_INT_EXPR_SCOPE) == GPS_NEW_SCOPE_RANDOM)) {
                 if (e->is_field()) {
                     ast_field* f = e->get_field();
                     gm_backend_error(GM_ERROR_GPS_EDGE_WRITE_RHS, f->get_line(), f->get_col(), f->get_first()->get_orgname());

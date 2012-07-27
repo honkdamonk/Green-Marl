@@ -671,52 +671,25 @@ public class GlobalMembersGm_rw_analysis {
 		return is_okay;
 	}
 
-	public static boolean merge_body(gm_rwinfo_map R, gm_rwinfo_map W, gm_rwinfo_map D, gm_rwinfo_map M, ast_sent s, boolean is_conditional) // body
-																																				// sentence
-																																				// -
-																																				// top
-	{
+	// body sentence - top
+	public static boolean merge_body(gm_rwinfo_map R, gm_rwinfo_map W, gm_rwinfo_map D, gm_rwinfo_map M, ast_sent s, boolean is_conditional) {
+		
 		gm_rwinfo_sets sets2 = GlobalMembersGm_rw_analysis.get_rwinfo_sets(s);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& R2
-		// = sets2->read_set;
-		gm_rwinfo_map R2 = new gm_rwinfo_map(sets2.read_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& W2
-		// = sets2->write_set;
-		gm_rwinfo_map W2 = new gm_rwinfo_map(sets2.write_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& D2
-		// = sets2->reduce_set;
-		gm_rwinfo_map D2 = new gm_rwinfo_map(sets2.reduce_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& M2
-		// = sets2->mutate_set;
-		gm_rwinfo_map M2 = new gm_rwinfo_map(sets2.mutate_set);
+		gm_rwinfo_map R2 = sets2.read_set;
+		gm_rwinfo_map W2 = sets2.write_set;
+		gm_rwinfo_map D2 = sets2.reduce_set;
+		gm_rwinfo_map M2 = sets2.mutate_set;
 		boolean is_okay = true;
 
 		if (!is_conditional) {
-			is_okay = GlobalMembersGm_rw_analysis.merge_all(R, R2, false) && is_okay; // copy
-																						// as
-																						// is
+			// copy as is
+			is_okay = GlobalMembersGm_rw_analysis.merge_all(R, R2, false) && is_okay; 
 			is_okay = GlobalMembersGm_rw_analysis.merge_all(W, W2, false) && is_okay;
 			is_okay = GlobalMembersGm_rw_analysis.merge_all(D, D2, true) && is_okay;
 			is_okay = GlobalMembersGm_rw_analysis.merge_all(M, M2, false) && is_okay;
 		} else {
-			is_okay = GlobalMembersGm_rw_analysis.merge_for_if(R, R2, false) && is_okay; // copy
-																							// and
-																							// change
-																							// it
-																							// as
-																							// conditional
+			// copy and change it as conditional
+			is_okay = GlobalMembersGm_rw_analysis.merge_for_if(R, R2, false) && is_okay; 
 			is_okay = GlobalMembersGm_rw_analysis.merge_for_if(W, W2, false) && is_okay;
 			is_okay = GlobalMembersGm_rw_analysis.merge_for_if(D, D2, true) && is_okay;
 			is_okay = GlobalMembersGm_rw_analysis.merge_for_if(M, M2, false) && is_okay;
@@ -763,12 +736,12 @@ public class GlobalMembersGm_rw_analysis {
 	// -----------------------------------------------------------------------------
 	//
 	public static boolean cleanup_iterator_access(ast_id iter, gm_rwinfo_map T_temp, gm_rwinfo_map T, GMTYPE_T iter_type, boolean is_parallel) {
+		
 		boolean is_okay = true;
 
 		gm_symtab_entry iter_sym = iter.getSymInfo();
 		gm_range_type_t range = GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type);
-		// printf("iter_type = %s, range = %s\n", gm_get_type_string(iter_type),
-		// gm_get_range_string(range));
+
 		for (gm_symtab_entry sym : T_temp.keySet()) {
 			gm_rwinfo_list l = T_temp.get(sym);
 			if (sym == iter_sym) // direct reading of iterator
@@ -776,13 +749,8 @@ public class GlobalMembersGm_rw_analysis {
 			for (gm_rwinfo e : l) {
 				gm_rwinfo cp = e.copy();
 				if (cp.driver != null)
-					/*
-					 * printf("cp->driver = %s %p, iter_sym = %s %p\n",
-					 * cp->driver->getId()->get_genname(), cp->driver,
-					 * iter_sym->getId()->get_genname(), iter_sym);
-					 */
-					if (cp.driver == iter_sym) // replace access from this
-												// iterator
+					// replace access from this iterator
+					if (cp.driver == iter_sym) 
 					{
 						cp.driver = null;
 						cp.access_range = range;

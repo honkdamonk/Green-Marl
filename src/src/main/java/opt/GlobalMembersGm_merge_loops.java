@@ -1,7 +1,5 @@
 package opt;
 
-import java.util.Map;
-
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.gm_rwinfo_list;
@@ -16,22 +14,6 @@ import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
 
 public class GlobalMembersGm_merge_loops {
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define TO_STR(X) #X
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define DEF_STRING(X) static const char *X = "X"
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public
-	// gm_compile_step { private: CLASS() {set_description(DESC);}public:
-	// virtual void process(ast_procdef*p); virtual gm_compile_step*
-	// get_instance(){return new CLASS();} static gm_compile_step*
-	// get_factory(){return new CLASS();} };
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
 
 	// ---------------------------------------------------------
 	// gm_merge_foreach_if_possible(P, Q)
@@ -53,21 +35,18 @@ public class GlobalMembersGm_merge_loops {
 		for (gm_symtab_entry e : S1.keySet()) {
 			if (S2.containsKey(e)) {
 				// found entry
-				if (!e.getType().is_property()) // scala
-				{
+				if (!e.getType().is_property()) { // scala
 					if (e.getType().is_collection()) {
 						if (!e.getType().is_sequential_collection())
 							return false;
 					}
 					return true;
-				} else {
-					// check S1, S2 is linearly accessed only.
+				} else { // check S1, S2 is linearly accessed only.					
 					if (!GlobalMembersGm_merge_loops.is_linear_access_only(S1.get(e)))
 						return true;
 					if (!GlobalMembersGm_merge_loops.is_linear_access_only(S2.get(e)))
 						return true;
-					if (check_reduce) // if e is in the reduce-set,
-					{
+					if (check_reduce) 					{ // if e is in the reduce-set,
 						if (S1_reduce.containsKey(e))
 							return true;
 					}
@@ -119,15 +98,15 @@ public class GlobalMembersGm_merge_loops {
 		gm_rwinfo_sets P_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(P);
 		gm_rwinfo_sets Q_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(Q);
 
-		gm_rwinfo_map P_R = new gm_rwinfo_map(P_SET.read_set);
-		gm_rwinfo_map P_W = new gm_rwinfo_map(P_SET.write_set);
-		gm_rwinfo_map Q_R = new gm_rwinfo_map(Q_SET.read_set);
-		gm_rwinfo_map Q_W = new gm_rwinfo_map(Q_SET.write_set);
-		gm_rwinfo_map P_M = new gm_rwinfo_map(P_SET.mutate_set);
-		gm_rwinfo_map Q_M = new gm_rwinfo_map(Q_SET.mutate_set);
+		gm_rwinfo_map P_R = P_SET.read_set;
+		gm_rwinfo_map P_W = P_SET.write_set;
+		gm_rwinfo_map Q_R = Q_SET.read_set;
+		gm_rwinfo_map Q_W = Q_SET.write_set;
+		gm_rwinfo_map P_M = P_SET.mutate_set;
+		gm_rwinfo_map Q_M = Q_SET.mutate_set;
 
 		gm_rwinfo_sets P_BODY_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(P.get_body());
-		gm_rwinfo_map P_D = new gm_rwinfo_map(P_BODY_SET.reduce_set);
+		gm_rwinfo_map P_D = P_BODY_SET.reduce_set;
 
 		boolean b;
 		// ---------------------------------------------------

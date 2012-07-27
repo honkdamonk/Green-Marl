@@ -32,8 +32,8 @@ public class nop_reduce_scalar extends ast_nop {
 	public boolean do_rw_analysis() {
 
 		gm_rwinfo_sets sets = GlobalMembersGm_rw_analysis.get_rwinfo_sets(this);
-		gm_rwinfo_map R = new gm_rwinfo_map(sets.read_set);
-		gm_rwinfo_map W = new gm_rwinfo_map(sets.write_set);
+		gm_rwinfo_map R = sets.read_set;
+		gm_rwinfo_map W = sets.write_set;
 
 		// read all old symbols
 		for (gm_symtab_entry entry : old_s) {

@@ -258,11 +258,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 
 		for (gm_symtab_entry e : S1.keySet()) {
 			if (S2.containsKey(e)) {
-				if (regard_mutate_direction) {
-					if (e.find_info_int("GM_BLTIN_INFO_MUTATING") != S2.find(e).next().getKey().find_info_int("GM_BLTIN_INFO_MUTATING")) {
-						return true;
-					}
-				} else {
+				if (!regard_mutate_direction) {
 					return true;
 				}
 			}

@@ -4,6 +4,12 @@ import ast.ast_id;
 import frontend.gm_symtab_entry;
 
 public class GlobalMembersGm_error {
+
+	public static String curr_file = null;
+	public static String curr_proc = null;
+	public static boolean need_print = true;
+	public static boolean parse_error = false;
+
 	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id, String str1) {
 		gm_type_error(errno, id, str1, "");
 	}
@@ -12,10 +18,6 @@ public class GlobalMembersGm_error {
 		gm_type_error(errno, id, "", "");
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void gm_type_error(int errno, ast_id* id, String str1 =
-	// "", String str2 = "")
 	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id, String str1, String str2) {
 		GlobalMembersGm_error.gm_print_error_header();
 		if (curr_file != null)
@@ -52,22 +54,18 @@ public class GlobalMembersGm_error {
 		// case GM_ERROR_INVALID_ITERATOR:
 		// printf("Iterator not valid for the source %s \n", id->get_orgname());
 		// break;
-
 		case GM_ERROR_NEED_NODE_ITERATION:
 			System.out.printf("Iteration should start from a node instead of %s\n", id.get_orgname());
 			break;
 		case GM_ERROR_NEED_BFS_ITERATION:
 			System.out.printf("Leveled Iteration should start from a bfs iterator instead of %s \n", id.get_orgname());
 			break;
-
 		case GM_ERROR_NEED_ITERATOR:
 			System.out.printf("%s is not an iterator name\n", id.get_orgname());
 			break;
-
 		case GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS:
 			System.out.print("More than one graph present. Explicit binding of nodes, edges, properties and collections is required!\n");
 			break;
-
 		case GM_ERROR_UNKNOWN:
 		default:
 			assert false;
@@ -103,11 +101,9 @@ public class GlobalMembersGm_error {
 		case GM_ERROR_TARGET_MISMATCH:
 			System.out.printf("Target Graphs mismatches %s, %s.\n", id1.get_orgname(), id2.get_orgname());
 			break;
-
 		case GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS:
 			System.out.print("More than one graph present. Explicit binding of nodes, edges, properties and collections is required!\n");
 			break;
-
 		case GM_ERROR_UNKNOWN:
 		default:
 			System.out.print("Unknown error 3\n");
@@ -127,10 +123,6 @@ public class GlobalMembersGm_error {
 		gm_type_error(errno, l, c, "", "", "");
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void gm_type_error(int errno, int l, int c, String str1 =
-	// "", String str2 = "", String str3 = "")
 	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1, String str2, String str3) {
 		GlobalMembersGm_error.gm_print_error_header();
 
@@ -150,7 +142,6 @@ public class GlobalMembersGm_error {
 		case GM_ERROR_INCONSISTENT_ARGMAX:
 			System.out.print("LHS list of argmiax assignment is not consistent; They should be all scalar or have same driver\n");
 			break;
-
 		case GM_ERROR_NESTED_BFS:
 			System.out.print("Currently, nested bfs/dfs is not supported\n");
 			break;
@@ -196,7 +187,6 @@ public class GlobalMembersGm_error {
 		case GM_ERROR_UNBOUND_REDUCE:
 			System.out.print("Cannot determine bound to Reduce(Defer) assignment\n");
 			break;
-
 		case GM_ERROR_DOUBLE_BOUND_ITOR:
 			System.out.printf("Reduce(Defer) Target already bound to a different iterator: %s\n", str1);
 			break;
@@ -218,24 +208,21 @@ public class GlobalMembersGm_error {
 		case GM_ERROR_RETURN_MISMATCH:
 			System.out.printf("Return type mismatch: required(%s), found(%s)\n", str1, str2);
 			break;
-
 		case GM_ERROR_REQUIRE_BOOLEAN_REDUCE:
 			System.out.print("Boolean type required for reduction\n");
 			break;
 		case GM_ERROR_REQUIRE_NUMERIC_REDUCE:
 			System.out.print("Numeric type required for reduction\n");
 			break;
-
+		case GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS:
+			System.out.print("More than one graph present. Explicit binding of nodes, edges, properties and collections is required!\n");
+			break;
 		default:
 			System.out.print("Unknown error 2\n");
 			break;
 		}
 	}
 
-	// extern void gm_type_error(int errnumber, String str);
-
-	// extern void gm_conf_error(int errnumber, gm_symtab_entry* target, ast_id*
-	// evidence1);
 	public static void gm_conf_error(GM_ERRORS_AND_WARNINGS errno, gm_symtab_entry target, ast_id ev1, ast_id ev2, boolean is_warning) {
 		GlobalMembersGm_error.gm_print_error_header();
 		if (curr_file != null)
@@ -279,18 +266,13 @@ public class GlobalMembersGm_error {
 		}
 	}
 
-	// todo: should be differend error routines for different back-ends
+	// TODO: should be differend error routines for different back-ends
 	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, String str1) {
 		gm_backend_error(errno, str1, "");
 	}
 
 	// extern void gm_conf_warning(int errnumber, gm_symtab_entry* target,
 	// ast_id* evidence1, ast_id* evidence2);
-
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void gm_backend_error(int errno, String str1, String str2
-	// = "")
 	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, String str1, String str2) {
 		GlobalMembersGm_error.gm_print_error_header();
 		if (curr_file != null)
@@ -316,10 +298,6 @@ public class GlobalMembersGm_error {
 		gm_backend_error(errno, l, c, "");
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void gm_backend_error(int errno, int l, int c, String str1
-	// = "")
 	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1) {
 		GlobalMembersGm_error.gm_print_error_header();
 		if (curr_file != null)
@@ -416,16 +394,11 @@ public class GlobalMembersGm_error {
 		curr_proc = pname.argvalue;
 		need_print = true;
 	}
-	
+
 	public static void gm_set_curr_procname(String pname) {
 		curr_proc = pname;
 		need_print = true;
 	}
-
-	public static String curr_file = null;
-	public static String curr_proc = null;
-	public static boolean need_print = true;
-	public static boolean parse_error = false;
 
 	public static void GM_set_parse_error(boolean b) {
 		parse_error = b;

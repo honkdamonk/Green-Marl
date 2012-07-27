@@ -29,7 +29,6 @@ import ast.gm_rwinfo_map;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_misc;
 import common.GlobalMembersGm_traverse;
 
 public class GlobalMembersGm_rw_analysis {
@@ -424,7 +423,7 @@ public class GlobalMembersGm_rw_analysis {
 			// assert(neo->driver->getId() != NULL);
 
 			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_OP, neo.location.get_line(), neo.location.get_col(),
-					GlobalMembersGm_misc.gm_get_reduce_string(old.reduce_op));
+					old.reduce_op.get_reduce_string());
 			return true;
 		}
 

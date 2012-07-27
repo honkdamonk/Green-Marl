@@ -22,7 +22,6 @@ import ast.ast_sentblock;
 import ast.ast_vardecl;
 import ast.ast_while;
 
-import common.GlobalMembersGm_misc;
 import common.GlobalMembersGm_reproduce;
 
 // default code generator
@@ -262,7 +261,7 @@ public abstract class gm_code_generator {
 
 		generate_expr(e.get_left_op());
 		_Body.SPC();
-		String opstr = GlobalMembersGm_misc.gm_get_op_string(e.get_optype());
+		String opstr = e.get_optype().get_op_string();
 		_Body.pushSpace(opstr);
 		generate_expr(e.get_right_op());
 
@@ -280,7 +279,7 @@ public abstract class gm_code_generator {
 
 		generate_expr(e.get_left_op());
 		_Body.SPC();
-		String opstr = GlobalMembersGm_misc.gm_get_op_string(e.get_optype());
+		String opstr = e.get_optype().get_op_string();
 		_Body.pushSpace(opstr);
 		generate_expr(e.get_right_op());
 

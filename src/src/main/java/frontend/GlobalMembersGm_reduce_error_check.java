@@ -1,5 +1,7 @@
 package frontend;
 
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_ITOR;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_OP;
 import inc.GM_REDUCE_T;
 
 import java.util.LinkedList;
@@ -9,9 +11,7 @@ import ast.ast_id;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_misc;
 
 public class GlobalMembersGm_reduce_error_check {
 	public static boolean is_conflict(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type, RefObject<Boolean> is_bound_error,
@@ -67,13 +67,11 @@ public class GlobalMembersGm_reduce_error_check {
 				if (tempVar) {
 					ast_id loc = jj.location;
 					if (is_bound_error) {
-						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_ITOR, loc.get_line(), loc.get_col(), jj.bound_symbol
-								.getId().get_orgname());
+						GlobalMembersGm_error.gm_type_error(GM_ERROR_DOUBLE_BOUND_ITOR, loc.get_line(), loc.get_col(), jj.bound_symbol.getId().get_orgname());
 						return false;
 					}
 					if (is_type_error) {
-						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_OP, loc.get_line(), loc.get_col(),
-								GlobalMembersGm_misc.gm_get_reduce_string(jj.reduce_op));
+						GlobalMembersGm_error.gm_type_error(GM_ERROR_DOUBLE_BOUND_OP, loc.get_line(), loc.get_col(), jj.reduce_op.get_reduce_string());
 						return false;
 					}
 				} else {

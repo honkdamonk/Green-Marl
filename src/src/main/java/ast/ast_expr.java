@@ -1,13 +1,12 @@
 package ast;
 
+import frontend.gm_symtab_entry;
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
-import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_misc;
-import common.gm_apply;
 
-import frontend.gm_symtab_entry;
+import common.GlobalMembersGm_dumptree;
+import common.gm_apply;
 
 // Numeric or boolean expression
 //C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
@@ -117,7 +116,7 @@ public class ast_expr extends ast_node {
 		}
 
 		// binop
-		String opstr = GlobalMembersGm_misc.gm_get_op_string(op_type);
+		String opstr = op_type.get_op_string();
 		assert is_biop() || is_comp();
 		// numeric or logical
 
@@ -220,7 +219,7 @@ public class ast_expr extends ast_node {
 			// TODO add some print statements for these?
 			return;
 		}
-		String opstr = GlobalMembersGm_misc.gm_get_op_string(op_type);
+		String opstr = op_type.get_op_string();
 
 		assert (expr_class == GMEXPR_CLASS.GMEXPR_BIOP) || (expr_class == GMEXPR_CLASS.GMEXPR_LBIOP) || (expr_class == GMEXPR_CLASS.GMEXPR_COMP);
 

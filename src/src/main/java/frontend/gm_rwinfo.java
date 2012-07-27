@@ -3,8 +3,6 @@ package frontend;
 import inc.GM_REDUCE_T;
 import ast.ast_id;
 
-import common.GlobalMembersGm_misc;
-
 public class gm_rwinfo {
 	// RANGE_LINEAR, RANGE_RANDOM, RANGE_SINGLE
 	public gm_range_type_t access_range;
@@ -164,13 +162,13 @@ public class gm_rwinfo {
 			System.out.print("COND");
 
 		if (bound_symbol != null) {
-			System.out.printf(" ,%s, %s ", GlobalMembersGm_misc.gm_get_reduce_string(reduce_op), bound_symbol.getId().get_orgname());
+			System.out.printf(" ,%s, %s ", reduce_op.get_reduce_string(), bound_symbol.getId().get_orgname());
 		}
 
 		System.out.print(")");
 	}
-	
+
 	public void dispose() {
-		
+
 	}
 }

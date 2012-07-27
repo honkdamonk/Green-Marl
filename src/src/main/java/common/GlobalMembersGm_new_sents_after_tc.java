@@ -194,7 +194,7 @@ public class GlobalMembersGm_new_sents_after_tc
 				init_val = ast_expr.new_bval_expr(false);
 				break;
 			default:
-				System.out.printf("%d %s \n", reduce_type, GlobalMembersGm_misc.gm_get_reduce_string(reduce_type));
+				System.out.printf("%d %s \n", reduce_type, reduce_type.get_reduce_string());
 				assert false;
 				throw new AssertionError();
 		}

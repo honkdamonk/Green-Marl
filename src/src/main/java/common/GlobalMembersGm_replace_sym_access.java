@@ -26,6 +26,10 @@ public class GlobalMembersGm_replace_sym_access {
 		return GlobalMembersGm_replace_sym_access.replace_symbol_access(top, S);
 	}
 
+	public static boolean gm_replace_symbol_access_scalar_field(ast_node top, gm_symtab_entry src, gm_symtab_entry t_drv, gm_symtab_entry target) {
+		return gm_replace_symbol_access_scalar_field(top, src, t_drv, target, true, true);
+	}
+	
 	public static boolean gm_replace_symbol_access_scalar_field(ast_node top, gm_symtab_entry src, gm_symtab_entry t_drv, gm_symtab_entry target,
 			boolean change_rhs, boolean change_lhs) {
 		gm_sym_change_info S = new gm_sym_change_info();

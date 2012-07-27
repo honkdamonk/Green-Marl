@@ -24,9 +24,12 @@ public class GlobalMembersGm_merge_sentblock
 	//   - Symbol table is kept valid.
 	//   - (RW analysis is re-done here?)
 	//---------------------------------------------------------
-	/*
-	 */
-
+	
+	public static void gm_merge_sentblock(ast_sentblock P, ast_sentblock Q)
+	{
+		gm_merge_sentblock(P, Q, false);
+	}
+	
 	public static void gm_merge_sentblock(ast_sentblock P, ast_sentblock Q, boolean delete_Q_after)
 	{
 		//(assumption) type-checking is already done

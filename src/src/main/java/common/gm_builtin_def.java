@@ -1,33 +1,24 @@
 package common;
 
-import ast.ast_extra_info;
 import inc.GMTYPE_T;
 
+import java.util.HashMap;
+
+import ast.ast_extra_info;
+
 public class gm_builtin_def {
-	
-	private GMTYPE_T src_type;
-	private GMTYPE_T res_type;
-	private int num_args;
-	private GMTYPE_T[] arg_types;
-	private String orgname;
+
+	private GMTYPE_T src_type = GMTYPE_T.GMTYPE_INVALID;
+	private GMTYPE_T res_type = GMTYPE_T.GMTYPE_INVALID;
+	private int num_args = 0;
+	private GMTYPE_T[] arg_types = null;
+	private String orgname = null;
 	private gm_method_id_t method_id;
-	private boolean need_strict;
-	private java.util.HashMap<String, ast_extra_info> extra_info = new java.util.HashMap<String, ast_extra_info>();
+	private boolean need_strict = false;
+	private HashMap<String, ast_extra_info> extra_info = new HashMap<String, ast_extra_info>();
 
-	private boolean synonym;
-	private gm_builtin_def org_def;
-
-	private gm_builtin_def() {
-		this.src_type = GMTYPE_T.GMTYPE_INVALID;
-		this.res_type = GMTYPE_T.GMTYPE_INVALID;
-		this.num_args = 0;
-		this.arg_types = null;
-		this.orgname = null;
-		this.method_id = gm_method_id_t.forValue(0);
-		this.need_strict = false;
-		this.org_def = null;
-		this.synonym = false;
-	} // not allow random creation
+	private boolean synonym = false;
+	private gm_builtin_def org_def = null;
 
 	public gm_builtin_def(gm_builtin_desc_t def) {
 		this.method_id = def.method_id;
@@ -111,15 +102,7 @@ public class gm_builtin_def {
 				p = tangible.StringFunctions.strTok(null, ":");
 				p2 = tangible.StringFunctions.strTok(null, ":");
 			}
-
-			// C++ TO JAVA CONVERTER TODO TASK: The memory management function
-			// 'free' has no equivalent in Java:
-			// free(extra_info);
 		}
-	}
-
-	public void dispose() {
-		orgname = null;
 	}
 
 	public final int get_num_args() {

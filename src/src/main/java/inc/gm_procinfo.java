@@ -8,14 +8,15 @@ import common.gm_vocabulary;
 // empty class
 
 public class gm_procinfo {
+	
+	private ast_procdef body = null;
+	private int temp_no = 0;
+	private gm_backend_info be_info = null;
 
+	private gm_vocabulary flat = new gm_vocabulary(); // flat
+	
 	public gm_procinfo(ast_procdef d) {
 		body = d;
-		temp_no = 0;
-		be_info = null;
-	}
-
-	public void dispose() {
 	}
 
 	// --------------------------------------------
@@ -176,17 +177,5 @@ public class gm_procinfo {
 	public final void set_be_info(gm_backend_info i) {
 		be_info = i;
 	}
-
-	private gm_procinfo() {
-		this.body = null;
-		this.temp_no = 0;
-		this.be_info = null;
-	} // cannot create without body
-
-	private ast_procdef body;
-	private int temp_no;
-	private gm_backend_info be_info;
-
-	private gm_vocabulary flat = new gm_vocabulary(); // flat
 
 }

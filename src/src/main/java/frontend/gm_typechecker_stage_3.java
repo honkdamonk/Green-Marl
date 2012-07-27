@@ -379,8 +379,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			boolean warning = warning_ref.argvalue;
 
 			if (!isCompatible) {
-				String temp = new String(new char[20]);
-				temp = String.format("%d", position + 1);
+				String temp = String.format("%d", position + 1);
 				GlobalMembersGm_error
 						.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN_ARG_TYPE, b.get_line(), b.get_col(), b.get_callname(), temp);
 				okay = false;

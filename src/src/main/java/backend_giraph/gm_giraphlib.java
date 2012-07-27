@@ -36,20 +36,9 @@ import backend_gps.gps_syminfo;
 import common.GlobalMembersGm_main;
 import common.gm_builtin_def;
 
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-
 //-----------------------------------------------------------------
 // interface for graph library Layer
 //-----------------------------------------------------------------
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class gm_giraph_gen;
 
 // Nothing happens in this class
 public class gm_giraphlib extends gm_gpslib {
@@ -73,22 +62,20 @@ public class gm_giraphlib extends gm_gpslib {
 	// b);
 
 	public void generate_broadcast_reduce_initialize_master(ast_id id, gm_code_writer Body, GM_REDUCE_T reduce_op_type, String base_value) {
-		String temp = new String(new char[1024]);
 		Body.push("((");
 		generate_broadcast_variable_type(id.getTypeSummary(), Body, reduce_op_type);
-		temp = String.format(") getAggregator(%s)).setAggregatedValue(%s);", create_key_string(id), base_value);
+		String temp = String.format(") getAggregator(%s)).setAggregatedValue(%s);", create_key_string(id), base_value);
 		Body.pushln(temp);
 	}
 
 	public void generate_broadcast_state_master(String state_var, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("((IntOverwriteAggregator) getAggregator(%s)).setAggregatedValue(%s);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE, state_var);
+		String temp = String.format("((IntOverwriteAggregator) getAggregator(%s)).setAggregatedValue(%s);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE,
+				state_var);
 		Body.pushln(temp);
 	}
 
 	public void generate_broadcast_isFirst_master(String is_first_var, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("((BooleanOverwriteAggregator) getAggregator(\"%s\")).setAggregatedValue(%s);", is_first_var, is_first_var);
+		String temp = String.format("((BooleanOverwriteAggregator) getAggregator(\"%s\")).setAggregatedValue(%s);", is_first_var, is_first_var);
 		Body.pushln(temp);
 	}
 
@@ -176,10 +163,9 @@ public class gm_giraphlib extends gm_gpslib {
 		// ---------------------------------------------------
 		// create new BV
 		// ---------------------------------------------------
-		String temp = new String(new char[1024]);
 		Body.push("((");
 		generate_broadcast_variable_type(id.getTypeSummary(), Body);
-		temp = String.format(") getAggregator(%s)).setAggregatedValue(", create_key_string(id));
+		String temp = String.format(") getAggregator(%s)).setAggregatedValue(", create_key_string(id));
 		Body.push(temp);
 
 		// ---------------------------------------------------
@@ -190,9 +176,8 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	public void generate_broadcast_receive_master(ast_id id, gm_code_writer Body, GM_REDUCE_T reduce_op_type) {
-		String temp = new String(new char[1024]);
 		generate_broadcast_variable_type(id.getTypeSummary(), Body, reduce_op_type);
-		temp = String.format(" %sAggregator = (", id.get_genname());
+		String temp = String.format(" %sAggregator = (", id.get_genname());
 		Body.push(temp);
 		generate_broadcast_variable_type(id.getTypeSummary(), Body, reduce_op_type);
 		temp = String.format(") getAggregator(%s);", create_key_string(id));
@@ -274,10 +259,9 @@ public class gm_giraphlib extends gm_gpslib {
 		assert a.is_target_scalar();
 		ast_id id = a.get_lhs_scala();
 
-		String temp = new String(new char[1024]);
 		Body.push("((");
 		generate_broadcast_variable_type(id.getTypeSummary(), Body, reduce_op_type);
-		temp = String.format(") getAggregator(%s)).aggregate(", create_key_string(id));
+		String temp = String.format(") getAggregator(%s)).aggregate(", create_key_string(id));
 		Body.push(temp);
 
 		// ---------------------------------------------------
@@ -290,16 +274,15 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	public void generate_broadcast_receive_vertex(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
 		Body.push("((");
 		generate_broadcast_variable_type(id.getTypeSummary(), Body);
-		temp = String.format(") getAggregator(%s)).getAggregatedValue().get()", create_key_string(id));
+		String temp = String.format(") getAggregator(%s)).getAggregatedValue().get()", create_key_string(id));
 		Body.push(temp);
 	}
 
 	public void generate_parameter_read_vertex(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
 		Body.push("getConf().");
+		String temp;
 		switch (id.getTypeSummary()) {
 		case GMTYPE_BOOL:
 			temp = String.format("getBoolean(\"%s\", false)", id.get_genname());
@@ -329,7 +312,7 @@ public class gm_giraphlib extends gm_gpslib {
 			break;
 		default:
 			assert false;
-			break;
+			throw new AssertionError();
 		}
 		Body.push(temp);
 	}
@@ -369,7 +352,6 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	public void generate_vertex_prop_class_details(java.util.HashSet<gm_symtab_entry> prop, gm_code_writer Body, boolean is_edge_prop) {
-		String temp = new String(new char[1024]);
 		int total = is_edge_prop ? ((gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info()).get_total_edge_property_size()
 				: ((gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info()).get_total_node_property_size();
 
@@ -396,7 +378,7 @@ public class gm_giraphlib extends gm_gpslib {
 			genPutIOB(sym.getId().get_genname(), sym.getType().getTargetTypeSummary(), Body, this);
 		}
 		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE)) {
-			temp = String.format("out.writeInt(%s.length);", GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
+			String temp = String.format("out.writeInt(%s.length);", GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
 			Body.pushln(temp);
 			String.format(temp, "for (%s node : %s) {", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable",
 					GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
@@ -413,7 +395,7 @@ public class gm_giraphlib extends gm_gpslib {
 		}
 		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE)) {
 			Body.pushln("int _node_count = in.readInt();");
-			temp = String.format("%s = new %s[_node_count];", GlobalMembersGm_backend_gps.GPS_REV_NODE_ID, GlobalMembersGm_main.PREGEL_BE.get_lib()
+			String temp = String.format("%s = new %s[_node_count];", GlobalMembersGm_backend_gps.GPS_REV_NODE_ID, GlobalMembersGm_main.PREGEL_BE.get_lib()
 					.is_node_type_int() ? "IntWritable" : "LongWritable");
 			Body.pushln(temp);
 			Body.pushln("for (int i = 0; i < _node_count; i++) {");
@@ -432,15 +414,13 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	public void generate_receive_state_vertex(String state_var, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("int %s = ((IntOverwriteAggregator) getAggregator(%s)).getAggregatedValue().get();", state_var,
+		String temp = String.format("int %s = ((IntOverwriteAggregator) getAggregator(%s)).getAggregatedValue().get();", state_var,
 				GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
 	}
 
 	public void generate_receive_isFirst_vertex(String is_first_var, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("boolean %s = ((BooleanOverwriteAggregator) getAggregator(\"%s\"", is_first_var, is_first_var);
+		String temp = String.format("boolean %s = ((BooleanOverwriteAggregator) getAggregator(\"%s\"", is_first_var, is_first_var);
 		Body.push(temp);
 		Body.pushln(")).getAggregatedValue().get();");
 	}
@@ -449,7 +429,7 @@ public class gm_giraphlib extends gm_gpslib {
 		for (int i = 0; i < count; i++) {
 			String str = main.get_type_string(gm_type);
 			String vname = get_message_field_var_name(gm_type, i);
-			str_buf = String.format("%s %s;", str, vname);
+			String str_buf = String.format("%s %s;", str, vname);
 			Body.pushln(str_buf);
 			vname = null;
 		}
@@ -459,14 +439,12 @@ public class gm_giraphlib extends gm_gpslib {
 	// gm_code_writer Body);
 
 	public void generate_vertex_prop_access_lhs(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("%s.%s", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, id.get_genname());
+		String temp = String.format("%s.%s", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, id.get_genname());
 		Body.push(temp);
 	}
 
 	public void generate_vertex_prop_access_lhs_edge(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("_outEdgeData.%s", id.get_genname());
+		String temp = String.format("_outEdgeData.%s", id.get_genname());
 		Body.push(temp);
 	}
 
@@ -479,14 +457,12 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	public void generate_vertex_prop_access_remote_lhs(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("_remote_%s", id.get_genname());
+		String temp = String.format("_remote_%s", id.get_genname());
 		Body.push(temp);
 	}
 
 	public void generate_vertex_prop_access_remote_lhs_edge(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("_remote_%s", id.get_genname());
+		String temp = String.format("_remote_%s", id.get_genname());
 		Body.push(temp);
 	}
 
@@ -495,8 +471,7 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	public void generate_vertex_prop_access_prepare(gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("VertexData %s = getVertexValue();", GlobalMembersGm_backend_gps.STATE_SHORT_CUT);
+		String temp = String.format("VertexData %s = getVertexValue();", GlobalMembersGm_backend_gps.STATE_SHORT_CUT);
 		Body.pushln(temp);
 	}
 
@@ -525,7 +500,7 @@ public class gm_giraphlib extends gm_gpslib {
 
 	// caller should delete var_name later
 	public String get_message_field_var_name(GMTYPE_T gm_type, int index) {
-		
+
 		String str = main.get_type_string(gm_type);
 		return String.format("%c%d", str.charAt(0), index);
 	}
@@ -545,9 +520,7 @@ public class gm_giraphlib extends gm_gpslib {
 
 	// random write
 	public void generate_message_send_for_random_write(ast_sentblock sb, gm_symtab_entry sym, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-
-		temp = String.format("sendMsg(new %s(", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
+		String temp = String.format("sendMsg(new %s(", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
 		Body.push(temp);
 		get_main().generate_rhs_id(sym.getId());
 		temp = String.format("), %s);", get_random_write_message_name(sym));
@@ -764,7 +737,6 @@ public class gm_giraphlib extends gm_gpslib {
 		Body.pushln("public void write(DataOutput out) throws IOException {");
 		if (!info.is_single_message())
 			Body.pushln("out.writeByte(m_type);");
-		String str_buf = new String(new char[1024]);
 		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
 		boolean is_single = info.is_single_message();
 		boolean is_first = true;
@@ -773,10 +745,10 @@ public class gm_giraphlib extends gm_gpslib {
 			int sz = get_total_size(SYMS);
 			if (!is_single && is_first) {
 				is_first = false;
-				str_buf = String.format("if (m_type == %d) ", SYMS.id);
+				String str_buf = String.format("if (m_type == %d) ", SYMS.id);
 				Body.push(str_buf);
 			} else if (!is_single) {
-				str_buf = String.format("else if (m_type == %d) ", SYMS.id);
+				String str_buf = String.format("else if (m_type == %d) ", SYMS.id);
 				Body.push(str_buf);
 			}
 			if (!info.is_single_message())
@@ -801,8 +773,7 @@ public class gm_giraphlib extends gm_gpslib {
 		Body.pushln("public void readFields(DataInput in) throws IOException {");
 		if (!info.is_single_message())
 			Body.pushln("m_type = in.readByte();");
-		String str_buf = new String(new char[1024]);
-		java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
+		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
 		boolean is_single = info.is_single_message();
 		boolean is_first = true;
 		for (gm_gps_congruent_msg_class c : LOOPS) {
@@ -810,10 +781,10 @@ public class gm_giraphlib extends gm_gpslib {
 			int sz = get_total_size(SYMS);
 			if (!is_single && is_first) {
 				is_first = false;
-				str_buf = String.format("if (m_type == %d) ", SYMS.id);
+				String str_buf = String.format("if (m_type == %d) ", SYMS.id);
 				Body.push(str_buf);
 			} else if (!is_single) {
-				str_buf = String.format("else if (m_type == %d) ", SYMS.id);
+				String str_buf = String.format("else if (m_type == %d) ", SYMS.id);
 				Body.push(str_buf);
 			}
 			if (!info.is_single_message())
@@ -848,7 +819,6 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	public void generate_message_send(ast_foreach fe, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
 
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
@@ -856,7 +826,7 @@ public class gm_giraphlib extends gm_gpslib {
 
 		gm_gps_comm_unit U = new gm_gps_comm_unit(m_type, fe);
 
-		java.util.LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
+		LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
 
 		gm_gps_communication_size_info SINFO = info.find_communication_size_info(U);
 
@@ -866,7 +836,8 @@ public class gm_giraphlib extends gm_gpslib {
 		if (!need_separate_message) {
 			Body.pushln("// Sending messages to all neighbors (if there is a neighbor)");
 			if (is_in_neighbors) {
-				temp = String.format("if (%s.%s.length > 0) {", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID); // TODO
+				String temp = String
+						.format("if (%s.%s.length > 0) {", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID); // TODO
 				Body.pushln(temp);
 			} else {
 				Body.pushln("if (getNumOutEdges() > 0) {");
@@ -874,7 +845,7 @@ public class gm_giraphlib extends gm_gpslib {
 		} else {
 			assert (fe != null) && (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_NBRS);
 			Body.pushln("// Sending messages to each neighbor");
-			temp = String.format("Iterator<%s> neighbors = this.getOutEdgesIterator();",
+			String temp = String.format("Iterator<%s> neighbors = this.getOutEdgesIterator();",
 					GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
 			Body.pushln(temp);
 			Body.pushln("while (neighbors.hasNext()) {");
@@ -914,7 +885,7 @@ public class gm_giraphlib extends gm_gpslib {
 		Body.push("MessageData _msg = new MessageData(");
 
 		// todo: should this always be a byte?
-		str_buf = String.format("(byte) %d", SINFO.msg_class.id);
+		String str_buf = String.format("(byte) %d", SINFO.msg_class.id);
 		Body.push(str_buf);
 		Body.pushln(");");
 
@@ -950,8 +921,8 @@ public class gm_giraphlib extends gm_gpslib {
 
 		if (!need_separate_message) {
 			if (is_in_neighbors) {
-				String.format(temp, "for (%s node : %s.%s) {", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable",
-						GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
+				String temp = String.format("for (%s node : %s.%s) {", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable"
+						: "LongWritable", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
 				Body.pushln(temp);
 				Body.pushln("sendMsg(node, _msg);");
 				Body.pushln("}");
@@ -1005,9 +976,8 @@ public class gm_giraphlib extends gm_gpslib {
 		// int comm_id = info->find_communication_size_info(fe).id;
 		int comm_id = (info.find_communication_size_info(U)).msg_class.id;
 
-		String temp = new String(new char[1024]);
 		if (!is_only_comm && !info.is_single_message()) {
-			temp = String.format("if (_msg.m_type == %d) {", comm_id);
+			String temp = String.format("if (_msg.m_type == %d) {", comm_id);
 			Body.pushln(temp);
 		}
 
@@ -1076,11 +1046,10 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	public void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block bb) {
-		String temp = new String(new char[1024]);
 
 		if (bb.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) {
 			Body.pushln("// Preperation: creating reverse edges");
-			temp = String.format("%s %s = getVertexId().get();", main.get_type_string(GMTYPE_T.GMTYPE_NODE), GlobalMembersGm_backend_gps.GPS_DUMMY_ID);
+			String temp = String.format("%s %s = getVertexId().get();", main.get_type_string(GMTYPE_T.GMTYPE_NODE), GlobalMembersGm_backend_gps.GPS_DUMMY_ID);
 			Body.pushln(temp);
 
 			generate_message_send(null, Body);
@@ -1093,7 +1062,7 @@ public class gm_giraphlib extends gm_gpslib {
 			Body.pushln("i++;");
 			Body.pushln("}");
 
-			temp = String.format("%s.%s = new %s[i];", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID,
+			String temp = String.format("%s.%s = new %s[i];", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID,
 					GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
 			Body.pushln(temp);
 			Body.NL();

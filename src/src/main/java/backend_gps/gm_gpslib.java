@@ -1,7 +1,9 @@
 package backend_gps;
+
 import static backend_gps.gm_gps_comm_t.GPS_COMM_INIT;
 import static backend_gps.gm_gps_comm_t.GPS_COMM_NESTED;
 import static backend_gps.gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
+import static frontend.GlobalMembersGm_frontend.GMUSAGE_PROPERTY;
 import static inc.GlobalMembersGm_backend_gps.GPS_DUMMY_ID;
 import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_COMM_DEF_ASSIGN;
 import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINING_INNER;
@@ -12,7 +14,6 @@ import static inc.GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE;
 import static inc.GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS;
 import static inc.GlobalMembersGm_backend_gps.GPS_REV_NODE_ID;
 import static inc.GlobalMembersGm_backend_gps.STATE_SHORT_CUT;
-import frontend.GlobalMembersGm_frontend;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_PROP_USAGE_T;
@@ -82,7 +83,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	// note: consume the return string immedately
 	public String create_key_string(ast_id id) {
-		str_buf = String.format("KEY_%s", id.get_genname());
+		String str_buf = String.format("KEY_%s", id.get_genname());
 		return str_buf;
 	}
 
@@ -325,13 +326,13 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public void generate_vertex_prop_class_details(java.util.HashSet<gm_symtab_entry> prop, gm_code_writer Body, boolean is_edge_prop) {
-		String temp = new String(new char[1024]);
+
 		int total = is_edge_prop ? ((gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info()).get_total_edge_property_size()
 				: ((gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info()).get_total_node_property_size();
 
 		Body.pushln("@Override");
 		Body.push("public int numBytes() {return ");
-		temp = String.format("%d;}", total);
+		String temp = String.format("%d;}", total);
 		Body.pushln(temp);
 
 		Body.pushln("@Override");
@@ -378,13 +379,13 @@ public class gm_gpslib extends gm_graph_library {
 		boolean firstProperty = true;
 		for (gm_symtab_entry sym : prop) {
 			// this property is set to procedure argument only
-			if (sym.find_info(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == null) {
+			if (sym.find_info(GMUSAGE_PROPERTY) == null) {
 				// printf("no argument property :%s\n",
 				// sym->getId()->get_genname());
 				continue;
 			}
 			// Used as input only
-			if (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue()) {
+			if (sym.find_info_int(GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue()) {
 				// printf("used as input only :%s\n",
 				// sym->getId()->get_genname());
 				continue;
@@ -413,16 +414,16 @@ public class gm_gpslib extends gm_graph_library {
 				total_count = prop.size();
 			else {
 				for (gm_symtab_entry e : prop) {
-					if ((e.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
-							|| (e.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
+					if ((e.find_info_int(GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
+							|| (e.find_info_int(GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
 						total_count++;
 				}
 			}
 
 			if (total_count == 1) {
 				for (gm_symtab_entry sym : prop) {
-					if (!is_edge_prop && (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
-							&& (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
+					if (!is_edge_prop && (sym.find_info_int(GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
+							&& (sym.find_info_int(GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
 						continue;
 					RefObject<String> name1_ref = new RefObject<String>(null);
 					RefObject<String> name2_ref = new RefObject<String>(null);
@@ -439,8 +440,8 @@ public class gm_gpslib extends gm_graph_library {
 												// gm-compiler
 				int cnt = 0;
 				for (gm_symtab_entry sym : prop) {
-					if (!is_edge_prop && (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
-							&& (sym.find_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
+					if (!is_edge_prop && (sym.find_info_int(GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
+							&& (sym.find_info_int(GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
 						continue;
 					RefObject<String> name1_ref = new RefObject<String>(null);
 					RefObject<String> name2_ref = new RefObject<String>(null);
@@ -457,16 +458,14 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public void generate_receive_state_vertex(String state_var, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("int %s = ((IntOverwriteGlobalObject) getGlobalObjectsMap().getGlobalObject(", state_var);
+		String temp = String.format("int %s = ((IntOverwriteGlobalObject) getGlobalObjectsMap().getGlobalObject(", state_var);
 		Body.push(temp);
 		Body.push(GPS_KEY_FOR_STATE);
 		Body.pushln(")).getValue().getValue();");
 	}
 
 	public void generate_receive_isFirst_vertex(String is_first_var, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("boolean %s = ((BooleanOverwriteGlobalObject) getGlobalObjectsMap().getGlobalObject(\"%s\"", is_first_var, is_first_var);
+		String temp = String.format("boolean %s = ((BooleanOverwriteGlobalObject) getGlobalObjectsMap().getGlobalObject(\"%s\"", is_first_var, is_first_var);
 		Body.push(temp);
 		Body.pushln(")).getValue().getValue();");
 	}
@@ -475,7 +474,7 @@ public class gm_gpslib extends gm_graph_library {
 		for (int i = 0; i < count; i++) {
 			String str = main.get_type_string(gm_type);
 			String vname = get_message_field_var_name(gm_type, i);
-			str_buf = String.format("%s %s;", str, vname);
+			String str_buf = String.format("%s %s;", str, vname);
 			Body.pushln(str_buf);
 			vname = null;
 		}
@@ -485,14 +484,12 @@ public class gm_gpslib extends gm_graph_library {
 	// gm_code_writer Body);
 
 	public void generate_vertex_prop_access_lhs(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("%s.%s", STATE_SHORT_CUT, id.get_genname());
+		String temp = String.format("%s.%s", STATE_SHORT_CUT, id.get_genname());
 		Body.push(temp);
 	}
 
 	public void generate_vertex_prop_access_lhs_edge(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("_outEdge.getEdgeValue().%s", id.get_genname());
+		String temp = String.format("_outEdge.getEdgeValue().%s", id.get_genname());
 		Body.push(temp);
 	}
 
@@ -505,14 +502,12 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public void generate_vertex_prop_access_remote_lhs(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("_remote_%s", id.get_genname());
+		String temp = String.format("_remote_%s", id.get_genname());
 		Body.push(temp);
 	}
 
 	public void generate_vertex_prop_access_remote_lhs_edge(ast_id id, gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("_remote_%s", id.get_genname());
+		String temp = String.format("_remote_%s", id.get_genname());
 		Body.push(temp);
 	}
 
@@ -521,8 +516,7 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public void generate_vertex_prop_access_prepare(gm_code_writer Body) {
-		String temp = new String(new char[1024]);
-		temp = String.format("VertexData %s = getValue();", STATE_SHORT_CUT);
+		String temp = String.format("VertexData %s = getValue();", STATE_SHORT_CUT);
 		Body.pushln(temp);
 	}
 
@@ -582,7 +576,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.push(get_random_write_message_name(sym));
 		Body.push(" = new MessageData(");
 		// todo: should this always be a byte?
-		str_buf = String.format("(byte) %d);", SINFO.msg_class.id);
+		String str_buf = String.format("(byte) %d);", SINFO.msg_class.id);
 		Body.pushln(str_buf);
 	}
 
@@ -617,7 +611,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	// virtual void generate_expr_nil(ast_expr e, gm_code_writer Body);
 	public final String get_random_write_message_name(gm_symtab_entry sym) {
-		str_buf = String.format("_msg_%s", sym.getId().get_genname());
+		String str_buf = String.format("_msg_%s", sym.getId().get_genname());
 		return str_buf;
 	}
 
@@ -630,7 +624,6 @@ public class gm_gpslib extends gm_graph_library {
 		return true;
 	}
 
-	protected String str_buf = new String(new char[1024 * 8]);
 	protected gm_gps_gen main;
 
 	/* TODO Inserted from gm_gps_lib.java, clean up */
@@ -783,8 +776,7 @@ public class gm_gpslib extends gm_graph_library {
 			assert false;
 			break;
 		}
-		String str_buf = new String(new char[1024]);
-		str_buf = String.format("_BA, _idx + %d);", offset);
+		String str_buf = String.format("_BA, _idx + %d);", offset);
 		Body.pushln(str_buf);
 	}
 
@@ -898,28 +890,38 @@ public class gm_gpslib extends gm_graph_library {
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	//private static void generate_message_class_get_size_generate_message_class_read1(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
-	//}
+	// private static void
+	// generate_message_class_get_size_generate_message_class_read1(gm_gpslib
+	// lib, gm_gps_beinfo info, gm_code_writer Body) {
+	// }
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	//private static void generate_message_class_get_size_generate_message_class_read2(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
-	//}
+	// private static void
+	// generate_message_class_get_size_generate_message_class_read2(gm_gpslib
+	// lib, gm_gps_beinfo info, gm_code_writer Body) {
+	// }
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	//private static void generate_message_class_get_size_generate_message_class_read3(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
-	//}
+	// private static void
+	// generate_message_class_get_size_generate_message_class_read3(gm_gpslib
+	// lib, gm_gps_beinfo info, gm_code_writer Body) {
+	// }
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	//private static void generate_message_class_get_size_generate_message_class_combine(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
-	//}
+	// private static void
+	// generate_message_class_get_size_generate_message_class_combine(gm_gpslib
+	// lib, gm_gps_beinfo info, gm_code_writer Body) {
+	// }
 
 	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
 	// declaration (not allowed in Java):
-	//private static boolean generate_message_class_get_size_is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {
-	//}
+	// private static boolean
+	// generate_message_class_get_size_is_symbol_defined_in_bb(gm_gps_basic_block
+	// b, gm_symtab_entry e) {
+	// }
 
 	public static void generate_message_class_get_size(gm_gps_beinfo info, gm_code_writer Body) {
 		Body.pushln("@Override");
@@ -1251,7 +1253,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.push("MessageData _msg = new MessageData(");
 
 		// todo: should this always be a byte?
-		str_buf = String.format("(byte) %d", SINFO.msg_class.id);
+		String str_buf = String.format("(byte) %d", SINFO.msg_class.id);
 		Body.push(str_buf);
 		Body.pushln(");");
 
@@ -1348,8 +1350,7 @@ public class gm_gpslib extends gm_graph_library {
 			gm_symtab_entry e = SYM.symbol;
 
 			// check it once again later
-			if (e.getType().is_property() || e.getType().is_node_compatible() || e.getType().is_edge_compatible()
-					|| !is_symbol_defined_in_bb(b, e)) {
+			if (e.getType().is_property() || e.getType().is_node_compatible() || e.getType().is_edge_compatible() || !is_symbol_defined_in_bb(b, e)) {
 				String str = main.get_type_string(SYM.gm_type);
 				Body.push(str);
 				Body.SPC();

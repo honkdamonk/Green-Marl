@@ -1,10 +1,20 @@
 package backend_giraph;
 
+import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL;
+import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN;
+import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP;
+import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE;
+import static inc.GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST;
+import static inc.GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO;
+import static inc.GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE;
+import static inc.GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL;
+import static inc.GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1;
+import static inc.GlobalMembersGm_backend_gps.GPS_RET_VALUE;
+import static inc.GlobalMembersGm_backend_gps.GPS_REV_NODE_ID;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_backend_gps;
 import inc.gm_compile_step;
 
 import java.util.HashSet;
@@ -195,10 +205,10 @@ public class gm_giraph_gen extends gm_gps_gen {
 		String temp = String.format("public static class %sMaster extends MasterCompute {", proc.get_procname().get_genname());
 		Body.pushln(temp);
 		Body.pushln("// Control fields");
-		boolean prep = GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE);
-		temp = String.format("private int     _master_state                = %d;", !prep ? 0 : GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1);
+		boolean prep = GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE);
+		temp = String.format("private int     _master_state                = %d;", !prep ? 0 : GPS_PREPARE_STEP1);
 		Body.pushln(temp);
-		temp = String.format("private int     _master_state_nxt            = %d;", !prep ? 0 : GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1);
+		temp = String.format("private int     _master_state_nxt            = %d;", !prep ? 0 : GPS_PREPARE_STEP1);
 		Body.pushln(temp);
 		Body.pushln("private boolean _master_should_start_workers = false;");
 		Body.pushln("private boolean _master_should_finish        = false;");
@@ -213,16 +223,15 @@ public class gm_giraph_gen extends gm_gps_gen {
 		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
-		temp = String.format("registerAggregator(%s, IntOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
+		temp = String.format("registerAggregator(%s, IntOverwriteAggregator.class);", GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
 		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 
-			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-				int cond_bb_no = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-				temp = String.format("registerAggregator(\"%s%d\", BooleanOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST,
-						cond_bb_no);
+			if (b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+				int cond_bb_no = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
+				temp = String.format("registerAggregator(\"%s%d\", BooleanOverwriteAggregator.class);", GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 				Body.pushln(temp);
 			}
 		}
@@ -305,8 +314,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("public void writeOutput() {");
 		ast_typedecl t = proc.get_return_type();
 		if ((t != null) && (!t.is_void())) {
-			temp = String.format("System.out.println(\"%s:\\t\" + %s + \"\\n\");", GlobalMembersGm_backend_gps.GPS_RET_VALUE,
-					GlobalMembersGm_backend_gps.GPS_RET_VALUE);
+			temp = String.format("System.out.println(\"%s:\\t\" + %s + \"\\n\");", GPS_RET_VALUE, GPS_RET_VALUE);
 			Body.pushln(temp);
 		}
 		for (gm_symtab_entry s : syms) {
@@ -326,33 +334,31 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("//----------------------------------------------------------");
 		Body.pushln("// Scalar Variables ");
 		Body.pushln("//----------------------------------------------------------");
-		String temp = new String(new char[1024]);
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
+		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry e : scalar) {
 			gps_syminfo syminfo = (gps_syminfo) e.find_info(GlobalMembersGps_syminfo.GPS_TAG_BB_USAGE);
 			if (!syminfo.is_used_in_master())
 				continue;
 
-			temp = String.format("private %s %s;", get_type_string(e.getType(), true), e.getId().get_genname());
+			String temp = String.format("private %s %s;", get_type_string(e.getType(), true), e.getId().get_genname());
 			Body.pushln(temp);
 		}
 
 		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
 		ast_typedecl t = proc.get_return_type();
 		if ((t != null) && (!t.is_void())) {
-			temp = String.format("private %s %s; // the final return value of the procedure", get_type_string(t, true),
-					GlobalMembersGm_backend_gps.GPS_RET_VALUE);
+			String temp = String.format("private %s %s; // the final return value of the procedure", get_type_string(t, true), GPS_RET_VALUE);
 			Body.pushln(temp);
 		}
 
 		// Intra-Loop Merging
-		if (proc.has_info(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL)) {
-			java.util.LinkedList<Object> L = proc.get_info_list(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL);
+		if (proc.has_info(GPS_LIST_INTRA_MERGED_CONDITIONAL)) {
+			LinkedList<Object> L = proc.get_info_list(GPS_LIST_INTRA_MERGED_CONDITIONAL);
 			for (Object obj : L) {
 				gm_gps_basic_block bb = (gm_gps_basic_block) (obj);
-				temp = String.format("private boolean %s%d = true;", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, bb.get_id());
+				String temp = String.format("private boolean %s%d = true;", GPS_INTRA_MERGE_IS_FIRST, bb.get_id());
 				Body.pushln(temp);
 			}
 		}
@@ -362,7 +368,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 	public void do_generate_master_serialization() {
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
+		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 		get_lib().generate_master_class_details(scalar, Body);
 	}
 
@@ -370,8 +376,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		int id = b.get_id();
 		gm_gps_bbtype_t type = b.get_type();
 
-		String temp = new String(new char[1024]);
-		temp = String.format("private void _master_state_%d() {", id);
+		String temp = String.format("private void _master_state_%d() {", id);
 		Body.pushln(temp);
 		Body.pushln("/*------");
 		Body.flush();
@@ -384,9 +389,9 @@ public class gm_giraph_gen extends gm_gps_gen {
 			// generate Broadcast
 			do_generate_scalar_broadcast_send(b);
 			get_lib().generate_broadcast_state_master("_master_state", Body);
-			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-				int cond_bb_no = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-				temp = String.format("%s%d", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
+			if (b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+				int cond_bb_no = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
+				temp = String.format("%s%d", GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 				get_lib().generate_broadcast_isFirst_master(temp, Body);
 			}
 			Body.NL();
@@ -421,20 +426,20 @@ public class gm_giraph_gen extends gm_gps_gen {
 			}
 			Body.NL();
 
-			int cond_bb_no = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
+			int cond_bb_no = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
 
 			// generate sequential sentences
 			b.prepare_iter();
 			ast_sent s = b.get_next();
 			while (s != null) {
-				if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-					temp = String.format("if (!%s%d) {", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
+				if (s.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+					temp = String.format("if (!%s%d) {", GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 					Body.pushln(temp);
 				}
 
 				generate_sent(s);
 
-				if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+				if (s.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 					Body.pushln("}");
 				}
 
@@ -482,9 +487,8 @@ public class gm_giraph_gen extends gm_gps_gen {
 					b.get_nth_exit(1).get_id()); // exit - continue while
 			Body.pushln(temp);
 
-			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-				temp = String.format("if (!_expression_result) %s%d=true; // reset is_first\n\n", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST,
-						b.get_id());
+			if (b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+				temp = String.format("if (!_expression_result) %s%d=true; // reset is_first\n\n", GPS_INTRA_MERGE_IS_FIRST, b.get_id());
 				Body.pushln(temp);
 			}
 
@@ -502,13 +506,12 @@ public class gm_giraph_gen extends gm_gps_gen {
 			Body.pushln("_master_should_start_workers = true;");
 		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL) {
 			Body.pushln("// Intra-Loop Merged");
-			int source_id = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-			temp = String.format("if (%s%d) _master_state_nxt = %d;", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, source_id, b.get_nth_exit(0)
-					.get_id());
+			int source_id = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
+			temp = String.format("if (%s%d) _master_state_nxt = %d;", GPS_INTRA_MERGE_IS_FIRST, source_id, b.get_nth_exit(0).get_id());
 			Body.pushln(temp);
 			temp = String.format("else _master_state_nxt = %d;", b.get_nth_exit(1).get_id());
 			Body.pushln(temp);
-			temp = String.format("%s%d = false;\n", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, source_id);
+			temp = String.format("%s%d = false;\n", GPS_INTRA_MERGE_IS_FIRST, source_id);
 			Body.pushln(temp);
 		} else {
 			assert false;
@@ -594,39 +597,37 @@ public class gm_giraph_gen extends gm_gps_gen {
 		do_generate_worker_context_class();
 		do_generate_vertex_property_class(false);
 
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP))
+		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP))
 			do_generate_vertex_property_class(true);
 
 		do_generate_message_class();
 	}
 
 	public void do_generate_worker_context_class() {
-		String temp = new String(new char[1024]);
 		String proc_name = GlobalMembersGm_main.FE.get_current_proc().get_procname().get_genname();
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 
-		java.util.LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
-		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
+		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
+		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		Body.pushln("//----------------------------------------------");
 		Body.pushln("// Worker Context Class");
 		Body.pushln("//----------------------------------------------");
-		temp = String.format("public static class %sWorkerContext extends WorkerContext {", proc_name);
+		String temp = String.format("public static class %sWorkerContext extends WorkerContext {", proc_name);
 		Body.pushln(temp);
 		Body.NL();
 		Body.pushln("@Override");
 		Body.pushln("public void preApplication() throws InstantiationException, IllegalAccessException {");
-		temp = String.format("registerAggregator(%s, IntOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
+		temp = String.format("registerAggregator(%s, IntOverwriteAggregator.class);", GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
 
 		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 
-			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-				int cond_bb_no = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-				temp = String.format("registerAggregator(\"%s%d\", BooleanOverwriteAggregator.class);", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST,
-						cond_bb_no);
+			if (b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+				int cond_bb_no = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
+				temp = String.format("registerAggregator(\"%s%d\", BooleanOverwriteAggregator.class);", GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 				Body.pushln(temp);
 			}
 		}
@@ -651,16 +652,16 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.NL();
 		Body.pushln("@Override");
 		Body.pushln("public void preSuperstep() {");
-		temp = String.format("useAggregator(%s);", GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE);
+		temp = String.format("useAggregator(%s);", GPS_KEY_FOR_STATE);
 		Body.pushln(temp);
 
 		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 
-			if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-				int cond_bb_no = b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
-				temp = String.format("useAggregator(\"%s%d\");", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
+			if (b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+				int cond_bb_no = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
+				temp = String.format("useAggregator(\"%s%d\");", GPS_INTRA_MERGE_IS_FIRST, cond_bb_no);
 				Body.pushln(temp);
 			}
 		}
@@ -692,16 +693,15 @@ public class gm_giraph_gen extends gm_gps_gen {
 		else
 			Body.pushln("// Vertex Property Class");
 		Body.pushln("//----------------------------------------------");
-		String temp = new String(new char[1024]);
 		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
 		assert proc != null;
-		temp = String.format("public static class %s implements Writable {", is_edge_prop ? "EdgeData" : "VertexData");
+		String temp = String.format("public static class %s implements Writable {", is_edge_prop ? "EdgeData" : "VertexData");
 		Body.pushln(temp);
 
 		// list out property
 		Body.pushln("// properties");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		java.util.HashSet<gm_symtab_entry> prop = is_edge_prop ? info.get_edge_prop_symbols() : info.get_node_prop_symbols();
+		HashSet<gm_symtab_entry> prop = is_edge_prop ? info.get_edge_prop_symbols() : info.get_node_prop_symbols();
 		for (gm_symtab_entry sym : prop) {
 			// gps_syminfo* syminfo = (gps_syminfo*)
 			// sym->find_info(TAG_BB_USAGE);
@@ -710,9 +710,9 @@ public class gm_giraph_gen extends gm_gps_gen {
 			Body.pushln(temp);
 		}
 
-		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE)) {
+		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
 			temp = String.format("%s[] %s; //reverse edges (node IDs)", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable"
-					: "LongWritable", GlobalMembersGm_backend_gps.GPS_REV_NODE_ID);
+					: "LongWritable", GPS_REV_NODE_ID);
 			Body.pushln(temp);
 		}
 
@@ -725,15 +725,14 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void do_generate_vertex_class() {
-		String temp = new String(new char[1024]);
 		String proc_name = GlobalMembersGm_main.FE.get_current_proc().get_procname().get_genname();
 		Body.pushln("//----------------------------------------------");
 		Body.pushln("// Main Vertex Class");
 		Body.pushln("//----------------------------------------------");
-		temp = String.format("public static class %sVertex", proc_name);
+		String temp = String.format("public static class %sVertex", proc_name);
 		Body.pushln(temp);
 		Body.pushIndent();
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP)) {
+		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
 			temp = String.format("extends EdgeListVertex< %s, VertexData, EdgeData, MessageData > {", GlobalMembersGm_main.PREGEL_BE.get_lib()
 					.is_node_type_int() ? "IntWritable" : "LongWritable");
 		} else {
@@ -779,7 +778,6 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void do_generate_vertex_states() {
-		String temp = new String(new char[1024]);
 		Body.NL();
 		Body.pushln("@Override");
 		Body.pushln("public void compute(Iterator<MessageData> _msgs) {");
@@ -787,13 +785,13 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 		Body.pushln("switch(_state_vertex) { ");
 		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
-		java.util.LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
+		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
 		int cnt = 0;
 		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			int id = b.get_id();
-			temp = String.format("case %d: _vertex_state_%d(_msgs); break;", id, id);
+			String temp = String.format("case %d: _vertex_state_%d(_msgs); break;", id, id);
 			Body.pushln(temp);
 			cnt++;
 		}
@@ -820,8 +818,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		int id = b.get_id();
 		gm_gps_bbtype_t type = b.get_type();
 
-		String temp = new String(new char[1024]);
-		temp = String.format("private void _vertex_state_%d(Iterator<MessageData> _msgs) {", id);
+		String temp = String.format("private void _vertex_state_%d(Iterator<MessageData> _msgs) {", id);
 		Body.pushln(temp);
 
 		get_lib().generate_vertex_prop_access_prepare(Body);
@@ -835,11 +832,11 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 
 		assert type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX;
-		boolean is_conditional = b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL);
-		String cond_var = new String(new char[128]);
-		if (is_conditional)
-			cond_var = String.format("%s%d", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST,
-					b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO));
+		boolean is_conditional = b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL);
+		String cond_var = "";
+		if (is_conditional) {
+			cond_var = String.format("%s%d", GPS_INTRA_MERGE_IS_FIRST, b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO));
+		}
 
 		// ---------------------------------------------------------
 		// Generate Receiver Routine
@@ -894,7 +891,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 					else
 						GlobalMembersGm_reproduce.gm_baseindent_reproduce(5);
 					for (ast_sent s : sb.get_sents()) {
-						if (s.find_info_ptr(GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb)
+						if (s.find_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb)
 							s.reproduce(0);
 					}
 					GlobalMembersGm_reproduce.gm_flush_reproduce();
@@ -903,7 +900,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 					get_lib().generate_message_receive_begin(sb, U.sym, Body, b, R.size() == 1);
 
 					for (ast_sent s : sb.get_sents()) {
-						if (s.find_info_ptr(GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb) {
+						if (s.find_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb) {
 							// implement receiving sentence
 							generate_sent(s);
 						}
@@ -941,7 +938,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 				if (cnt != 0)
 					Body.NL();
 				cnt++;
-				if (fe.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 					temp = String.format("if (!%s)", cond_var);
 					Body.push(temp);
 					if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
@@ -952,7 +949,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 				generate_sent(body);
 
-				if (fe.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 					if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
 						Body.pushln("}");
 				}
@@ -996,27 +993,24 @@ public class gm_giraph_gen extends gm_gps_gen {
 			}
 		}
 
-		if (b.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-			String temp = new String(new char[1024]);
-			temp = String.format("%s%d", GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST,
-					b.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO));
+		if (b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
+			String temp = String.format("%s%d", GPS_INTRA_MERGE_IS_FIRST, b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO));
 			get_lib().generate_receive_isFirst_vertex(temp, Body);
 		}
 	}
 
 	public void do_generate_input_output_formats() {
-		String temp = new String(new char[1024]);
 		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
 
 		String proc_name = proc.get_procname().get_genname();
 		String vertex_id = GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable";
-		String edge_data = proc.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP) ? "EdgeData" : "NullWritable";
+		String edge_data = proc.find_info_bool(GPS_FLAG_USE_EDGE_PROP) ? "EdgeData" : "NullWritable";
 
 		Body.pushln("//----------------------------------------------");
 		Body.pushln("// Vertex Input format");
 		Body.pushln("//----------------------------------------------");
 
-		temp = String.format("static class %sVertexInputFormat extends TextVertexInputFormat<%s, VertexData, %s, MessageData> {", proc_name, vertex_id,
+		String temp = String.format("static class %sVertexInputFormat extends TextVertexInputFormat<%s, VertexData, %s, MessageData> {", proc_name, vertex_id,
 				edge_data);
 		Body.pushln(temp);
 		Body.pushln("@Override");
@@ -1063,7 +1057,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		} else {
 			Body.pushln("LongWritable edgeId = new LongWritable(Long.parseLong(values[i]));");
 		}
-		if (proc.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP)) {
+		if (proc.find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
 			Body.pushln("double edgeValue = Double.parseDouble(values[i+1]);");
 			Body.pushln("edges.put(edgeId, new EdgeData(edgeValue));");
 		} else {
@@ -1121,7 +1115,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		temp = String.format("Iterator<%s> outEdges = vertex.getOutEdgesIterator();", vertex_id);
 		Body.pushln(temp);
 		Body.pushln("while (outEdges.hasNext()) {");
-		if (proc.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP)) {
+		if (proc.find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
 			temp = String.format("%s neighbor = outEdges.next();", vertex_id);
 			Body.pushln(temp);
 			Body.pushln("sb.append('\\t').append(neighbor);");
@@ -1140,13 +1134,12 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void do_generate_job_configuration() {
-		String temp = new String(new char[1024]);
 		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
 
 		// Iterate symbol table
 		gm_symtab args = proc.get_symtab_var();
 		assert args != null;
-		java.util.HashSet<gm_symtab_entry> syms = args.get_entries();
+		HashSet<gm_symtab_entry> syms = args.get_entries();
 
 		Body.NL();
 		Body.pushln("//----------------------------------------------");
@@ -1160,6 +1153,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("options.addOption(\"w\", \"workers\", true, \"Number of workers\");");
 		Body.pushln("options.addOption(\"i\", \"input\", true, \"Input filename\");");
 		Body.pushln("options.addOption(\"o\", \"output\", true, \"Output filename\");");
+		String temp;
 		for (gm_symtab_entry s : syms) {
 			if (!s.getType().is_primitive() && (!s.getType().is_node()))
 				continue;

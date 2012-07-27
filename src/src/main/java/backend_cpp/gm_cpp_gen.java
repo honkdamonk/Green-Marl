@@ -439,7 +439,7 @@ public class gm_cpp_gen extends BackendGenerator {
 	}
 
 	public void generate_expr_inf(ast_expr e) {
-		String temp = temp_str;
+		String temp;
 		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
 		GMTYPE_T t = e.get_type_summary();
 		switch (t) {

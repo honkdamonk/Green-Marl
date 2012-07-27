@@ -27,14 +27,16 @@ import common.GlobalMembersGm_reproduce;
 
 // default code generator
 public abstract class gm_code_generator {
+	
+	protected gm_code_writer _Body;
 
 	public gm_code_generator() {
-		this._Body = new gm_code_writer();
+		_Body = new gm_code_writer();
 	}
 
 	@Deprecated
 	public gm_code_generator(gm_code_writer W) {
-		this._Body = new gm_code_writer();
+		_Body = new gm_code_writer();
 	}
 
 	public void dispose() {
@@ -146,7 +148,7 @@ public abstract class gm_code_generator {
 	}
 
 	public void generate_expr_val(ast_expr e) {
-		String temp = temp_str;
+		String temp;
 		switch (e.get_opclass()) {
 		case GMEXPR_IVAL:
 			temp = String.format("%ld", e.get_ival()); // to be changed
@@ -174,7 +176,7 @@ public abstract class gm_code_generator {
 	}
 
 	public void generate_expr_inf(ast_expr e) {
-		String temp = temp_str;
+		String temp;
 		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
 		GMTYPE_T t = e.get_type_summary();
 		switch (t) {
@@ -459,8 +461,5 @@ public abstract class gm_code_generator {
 		generate_expr(ff);
 		_Body.pushln(";");
 	}
-
-	protected String temp_str = new String(new char[1024 * 8]);
-	protected gm_code_writer _Body;
 
 }

@@ -2,7 +2,6 @@ package backend_cpp;
 
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_backend_cpp;
 import inc.gm_assignment_t;
 import inc.nop_reduce_scalar;
 
@@ -122,7 +121,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 		ast_sentblock se = (ast_sentblock) fe.get_parent();
 
 		// set scope parallel
-		se.add_info(GlobalMembersGm_backend_cpp.LABEL_PAR_SCOPE, new ast_extra_info(true));
+		se.add_info(gm_cpp_gen.LABEL_PAR_SCOPE, new ast_extra_info(true));
 
 		// foreach scalar boundsymbol
 		gm_rwinfo_map B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;

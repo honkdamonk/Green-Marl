@@ -1,7 +1,6 @@
 package backend_cpp;
 
 import inc.GMTYPE_T;
-import inc.GlobalMembersGm_backend_cpp;
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -15,21 +14,6 @@ import common.gm_apply;
 import common.gm_builtin_def;
 
 import frontend.gm_symtab_entry;
-
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define AUX_INFO(X,Y) "X"":""Y"
-///#define GM_BLTIN_MUTATE_GROW 1
-///#define GM_BLTIN_MUTATE_SHRINK 2
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_BLTIN_FLAG_TRUE true
 
 //-------------------------------------------------------------
 // Misc checks before code generation
@@ -54,7 +38,7 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 				ast_id G = driver.getTypeInfo().get_target_graph_id();
 				assert G != null;
 				gm_symtab_entry e = G.getSymInfo();
-				e.add_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_USE_REVERSE_EDGE, true);
+				e.add_info_bool(gm_cpp_gen.CPPBE_INFO_USE_REVERSE_EDGE, true);
 			}
 
 			if (def.find_info_bool(GlobalMembersGm_builtin.GM_BLTIN_INFO_CHECK_NBR)) {
@@ -63,7 +47,7 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 				ast_id G = driver.getTypeInfo().get_target_graph_id();
 				assert G != null;
 				gm_symtab_entry e = G.getSymInfo();
-				e.add_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEED_SEMI_SORT, true);
+				e.add_info_bool(gm_cpp_gen.CPPBE_INFO_NEED_SEMI_SORT, true);
 			}
 
 			if (def.find_info_bool(GlobalMembersGm_builtin.GM_BLTIN_INFO_NEED_FROM)) {
@@ -72,7 +56,7 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 				ast_id G = driver.getTypeInfo().get_target_graph_id();
 				assert G != null;
 				gm_symtab_entry e = G.getSymInfo();
-				e.add_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEED_FROM_INFO, true);
+				e.add_info_bool(gm_cpp_gen.CPPBE_INFO_NEED_FROM_INFO, true);
 			}
 		}
 		return true;
@@ -84,8 +68,8 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 			if (bfs.is_transpose()) {
 				ast_id G = bfs.get_source();
 				gm_symtab_entry e = G.getSymInfo();
-				if (e.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_USE_REVERSE_EDGE) == false) {
-					e.add_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_USE_REVERSE_EDGE, true);
+				if (e.find_info_bool(gm_cpp_gen.CPPBE_INFO_USE_REVERSE_EDGE) == false) {
+					e.add_info_bool(gm_cpp_gen.CPPBE_INFO_USE_REVERSE_EDGE, true);
 				}
 			}
 		}
@@ -97,8 +81,8 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 				ast_id G = fe.get_source().getTypeInfo().get_target_graph_id();
 				if (G != null) {
 					gm_symtab_entry e = G.getSymInfo();
-					if (e.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_USE_REVERSE_EDGE) == false) {
-						e.add_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_USE_REVERSE_EDGE, true);
+					if (e.find_info_bool(gm_cpp_gen.CPPBE_INFO_USE_REVERSE_EDGE) == false) {
+						e.add_info_bool(gm_cpp_gen.CPPBE_INFO_USE_REVERSE_EDGE, true);
 					}
 				}
 			}
@@ -107,8 +91,8 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 				ast_id G = fe.get_source().getTypeInfo().get_target_graph_id();
 				if (G != null) {
 					gm_symtab_entry e = G.getSymInfo();
-					if (e.find_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEED_SEMI_SORT) == false) {
-						e.add_info_bool(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEED_SEMI_SORT, true);
+					if (e.find_info_bool(gm_cpp_gen.CPPBE_INFO_NEED_SEMI_SORT) == false) {
+						e.add_info_bool(gm_cpp_gen.CPPBE_INFO_NEED_SEMI_SORT, true);
 					}
 				}
 			}

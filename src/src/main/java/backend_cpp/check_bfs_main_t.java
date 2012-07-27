@@ -1,6 +1,9 @@
 package backend_cpp;
 
-import inc.GlobalMembersGm_backend_cpp;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -17,15 +20,6 @@ import frontend.GlobalMembersGm_rw_analysis;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
-
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
 
 //---------------------------------------------------------------
 // Checking for BFS or DFS
@@ -96,33 +90,27 @@ public class check_bfs_main_t extends gm_apply {
 			// copy constructor should be created if it does not yet exist:
 			// ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*,
 			// java.util.LinkedList<gm_rwinfo*>*>& WS = RWINFO->write_set;
-			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> WS = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>(
-					RWINFO.write_set);
+			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> WS = new HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>(RWINFO.write_set);
 			// C++ TO JAVA CONVERTER WARNING: The following line was determined
 			// to be a copy constructor call - this should be verified and a
 			// copy constructor should be created if it does not yet exist:
 			// ORIGINAL LINE: java.util.HashMap<gm_symtab_entry*,
 			// java.util.LinkedList<gm_rwinfo*>*>& DS = RWINFO->reduce_set;
-			java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>> DS = new java.util.HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>(
-					RWINFO.reduce_set);
+			HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> DS = new HashMap<gm_symtab_entry, java.util.LinkedList<gm_rwinfo>>(RWINFO.reduce_set);
 
 			process_rwinfo(RS, S);
 			process_rwinfo(WS, S);
 			process_rwinfo(DS, S);
 
-			s.add_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_SYMBOLS, syms);
+			s.add_info(gm_cpp_gen.CPPBE_INFO_BFS_SYMBOLS, syms);
 			has_bfs = true;
 			ast_bfs bfs = (ast_bfs) s;
 
 			String temp = String.format("%s", proc.get_procname().get_genname());
 			String suffix = bfs.is_bfs() ? "_bfs" : "_dfs";
-			// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent
-			// for pointers to value types:
-			// ORIGINAL LINE: sbyte* c = FE.voca_temp_name_and_add(temp,
-			// suffix);
 			String c = GlobalMembersGm_main.FE.voca_temp_name_and_add(temp, suffix);
 
-			s.add_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_NAME, c);
+			s.add_info_string(gm_cpp_gen.CPPBE_INFO_BFS_NAME, c);
 
 			bfs_lists.addLast(s);
 
@@ -143,7 +131,7 @@ public class check_bfs_main_t extends gm_apply {
 			ast_id driver = bin.get_driver();
 			if (driver != null) {
 
-				java.util.HashSet<Object> SET = ((ast_extra_info_set) current_bfs.find_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_BFS_SYMBOLS)).get_set();
+				HashSet<Object> SET = ((ast_extra_info_set) current_bfs.find_info(gm_cpp_gen.CPPBE_INFO_BFS_SYMBOLS)).get_set();
 				SET.add(driver.getSymInfo());
 			}
 		}

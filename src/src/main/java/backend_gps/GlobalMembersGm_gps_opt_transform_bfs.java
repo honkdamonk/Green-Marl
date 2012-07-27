@@ -1,11 +1,11 @@
 package backend_gps;
 
-import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_backend_gps;
 import inc.gm_assignment_t;
+import tangible.RefObject;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -23,6 +23,8 @@ import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_resolve_nc;
 import common.GlobalMembersGm_transform_helper;
+
+import frontend.gm_symtab_entry;
 
 public class GlobalMembersGm_gps_opt_transform_bfs {
 
@@ -296,14 +298,14 @@ public class GlobalMembersGm_gps_opt_transform_bfs {
 		// ORIGINAL LINE: sbyte* fin_name =
 		// FE.voca_temp_name_and_add("bfs_finished", null, true);
 		String fin_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("bfs_finished", null, true);
-		tangible.RefObject<String> tempRef_lev_name = new tangible.RefObject<String>(lev_name);
+		RefObject<String> tempRef_lev_name = new RefObject<String>(lev_name);
 		gm_symtab_entry lev_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, b.get_source().getSymInfo(),
 				tempRef_lev_name);
 		lev_name = tempRef_lev_name.argvalue;
-		tangible.RefObject<String> tempRef_curr_name = new tangible.RefObject<String>(curr_name);
+		RefObject<String> tempRef_curr_name = new RefObject<String>(curr_name);
 		gm_symtab_entry curr_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_INT, tempRef_curr_name);
 		curr_name = tempRef_curr_name.argvalue;
-		tangible.RefObject<String> tempRef_fin_name = new tangible.RefObject<String>(fin_name);
+		RefObject<String> tempRef_fin_name = new RefObject<String>(fin_name);
 		gm_symtab_entry fin_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_BOOL, tempRef_fin_name);
 		fin_name = tempRef_fin_name.argvalue;
 

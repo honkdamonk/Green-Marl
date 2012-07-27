@@ -142,21 +142,16 @@ public class gm_frontend {
 	}
 
 	public final void prepare_proc_iteration() {
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy assignment (rather than a reference assignment) - this
-		// should be verified and a 'copyFrom' method should be created if it
-		// does not yet exist:
-		// ORIGINAL LINE: I = procs.begin();
-		I.copyFrom(procs.iterator());
+		I = procs.iterator();
 	}
 
 	public final ast_procdef get_next_proc() {
-		if (I == procs.end()) {
+		ast_procdef p = I.next();
+		if (p == null) {
 			GlobalMembersGm_error.gm_set_curr_procname("");
 			set_current_proc(null);
 			return null;
 		} else {
-			ast_procdef p = I.next();
 			GlobalMembersGm_error.gm_set_curr_procname(p.get_procname().get_orgname());
 			set_current_proc(p);
 			return p;

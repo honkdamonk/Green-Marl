@@ -6,7 +6,7 @@ import inc.GM_REDUCE_T;
 import inc.GlobalMembersGm_backend_gps;
 import inc.gm_code_writer;
 
-import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -762,84 +762,77 @@ public class gm_giraphlib extends gm_gpslib {
 			return true;
 	}
 
-	public static void generate_message_class_write(gm_giraphlib lib, gm_gps_beinfo info, gm_code_writer Body)
-    {
-        Body.pushln("@Override");
-        Body.pushln("public void write(DataOutput out) throws IOException {");
-        if (!info.is_single_message())
-            Body.pushln("out.writeByte(m_type);");
-        String str_buf = new String(new char[1024]);
-        java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        boolean is_single = info.is_single_message();
-        boolean is_first = true;
-        for (gm_gps_congruent_msg_class c : LOOPS) {
-            gm_gps_communication_size_info SYMS = c.sz_info;
-            int sz = get_total_size(SYMS);
-            if (!is_single && is_first)
-            {
-                is_first = false;
-                String.format(str_buf,"if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            else if (!is_single)
-            {
-                String.format(str_buf,"else if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            if(!info.is_single_message())
-                Body.pushln("{");
-            if (info.is_single_message() && get_total_size(SYMS) == 0)
-                Body.pushln("out.writeByte((byte)0); // empty message");
-            generate_message_write_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
-            generate_message_write_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
-            generate_message_write_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
-            generate_message_write_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
-            generate_message_write_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
-            if (!info.is_single_message())
-                Body.pushln("}");
-        () }() Body.pushln("}");
-    }
+	public static void generate_message_class_write(gm_giraphlib lib, gm_gps_beinfo info, gm_code_writer Body) {
+		Body.pushln("@Override");
+		Body.pushln("public void write(DataOutput out) throws IOException {");
+		if (!info.is_single_message())
+			Body.pushln("out.writeByte(m_type);");
+		String str_buf = new String(new char[1024]);
+		java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
+		boolean is_single = info.is_single_message();
+		boolean is_first = true;
+		for (gm_gps_congruent_msg_class c : LOOPS) {
+			gm_gps_communication_size_info SYMS = c.sz_info;
+			int sz = get_total_size(SYMS);
+			if (!is_single && is_first) {
+				is_first = false;
+				String.format(str_buf, "if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			} else if (!is_single) {
+				String.format(str_buf, "else if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			}
+			if (!info.is_single_message())
+				Body.pushln("{");
+			if (info.is_single_message() && get_total_size(SYMS) == 0)
+				Body.pushln("out.writeByte((byte)0); // empty message");
+			generate_message_write_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
+			generate_message_write_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
+			generate_message_write_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
+			generate_message_write_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
+			generate_message_write_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
+			if (!info.is_single_message())
+				Body.pushln("}");
+		}
+		Body.pushln("}");
+	}
 
 	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
 	// allowed in Java) has been moved just prior to the method:
-	static void generate_message_class_read1(gm_giraphlib lib, gm_gps_beinfo info, gm_code_writer Body)
-    {
-        Body.pushln("@Override");
-        Body.pushln("public void readFields(DataInput in) throws IOException {");
-        if (!info.is_single_message())
-            Body.pushln("m_type = in.readByte();");
-        String str_buf = new String(new char[1024]);
-        java.util.LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
-        boolean is_single = info.is_single_message();
-        boolean is_first = true;
-        for(gm_gps_congruent_msg_class c : LOOPS)
-        {
-            gm_gps_communication_size_info SYMS = c.sz_info;
-            int sz = get_total_size(SYMS);
-            if (!is_single && is_first)
-            {
-                is_first = false;
-                String.format(str_buf,"if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            else if (!is_single)
-            {
-                String.format(str_buf,"else if (m_type == %d) ", SYMS.id);
-                Body.push(str_buf);
-            }
-            if(!info.is_single_message())
-                Body.pushln("{");
-            if (info.is_single_message() && get_total_size(SYMS) == 0)
-                Body.pushln("in.readByte(); // consume empty message byte");
-            generate_message_read1_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
-            generate_message_read1_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
-            generate_message_read1_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
-            generate_message_read1_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
-            generate_message_read1_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
-            if (!info.is_single_message())
-                Body.pushln("}");
-        () }() Body.pushln("}");
-    }
+	static void generate_message_class_read1(gm_giraphlib lib, gm_gps_beinfo info, gm_code_writer Body) {
+		Body.pushln("@Override");
+		Body.pushln("public void readFields(DataInput in) throws IOException {");
+		if (!info.is_single_message())
+			Body.pushln("m_type = in.readByte();");
+		String str_buf = new String(new char[1024]);
+		LinkedList<gm_gps_congruent_msg_class> LOOPS = info.get_congruent_message_classes();
+		boolean is_single = info.is_single_message();
+		boolean is_first = true;
+		for (gm_gps_congruent_msg_class c : LOOPS) {
+			gm_gps_communication_size_info SYMS = c.sz_info;
+			int sz = get_total_size(SYMS);
+			if (!is_single && is_first) {
+				is_first = false;
+				String.format(str_buf, "if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			} else if (!is_single) {
+				String.format(str_buf, "else if (m_type == %d) ", SYMS.id);
+				Body.push(str_buf);
+			}
+			if (!info.is_single_message())
+				Body.pushln("{");
+			if (info.is_single_message() && get_total_size(SYMS) == 0)
+				Body.pushln("in.readByte(); // consume empty message byte");
+			generate_message_read1_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
+			generate_message_read1_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
+			generate_message_read1_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
+			generate_message_read1_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
+			generate_message_read1_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
+			if (!info.is_single_message())
+				Body.pushln("}");
+		}
+		Body.pushln("}");
+	}
 
 	void generate_message_class_details(gm_gps_beinfo info, gm_code_writer Body) {
 
@@ -1112,7 +1105,7 @@ public class gm_giraphlib extends gm_gpslib {
 			Body.pushln("MessageData _msg;");
 			Body.pushln("while (_msgs.hasNext()) {");
 			Body.pushln("_msg = _msgs.next();");
-			generate_message_receive_begin(null, Body, bb, true);
+			generate_message_receive_begin((ast_foreach) null, Body, bb, true);
 			String.format(temp, "%s.%s[i] = new %s(%s);", GlobalMembersGm_backend_gps.STATE_SHORT_CUT, GlobalMembersGm_backend_gps.GPS_REV_NODE_ID,
 					GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable", GlobalMembersGm_backend_gps.GPS_DUMMY_ID);
 			Body.pushln(temp);

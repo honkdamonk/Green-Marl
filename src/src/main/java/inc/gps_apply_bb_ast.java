@@ -29,6 +29,7 @@ import backend_gps.gm_gps_comm_unit;
 import common.GlobalMembersGm_main;
 
 public class gps_apply_bb_ast extends gps_apply_bb {
+	
 	// set by traverse engine
 	protected gm_gps_basic_block _curr;
 	protected boolean _under_receiver;

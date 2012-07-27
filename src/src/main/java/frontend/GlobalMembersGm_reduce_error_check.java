@@ -44,12 +44,9 @@ public class GlobalMembersGm_reduce_error_check {
 		for (bound_info_t db : L) {
 			if ((db.target == t) && (db.reduce_type == r_type) && (db.bound == b)) {
 				L.remove(db);
-				if (db != null)
-					db.dispose();
 				return;
 			}
 		}
-		return;
 	}
 
 	// returns is_okay

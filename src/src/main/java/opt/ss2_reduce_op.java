@@ -85,12 +85,13 @@ public class ss2_reduce_op extends gm_apply {
 		GM_REDUCE_T rtype = target.get_reduce_type();
 		boolean is_avg = (rtype == GM_REDUCE_T.GMREDUCE_AVG);
 
-		ast_expr_reduce left_nested = null;
-		ast_expr_reduce right_nested = null;
-		boolean has_other_rhs = false;
-		RefObject<Boolean> tempRef_has_other_rhs = new RefObject<Boolean>(has_other_rhs);
-		boolean has_nested = check_has_nested(target.get_body(), rtype, tempRef_has_other_rhs, left_nested, right_nested);
-		has_other_rhs = tempRef_has_other_rhs.argvalue;
+		RefObject<ast_expr_reduce> left_nested_ref = new RefObject<ast_expr_reduce>(null);
+		RefObject<ast_expr_reduce> right_nested_ref = new RefObject<ast_expr_reduce>(null);
+		RefObject<Boolean> tempRef_has_other_rhs = new RefObject<Boolean>(false);
+		boolean has_nested = check_has_nested(target.get_body(), rtype, tempRef_has_other_rhs, left_nested_ref, right_nested_ref);
+		boolean has_other_rhs = tempRef_has_other_rhs.argvalue;
+		ast_expr_reduce left_nested = left_nested_ref.argvalue;
+		ast_expr_reduce right_nested = right_nested_ref.argvalue;
 
 		ast_sent holder = null;
 		ast_sentblock nested_up_sentblock = null;
@@ -364,40 +365,22 @@ public class ss2_reduce_op extends gm_apply {
 		// -----------------------------------
 		// propagate information for nested
 		// -----------------------------------
-		// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-		// in-line:
-		// /#define PROPAGATE_INFORMATION(expr, scope, target, bound) {
-		// (expr)->add_info_bool(OPT_FLAG_NESTED_REDUCTION, true);
-		// (expr)->add_info_ptr (OPT_SB_NESTED_REDUCTION_SCOPE, scope);
-		// (expr)->add_info_ptr (OPT_SYM_NESTED_REDUCTION_TARGET, target);
-		// (expr)->add_info_ptr (OPT_SYM_NESTED_REDUCTION_BOUND, bound); }
 		if (has_nested) {
 			assert nested_sentblock != null;
 			assert lhs_symbol != null;
 			assert bound_sym != null;
 			if (left_nested != null) {
-				{
-					left_nested.add_info_bool(OPT_FLAG_NESTED_REDUCTION, true);
-					left_nested.add_info_ptr(OPT_SB_NESTED_REDUCTION_SCOPE, nested_sentblock);
-					left_nested.add_info_ptr(OPT_SYM_NESTED_REDUCTION_TARGET, lhs_symbol);
-					left_nested.add_info_ptr(OPT_SYM_NESTED_REDUCTION_BOUND, bound_sym);
-				}
-				;
+				left_nested.add_info_bool(OPT_FLAG_NESTED_REDUCTION, true);
+				left_nested.add_info_ptr(OPT_SB_NESTED_REDUCTION_SCOPE, nested_sentblock);
+				left_nested.add_info_ptr(OPT_SYM_NESTED_REDUCTION_TARGET, lhs_symbol);
+				left_nested.add_info_ptr(OPT_SYM_NESTED_REDUCTION_BOUND, bound_sym);
 			}
 			if (right_nested != null) {
-				{
-					(right_nested).add_info_bool(OPT_FLAG_NESTED_REDUCTION, true);
-					(right_nested).add_info_ptr(OPT_SB_NESTED_REDUCTION_SCOPE, nested_sentblock);
-					(right_nested).add_info_ptr(OPT_SYM_NESTED_REDUCTION_TARGET, lhs_symbol);
-					(right_nested).add_info_ptr(OPT_SYM_NESTED_REDUCTION_BOUND, bound_sym);
-				}
-				;
+				(right_nested).add_info_bool(OPT_FLAG_NESTED_REDUCTION, true);
+				(right_nested).add_info_ptr(OPT_SB_NESTED_REDUCTION_SCOPE, nested_sentblock);
+				(right_nested).add_info_ptr(OPT_SYM_NESTED_REDUCTION_TARGET, lhs_symbol);
+				(right_nested).add_info_ptr(OPT_SYM_NESTED_REDUCTION_BOUND, bound_sym);
 			}
 		}
-
-		// finally delete old expression.
-		if (target != null)
-			target.dispose();
-
 	}
 }

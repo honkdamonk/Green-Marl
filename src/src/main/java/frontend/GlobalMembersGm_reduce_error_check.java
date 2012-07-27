@@ -2,20 +2,20 @@ package frontend;
 
 import inc.GM_REDUCE_T;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 import tangible.RefObject;
 import ast.ast_id;
 import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
 import common.GlobalMembersGm_misc;
 
 public class GlobalMembersGm_reduce_error_check {
-	public static boolean is_conflict(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type,
-			RefObject<Boolean> is_bound_error, RefObject<Boolean> is_type_error) {
+	public static boolean is_conflict(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type, RefObject<Boolean> is_bound_error,
+			RefObject<Boolean> is_type_error) {
 		is_type_error.argvalue = false;
 		is_bound_error.argvalue = false;
 		for (bound_info_t db : L) {
@@ -53,7 +53,7 @@ public class GlobalMembersGm_reduce_error_check {
 	}
 
 	// returns is_okay
-	public static boolean check_add_and_report_conflicts(LinkedList<bound_info_t> L, HashMap<gm_symtab_entry, gm_rwinfo_list> B) {
+	public static boolean check_add_and_report_conflicts(LinkedList<bound_info_t> L, gm_rwinfo_map B) {
 		for (gm_symtab_entry e : B.keySet()) {
 			gm_rwinfo_list l = B.get(e);
 			for (gm_rwinfo jj : l) {
@@ -87,7 +87,7 @@ public class GlobalMembersGm_reduce_error_check {
 		return true;
 	}
 
-	public static void remove_all(LinkedList<bound_info_t> L, HashMap<gm_symtab_entry, gm_rwinfo_list> B) {
+	public static void remove_all(LinkedList<bound_info_t> L, gm_rwinfo_map B) {
 		for (gm_symtab_entry e : B.keySet()) {
 			gm_rwinfo_list l = B.get(e);
 			for (gm_rwinfo jj : l) {

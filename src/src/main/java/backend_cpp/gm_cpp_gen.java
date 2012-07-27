@@ -991,7 +991,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			ast_id id = idl.get_item(i);
 			generate_lhs_id(id);
 			if (i < z - 1)
-				_Body.push_spc(',');
+				_Body.pushSpace(',');
 		}
 	}
 
@@ -1631,7 +1631,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			generate_lhs_id(id);
 			generate_lhs_default(id.getTypeSummary());
 			if (i < length - 1)
-				_Body.push_spc(',');
+				_Body.pushSpace(',');
 		}
 	}
 

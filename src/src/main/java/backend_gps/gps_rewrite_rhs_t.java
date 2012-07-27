@@ -97,7 +97,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 				continue;
 
 			// for future optimization
-			if (GlobalMembersGm_gps_new_rewrite_rhs.is_composed_of(e, props_vars)) {
+			if (is_composed_of(e, props_vars)) {
 				assert false;
 			} else {
 				gm_symtab_entry target;
@@ -115,9 +115,9 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		for (ast_expr e : exprs) {
 			// if not is_composed_of ...
 			if (e.is_field())
-				GlobalMembersGm_gps_new_rewrite_rhs.replace_access_expr(e, props_vars.get(e.get_field().get_second().getSymInfo()), true);
+				replace_access_expr(e, props_vars.get(e.get_field().get_second().getSymInfo()), true);
 			else
-				GlobalMembersGm_gps_new_rewrite_rhs.replace_access_expr(e, expr_vars.get(e), false);
+				replace_access_expr(e, expr_vars.get(e), false);
 		}
 
 		// create definitions
@@ -193,5 +193,15 @@ public class gps_rewrite_rhs_t extends gm_apply {
 			e = e.get_up_op();
 		}
 		return false;
+	}
+
+	public static boolean is_composed_of(ast_expr e, java.util.HashMap<gm_symtab_entry, gm_symtab_entry> SYMS) {
+		return false;
+	}
+
+	public static void replace_access_expr(ast_expr org, gm_symtab_entry target, boolean destroy) {
+		gm_replace_simple_props_t T = new gm_replace_simple_props_t(org, target, destroy);
+		assert org.get_parent() != null;
+		GlobalMembersGm_transform_helper.gm_replace_expr_general(org.get_parent(), T);
 	}
 }

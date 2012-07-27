@@ -66,4 +66,49 @@ public enum GM_REDUCE_T {
 		return (this == GMREDUCE_PLUS) ? "+=" : (this == GMREDUCE_MULT) ? "*=" : (this == GMREDUCE_MIN) ? "min=" : (this == GMREDUCE_MAX) ? "max="
 				: (this == GMREDUCE_AND) ? "&=" : (this == GMREDUCE_OR) ? "|=" : (this == GMREDUCE_DEFER) ? "<=" : "??";
 	}
+	
+	public String get_reduce_base_value(GMTYPE_T gm_type) {
+		switch (this) {
+		case GMREDUCE_PLUS:
+			return "0";
+		case GMREDUCE_MULT:
+			return "1";
+		case GMREDUCE_AND:
+			return "true";
+		case GMREDUCE_OR:
+			return "false";
+		case GMREDUCE_MIN:
+			switch (gm_type) {
+			case GMTYPE_INT:
+				return "Integer.MAX_VALUE";
+			case GMTYPE_LONG:
+				return "Long.MAX_VALUE";
+			case GMTYPE_FLOAT:
+				return "Float.MAX_VALUE";
+			case GMTYPE_DOUBLE:
+				return "Double.MAX_VALUE";
+			default:
+				assert false;
+				return "0";
+			}
+		case GMREDUCE_MAX:
+			switch (gm_type) {
+			case GMTYPE_INT:
+				return "Integer.MIN_VALUE";
+			case GMTYPE_LONG:
+				return "Long.MIN_VALUE";
+			case GMTYPE_FLOAT:
+				return "Float.MIN_VALUE";
+			case GMTYPE_DOUBLE:
+				return "Double.MIN_VALUE";
+			default:
+				assert false;
+				return "0";
+			}
+		default:
+			assert false;
+			break;
+		}
+		return "0";
+	}
 }

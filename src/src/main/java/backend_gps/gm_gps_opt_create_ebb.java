@@ -15,7 +15,7 @@ import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_traverse;
 
 public class gm_gps_opt_create_ebb extends gm_compile_step {
-	
+
 	private gm_gps_opt_create_ebb() {
 		set_description("Create ExtendedBasicBlocks");
 	}
@@ -47,7 +47,7 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		// STEP 3:
 		// merge BASIC BLOCKS
 		// --------------------------------
-		GlobalMembersGm_gps_bb_merge.gm_gps_merge_basic_blocks(T2.get_entry());
+		gm_gps_merge_basic_blocks(T2.get_entry());
 
 		// ---------------------------
 		// STEP 4:
@@ -84,5 +84,10 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 
 	public static gm_compile_step get_factory() {
 		return new gm_gps_opt_create_ebb();
+	}
+
+	private static void gm_gps_merge_basic_blocks(gm_gps_basic_block entry) {
+		gps_merge_simple_t T = new gps_merge_simple_t();
+		GlobalMembersGm_gps_misc.gps_bb_apply_until_no_change(entry, T);
 	}
 }

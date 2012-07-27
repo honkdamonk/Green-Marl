@@ -14,7 +14,6 @@ import static inc.GlobalMembersGm_backend_gps.GPS_REV_NODE_ID;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 import inc.gm_compile_step;
 
@@ -534,7 +533,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 				// printf("being used as reduce :%s\n",
 				// I->first->getId()->get_genname());
 				get_lib().generate_broadcast_reduce_initialize_master(entry.getId(), Body, reduce_type,
-						get_reduce_base_value(reduce_type, entry.getType().getTypeSummary()));
+						reduce_type.get_reduce_base_value(entry.getType().getTypeSummary()));
 				// [TODO] global argmax
 				continue;
 			}
@@ -1300,56 +1299,6 @@ public class gm_giraph_gen extends gm_gps_gen {
 		do_generate_job_configuration();
 
 		end_class();
-	}
-
-	// extern void gm_redirect_reproduce(FILE f);
-	// extern void gm_baseindent_reproduce(int i);
-	// extern void gm_flush_reproduce();
-	// extern void gm_redirect_reproduce(FILE f);
-	// extern void gm_baseindent_reproduce(int i);
-	public static String get_reduce_base_value(GM_REDUCE_T reduce_type, GMTYPE_T gm_type) {
-		switch (reduce_type) {
-		case GMREDUCE_PLUS:
-			return "0";
-		case GMREDUCE_MULT:
-			return "1";
-		case GMREDUCE_AND:
-			return "true";
-		case GMREDUCE_OR:
-			return "false";
-		case GMREDUCE_MIN:
-			switch (gm_type) {
-			case GMTYPE_INT:
-				return "Integer.MAX_VALUE";
-			case GMTYPE_LONG:
-				return "Long.MAX_VALUE";
-			case GMTYPE_FLOAT:
-				return "Float.MAX_VALUE";
-			case GMTYPE_DOUBLE:
-				return "Double.MAX_VALUE";
-			default:
-				assert false;
-				return "0";
-			}
-		case GMREDUCE_MAX:
-			switch (gm_type) {
-			case GMTYPE_INT:
-				return "Integer.MIN_VALUE";
-			case GMTYPE_LONG:
-				return "Long.MIN_VALUE";
-			case GMTYPE_FLOAT:
-				return "Float.MIN_VALUE";
-			case GMTYPE_DOUBLE:
-				return "Double.MIN_VALUE";
-			default:
-				assert false;
-				return "0";
-			}
-		default:
-			assert false;
-			break;
-		}
-		return "0";
 	}
 
 }

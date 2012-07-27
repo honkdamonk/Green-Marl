@@ -4,6 +4,9 @@ import inc.gm_backend_info;
 import inc.gm_compile_step;
 import inc.gm_procinfo;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.Extern;
@@ -16,29 +19,27 @@ import common.GlobalMembersGm_error;
 import common.GlobalMembersGm_traverse;
 import common.gm_vocabulary;
 
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-
 public class gm_frontend {
+	
+	private LinkedList<gm_compile_step> local_steps = new LinkedList<gm_compile_step>();
+	// ----------------------------------
+	// tempoprary fields used during parsing
+	// ----------------------------------
+	private LinkedList<ast_sentblock> blocks = new LinkedList<ast_sentblock>();
+	private ast_procdef curr_proc = null;
+	private ast_idlist curr_idlist = null;
+	private Iterator<ast_procdef> I;
+	private ArrayList<ast_procdef> procs = new ArrayList<ast_procdef>();
+	private HashMap<ast_procdef, gm_procinfo> proc_info = new HashMap<ast_procdef, gm_procinfo>();
+	private ast_procdef _curr_proc;
+	// a hack for debug
+	public boolean vardecl_removed = false; // a temporary hack
 
 	// ------------------------------------------------
 	// frontend module implementation
 	// ------------------------------------------------
 	public gm_frontend() {
-		this.curr_proc = null;
-		this.curr_idlist = null;
-		this.vardecl_removed = false;
 		init_steps();
-	}
-
-	public void dispose() {
-		// delete all procs
-		for (int i = 0; i < (int) procs.size(); i++) {
-			if (procs.get(i) != null)
-				procs.get(i).dispose();
-		}
 	}
 
 	// ----------------------------------------------------
@@ -92,14 +93,7 @@ public class gm_frontend {
 	public final void finish_id_comma_list() {
 		curr_idlist = null;
 	}
-
-	// ----------------------------------
-	// tempoprary fields used during parsing
-	// ----------------------------------
-	private java.util.LinkedList<ast_sentblock> blocks = new java.util.LinkedList<ast_sentblock>();
-	private ast_procdef curr_proc;
-	private ast_idlist curr_idlist;
-
+	
 	// -------------------------------------------------------
 	// Interface to compiler main
 	public final boolean do_local_frontend_process() {
@@ -261,11 +255,6 @@ public class gm_frontend {
 		_curr_proc = p;
 	}
 
-	private java.util.Iterator<ast_procdef> I;
-	private java.util.ArrayList<ast_procdef> procs = new java.util.ArrayList<ast_procdef>();
-	private java.util.HashMap<ast_procdef, gm_procinfo> proc_info = new java.util.HashMap<ast_procdef, gm_procinfo>();
-	private ast_procdef _curr_proc;
-
 	// void init_op_type_rules(); // operator type checkgin rules
 
 	// --------------------------------------------------------
@@ -273,12 +262,7 @@ public class gm_frontend {
 	// --------------------------------------------------------
 
 	private void init_steps() {
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: java.util.LinkedList<gm_compile_step*>& LIST =
-		// this->local_steps;
-		LinkedList<gm_compile_step> LIST = new LinkedList<gm_compile_step>(this.local_steps);
+		LinkedList<gm_compile_step> LIST = local_steps;
 
 		LIST.addLast(gm_fe_check_syntax_rules.get_factory());
 		LIST.addLast(gm_fe_syntax_sugar.get_factory());
@@ -296,14 +280,10 @@ public class gm_frontend {
 		LIST.addLast(gm_fe_check_property_argument_usage.get_factory());
 	}
 
-	private java.util.LinkedList<gm_compile_step> local_steps = new java.util.LinkedList<gm_compile_step>();
-
 	private ast_procdef get_procedure(int i) {
 		return procs.get(i);
 	}
 
-	// a hack for debug
-	public boolean vardecl_removed; // a temporary hack
 	// void restore_vardecl_all();
 
 	public final boolean is_vardecl_removed() {
@@ -314,12 +294,8 @@ public class gm_frontend {
 		vardecl_removed = b;
 	}
 
-	// C++ TO JAVA CONVERTER WARNING: The original C++ declaration of the
-	// following method implementation was not found:
 	public void restore_vardecl_all() {
-		java.util.LinkedList<gm_compile_step> L = new java.util.LinkedList<gm_compile_step>();
 		GlobalMembersGm_apply_compiler_stage.gm_apply_all_proc(gm_fe_restore_vardecl.get_factory());
-
 	}
 
 	public void print_rwinfo() {

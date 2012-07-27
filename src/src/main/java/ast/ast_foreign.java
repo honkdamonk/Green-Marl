@@ -24,11 +24,7 @@ public class ast_foreign extends ast_sent {
 		ast_foreign S = new ast_foreign();
 		S.set_expr(f);
 		f.set_parent(S);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: LinkedList<ast_node*>&L = l->LIST;
-		LinkedList<ast_node> L = new LinkedList<ast_node>(l.LIST);
+		LinkedList<ast_node> L = l.LIST;
 		for (ast_node n : L) {
 			n.set_parent(S);
 			S.modified.addLast(n);

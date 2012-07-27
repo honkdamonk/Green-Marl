@@ -4,6 +4,8 @@ import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.expr_list;
 
+import java.util.LinkedList;
+
 public class ast_expr_builtin_field extends ast_expr_builtin {
 
 	public void dispose() {
@@ -46,9 +48,8 @@ public class ast_expr_builtin_field extends ast_expr_builtin {
 		}
 
 		if (exList != null) {
-			newExpression.args = new java.util.LinkedList<ast_expr>(exList.LIST); // shallow
-																					// copy
-																					// LIST
+			// shallow copy LIST
+			newExpression.args = new LinkedList<ast_expr>(exList.LIST); 
 			// but not set 'up' pointer.
 			for (ast_expr e : newExpression.args)
 				e.set_parent(newExpression);

@@ -15,22 +15,43 @@ import ast.ast_sentblock;
 
 import common.GlobalMembersGm_main;
 
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-
-// backend information per each procedure
+/** backend information per each procedure */
 public class gm_gps_beinfo extends gm_backend_info {
+
+	private ast_procdef body;
+	/** entry for the procedure basic blocks (DAG) */
+	private gm_gps_basic_block bb_entry = null;
+	/** same as above DAG, but flattened as list */
+	private LinkedList<gm_gps_basic_block> bb_blocks = new LinkedList<gm_gps_basic_block>();
+	/** list of persistent master symbols */
+	private HashSet<gm_symtab_entry> scalar = new HashSet<gm_symtab_entry>();
+	/** list of persistent property symbols */
+	private HashSet<gm_symtab_entry> node_prop = new HashSet<gm_symtab_entry>();
+	/** list of persistent property symbols */
+	private HashSet<gm_symtab_entry> edge_prop = new HashSet<gm_symtab_entry>();
+	private int total_node_prop_size = 0;
+	private int total_edge_prop_size = 0;
+
+	/**
+	 * map of inner loops (possible communications) and symbols used for the
+	 * communication in the loop.
+	 */
+	private HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>> comm_symbol_info = new HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>>();
+	private HashMap<gm_gps_comm_unit, gm_gps_communication_size_info> comm_size_info = new HashMap<gm_gps_comm_unit, gm_gps_communication_size_info>();
+	private gm_gps_communication_size_info max_comm_size = new gm_gps_communication_size_info();
+
+	/** set of communications */
+	private HashSet<gm_gps_comm_unit> comm_loops = new HashSet<gm_gps_comm_unit>();
+	private HashMap<gm_gps_comm_unit, LinkedList<ast_sent>> random_write_sents = new HashMap<gm_gps_comm_unit, LinkedList<ast_sent>>();
+	/** congruent message class information */
+	private LinkedList<gm_gps_congruent_msg_class> congruent_msg = new LinkedList<gm_gps_congruent_msg_class>();
+
+	private int comm_id = 0;
+	private int basicblock_id = 0;
+	private boolean rand_used = false;
 
 	public gm_gps_beinfo(ast_procdef d) {
 		body = d;
-		comm_id = 0;
-		basicblock_id = 0;
-		total_node_prop_size = 0;
-		total_edge_prop_size = 0;
-		rand_used = false;
-		bb_entry = null;
 	}
 
 	public void dispose() {
@@ -51,8 +72,6 @@ public class gm_gps_beinfo extends gm_backend_info {
 	// -------------------------------------------------------------------
 	// inner loops (a.k.a. communication loops) are seperately managed.
 	// -------------------------------------------------------------------
-	// public final HashSet<gm_gps_comm_unit, gm_gps_comm_unit>
-	// get_communication_loops() {
 	public final HashSet<gm_gps_comm_unit> get_communication_loops() {
 		return comm_loops;
 	}
@@ -89,10 +108,7 @@ public class gm_gps_beinfo extends gm_backend_info {
 
 	// prepare to manage a communication loop
 	public final void add_communication_unit(gm_gps_comm_unit C) {
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: if (comm_loops.find(C) != comm_loops.end())
+
 		if (comm_loops.contains(C)) // already added
 			return;
 
@@ -214,22 +230,6 @@ public class gm_gps_beinfo extends gm_backend_info {
 		return find_communication_size_info(U);
 	}
 
-	/*
-	 * gm_gps_communication_symbol_info&
-	 * gm_gps_beinfo::find_communication_symbol_info( ast_foreach* fe, int
-	 * comm_type, gm_symtab_entry* sym) { gm_gps_comm_unit U(comm_type, fe);
-	 * assert(comm_symbol_info.find(U) != comm_symbol_info.end());
-	 * 
-	 * std::list<gm_gps_communication_symbol_info>& sym_info =
-	 * comm_symbol_info[U];
-	 * std::list<gm_gps_communication_symbol_info>::iterator I;
-	 * for(I=sym_info.begin(); I!= sym_info.end();I++) {
-	 * gm_gps_communication_symbol_info& S = *I; if (S.symbol == sym) return S;
-	 * // already added }
-	 * 
-	 * assert(false); }
-	 */
-
 	public final gm_gps_communication_size_info find_communication_size_info(gm_gps_comm_unit U) {
 		assert comm_size_info.containsKey(U);
 		return comm_size_info.get(U);
@@ -237,30 +237,19 @@ public class gm_gps_beinfo extends gm_backend_info {
 
 	// get maximum communication size over all comm-loops
 	public final void compute_max_communication_size() {
-		for (gm_gps_comm_unit unit : this.comm_loops) {
-			ast_foreach fe = unit.fe;
-			gm_gps_communication_size_info size_info = (comm_size_info.get(unit));
+		for (gm_gps_comm_unit unit : comm_loops) {
 
-			if (max_comm_size.num_int < size_info.num_int) {
+			gm_gps_communication_size_info size_info = (comm_size_info.get(unit));
+			if (max_comm_size.num_int < size_info.num_int)
 				max_comm_size.num_int = size_info.num_int;
-			}
-			;
-			if (max_comm_size.num_bool < size_info.num_bool) {
+			if (max_comm_size.num_bool < size_info.num_bool)
 				max_comm_size.num_bool = size_info.num_bool;
-			}
-			;
-			if (max_comm_size.num_long < size_info.num_long) {
+			if (max_comm_size.num_long < size_info.num_long)
 				max_comm_size.num_long = size_info.num_long;
-			}
-			;
-			if (max_comm_size.num_float < size_info.num_float) {
+			if (max_comm_size.num_float < size_info.num_float)
 				max_comm_size.num_float = size_info.num_float;
-			}
-			;
-			if (max_comm_size.num_double < size_info.num_double) {
+			if (max_comm_size.num_double < size_info.num_double)
 				max_comm_size.num_double = size_info.num_double;
-			}
-			;
 		}
 
 		assert comm_loops.size() <= 255;
@@ -337,75 +326,4 @@ public class gm_gps_beinfo extends gm_backend_info {
 		return congruent_msg.size() == 0;
 	}
 
-	private ast_procdef body;
-
-	private gm_gps_basic_block bb_entry; // entry for the procedure basic blocks
-											// (DAG)
-	private LinkedList<gm_gps_basic_block> bb_blocks = new LinkedList<gm_gps_basic_block>(); // same
-																								// as
-																								// above
-																								// DAG,
-																								// but
-																								// flattened
-																								// as
-																								// list
-	// (created by gm_gps_bb_find_reachable.cc)
-
-	private HashSet<gm_symtab_entry> scalar = new HashSet<gm_symtab_entry>(); // list
-																				// of
-																				// persistent
-																				// master
-																				// symbols
-	private HashSet<gm_symtab_entry> node_prop = new HashSet<gm_symtab_entry>(); // list
-																					// of
-																					// persistent
-																					// property
-																					// symbols
-	private HashSet<gm_symtab_entry> edge_prop = new HashSet<gm_symtab_entry>(); // list
-																					// of
-																					// persistent
-																					// property
-																					// symbols
-	private int total_node_prop_size;
-	private int total_edge_prop_size;
-
-	// map of inner loops (possible communications) and
-	// symbols used for the communication in the loop.
-	// private HashMap<gm_gps_comm_unit,
-	// LinkedList<gm_gps_communication_symbol_info>, gm_gps_comm_unit>
-	// comm_symbol_info = new HashMap<gm_gps_comm_unit,
-	// LinkedList<gm_gps_communication_symbol_info>, gm_gps_comm_unit>();
-	private HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>> comm_symbol_info = new HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>>();
-	// private HashMap<gm_gps_comm_unit, gm_gps_communication_size_info,
-	// gm_gps_comm_unit> comm_size_info = new HashMap<gm_gps_comm_unit,
-	// gm_gps_communication_size_info, gm_gps_comm_unit>();
-	private HashMap<gm_gps_comm_unit, gm_gps_communication_size_info> comm_size_info = new HashMap<gm_gps_comm_unit, gm_gps_communication_size_info>();
-
-	private gm_gps_communication_size_info max_comm_size = new gm_gps_communication_size_info();
-
-	// set of communications
-	// private HashSet<gm_gps_comm_unit, gm_gps_comm_unit> comm_loops = new
-	// HashSet<gm_gps_comm_unit, gm_gps_comm_unit>();
-	private HashSet<gm_gps_comm_unit> comm_loops = new HashSet<gm_gps_comm_unit>();
-
-	// private HashMap<gm_gps_comm_unit, LinkedList<ast_sent>, gm_gps_comm_unit>
-	// random_write_sents = new HashMap<gm_gps_comm_unit, LinkedList<ast_sent>,
-	// gm_gps_comm_unit>();
-	private HashMap<gm_gps_comm_unit, LinkedList<ast_sent>> random_write_sents = new HashMap<gm_gps_comm_unit, LinkedList<ast_sent>>();
-
-	// congruent message class information
-	private LinkedList<gm_gps_congruent_msg_class> congruent_msg = new LinkedList<gm_gps_congruent_msg_class>();
-
-	private int comm_id;
-	private int basicblock_id;
-	private boolean rand_used;
-
 }
-// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-// /#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step {
-// private: CLASS() {set_description(DESC);}public: virtual void
-// process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new
-// CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-// /#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-

@@ -21,9 +21,6 @@ public class ast_idlist extends ast_node {
 		return copy(false);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: ast_idlist* copy(boolean cp_sym = false)
 	public final ast_idlist copy(boolean cp_sym) {
 		ast_idlist cpy = new ast_idlist();
 		for (int i = 0; i < (int) lst.size(); i++)

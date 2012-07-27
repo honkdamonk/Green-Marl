@@ -1,5 +1,8 @@
 package common;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -73,7 +76,6 @@ public class gm_replace_symbol_access_t extends gm_apply {
 	}
 
 	public final boolean apply(ast_expr e) {
-		ast_id new_id;
 		if (e.is_id() && (INFO.src_scalar)) {
 			ast_id i = e.get_id();
 			if (i.getSymInfo() == INFO.src) {
@@ -139,10 +141,11 @@ public class gm_replace_symbol_access_t extends gm_apply {
 
 			// lhs list
 			if (a.has_lhs_list()) {
-				java.util.LinkedList<ast_node> lhs_list = a.get_lhs_list();
-				java.util.Iterator<ast_node> I;
-				java.util.LinkedList<java.util.Iterator<ast_node>> to_be_removed = new java.util.LinkedList<java.util.Iterator<ast_node>>();
-				for (I = lhs_list.iterator(); I.hasNext();) {
+				LinkedList<ast_node> lhs_list = a.get_lhs_list();
+				Iterator<ast_node> I;
+				LinkedList<ast_node> to_be_removed = new LinkedList<ast_node>();
+				int i = 0;
+				for (I = lhs_list.iterator(); I.hasNext(); i++) {
 					ast_node n = I.next();
 					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) n;
@@ -150,40 +153,22 @@ public class gm_replace_symbol_access_t extends gm_apply {
 
 							// insert new lhs in front of this one
 							ast_node new_target = make_replace(id);
-							// C++ TO JAVA CONVERTER TODO TASK: There is no
-							// direct equivalent to the STL list 'insert' method
-							// in Java:
-							lhs_list.insert(I, new_target);
-
-							to_be_removed.addLast(I);
+							lhs_list.add(i, new_target);
+							to_be_removed.addLast(n);
 						}
 					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
 						ast_field f = (ast_field) n;
 						if ((f.get_first().getSymInfo() == INFO.s_drv) && (f.get_second().getSymInfo() == INFO.src)) {
 							// insert new lhs in front of this one
 							ast_node new_target = make_replace(f);
-							// C++ TO JAVA CONVERTER TODO TASK: There is no
-							// direct equivalent to the STL list 'insert' method
-							// in Java:
-							lhs_list.insert(I, new_target);
-
-							to_be_removed.addLast(I);
+							lhs_list.add(i, new_target);
+							to_be_removed.addLast(n);
 						}
 					} else {
 						assert false;
 					}
 				}
-
-				java.util.Iterator<java.util.Iterator<ast_node>> J;
-				for (J = to_be_removed.iterator(); J.hasNext();) {
-					java.util.Iterator<ast_node> I = J.next();
-					ast_node n = I.next();
-					// C++ TO JAVA CONVERTER TODO TASK: There is no direct
-					// equivalent to the STL list 'erase' method in Java:
-					lhs_list.erase(I);
-					if (n != null)
-						n.dispose();
-				}
+				to_be_removed.clear();
 			}
 
 		}

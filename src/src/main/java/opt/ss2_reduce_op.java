@@ -40,7 +40,6 @@ import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
 
-
 //---------------------------------------------------
 // reduction_op => initialization + foreach + reduction_assign
 // <e.g>
@@ -51,10 +50,10 @@ import common.gm_method_id_t;
 //     X = Y + _t;
 //---------------------------------------------------
 public class ss2_reduce_op extends gm_apply {
-	
+
 	// ReduceOps that should be replaced
-	protected LinkedList<ast_expr_reduce> targets = new LinkedList<ast_expr_reduce>(); 
-	
+	protected LinkedList<ast_expr_reduce> targets = new LinkedList<ast_expr_reduce>();
+
 	public ss2_reduce_op() {
 		set_for_expr(true);
 	}
@@ -81,9 +80,8 @@ public class ss2_reduce_op extends gm_apply {
 	protected final void post_process_body(ast_expr_reduce target) {
 
 		GMTYPE_T expr_type = target.get_body().get_type_summary();
-		boolean is_nested = target.find_info_bool(OPT_FLAG_NESTED_REDUCTION); // true
-																											// if
-																											// nested
+		// true if nested
+		boolean is_nested = target.find_info_bool(OPT_FLAG_NESTED_REDUCTION);
 		GM_REDUCE_T rtype = target.get_reduce_type();
 		boolean is_avg = (rtype == GM_REDUCE_T.GMREDUCE_AVG);
 
@@ -165,18 +163,20 @@ public class ss2_reduce_op extends gm_apply {
 				break;
 			}
 
-			boolean need_count_for_avg = false;
+			// FIXME: was need_count_for_avg - seems to be a bug in the cpp
+			// compiler
+			boolean need_count_for_avg1 = false;
 			if (is_avg) {
 				rtype = GM_REDUCE_T.GMREDUCE_PLUS; // Need sum
 
-				need_count_for_avg = true;
+				need_count_for_avg1 = true;
 				if (target.get_filter() == null) {
 					GMTYPE_T iter_type = target.get_iter_type();
 					GMTYPE_T src_type = target.get_source().getTypeInfo().getTypeSummary();
 					if (find_count_function(src_type, iter_type) == gm_method_id_t.GM_BLTIN_END)
-						need_count_for_avg = true;
+						need_count_for_avg1 = true;
 					else
-						need_count_for_avg = false;
+						need_count_for_avg1 = false;
 				}
 			}
 
@@ -196,8 +196,8 @@ public class ss2_reduce_op extends gm_apply {
 
 				cnt_symbol = insert_def_and_init_before(temp_cnt, GMTYPE_LONG, holder, ast_expr.new_ival_expr(0));
 
-				avg_val_symbol = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, (expr_type == GMTYPE_FLOAT) ? GMTYPE_FLOAT
-						: GMTYPE_DOUBLE, new RefObject<String>(temp_avg));
+				avg_val_symbol = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, (expr_type == GMTYPE_FLOAT) ? GMTYPE_FLOAT : GMTYPE_DOUBLE,
+						new RefObject<String>(temp_avg));
 			}
 		}
 
@@ -236,11 +236,11 @@ public class ss2_reduce_op extends gm_apply {
 
 			if (need_count_for_avg) {
 				ast_sentblock sb = ast_sentblock.new_sentblock();
-				ast_id lhs_id = cnt_symbol.getId().copy(true); // symInfo is
-																// correct for
-																// LHS
+				// symInfo is correct for LHS
+				// FIXME: was lhs_id - seems to be a bug in the cpp gm-compiler
+				ast_id lhs_id1 = cnt_symbol.getId().copy(true);
 				bound_id2 = old_iter.copy(false); // symInfo not available yet
-				ast_assign r_assign2 = ast_assign.new_assign_scala(lhs_id, ast_expr.new_ival_expr(1), gm_assignment_t.GMASSIGN_REDUCE, bound_id2,
+				ast_assign r_assign2 = ast_assign.new_assign_scala(lhs_id1, ast_expr.new_ival_expr(1), gm_assignment_t.GMASSIGN_REDUCE, bound_id2,
 						GM_REDUCE_T.GMREDUCE_PLUS);
 
 				GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(sb, r_assign);

@@ -4,6 +4,7 @@ import inc.gm_compile_step;
 import ast.ast_procdef;
 
 public class gm_fe_typecheck_step5 extends gm_compile_step {
+	
 	private gm_fe_typecheck_step5() {
 		set_description("Typecheck: check assignments and call-sites");
 	}

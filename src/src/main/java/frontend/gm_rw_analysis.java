@@ -35,10 +35,9 @@ import common.gm_builtin_def;
 // (Should be 'post-applying')
 //----------------------------------------------------
 public class gm_rw_analysis extends gm_apply {
-	public gm_rw_analysis() {
-		_succ = true;
-	}
-
+	
+	private boolean _succ = true;
+	
 	@Override
 	public boolean apply(ast_sent s) {
 		boolean b = true;
@@ -515,5 +514,4 @@ public class gm_rw_analysis extends gm_apply {
 
 	}
 
-	private boolean _succ;
 }

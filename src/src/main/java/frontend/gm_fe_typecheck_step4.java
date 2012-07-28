@@ -4,6 +4,7 @@ import inc.gm_compile_step;
 import ast.ast_procdef;
 
 public class gm_fe_typecheck_step4 extends gm_compile_step {
+	
 	private gm_fe_typecheck_step4() {
 		set_description("Typecheck: determine size of INF");
 	}
@@ -23,4 +24,5 @@ public class gm_fe_typecheck_step4 extends gm_compile_step {
 	public static gm_compile_step get_factory() {
 		return new gm_fe_typecheck_step4();
 	}
+	
 }

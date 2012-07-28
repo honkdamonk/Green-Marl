@@ -1,6 +1,21 @@
 package frontend;
 
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_ITERATOR_FOR_RARROW;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_OUTPUT_TYPE;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_BFS_ITERATION;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_ITERATOR;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_NONGRAPH_FIELD;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_NONNODE_TARGET;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY;
+import static frontend.GlobalMembersGm_typecheck.GM_READ_AVAILABLE;
+import static frontend.GlobalMembersGm_typecheck.GM_READ_NOT_AVAILABLE;
+import static frontend.GlobalMembersGm_typecheck.GM_WRITE_AVAILABLE;
+import static frontend.GlobalMembersGm_typecheck.GM_WRITE_NOT_AVAILABLE;
 import inc.GMTYPE_T;
+
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_argdecl;
 import ast.ast_assign;
@@ -21,25 +36,9 @@ import ast.ast_sent;
 import ast.ast_typedecl;
 import ast.ast_vardecl;
 
-import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
 import common.GlobalMembersGm_main;
 import common.gm_apply;
-
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define AUX_INFO(X,Y) "X"":""Y"
-///#define GM_BLTIN_MUTATE_GROW 1
-///#define GM_BLTIN_MUTATE_SHRINK 2
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_BLTIN_FLAG_TRUE true
 
 //----------------------------------------------------------------
 // Type-check  Step 1: 
@@ -66,15 +65,23 @@ import common.gm_apply;
 //                   * target graph should match
 //           
 //----------------------------------------------------------------
-
 public class gm_typechecker_stage_1 extends gm_apply {
+
+	// symbol tables
+	private LinkedList<gm_symtab> var_syms = new LinkedList<gm_symtab>();
+	private LinkedList<gm_symtab> field_syms = new LinkedList<gm_symtab>();
+	private LinkedList<gm_symtab> proc_syms = new LinkedList<gm_symtab>();
+
+	private gm_symtab curr_sym = null;
+	private gm_symtab curr_field = null;
+	private gm_symtab curr_proc = null;
+
+	private boolean _is_okay = true;
+
 	public gm_typechecker_stage_1() {
 		set_for_expr(true);
 		set_for_sent(true);
 		set_for_proc(true);
-		_is_okay = true;
-
-		curr_sym = curr_field = curr_proc = null;
 	}
 
 	// --------------------------------------------------------
@@ -83,7 +90,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 	public boolean apply(ast_procdef p) {
 		boolean is_okay = true;
 		// add arguments to the current symbol table
-		java.util.LinkedList<ast_argdecl> in_args = p.get_in_args();
+		LinkedList<ast_argdecl> in_args = p.get_in_args();
 		for (ast_argdecl a : in_args) {
 			ast_typedecl type = a.get_type();
 			boolean b = GlobalMembersGm_new_typecheck_step1.gm_check_type_is_well_defined(type, curr_sym);
@@ -93,8 +100,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				gm_symtab S = type.is_property() ? curr_field : curr_sym;
 				for (int i = 0; i < idlist.get_length(); i++) {
 					ast_id id = idlist.get_item(i);
-					is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(S, id, type, GlobalMembersGm_typecheck.GM_READ_AVAILABLE,
-							GlobalMembersGm_typecheck.GM_WRITE_NOT_AVAILABLE) && is_okay;
+					is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(S, id, type, GM_READ_AVAILABLE, GM_WRITE_NOT_AVAILABLE) && is_okay;
 					if (is_okay) {
 						id.getSymInfo().setArgument(true);
 					}
@@ -102,7 +108,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			}
 		}
 
-		java.util.LinkedList<ast_argdecl> out_args = p.get_out_args();
+		LinkedList<ast_argdecl> out_args = p.get_out_args();
 		for (ast_argdecl a : out_args) {
 			ast_typedecl type = a.get_type();
 			boolean b = GlobalMembersGm_new_typecheck_step1.gm_check_type_is_well_defined(type, curr_sym);
@@ -111,14 +117,14 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				// ast_idlist idlist = a.get_idlist();
 				// only primitives or nodes or edges can be an output
 				if (!type.is_primitive() && !type.is_nodeedge()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_OUTPUT_TYPE, type.get_line(), type.get_col());
+					GlobalMembersGm_error.gm_type_error(GM_ERROR_INVALID_OUTPUT_TYPE, type.get_line(), type.get_col());
 					is_okay = false;
 				} else {
 					ast_idlist idlist = a.get_idlist();
 					for (int i = 0; i < idlist.get_length(); i++) {
 						ast_id id = idlist.get_item(i);
-						is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, id, type, GlobalMembersGm_typecheck.GM_READ_NOT_AVAILABLE,
-								GlobalMembersGm_typecheck.GM_WRITE_AVAILABLE) && is_okay;
+						is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, id, type, GM_READ_NOT_AVAILABLE, GM_WRITE_AVAILABLE)
+								&& is_okay;
 						if (is_okay) {
 							id.getSymInfo().setArgument(true);
 						}
@@ -138,7 +144,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		}
 		is_okay = GlobalMembersGm_new_typecheck_step1.gm_check_type_is_well_defined(ret, curr_sym) && is_okay;
 		if (!ret.is_void() && !ret.is_primitive() && !ret.is_nodeedge()) {
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_OUTPUT_TYPE, ret.get_line(), ret.get_col());
+			GlobalMembersGm_error.gm_type_error(GM_ERROR_INVALID_OUTPUT_TYPE, ret.get_line(), ret.get_col());
 			is_okay = false;
 		}
 
@@ -188,7 +194,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		}
 		case GMEXPR_FOREIGN: {
 			ast_expr_foreign f = (ast_expr_foreign) p;
-			java.util.LinkedList<ast_node> L = f.get_parsed_nodes();
+			LinkedList<ast_node> L = f.get_parsed_nodes();
 			for (ast_node n : L) {
 				if (n == null)
 					continue;
@@ -229,15 +235,13 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				gm_symtab S = type.is_property() ? curr_field : curr_sym;
 				for (int i = 0; i < idlist.get_length(); i++) {
 					ast_id id = idlist.get_item(i);
-					is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(S, id, type, GlobalMembersGm_typecheck.GM_READ_AVAILABLE,
-							GlobalMembersGm_typecheck.GM_WRITE_AVAILABLE) && is_okay;
+					is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(S, id, type, GM_READ_AVAILABLE, GM_WRITE_AVAILABLE) && is_okay;
 				}
 			}
 
 			v.set_tc_finished(true); // why?
 			break;
 		}
-
 		// check lhs and bound symbol
 		case AST_ASSIGN: {
 			ast_assign a = (ast_assign) s;
@@ -251,7 +255,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			}
 
 			if (a.is_argminmax_assign()) {
-				java.util.LinkedList<ast_node> L = a.get_lhs_list();
+				LinkedList<ast_node> L = a.get_lhs_list();
 				for (ast_node n : L) {
 					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) n;
@@ -270,7 +274,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				if (is_okay) {
 					// bound symbol must be iterator
 					if (!bound.getTypeInfo().is_node_edge_iterator() && !bound.getTypeInfo().is_collection_iterator()) {
-						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_ITERATOR, bound);
+						GlobalMembersGm_error.gm_type_error(GM_ERROR_NEED_ITERATOR, bound);
 						is_okay = false;
 					}
 				}
@@ -278,7 +282,6 @@ public class gm_typechecker_stage_1 extends gm_apply {
 
 			break;
 		}
-
 		// check bound symbol
 		case AST_FOREACH: {
 			ast_foreach fe = (ast_foreach) s;
@@ -293,7 +296,6 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			}
 			break;
 		}
-
 		case AST_BFS: {
 			ast_bfs bfs = (ast_bfs) s;
 			is_okay = gm_symbol_check_bfs_header(bfs.get_iterator(), bfs.get_source(), bfs.get_root(), bfs.get_iter_type());
@@ -304,22 +306,20 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			String tname = GlobalMembersGm_main.FE.voca_temp_name("nx");
 			ast_id iter2 = ast_id.new_id(tname, bfs.get_iterator().get_line(), bfs.get_iterator().get_col());
 			ast_typedecl type = ast_typedecl.new_nbr_iterator(bfs.get_iterator().copy(true), bfs.get_iter_type2());
-			is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, iter2, type, GlobalMembersGm_typecheck.GM_READ_AVAILABLE,
-					GlobalMembersGm_typecheck.GM_WRITE_NOT_AVAILABLE) && is_okay;
+			is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, iter2, type, GM_READ_AVAILABLE, GM_WRITE_NOT_AVAILABLE) && is_okay;
 			if (type != null)
 				type.dispose();
 			tname = null;
 			bfs.set_iterator2(iter2);
 			break;
 		}
-
 		case AST_FOREIGN: {
 			ast_foreign f = (ast_foreign) s;
 
 			// -----------------------------------
 			// examine mutation list
 			// -----------------------------------
-			java.util.LinkedList<ast_node> L = f.get_modified();
+			LinkedList<ast_node> L = f.get_modified();
 			for (ast_node node : L) {
 				if (node.get_nodetype() == AST_NODE_TYPE.AST_ID) {
 					ast_id id = (ast_id) node;
@@ -337,7 +337,6 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			}
 			break;
 		}
-
 		// expressions will be considiered when apply(ast_expr*) is invoked
 		case AST_SENTBLOCK:
 		case AST_CALL:
@@ -346,9 +345,8 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		case AST_NOP:
 		case AST_RETURN:
 			break;
-
 		default:
-			System.out.printf("type = %s\n", s.get_nodetype().get_nodetype_string());
+			System.out.println("type = " + s.get_nodetype().get_nodetype_string());
 			assert false;
 			break;
 		}
@@ -416,12 +414,12 @@ public class gm_typechecker_stage_1 extends gm_apply {
 					.is_collection_iterator())) // for group assignment - for
 												// group assignment
 			{
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONGRAPH_FIELD, driver);
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_NONGRAPH_FIELD, driver);
 				is_okay = false;
 			}
 
 			if (!field_type.is_property()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, field, "property");
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "property");
 				is_okay = false;
 			}
 
@@ -436,11 +434,11 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				GMTYPE_T type = name_type.getTypeSummary();
 				if (!(type.is_inout_nbr_node_iter_type() || (type == GMTYPE_T.GMTYPE_NODEITER_BFS))) {
 					// not BFS, not in-out
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_ITERATOR_FOR_RARROW, driver);
+					GlobalMembersGm_error.gm_type_error(GM_ERROR_INVALID_ITERATOR_FOR_RARROW, driver);
 					return false;
 				}
 				if (!field_type.is_edge_property()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, field, "Edge_Property");
+					GlobalMembersGm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "Edge_Property");
 					return false;
 				}
 			} else {
@@ -449,12 +447,12 @@ public class gm_typechecker_stage_1 extends gm_apply {
 					// to be resolved more later (group assignment)
 				} else if (name_type.is_node_compatible()) {
 					if (!field_type.is_node_property()) {
-						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, field, "Node_Property");
+						GlobalMembersGm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "Node_Property");
 						return false;
 					}
 				} else if (name_type.is_edge_compatible()) {
 					if (!field_type.is_edge_property()) {
-						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, field, "Edge_Property");
+						GlobalMembersGm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "Edge_Property");
 						return false;
 					}
 				} else {
@@ -464,7 +462,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 
 			// check target graph matches
 			if (!GlobalMembersGm_new_typecheck_step1.gm_check_target_graph(driver, field)) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH, driver, field);
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, driver, field);
 				return false;
 			}
 		}
@@ -520,14 +518,14 @@ public class gm_typechecker_stage_1 extends gm_apply {
 
 				ast_typedecl type = n.getTypeInfo();
 				if (!type.is_node_compatible()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONNODE_TARGET, n, n);
+					GlobalMembersGm_error.gm_type_error(GM_ERROR_NONNODE_TARGET, n, n);
 					is_okay = false;
 				}
 
 				// In/Down is only available inside BFS -> checked at step 2
 				if (iter_type.is_iteration_on_updown_levels()) {
 					if (n.getTypeSummary().is_iteration_bfs()) {
-						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_BFS_ITERATION, n);
+						GlobalMembersGm_error.gm_type_error(GM_ERROR_NEED_BFS_ITERATION, n);
 						is_okay = false;
 					}
 				}
@@ -542,7 +540,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 						gm_symtab_entry e2 = src2.getTypeInfo().get_target_graph_sym();
 						assert e1 != null;
 						if (e1 != e2) {
-							GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH, src2.get_line(), src2.get_col());
+							GlobalMembersGm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, src2.get_line(), src2.get_col());
 							is_okay = false;
 						}
 					}
@@ -572,14 +570,12 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		}
 
 		if (iter_type.is_iteration_on_property())
-			is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, it, type, GlobalMembersGm_typecheck.GM_READ_AVAILABLE,
-					GlobalMembersGm_typecheck.GM_WRITE_NOT_AVAILABLE, curr_field);
+			is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, it, type, GM_READ_AVAILABLE, GM_WRITE_NOT_AVAILABLE, curr_field);
 		else if (src.getTypeInfo().is_collection_of_collection())
-			is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, it, type, GlobalMembersGm_typecheck.GM_READ_AVAILABLE,
-					GlobalMembersGm_typecheck.GM_WRITE_NOT_AVAILABLE, null, src.getTargetTypeSummary());
+			is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, it, type, GM_READ_AVAILABLE, GM_WRITE_NOT_AVAILABLE, null,
+					src.getTargetTypeSummary());
 		else
-			is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, it, type, GlobalMembersGm_typecheck.GM_READ_AVAILABLE,
-					GlobalMembersGm_typecheck.GM_WRITE_NOT_AVAILABLE);
+			is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, it, type, GM_READ_AVAILABLE, GM_WRITE_NOT_AVAILABLE);
 
 		if (type != null)
 			type.dispose();
@@ -598,7 +594,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			// root should be a node. and target should be the graph
 			ast_typedecl t_root = root.getTypeInfo();
 			if (!t_root.is_node_compatible()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONNODE_TARGET, root, root);
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_NONNODE_TARGET, root, root);
 				is_okay = false;
 			}
 		}
@@ -607,31 +603,19 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			// check root is a node of src
 			is_okay = GlobalMembersGm_new_typecheck_step1.gm_check_target_graph(src, root);
 			if (!is_okay)
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH, src, root);
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, src, root);
 		}
 
 		// -----------------------------------------
 		// create iteator
 		// -----------------------------------------
 		ast_typedecl type = ast_typedecl.new_nodeedge_iterator(src.copy(true), iter_type);
-		is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, it, type, GlobalMembersGm_typecheck.GM_READ_AVAILABLE,
-				GlobalMembersGm_typecheck.GM_WRITE_NOT_AVAILABLE) && is_okay;
+		is_okay = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(curr_sym, it, type, GM_READ_AVAILABLE, GM_WRITE_NOT_AVAILABLE) && is_okay;
 		if (type != null)
 			type.dispose();
 
 		return is_okay;
 	}
-
-	// symbol tables
-	private java.util.LinkedList<gm_symtab> var_syms = new java.util.LinkedList<gm_symtab>();
-	private java.util.LinkedList<gm_symtab> field_syms = new java.util.LinkedList<gm_symtab>();
-	private java.util.LinkedList<gm_symtab> proc_syms = new java.util.LinkedList<gm_symtab>();
-
-	private gm_symtab curr_sym;
-	private gm_symtab curr_field;
-	private gm_symtab curr_proc;
-
-	private boolean _is_okay;
 
 	// if sourceId is defined as a field variable (= is a property) the iter
 	// type should be a property iterator
@@ -665,4 +649,3 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		}
 	}
 }
-// bool gm_frontend::do_typecheck_step1_create_symbol_table(ast_procdef* p)

@@ -9,23 +9,8 @@ import common.GlobalMembersGm_dumptree;
 import common.gm_apply;
 
 // Numeric or boolean expression
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class gm_builtin_def;
-// defined in gm_builtin.h
 
 public class ast_expr extends ast_node {
-	public void dispose() {
-		if (id1 != null)
-			id1.dispose();
-		if (field != null)
-			field.dispose();
-		if (left != null)
-			left.dispose(); // object is new-ed
-		if (right != null)
-			right.dispose();
-		if (cond != null)
-			cond.dispose();
-	}
 
 	public void reproduce(int ind_level) {
 
@@ -153,13 +138,13 @@ public class ast_expr extends ast_node {
 			System.out.printf("%cINF", plus_inf ? '+' : '-');
 			return;
 		case GMEXPR_IVAL:
-			System.out.printf("%ld", ival);
+			System.out.print(ival);
 			return;
 		case GMEXPR_FVAL:
-			System.out.printf("%fl", fval);
+			System.out.print(fval);
 			return;
 		case GMEXPR_BVAL:
-			System.out.printf("%s", bval ? "true" : "false");
+			System.out.print(bval ? "true" : "false");
 			return;
 		case GMEXPR_ID:
 			id1.dump_tree(0);

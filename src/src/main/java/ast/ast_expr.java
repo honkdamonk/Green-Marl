@@ -11,6 +11,36 @@ import common.gm_apply;
 // Numeric or boolean expression
 
 public class ast_expr extends ast_node {
+	
+	protected GMEXPR_CLASS expr_class = GMEXPR_CLASS.GMEXPR_ID;
+	protected ast_expr left = null;
+	protected ast_expr right = null;
+	protected ast_expr cond = null;
+	protected ast_expr up = null;
+	protected ast_id id1 = null;
+	protected ast_field field = null;
+	protected int ival = 0;
+	protected double fval = 0.0d;
+	protected boolean bval = false;
+	protected boolean plus_inf = false;
+	protected GM_OPS_T op_type = GM_OPS_T.GMOP_END;
+	
+	/** am I a right-operand? */
+	protected boolean is_right = false;
+	/** am I a conditional-operand? */
+	protected boolean is_cond = false; 
+
+	/** set after local typecheck */
+	protected GMTYPE_T type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
+	/** used for group-assignment only. (during type checking) */
+	protected GMTYPE_T alternative_type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
+	/** used only during typecheck */
+	protected gm_symtab_entry bound_graph_sym = null; 
+	
+	
+	protected ast_expr() {
+		super(AST_NODE_TYPE.AST_EXPR);
+	}
 
 	public void reproduce(int ind_level) {
 
@@ -224,21 +254,21 @@ public class ast_expr extends ast_node {
 		boolean for_symtab = a.is_for_symtab();
 		boolean for_rhs = a.is_for_rhs();
 
-		if (!(for_id || for_expr || for_symtab || for_rhs)) // no more sentence
-															// behind this
+		// no more sentence behind this
+		if (!(for_id || for_expr || for_symtab || for_rhs)) 
 			return;
 
 		if (for_expr && is_pre)
 			a.apply(this);
 
-		boolean b = a.has_separate_post_apply();
+		boolean hasSeparateApply = a.has_separate_post_apply();
 		switch (get_opclass()) {
 		case GMEXPR_ID:
 			if (for_id) {
 				if (is_pre)
 					a.apply(get_id());
 				if (is_post) {
-					if (b)
+					if (hasSeparateApply)
 						a.apply2(get_id());
 					else
 						a.apply(get_id());
@@ -248,7 +278,7 @@ public class ast_expr extends ast_node {
 				if (is_pre)
 					a.apply_rhs(get_id());
 				if (is_post) {
-					if (b)
+					if (hasSeparateApply)
 						a.apply_rhs2(get_id());
 					else
 						a.apply_rhs(get_id());
@@ -262,7 +292,7 @@ public class ast_expr extends ast_node {
 					a.apply(get_field().get_second());
 				}
 				if (is_post) {
-					if (b) {
+					if (hasSeparateApply) {
 						a.apply2(get_field().get_first());
 						a.apply2(get_field().get_second());
 					} else {
@@ -275,7 +305,7 @@ public class ast_expr extends ast_node {
 				if (is_pre)
 					a.apply_rhs(get_field());
 				if (is_post) {
-					if (b)
+					if (hasSeparateApply)
 						a.apply_rhs2(get_field());
 					else
 						a.apply_rhs(get_field());
@@ -533,48 +563,6 @@ public class ast_expr extends ast_node {
 		return E;
 	}
 
-	protected ast_expr() {
-		super(AST_NODE_TYPE.AST_EXPR);
-		this.expr_class = GMEXPR_CLASS.GMEXPR_ID;
-		this.left = null;
-		this.right = null;
-		this.cond = null;
-		this.up = null;
-		this.id1 = null;
-		this.field = null;
-		this.ival = 0;
-		this.fval = 0;
-		this.bval = false;
-		this.plus_inf = false;
-		this.op_type = GM_OPS_T.GMOP_END;
-		this.is_right = false;
-		this.is_cond = false;
-		this.type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
-		this.alternative_type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
-		this.bound_graph_sym = null;
-	}
-
-	protected GMEXPR_CLASS expr_class; // GMEXPR_...
-	protected ast_expr left;
-	protected ast_expr right;
-	protected ast_expr cond;
-	protected ast_expr up;
-	protected ast_id id1;
-	protected ast_field field;
-	protected int ival;
-	protected double fval;
-	protected boolean bval;
-	protected boolean plus_inf;
-	protected GM_OPS_T op_type;
-	protected boolean is_right; // am I a right-operand?
-	protected boolean is_cond; // am I a conditional-operand?
-
-	protected GMTYPE_T type_of_expression; // set after local typecheck
-	protected GMTYPE_T alternative_type_of_expression; // used for
-														// group-assignment
-														// only. (during type
-														// checking)
-
 	public final boolean is_biop() {
 		return (expr_class == GMEXPR_CLASS.GMEXPR_BIOP) || (expr_class == GMEXPR_CLASS.GMEXPR_LBIOP);
 	}
@@ -773,5 +761,4 @@ public class ast_expr extends ast_node {
 		expr_class = ec;
 	}
 
-	protected gm_symtab_entry bound_graph_sym; // used only during typecheck
 }

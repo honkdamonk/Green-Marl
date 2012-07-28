@@ -1,16 +1,16 @@
 package backend_giraph;
 
+import static backend_gps.GPSConstants.GPS_DUMMY_ID;
+import static backend_gps.GPSConstants.GPS_FLAG_COMM_DEF_ASSIGN;
+import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINING_INNER;
+import static backend_gps.GPSConstants.GPS_FLAG_USE_REVERSE_EDGE;
+import static backend_gps.GPSConstants.GPS_KEY_FOR_STATE;
+import static backend_gps.GPSConstants.GPS_LIST_EDGE_PROP_WRITE;
+import static backend_gps.GPSConstants.GPS_MAP_EDGE_PROP_ACCESS;
+import static backend_gps.GPSConstants.GPS_REV_NODE_ID;
+import static backend_gps.GPSConstants.STATE_SHORT_CUT;
 import static common.GlobalMembersGm_main.FE;
 import static common.GlobalMembersGm_main.PREGEL_BE;
-import static inc.GlobalMembersGm_backend_gps.GPS_DUMMY_ID;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_COMM_DEF_ASSIGN;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINING_INNER;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE;
-import static inc.GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE;
-import static inc.GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE;
-import static inc.GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS;
-import static inc.GlobalMembersGm_backend_gps.GPS_REV_NODE_ID;
-import static inc.GlobalMembersGm_backend_gps.STATE_SHORT_CUT;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
@@ -44,13 +44,13 @@ import backend_gps.gm_gpslib;
 import backend_gps.gps_syminfo;
 
 import common.gm_builtin_def;
-
 //-----------------------------------------------------------------
 // interface for graph library Layer
 //-----------------------------------------------------------------
 
 // Nothing happens in this class
 public class gm_giraphlib extends gm_gpslib {
+	
 	public gm_giraphlib() {
 		main = null;
 	}

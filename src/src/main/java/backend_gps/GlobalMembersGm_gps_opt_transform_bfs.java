@@ -1,9 +1,9 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_FLAG_HAS_DOWN_NBRS;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_backend_gps;
 import inc.gm_assignment_t;
 import tangible.RefObject;
 import ast.ast_assign;
@@ -198,7 +198,7 @@ public class GlobalMembersGm_gps_opt_transform_bfs {
 		// create user body
 		if (((ast_sentblock) bfs.get_fbody()).get_sents().size() > 0) {
 			ast_sentblock fw_body_to_add;
-			if (bfs.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_HAS_DOWN_NBRS)) {
+			if (bfs.find_info_bool(GPS_FLAG_HAS_DOWN_NBRS)) {
 				fw_body_to_add = GlobalMembersGm_gps_opt_transform_bfs.create_fw_body_prepare(while_sb, bfs, lev_sym, curr_sym, foreach_out);
 			} else {
 				fw_body_to_add = lev_check_out_sb;

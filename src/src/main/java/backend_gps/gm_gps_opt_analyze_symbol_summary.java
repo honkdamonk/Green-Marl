@@ -1,10 +1,10 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_FLAG_NODE_VALUE_INIT;
 import static frontend.GlobalMembersGm_frontend.GMUSAGE_PROPERTY;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab_entry;
 import inc.GM_PROP_USAGE_T;
-import inc.GlobalMembersGm_backend_gps;
 import inc.gm_compile_step;
 
 import java.util.HashSet;
@@ -14,12 +14,12 @@ import ast.ast_procdef;
 import common.GlobalMembersGm_main;
 
 public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
+	
 	private gm_gps_opt_analyze_symbol_summary() {
 		set_description("Create Symbol Summary");
 	}
 
 	public void process(ast_procdef p) {
-
 		// -----------------------------------------------
 		// mark special markers to the property arguments
 		// -----------------------------------------------
@@ -65,7 +65,7 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 		}
 
 		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
-		proc.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_NODE_VALUE_INIT, need_node_prop_init);
+		proc.add_info_bool(GPS_FLAG_NODE_VALUE_INIT, need_node_prop_init);
 
 		set_okay(true);
 	}

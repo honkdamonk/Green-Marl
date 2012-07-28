@@ -30,9 +30,6 @@ public abstract class gm_apply {
 	protected ast_node matching_lhs = null;
 	protected ast_expr matching_rhs = null;
 	
-	public void dispose() {
-	}
-
 	// SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
 	public boolean apply(gm_symtab_entry gm_symtab_entry, SYMTAB_TYPES symtab_type) {
 		return true;

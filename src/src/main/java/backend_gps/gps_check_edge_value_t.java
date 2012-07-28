@@ -1,16 +1,16 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINED_INNER;
+import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINING_INNER;
+import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINING_WRITE;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
+import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
+import static backend_gps.GPSConstants.GPS_LIST_EDGE_PROP_WRITE;
+import static backend_gps.GPSConstants.GPS_MAP_EDGE_PROP_ACCESS;
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_READ_RANDOM;
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_SEND_VERSIONS;
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_WRITE_CONDITIONAL;
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_WRITE_RHS;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINED_INNER;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINING_INNER;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINING_WRITE;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP;
-import static inc.GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE;
-import static inc.GlobalMembersGm_backend_gps.GPS_LIST_EDGE_PROP_WRITE;
-import inc.GlobalMembersGm_backend_gps;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -32,20 +32,16 @@ public class gps_check_edge_value_t extends gm_apply {
 	private static final int SENDING = 1;
 	private static final int WRITING = 2;
 
-	private gm_symtab_entry inner_iter;
-	private ast_foreach inner_loop;
-	private boolean target_is_edge_prop;
-	private boolean _error;
+	private gm_symtab_entry inner_iter = null;
+	private ast_foreach inner_loop = null;
+	private boolean target_is_edge_prop = false;
+	private boolean _error = false;
 
 	public gps_check_edge_value_t() {
 		set_separate_post_apply(true);
 		set_for_symtab(true);
 		set_for_sent(true);
 		set_for_expr(true);
-		inner_iter = null;
-		inner_loop = null;
-		_error = false;
-		target_is_edge_prop = false;
 	}
 
 	public final boolean is_error() {
@@ -229,13 +225,13 @@ public class gps_check_edge_value_t extends gm_apply {
 	private static boolean manage_edge_prop_access_state(ast_foreach fe, gm_symtab_entry e, int op) {
 
 		assert (op == SENDING) || (op == WRITING);
-		gm_gps_edge_access_t curr_state = (gm_gps_edge_access_t) fe.find_info_map_value(GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS, e);
+		gm_gps_edge_access_t curr_state = (gm_gps_edge_access_t) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
 
 		// first access
 		if (curr_state == null) {
 			gm_gps_edge_access_t new_state = (op == SENDING) ? gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_SENT : gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_WRITE;
 
-			fe.add_info_map_key_value(GlobalMembersGm_backend_gps.GPS_MAP_EDGE_PROP_ACCESS, e, new_state);
+			fe.add_info_map_key_value(GPS_MAP_EDGE_PROP_ACCESS, e, new_state);
 		} else {
 			gm_gps_edge_access_t curr_state_val = curr_state;
 			switch (curr_state_val) {

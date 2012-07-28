@@ -1,5 +1,15 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINED_INNER;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_OUTER_LOOP;
+import frontend.GlobalMembersGm_rw_analysis;
+import frontend.SYMTAB_TYPES;
+import frontend.gm_range_type_t;
+import frontend.gm_rwinfo;
+import frontend.gm_rwinfo_sets;
+import frontend.gm_symtab_entry;
+import inc.gps_apply_bb_ast;
 import ast.AST_NODE_TYPE;
 import ast.ast_expr_builtin;
 import ast.ast_field;
@@ -7,14 +17,6 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
-import frontend.GlobalMembersGm_rw_analysis;
-import frontend.SYMTAB_TYPES;
-import frontend.gm_range_type_t;
-import frontend.gm_rwinfo;
-import frontend.gm_rwinfo_sets;
-import frontend.gm_symtab_entry;
-import inc.GlobalMembersGm_backend_gps;
-import inc.gps_apply_bb_ast;
 
 import common.GlobalMembersGm_reproduce;
 
@@ -40,9 +42,9 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 	@Override
 	public boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
-			if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_OUTER_LOOP)) {
+			if (s.find_info_bool(GPS_FLAG_IS_OUTER_LOOP)) {
 				outer_loop = (ast_foreach) s;
-			} else if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP)) {
+			} else if (s.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
 				inner_loop = (ast_foreach) s;
 				assert outer_loop != null;
 			}
@@ -54,9 +56,9 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 	@Override
 	public boolean apply2(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
-			if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_OUTER_LOOP)) {
+			if (s.find_info_bool(GPS_FLAG_IS_OUTER_LOOP)) {
 				outer_loop = null;
-			} else if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP)) {
+			} else if (s.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
 				inner_loop = null;
 			}
 		}
@@ -208,7 +210,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 				if (is_under_receiver_traverse())
 					return true;
 				is_random = false;
-			} else if (drv.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINED_INNER)) {
+			} else if (drv.find_info_bool(GPS_FLAG_EDGE_DEFINED_INNER)) {
 				if (is_under_receiver_traverse())
 					return true;
 			} else {

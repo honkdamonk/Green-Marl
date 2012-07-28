@@ -1,8 +1,11 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_FLAG_HAS_COMMUNICATION;
+import static backend_gps.GPSConstants.GPS_FLAG_HAS_COMMUNICATION_RANDOM;
+import static backend_gps.GPSConstants.GPS_FLAG_WHILE_HEAD;
+import static backend_gps.GPSConstants.GPS_FLAG_WHILE_TAIL;
 import frontend.GlobalMembersGm_rw_analysis_check2;
 import frontend.gm_rwinfo_sets;
-import inc.GlobalMembersGm_backend_gps;
 import inc.gps_apply_bb;
 
 import java.util.LinkedList;
@@ -11,25 +14,21 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 	
 	private LinkedList<gps_intra_merge_candidate_t> cands;
 	private LinkedList<gm_gps_basic_block> stack = new LinkedList<gm_gps_basic_block>();
-	private int current_trace_head;
-	private gm_gps_basic_block curr_head;
-	private gm_gps_basic_block curr_tail;
+	private int current_trace_head = -1;
+	private gm_gps_basic_block curr_head = null;
+	private gm_gps_basic_block curr_tail = null;
 	
 	public gps_find_intra_merge_candidate_t(LinkedList<gps_intra_merge_candidate_t> L) {
-		this.cands = new LinkedList<gps_intra_merge_candidate_t>(L);
-		this.curr_head = null;
-		this.curr_tail = null;
-		current_trace_head = -1;
-		stack.clear();
+		cands = new LinkedList<gps_intra_merge_candidate_t>(L);
 	}
 
 	@Override
 	public void apply(gm_gps_basic_block b) {
 		// printf("visiting :%d\n", b->get_id());
-		if (b.has_info(GlobalMembersGm_backend_gps.GPS_FLAG_WHILE_HEAD)) {
+		if (b.has_info(GPS_FLAG_WHILE_HEAD)) {
 			start_new_trace(b.get_id(), b);
-		} else if (b.has_info(GlobalMembersGm_backend_gps.GPS_FLAG_WHILE_TAIL)) {
-			int head_id = b.find_info_int(GlobalMembersGm_backend_gps.GPS_FLAG_WHILE_TAIL);
+		} else if (b.has_info(GPS_FLAG_WHILE_TAIL)) {
+			int head_id = b.find_info_int(GPS_FLAG_WHILE_TAIL);
 			check_and_finish_trace(head_id, b);
 		} else if (current_trace_head != -1) {
 			if ((b.get_num_entries() == 1) && (b.get_num_exits() == 1)) // simple
@@ -86,8 +85,8 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 				// check PAR1 contains no receive
 				if (p1.has_receiver())
 					is_okay = false;
-				else if (p2.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_HAS_COMMUNICATION)
-						|| p2.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_HAS_COMMUNICATION_RANDOM))
+				else if (p2.find_info_bool(GPS_FLAG_HAS_COMMUNICATION)
+						|| p2.find_info_bool(GPS_FLAG_HAS_COMMUNICATION_RANDOM))
 					is_okay = false;
 
 				gm_rwinfo_sets rwi = null;

@@ -1,16 +1,16 @@
 package backend_giraph;
 
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP;
-import static inc.GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE;
-import static inc.GlobalMembersGm_backend_gps.GPS_INTRA_MERGE_IS_FIRST;
-import static inc.GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO;
-import static inc.GlobalMembersGm_backend_gps.GPS_KEY_FOR_STATE;
-import static inc.GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL;
-import static inc.GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1;
-import static inc.GlobalMembersGm_backend_gps.GPS_RET_VALUE;
-import static inc.GlobalMembersGm_backend_gps.GPS_REV_NODE_ID;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL;
+import static backend_gps.GPSConstants.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN;
+import static backend_gps.GPSConstants.GPS_FLAG_USE_EDGE_PROP;
+import static backend_gps.GPSConstants.GPS_FLAG_USE_REVERSE_EDGE;
+import static backend_gps.GPSConstants.GPS_INTRA_MERGE_IS_FIRST;
+import static backend_gps.GPSConstants.GPS_INT_INTRA_MERGED_CONDITIONAL_NO;
+import static backend_gps.GPSConstants.GPS_KEY_FOR_STATE;
+import static backend_gps.GPSConstants.GPS_LIST_INTRA_MERGED_CONDITIONAL;
+import static backend_gps.GPSConstants.GPS_PREPARE_STEP1;
+import static backend_gps.GPSConstants.GPS_RET_VALUE;
+import static backend_gps.GPSConstants.GPS_REV_NODE_ID;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;

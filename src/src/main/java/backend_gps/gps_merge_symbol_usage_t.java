@@ -1,8 +1,14 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_FLAG_COMM_DEF_ASSIGN;
+import static backend_gps.GPSConstants.GPS_FLAG_COMM_SYMBOL;
+import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINED_INNER;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
+import static backend_gps.GPSConstants.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN;
+import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
+import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
 import frontend.gm_symtab_entry;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_backend_gps;
 import inc.gps_apply_bb_ast;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
@@ -47,11 +53,11 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 																			// (MASTER,
 																			// VERTEX,
 																			// RECEIVER)
-			boolean scope = s.find_info_bool(GlobalMembersGm_backend_gps.GPS_INT_SYNTAX_CONTEXT); // GPS_NEW_SCOPE_GLOBAL/OUT/IN
+			boolean scope = s.find_info_bool(GPS_INT_SYNTAX_CONTEXT); // GPS_NEW_SCOPE_GLOBAL/OUT/IN
 
 			ast_assign a = (ast_assign) s;
 
-			random_write_target_sb = (ast_sentblock) s.find_info_ptr(GlobalMembersGm_backend_gps.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN);
+			random_write_target_sb = (ast_sentblock) s.find_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN);
 
 			// check if random write
 			is_random_write_target = (random_write_target_sb != null);
@@ -60,7 +66,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 				random_write_target = a.get_lhs_field().get_first().getSymInfo();
 			}
 
-			is_message_write_target = s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_COMM_DEF_ASSIGN);
+			is_message_write_target = s.find_info_bool(GPS_FLAG_COMM_DEF_ASSIGN);
 
 			/*
 			 * what? if (foreach_depth > 1) { if (context == GPS_CONTEXT_MASTER)
@@ -71,7 +77,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 			gm_gps_symbol_usage_t lhs_reduce = a.is_reduce_assign() ? gm_gps_symbol_usage_t.GPS_SYM_USED_AS_REDUCE : gm_gps_symbol_usage_t.GPS_SYM_USED_AS_LHS;
 			GM_REDUCE_T r_type = a.is_reduce_assign() ? a.get_reduce_type() : GM_REDUCE_T.GMREDUCE_NULL;
 
-			if (is_scalar == false && a.get_lhs_field().get_first().getSymInfo().find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINED_INNER))
+			if (is_scalar == false && a.get_lhs_field().get_first().getSymInfo().find_info_bool(GPS_FLAG_EDGE_DEFINED_INNER))
 				is_edge_prop_write_target = true;
 
 			if (context == gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER) {
@@ -83,7 +89,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 			if (is_message_write_target) {
 				// lhs is communication symbol
 				beinfo.add_communication_symbol_nested(in_loop, target.getSymInfo());
-				target.getSymInfo().add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_COMM_SYMBOL, true);
+				target.getSymInfo().add_info_bool(GPS_FLAG_COMM_SYMBOL, true);
 			}
 
 			update_access_information(target, is_scalar, lhs_reduce, context, r_type);
@@ -91,7 +97,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 
 		else if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
-			if (fe.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP))
+			if (fe.find_info_bool(GPS_FLAG_IS_INNER_LOOP))
 				in_loop = fe;
 		}
 		return true;
@@ -112,7 +118,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 
 		// int syntax_scope =
 		// get_current_sent()->find_info_int(GPS_INT_SYNTAX_CONTEXT);
-		int expr_scope = e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE);
+		int expr_scope = e.find_info_int(GPS_INT_EXPR_SCOPE);
 		gm_gps_symbol_usage_location_t context = get_current_context();
 		gm_gps_symbol_usage_t used_type = gm_gps_symbol_usage_t.GPS_SYM_USED_AS_RHS;
 		boolean is_id = e.is_id();
@@ -149,7 +155,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 			} else {
 				beinfo.add_communication_symbol_nested(in_loop, tg.getSymInfo());
 			}
-			tg.getSymInfo().add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_COMM_SYMBOL, true);
+			tg.getSymInfo().add_info_bool(GPS_FLAG_COMM_SYMBOL, true);
 		}
 		return true;
 	}

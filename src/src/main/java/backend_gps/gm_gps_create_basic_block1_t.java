@@ -1,6 +1,7 @@
 package backend_gps;
 
-import inc.GlobalMembersGm_backend_gps;
+import static backend_gps.GPSConstants.GPS_FLAG_WHILE_HEAD;
+import static backend_gps.GPSConstants.GPS_FLAG_WHILE_TAIL;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -13,18 +14,33 @@ import ast.ast_while;
 import common.gm_apply;
 
 public class gm_gps_create_basic_block1_t extends gm_apply {
+	
+	private int bb_number;
+	private HashMap<ast_sent, gm_gps_basic_block> prev_map = new HashMap<ast_sent, gm_gps_basic_block>();
+	private HashMap<ast_sent, gm_gps_basic_block> next_map = new HashMap<ast_sent, gm_gps_basic_block>();
+	private HashMap<ast_sent, gps_gps_sentence_t> s_mark;
+
+	private gm_gps_basic_block prev;
+	private gm_gps_basic_block entry;
+	private gm_gps_basic_block next;
+	private gm_gps_basic_block exit;
+
+	private LinkedList<gm_gps_basic_block> prev_stack = new LinkedList<gm_gps_basic_block>();
+	private LinkedList<gm_gps_basic_block> next_stack = new LinkedList<gm_gps_basic_block>();
+
+	private boolean already_added = false;
+	private int added_depth = 0;
+	private gm_gps_beinfo gen;
+	
 	public gm_gps_create_basic_block1_t(HashMap<ast_sent, gps_gps_sentence_t> s, gm_gps_beinfo _gen) {
-		already_added = false;
-		added_depth = 0;
 		s_mark = s;
 		gen = _gen;
 		entry = prev = newBB(); // entry
 		exit = next = newBB(); // exit
 
 		entry.add_exit(exit);
-
 	}
-
+	
 	@Override
 	public boolean apply(ast_sent s) {
 		if (already_added) {
@@ -136,8 +152,8 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 
 					// printf("head:%d, tail:%d\n", head->get_id(),
 					// cond->get_id());
-					cond.add_info_int(GlobalMembersGm_backend_gps.GPS_FLAG_WHILE_TAIL, head.get_id());
-					head.add_info_int(GlobalMembersGm_backend_gps.GPS_FLAG_WHILE_HEAD, head.get_id());
+					cond.add_info_int(GPS_FLAG_WHILE_TAIL, head.get_id());
+					head.add_info_int(GPS_FLAG_WHILE_HEAD, head.get_id());
 
 				} // while
 				else {
@@ -153,8 +169,8 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 
 					// printf("head:%d, tail:%d\n", cond->get_id(),
 					// head->get_id());
-					cond.add_info_int(GlobalMembersGm_backend_gps.GPS_FLAG_WHILE_HEAD, cond.get_id());
-					head.add_info_int(GlobalMembersGm_backend_gps.GPS_FLAG_WHILE_TAIL, cond.get_id());
+					cond.add_info_int(GPS_FLAG_WHILE_HEAD, cond.get_id());
+					head.add_info_int(GPS_FLAG_WHILE_TAIL, cond.get_id());
 				}
 
 				// begin/end for while sentence block
@@ -227,20 +243,4 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 		return entry;
 	}
 
-	private int bb_number;
-	private HashMap<ast_sent, gm_gps_basic_block> prev_map = new HashMap<ast_sent, gm_gps_basic_block>();
-	private HashMap<ast_sent, gm_gps_basic_block> next_map = new HashMap<ast_sent, gm_gps_basic_block>();
-	private HashMap<ast_sent, gps_gps_sentence_t> s_mark;
-
-	private gm_gps_basic_block prev;
-	private gm_gps_basic_block entry;
-	private gm_gps_basic_block next;
-	private gm_gps_basic_block exit;
-
-	private LinkedList<gm_gps_basic_block> prev_stack = new LinkedList<gm_gps_basic_block>();
-	private LinkedList<gm_gps_basic_block> next_stack = new LinkedList<gm_gps_basic_block>();
-
-	private boolean already_added;
-	private int added_depth;
-	private gm_gps_beinfo gen;
 }

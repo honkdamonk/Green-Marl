@@ -1,7 +1,10 @@
 package backend_gps;
 
-import static inc.GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE;
-import inc.GlobalMembersGm_backend_gps;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_EDGE_ITERATOR;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_OUTER_LOOP;
+import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
+import static backend_gps.GPSConstants.GPS_INT_SYMBOL_SCOPE;
 
 import java.util.LinkedList;
 
@@ -103,23 +106,19 @@ public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
 	}
 
 	public final gm_gps_new_scope_analysis_t get_scope_from_id(gm_symtab_entry e) {
-		return gm_gps_new_scope_analysis_t.forValue(e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYMBOL_SCOPE));
+		return gm_gps_new_scope_analysis_t.forValue(e.find_info_int(GPS_INT_SYMBOL_SCOPE));
 	}
 
 	public final gm_gps_new_scope_analysis_t get_scope_from_driver(gm_symtab_entry e) {
 		return get_scope_from_driver(e, false);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: int get_scope_from_driver(gm_symtab_entry* e, boolean
-	// is_rarrow = false)
 	public final gm_gps_new_scope_analysis_t get_scope_from_driver(gm_symtab_entry e, boolean is_rarrow) {
-		if (e.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP))
+		if (e.find_info_bool(GPS_FLAG_IS_INNER_LOOP))
 			return gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN;
-		else if (e.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_OUTER_LOOP))
+		else if (e.find_info_bool(GPS_FLAG_IS_OUTER_LOOP))
 			return gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT;
-		else if (e.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_EDGE_ITERATOR))
+		else if (e.find_info_bool(GPS_FLAG_IS_EDGE_ITERATOR))
 			return gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_EDGE;
 		else
 			return gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_RANDOM;

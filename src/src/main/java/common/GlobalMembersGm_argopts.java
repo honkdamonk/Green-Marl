@@ -51,24 +51,11 @@ public class GlobalMembersGm_argopts {
 			new GM_comp_args(GMARGFLAG_PRINTBB, GMARG_BOOL, "(For gps-debug) When stopped, print basicblock information", "0") //
 	};
 
-	// C++ TO JAVA CONVERTER NOTE: 'extern' variable declarations are not
-	// required in Java:
-	// extern gm_userargs OPTIONS;
-
-	// C++ TO JAVA CONVERTER NOTE: 'extern' variable declarations are not
-	// required in Java:
-	// extern gm_userargs OPTIONS;
-	// C++ TO JAVA CONVERTER NOTE: 'extern' variable declarations are not
-	// required in Java:
-	// extern java.util.LinkedList<sbyte*> GM_input_lists;
 
 	public static void print_help(RefObject<String> bin_name) {
 		System.out.printf("Usage: %s [options] input_file\n", bin_name.argvalue);
 		System.out.print("Options:\n");
-		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
-		// a direct reference to the array length:
-		// ORIGINAL LINE: int s = sizeof(GM_compiler_options) /
-		// sizeof(GM_comp_args);
+
 		int s = GM_compiler_options.length;
 		for (int i = 0; i < s; i++) {
 			int t = 0;
@@ -168,11 +155,7 @@ public class GlobalMembersGm_argopts {
 	}
 
 	public static void process_args(int argc, RefObject<String[]> argv) {
-		// set default values
-		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
-		// a direct reference to the array length:
-		// ORIGINAL LINE: int s = sizeof(GM_compiler_options) /
-		// sizeof(GM_comp_args);
+
 		int s = GM_compiler_options.length;
 		for (int i = 0; i < s; i++) {
 			GM_comp_args t = GM_compiler_options[i];

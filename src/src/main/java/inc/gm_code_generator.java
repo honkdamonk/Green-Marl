@@ -27,6 +27,9 @@ import common.GlobalMembersGm_reproduce;
 // default code generator
 public abstract class gm_code_generator {
 	
+	private static String LP = "(";
+	private static String RP = ")";
+	
 	protected gm_code_writer _Body;
 
 	public gm_code_generator() {
@@ -42,11 +45,11 @@ public abstract class gm_code_generator {
 	}
 
 	// should be overrided
-	public abstract void generate_rhs_id(ast_id i);
+	protected abstract void generate_rhs_id(ast_id i);
 
-	public abstract void generate_rhs_field(ast_field i);
+	protected abstract void generate_rhs_field(ast_field i);
 
-	public void generate_expr_foreign(ast_expr e) {
+	protected void generate_expr_foreign(ast_expr e) {
 		ast_expr_foreign f = (ast_expr_foreign) e;
 
 		LinkedList<ast_node> N = f.get_parsed_nodes();
@@ -67,18 +70,15 @@ public abstract class gm_code_generator {
 
 	}
 
-	public abstract void generate_expr_builtin(ast_expr e);
+	protected abstract void generate_expr_builtin(ast_expr e);
 
-	public abstract void generate_expr_minmax(ast_expr e);
+	protected abstract void generate_expr_minmax(ast_expr e);
 
-	public abstract void generate_expr_abs(ast_expr e);
+	protected abstract void generate_expr_abs(ast_expr e);
 
-	public abstract void generate_expr_nil(ast_expr e);
+	protected abstract void generate_expr_nil(ast_expr e);
 
-	final static String LP = "(";
-	final static String RP = ")";
-
-	public void generate_expr_type_conversion(ast_expr e) {
+	protected void generate_expr_type_conversion(ast_expr e) {
 		boolean no_lp1 = (e.get_up_op() == null);
 		boolean need_lp2 = e.get_left_op().is_builtin();
 		if (!no_lp1)
@@ -95,11 +95,8 @@ public abstract class gm_code_generator {
 			_Body.push(RP);
 	}
 
-	public abstract String get_type_string(GMTYPE_T gmtype_T); // returned
-																// string
-	// should be copied
-	// before usage.
-
+	protected abstract String get_type_string(GMTYPE_T gmtype_T); 
+	
 	public void generate_expr_list(LinkedList<ast_expr> L) {
 		int i = 0;
 		int size = L.size();
@@ -146,7 +143,7 @@ public abstract class gm_code_generator {
 		}
 	}
 
-	public void generate_expr_val(ast_expr e) {
+	protected void generate_expr_val(ast_expr e) {
 		String temp;
 		switch (e.get_opclass()) {
 		case GMEXPR_IVAL:
@@ -174,7 +171,7 @@ public abstract class gm_code_generator {
 		}
 	}
 
-	public void generate_expr_inf(ast_expr e) {
+	protected void generate_expr_inf(ast_expr e) {
 		String temp;
 		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
 		GMTYPE_T t = e.get_type_summary();
@@ -200,7 +197,7 @@ public abstract class gm_code_generator {
 		return;
 	}
 
-	public void generate_expr_uop(ast_expr e) {
+	protected void generate_expr_uop(ast_expr e) {
 		// char* temp = temp_str;
 		switch (e.get_opclass()) {
 		case GMEXPR_UOP:
@@ -228,7 +225,7 @@ public abstract class gm_code_generator {
 		}
 	}
 
-	public void generate_expr_ter(ast_expr e) {
+	protected void generate_expr_ter(ast_expr e) {
 
 		boolean need_para = (e.get_up_op() == null) ? false : check_need_para(e.get_optype(), e.get_up_op().get_optype(), e.is_right_op());
 
@@ -244,7 +241,7 @@ public abstract class gm_code_generator {
 		return;
 	}
 
-	public void generate_expr_bin(ast_expr e) {
+	protected void generate_expr_bin(ast_expr e) {
 		// char* temp = temp_str;
 		ast_expr up = e.get_up_op();
 		boolean need_para = false;
@@ -269,7 +266,7 @@ public abstract class gm_code_generator {
 			_Body.push(")");
 	}
 
-	public void generate_expr_comp(ast_expr e) {
+	protected void generate_expr_comp(ast_expr e) {
 		// char* temp = temp_str;
 		ast_expr up = e.get_up_op();
 		boolean need_para = (up == null) ? false : true;
@@ -287,25 +284,25 @@ public abstract class gm_code_generator {
 			_Body.push(")");
 	}
 
-	public boolean check_need_para(GM_OPS_T optype, GM_OPS_T up_optype, boolean is_right) {
+	protected boolean check_need_para(GM_OPS_T optype, GM_OPS_T up_optype, boolean is_right) {
 		return optype.gm_need_paranthesis(up_optype, is_right);
 	}
 
-	public abstract void generate_lhs_id(ast_id i);
+	protected abstract void generate_lhs_id(ast_id i);
 
-	public abstract void generate_lhs_field(ast_field i);
+	protected abstract void generate_lhs_field(ast_field i);
 
-	public abstract void generate_sent_nop(ast_nop n);
+	protected abstract void generate_sent_nop(ast_nop n);
 
-	public abstract void generate_sent_reduce_assign(ast_assign a);
+	protected abstract void generate_sent_reduce_assign(ast_assign a);
 
-	public abstract void generate_sent_defer_assign(ast_assign a);
+	protected abstract void generate_sent_defer_assign(ast_assign a);
 
-	public abstract void generate_sent_vardecl(ast_vardecl a);
+	protected abstract void generate_sent_vardecl(ast_vardecl a);
 
-	public abstract void generate_sent_foreach(ast_foreach a);
+	protected abstract void generate_sent_foreach(ast_foreach a);
 
-	public abstract void generate_sent_bfs(ast_bfs b);
+	protected abstract void generate_sent_bfs(ast_bfs b);
 
 	public void generate_sent(ast_sent s) {
 		switch (s.get_nodetype()) {
@@ -356,7 +353,7 @@ public abstract class gm_code_generator {
 		}
 	}
 
-	public void generate_sent_assign(ast_assign a) {
+	protected void generate_sent_assign(ast_assign a) {
 
 		if (a.is_target_scalar()) {
 			generate_lhs_id(a.get_lhs_scala());
@@ -371,7 +368,7 @@ public abstract class gm_code_generator {
 		_Body.pushln(" ;");
 	}
 
-	public void generate_sent_if(ast_if i) {
+	protected void generate_sent_if(ast_if i) {
 		_Body.push("if (");
 		generate_expr(i.get_cond());
 
@@ -404,7 +401,7 @@ public abstract class gm_code_generator {
 
 	}
 
-	public void generate_sent_while(ast_while w) {
+	protected void generate_sent_while(ast_while w) {
 		ast_sent b = w.get_body();
 		assert b.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 
@@ -426,11 +423,11 @@ public abstract class gm_code_generator {
 
 	}
 
-	public void generate_sent_block(ast_sentblock sb) {
+	protected void generate_sent_block(ast_sentblock sb) {
 		generate_sent_block(sb, true);
 	}
 
-	public void generate_sent_block(ast_sentblock sb, boolean need_brace) {
+	protected void generate_sent_block(ast_sentblock sb, boolean need_brace) {
 		LinkedList<ast_sent> sents = sb.get_sents();
 
 		if (need_brace)
@@ -442,7 +439,7 @@ public abstract class gm_code_generator {
 			_Body.pushln("}");
 	}
 
-	public void generate_sent_return(ast_return r) {
+	protected void generate_sent_return(ast_return r) {
 		_Body.push("return");
 		if (r.get_expr() != null) {
 			_Body.SPC();
@@ -451,11 +448,11 @@ public abstract class gm_code_generator {
 		_Body.pushln(";");
 	}
 
-	public void generate_sent_call(ast_call c) {
+	protected void generate_sent_call(ast_call c) {
 		assert false;
 	}
 
-	public void generate_sent_foreign(ast_foreign f) {
+	protected void generate_sent_foreign(ast_foreign f) {
 		ast_expr_foreign ff = f.get_expr();
 		generate_expr(ff);
 		_Body.pushln(";");

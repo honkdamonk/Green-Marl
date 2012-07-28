@@ -9,9 +9,9 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_sent;
 
-import common.GlobalMembersGm_builtin;
 import common.gm_apply;
 import common.gm_builtin_def;
+import common.gm_builtin_manager;
 
 import frontend.gm_symtab_entry;
 
@@ -22,6 +22,7 @@ import frontend.gm_symtab_entry;
 //   (3) Mark graph symbols if it uses from/to
 //-------------------------------------------------------------
 public class cpp_check_reverse_edge_t extends gm_apply {
+	
 	public cpp_check_reverse_edge_t() {
 		set_for_sent(true);
 		set_for_expr(true);
@@ -32,7 +33,7 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 			ast_expr_builtin b = (ast_expr_builtin) s;
 			gm_builtin_def def = b.get_builtin_def();
 
-			if (def.find_info_bool(GlobalMembersGm_builtin.GM_BLTIN_INFO_USE_REVERSE)) {
+			if (def.find_info_bool(gm_builtin_manager.GM_BLTIN_INFO_USE_REVERSE)) {
 				ast_id driver = b.get_driver();
 				assert driver != null;
 				ast_id G = driver.getTypeInfo().get_target_graph_id();
@@ -41,7 +42,7 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 				e.add_info_bool(gm_cpp_gen.CPPBE_INFO_USE_REVERSE_EDGE, true);
 			}
 
-			if (def.find_info_bool(GlobalMembersGm_builtin.GM_BLTIN_INFO_CHECK_NBR)) {
+			if (def.find_info_bool(gm_builtin_manager.GM_BLTIN_INFO_CHECK_NBR)) {
 				ast_id driver = b.get_driver();
 				assert driver != null;
 				ast_id G = driver.getTypeInfo().get_target_graph_id();
@@ -50,7 +51,7 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 				e.add_info_bool(gm_cpp_gen.CPPBE_INFO_NEED_SEMI_SORT, true);
 			}
 
-			if (def.find_info_bool(GlobalMembersGm_builtin.GM_BLTIN_INFO_NEED_FROM)) {
+			if (def.find_info_bool(gm_builtin_manager.GM_BLTIN_INFO_NEED_FROM)) {
 				ast_id driver = b.get_driver();
 				assert driver != null;
 				ast_id G = driver.getTypeInfo().get_target_graph_id();

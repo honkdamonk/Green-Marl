@@ -16,7 +16,6 @@ import ast.ast_if;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_while;
-import backend_cpp.GlobalMembersGm_cpp_opt_defer;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_main;

@@ -539,7 +539,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			} else if (t2.is_nodeedge()) {
 				return String.format("%s*", get_lib().get_type_string(t2));
 			} else if (t2.is_collection()) {
-				return String.format("%s<%s>&", GlobalMembersGm_cpplib_words.PROP_OF_COL, get_lib().get_type_string(t2));
+				return String.format("%s<%s>&", gm_cpplib_words.PROP_OF_COL, get_lib().get_type_string(t2));
 			} else {
 				assert false;
 			}

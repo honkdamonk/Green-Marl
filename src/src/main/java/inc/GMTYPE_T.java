@@ -660,4 +660,54 @@ public enum GMTYPE_T {
 			return "Unknown";
 		}
 	}
+	
+	public static GMTYPE_T gm_get_type_from_string(String s) {
+		assert s != null;
+		if (s.equals("Graph"))
+			return GMTYPE_T.GMTYPE_GRAPH;
+		else if (s.equals("Node"))
+			return GMTYPE_T.GMTYPE_NODE;
+		else if (s.equals("Edge"))
+			return GMTYPE_T.GMTYPE_EDGE;
+		else if (s.equals("NI_All"))
+			return GMTYPE_T.GMTYPE_NODEITER_ALL;
+		else if (s.equals("EI_All"))
+			return GMTYPE_T.GMTYPE_EDGEITER_ALL;
+		else if (s.equals("NI_Out"))
+			return GMTYPE_T.GMTYPE_NODEITER_NBRS;
+		else if (s.equals("NI_In"))
+			return GMTYPE_T.GMTYPE_NODEITER_IN_NBRS;
+		else if (s.equals("NI_Up"))
+			return GMTYPE_T.GMTYPE_NODEITER_UP_NBRS;
+		else if (s.equals("NI_Down"))
+			return GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS;
+		else if (s.equals("Int"))
+			return GMTYPE_T.GMTYPE_INT;
+		else if (s.equals("Long"))
+			return GMTYPE_T.GMTYPE_LONG;
+		else if (s.equals("Float"))
+			return GMTYPE_T.GMTYPE_FLOAT;
+		else if (s.equals("Double"))
+			return GMTYPE_T.GMTYPE_DOUBLE;
+		else if (s.equals("N_S"))
+			return GMTYPE_T.GMTYPE_NSET;
+		else if (s.equals("E_S"))
+			return GMTYPE_T.GMTYPE_ESET;
+		else if (s.equals("N_O"))
+			return GMTYPE_T.GMTYPE_NORDER;
+		else if (s.equals("E_O"))
+			return GMTYPE_T.GMTYPE_EORDER;
+		else if (s.equals("N_Q"))
+			return GMTYPE_T.GMTYPE_NSEQ;
+		else if (s.equals("E_Q"))
+			return GMTYPE_T.GMTYPE_ESEQ;
+		else if (s.equals("Void"))
+			return GMTYPE_T.GMTYPE_VOID;
+		else if (s.equals("Bool"))
+			return GMTYPE_T.GMTYPE_BOOL;
+		else {
+			assert false;
+			throw new AssertionError();
+		}
+	}
 }

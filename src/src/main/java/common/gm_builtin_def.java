@@ -58,38 +58,32 @@ public class gm_builtin_def {
 			if (p.charAt(0) == '_')
 				src_type = GMTYPE_T.GMTYPE_VOID; // top-level
 			else
-				this.src_type = GlobalMembersGm_builtin.gm_get_type_from_string(p);
+				src_type = GMTYPE_T.gm_get_type_from_string(p);
 
 			p = tangible.StringFunctions.strTok(null, ":");
 			assert p != null;
-			this.orgname = p;
+			orgname = p;
 			p = tangible.StringFunctions.strTok(null, ":");
-			this.res_type = GlobalMembersGm_builtin.gm_get_type_from_string(p);
+			res_type = GMTYPE_T.gm_get_type_from_string(p);
 			p = tangible.StringFunctions.strTok(null, ":");
 			if (p == null)
-				this.num_args = 0;
+				num_args = 0;
 			else
-				this.num_args = Integer.parseInt(p);
+				num_args = Integer.parseInt(p);
 			if (num_args > 0) {
-				this.arg_types = new GMTYPE_T[num_args];
+				arg_types = new GMTYPE_T[num_args];
 				for (int i = 0; i < num_args; i++) {
 					p = tangible.StringFunctions.strTok(null, ":");
-					this.arg_types[i] = GlobalMembersGm_builtin.gm_get_type_from_string(p);
+					arg_types[i] = GMTYPE_T.gm_get_type_from_string(p);
 				}
 			}
 
 			// -----------------------------------------------------------
 			// now parse the extra info [todo]
 			// -----------------------------------------------------------
-			// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent
-			// for pointers to value types:
-			// ORIGINAL LINE: sbyte* extra_info = strdup(def->extra_info);
 			String extra_info = def.extra_info;
 
 			p = tangible.StringFunctions.strTok(extra_info, ":");
-			// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent
-			// for pointers to value types:
-			// ORIGINAL LINE: sbyte* p2 = strtok(null, ":");
 			String p2 = tangible.StringFunctions.strTok(null, ":");
 			while ((p != null) && (p2 != null)) {
 				String key = p;

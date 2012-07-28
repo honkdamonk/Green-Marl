@@ -1,9 +1,9 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_FLAG_HAS_DOWN_NBRS;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_backend_gps;
 import inc.gm_assignment_t;
 import tangible.RefObject;
 import ast.ast_assign;
@@ -16,7 +16,6 @@ import ast.ast_if;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_while;
-import backend_cpp.GlobalMembersGm_cpp_opt_defer;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_main;
@@ -45,10 +44,6 @@ public class GlobalMembersGm_gps_opt_transform_bfs {
 		ast_assign a_fin = ast_assign.new_assign_scala(lhs_fin, rhs_fin);
 
 		ast_sentblock inner_sb = ast_sentblock.new_sentblock();
-		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
-		// pointers to value types:
-		// ORIGINAL LINE: sbyte* i_name = FE.voca_temp_name_and_add("i", null,
-		// true);
 		String i_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("i", null, true);
 		ast_id it = ast_id.new_id(i_name, bfs.get_iterator().get_line(), bfs.get_iterator().get_col());
 		ast_foreach fe = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(it, bfs.get_source().copy(true), inner_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
@@ -174,10 +169,6 @@ public class GlobalMembersGm_gps_opt_transform_bfs {
 
 		// inner loop
 		ast_sentblock inner_sb = ast_sentblock.new_sentblock();
-		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
-		// pointers to value types:
-		// ORIGINAL LINE: sbyte* inner_name = FE.voca_temp_name_and_add("_t",
-		// null, true);
 		String inner_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_t", null, true);
 		ast_id inner_id = ast_id.new_id(inner_name, 0, 0);
 		ast_foreach foreach_in = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(inner_id, foreach_out.get_iterator().copy(true), inner_sb,
@@ -207,7 +198,7 @@ public class GlobalMembersGm_gps_opt_transform_bfs {
 		// create user body
 		if (((ast_sentblock) bfs.get_fbody()).get_sents().size() > 0) {
 			ast_sentblock fw_body_to_add;
-			if (bfs.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_HAS_DOWN_NBRS)) {
+			if (bfs.find_info_bool(GPS_FLAG_HAS_DOWN_NBRS)) {
 				fw_body_to_add = GlobalMembersGm_gps_opt_transform_bfs.create_fw_body_prepare(while_sb, bfs, lev_sym, curr_sym, foreach_out);
 			} else {
 				fw_body_to_add = lev_check_out_sb;

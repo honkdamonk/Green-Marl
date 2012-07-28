@@ -51,24 +51,11 @@ public class GlobalMembersGm_argopts {
 			new GM_comp_args(GMARGFLAG_PRINTBB, GMARG_BOOL, "(For gps-debug) When stopped, print basicblock information", "0") //
 	};
 
-	// C++ TO JAVA CONVERTER NOTE: 'extern' variable declarations are not
-	// required in Java:
-	// extern gm_userargs OPTIONS;
-
-	// C++ TO JAVA CONVERTER NOTE: 'extern' variable declarations are not
-	// required in Java:
-	// extern gm_userargs OPTIONS;
-	// C++ TO JAVA CONVERTER NOTE: 'extern' variable declarations are not
-	// required in Java:
-	// extern java.util.LinkedList<sbyte*> GM_input_lists;
 
 	public static void print_help(RefObject<String> bin_name) {
 		System.out.printf("Usage: %s [options] input_file\n", bin_name.argvalue);
 		System.out.print("Options:\n");
-		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
-		// a direct reference to the array length:
-		// ORIGINAL LINE: int s = sizeof(GM_compiler_options) /
-		// sizeof(GM_comp_args);
+
 		int s = GM_compiler_options.length;
 		for (int i = 0; i < s; i++) {
 			int t = 0;
@@ -98,23 +85,19 @@ public class GlobalMembersGm_argopts {
 	}
 
 	public static void process_nullargs(RefObject<String> c, RefObject<String> bin_name) {
-		if (GlobalMembersGm_misc.gm_is_same_string(c.argvalue, "h")) {
+		if (c.argvalue.equals("h")) {
 			RefObject<String> tempRef_bin_name = bin_name;
 			GlobalMembersGm_argopts.print_help(tempRef_bin_name);
 			bin_name.argvalue = tempRef_bin_name.argvalue;
 			System.exit(0);
-		} else if (GlobalMembersGm_misc.gm_is_same_string(c.argvalue, "v")) {
-			System.out.printf("version %s\n", GlobalMembersGm_version_string.gm_version_string);
+		} else if (c.argvalue.equals("v")) {
+			System.out.printf("version %s\n", GlobalMembersGm_main.gm_version_string);
 			System.exit(0);
 		}
 		// add here
 	}
 
 	public static void parse_arg(RefObject<String> argv, RefObject<String> bin_name) {
-		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
-		// a direct reference to the array length:
-		// ORIGINAL LINE: int s = sizeof(GM_compiler_options) /
-		// sizeof(GM_comp_args);
 		int s = GM_compiler_options.length;
 		if (argv.argvalue.charAt(0) == '-') {
 			// search '=' in the argument
@@ -134,7 +117,7 @@ public class GlobalMembersGm_argopts {
 			int i;
 			for (i = 0; i < s; i++) {
 				GM_comp_args t = GM_compiler_options[i];
-				if (!GlobalMembersGm_misc.gm_is_same_string(t.name, key_begin))
+				if (!t.name.equals(key_begin))
 					continue;
 
 				if (t.arg_type == GMARG_NULL) {
@@ -172,11 +155,7 @@ public class GlobalMembersGm_argopts {
 	}
 
 	public static void process_args(int argc, RefObject<String[]> argv) {
-		// set default values
-		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
-		// a direct reference to the array length:
-		// ORIGINAL LINE: int s = sizeof(GM_compiler_options) /
-		// sizeof(GM_comp_args);
+
 		int s = GM_compiler_options.length;
 		for (int i = 0; i < s; i++) {
 			GM_comp_args t = GM_compiler_options[i];

@@ -3,7 +3,6 @@ package ast;
 import inc.GMTYPE_T;
 
 import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
 public class ast_foreach extends ast_sent {
@@ -70,7 +69,7 @@ public class ast_foreach extends ast_sent {
 		Out.push(" : ");
 		source.reproduce(0);
 		Out.push(".");
-		Out.push(GlobalMembersGm_misc.gm_get_iter_type_string(iter_type));
+		Out.push(iter_type.get_iter_type_string());
 		if (iter_type.is_common_nbr_iter_type()) {
 			Out.push('(');
 			source2.reproduce(0);
@@ -102,7 +101,7 @@ public class ast_foreach extends ast_sent {
 		System.out.print(" : ");
 		source.dump_tree(ind_level + 1);
 		System.out.print("  ");
-		System.out.printf("%s ", GlobalMembersGm_misc.gm_get_iter_type_string(iter_type));
+		System.out.printf("%s ", iter_type.get_iter_type_string());
 		if (cond != null)
 			System.out.print(" FILTER: ");
 		System.out.print("\n");

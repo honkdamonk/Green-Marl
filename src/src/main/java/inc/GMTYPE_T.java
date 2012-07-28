@@ -4,11 +4,23 @@ import tangible.RefObject;
 import frontend.GlobalMembersGm_typecheck_oprules;
 
 public enum GMTYPE_T {
-	GMTYPE_GRAPH(0), GMTYPE_UGRAPH(1), GMTYPE_NODEPROP(2), GMTYPE_EDGEPROP(3), GMTYPE_NODE(4), GMTYPE_EDGE(5), GMTYPE_NSET(6), GMTYPE_NSEQ(7), GMTYPE_NORDER(8), GMTYPE_ESET(
-			9), GMTYPE_ESEQ(10), GMTYPE_EORDER(11), GMTYPE_COLLECTION(12),
+	GMTYPE_GRAPH(0), //
+	GMTYPE_UGRAPH(1), //
+	GMTYPE_NODEPROP(2), //
+	GMTYPE_EDGEPROP(3), //
+	GMTYPE_NODE(4), //
+	GMTYPE_EDGE(5), //
+	GMTYPE_NSET(6), // 
+	GMTYPE_NSEQ(7), //
+	GMTYPE_NORDER(8), //
+	GMTYPE_ESET(9), //
+	GMTYPE_ESEQ(10), //
+	GMTYPE_EORDER(11), //
+	GMTYPE_COLLECTION(12), //
 
 	// iterators
-	GMTYPE_NODEITER_ALL(100), GMTYPE_NODEITER_NBRS(101), // out nbr
+	GMTYPE_NODEITER_ALL(100), //
+	GMTYPE_NODEITER_NBRS(101), // out nbr
 	GMTYPE_NODEITER_IN_NBRS(102), // in nbr
 	GMTYPE_NODEITER_BFS(103), // bfs
 	GMTYPE_NODEITER_UP_NBRS(104), // up nbr
@@ -20,16 +32,23 @@ public enum GMTYPE_T {
 	GMTYPE_NODEITER_COMMON_NBRS(109), // common neighbors
 
 	GMTYPE_COLLECTIONITER_SET(110), // iterator over collection of collection
-	GMTYPE_COLLECTIONITER_ORDER(111), GMTYPE_COLLECTIONITER_SEQ(112),
+	GMTYPE_COLLECTIONITER_ORDER(111), //
+	GMTYPE_COLLECTIONITER_SEQ(112),
 
-	GMTYPE_EDGEITER_ALL(200), GMTYPE_EDGEITER_NBRS(201), GMTYPE_EDGEITER_IN_NBRS(202), GMTYPE_EDGEITER_BFS(203), GMTYPE_EDGEITER_UP_NBRS(204), GMTYPE_EDGEITER_DOWN_NBRS(
-			205), GMTYPE_EDGEITER_SET(206), // set
+	GMTYPE_EDGEITER_ALL(200), //
+	GMTYPE_EDGEITER_NBRS(201), //
+	GMTYPE_EDGEITER_IN_NBRS(202), //
+	GMTYPE_EDGEITER_BFS(203), //
+	GMTYPE_EDGEITER_UP_NBRS(204), //
+	GMTYPE_EDGEITER_DOWN_NBRS(205), //
+	GMTYPE_EDGEITER_SET(206), // set
 	GMTYPE_EDGEITER_SEQ(207), // sequence
 	GMTYPE_EDGEITER_ORDER(208), // order
 
-	GMTYPE_PROPERTYITER_SET(209), GMTYPE_PROPERTYITER_SEQ(210), GMTYPE_PROPERTYITER_ORDER(211),
+	GMTYPE_PROPERTYITER_SET(209), //
+	GMTYPE_PROPERTYITER_SEQ(210),// 
+	GMTYPE_PROPERTYITER_ORDER(211),//
 
-	//
 	GMTYPE_BIT(1000), // 1b (for future extension)
 	GMTYPE_BYTE(1001), // 1B (for future extension)
 	GMTYPE_SHORT(1002), // 2B (for future extension)
@@ -37,17 +56,25 @@ public enum GMTYPE_T {
 	GMTYPE_LONG(1004), // 8B
 	GMTYPE_FLOAT(1005), // 4B
 	GMTYPE_DOUBLE(1006), // 8B
-	GMTYPE_BOOL(1007), GMTYPE_INF(1008), // PLUS INF or MINUS INF
-	GMTYPE_INF_INT(1009), GMTYPE_INF_LONG(1010), GMTYPE_INF_FLOAT(1011), GMTYPE_INF_DOUBLE(1012), GMTYPE_NIL_UNKNOWN(1013), GMTYPE_NIL_NODE(1014), GMTYPE_NIL_EDGE(
-			1015), GMTYPE_FOREIGN_EXPR(1016), // foreign type. Can be matched
-												// with any
+	GMTYPE_BOOL(1007), //
+	GMTYPE_INF(1008), // PLUS INF or MINUS INF
+	GMTYPE_INF_INT(1009), //
+	GMTYPE_INF_LONG(1010), //
+	GMTYPE_INF_FLOAT(1011), //
+	GMTYPE_INF_DOUBLE(1012), //
+	GMTYPE_NIL_UNKNOWN(1013), //
+	GMTYPE_NIL_NODE(1014), //
+	GMTYPE_NIL_EDGE(1015), //
+	GMTYPE_FOREIGN_EXPR(1016), // foreign type. Can be matched with any
 	GMTYPE_UNKNOWN(9999), // expression whose type is not identified yet
 							// (variable before typechecking)
 	GMTYPE_UNKNOWN_NUMERIC(10000), // expression whose type should be numeric,
 									// size not determined yet
 	GMTYPE_ITER_ANY(10001), // iterator to some collection. resolved after type
 							// checking
-	GMTYPE_ITER_UNDERSPECIFIED(10002), GMTYPE_VOID(10003), GMTYPE_INVALID(99999);
+	GMTYPE_ITER_UNDERSPECIFIED(10002), //
+	GMTYPE_VOID(10003), //
+	GMTYPE_INVALID(99999);
 
 	private int intValue;
 	private static java.util.HashMap<Integer, GMTYPE_T> mappings;
@@ -498,5 +525,189 @@ public enum GMTYPE_T {
 		if ((t1 == GMTYPE_FLOAT) && (t2 == GMTYPE_DOUBLE))
 			return true;
 		return false;
+	}
+	
+	public static GMTYPE_T get_iter_type_from_set_type(GMTYPE_T set_type) {
+		switch (set_type) {
+		case GMTYPE_NSET:
+			return GMTYPE_NODEITER_SET;
+		case GMTYPE_NSEQ:
+			return GMTYPE_NODEITER_SEQ;
+		case GMTYPE_NORDER:
+			return GMTYPE_NODEITER_ORDER;
+		case GMTYPE_ESET:
+			return GMTYPE_NODEITER_SET;
+		case GMTYPE_ESEQ:
+			return GMTYPE_NODEITER_SEQ;
+		case GMTYPE_EORDER:
+			return GMTYPE_NODEITER_ORDER;
+		default:
+			assert false;
+			return GMTYPE_INVALID;
+		}
+	}
+	
+	public String get_type_string() {
+		switch (this) {
+		case GMTYPE_GRAPH:
+			return "Graph";
+		case GMTYPE_BYTE:
+			return "Byte";
+		case GMTYPE_SHORT:
+			return "Short";
+		case GMTYPE_INT:
+			return "Int";
+		case GMTYPE_LONG:
+			return "Long";
+		case GMTYPE_FLOAT:
+			return "Float";
+		case GMTYPE_DOUBLE:
+			return "Double";
+		case GMTYPE_NODEPROP:
+			return "NP";
+		case GMTYPE_EDGEPROP:
+			return "EP";
+		case GMTYPE_NODE:
+			return "Node";
+		case GMTYPE_EDGE:
+			return "Edge";
+		case GMTYPE_NODEITER_ALL:
+			return "Node::I(ALL)";
+		case GMTYPE_NODEITER_NBRS:
+			return "Node::I(NBR)";
+		case GMTYPE_NODEITER_IN_NBRS:
+			return "Node::I(IN_NBR)";
+		case GMTYPE_NODEITER_BFS:
+			return "Node::I(BFS)";
+		case GMTYPE_NODEITER_UP_NBRS:
+			return "Node::I(+1)";
+		case GMTYPE_NODEITER_DOWN_NBRS:
+			return "Node::I(-1)";
+		case GMTYPE_EDGEITER_ALL:
+			return "EdgeI";
+		case GMTYPE_EDGEITER_NBRS:
+			return "EdgeI";
+		case GMTYPE_BOOL:
+			return "Bool";
+		case GMTYPE_NSET:
+			return "Node_Set";
+		case GMTYPE_NORDER:
+			return "Node_Order";
+		case GMTYPE_NSEQ:
+			return "Node_Sequence";
+		case GMTYPE_ESET:
+			return "Edge_Set";
+		case GMTYPE_EORDER:
+			return "Edge_Order";
+		case GMTYPE_ESEQ:
+			return "Edge_Sequence";
+		case GMTYPE_INF:
+		case GMTYPE_INF_INT:
+		case GMTYPE_INF_LONG:
+		case GMTYPE_INF_DOUBLE:
+		case GMTYPE_INF_FLOAT:
+			return "INF";
+		case GMTYPE_NODEITER_SET:
+			return "N_S::I";
+		case GMTYPE_NODEITER_SEQ:
+			return "N_Q::I";
+		case GMTYPE_NODEITER_ORDER:
+			return "N_O::I";
+		case GMTYPE_EDGEITER_SET:
+			return "E_S::I";
+		case GMTYPE_EDGEITER_SEQ:
+			return "E_Q::I";
+		case GMTYPE_EDGEITER_ORDER:
+			return "E_O::I";
+		case GMTYPE_ITER_ANY:
+			return "Collection::I";
+		case GMTYPE_VOID:
+			return "Void";
+
+		default: // printf("%d\n",t); assert(false);
+			return "Unknown";
+		}
+	}
+	
+	public String get_iter_type_string() {
+		switch (this) {
+		case GMTYPE_NODEITER_ALL:
+			return "Nodes";
+		case GMTYPE_NODEITER_NBRS:
+			return "Nbrs";
+		case GMTYPE_EDGEITER_ALL:
+			return "Edges";
+		case GMTYPE_EDGEITER_NBRS:
+			return "Nbr_Edges";
+		case GMTYPE_NODEITER_UP_NBRS:
+			return "UpNbrs";
+		case GMTYPE_NODEITER_DOWN_NBRS:
+			return "DownNbrs";
+		case GMTYPE_NODEITER_IN_NBRS:
+			return "InNbrs";
+		case GMTYPE_NODEITER_COMMON_NBRS:
+			return "CommonNbrs";
+		case GMTYPE_NODEITER_SET:
+			return "Items";
+		case GMTYPE_NODEITER_SEQ:
+			return "Items";
+		case GMTYPE_NODEITER_ORDER:
+			return "Items";
+		case GMTYPE_ITER_ANY:
+			return "Items";
+		default:
+			assert false;
+			return "Unknown";
+		}
+	}
+	
+	public static GMTYPE_T gm_get_type_from_string(String s) {
+		assert s != null;
+		if (s.equals("Graph"))
+			return GMTYPE_T.GMTYPE_GRAPH;
+		else if (s.equals("Node"))
+			return GMTYPE_T.GMTYPE_NODE;
+		else if (s.equals("Edge"))
+			return GMTYPE_T.GMTYPE_EDGE;
+		else if (s.equals("NI_All"))
+			return GMTYPE_T.GMTYPE_NODEITER_ALL;
+		else if (s.equals("EI_All"))
+			return GMTYPE_T.GMTYPE_EDGEITER_ALL;
+		else if (s.equals("NI_Out"))
+			return GMTYPE_T.GMTYPE_NODEITER_NBRS;
+		else if (s.equals("NI_In"))
+			return GMTYPE_T.GMTYPE_NODEITER_IN_NBRS;
+		else if (s.equals("NI_Up"))
+			return GMTYPE_T.GMTYPE_NODEITER_UP_NBRS;
+		else if (s.equals("NI_Down"))
+			return GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS;
+		else if (s.equals("Int"))
+			return GMTYPE_T.GMTYPE_INT;
+		else if (s.equals("Long"))
+			return GMTYPE_T.GMTYPE_LONG;
+		else if (s.equals("Float"))
+			return GMTYPE_T.GMTYPE_FLOAT;
+		else if (s.equals("Double"))
+			return GMTYPE_T.GMTYPE_DOUBLE;
+		else if (s.equals("N_S"))
+			return GMTYPE_T.GMTYPE_NSET;
+		else if (s.equals("E_S"))
+			return GMTYPE_T.GMTYPE_ESET;
+		else if (s.equals("N_O"))
+			return GMTYPE_T.GMTYPE_NORDER;
+		else if (s.equals("E_O"))
+			return GMTYPE_T.GMTYPE_EORDER;
+		else if (s.equals("N_Q"))
+			return GMTYPE_T.GMTYPE_NSEQ;
+		else if (s.equals("E_Q"))
+			return GMTYPE_T.GMTYPE_ESEQ;
+		else if (s.equals("Void"))
+			return GMTYPE_T.GMTYPE_VOID;
+		else if (s.equals("Bool"))
+			return GMTYPE_T.GMTYPE_BOOL;
+		else {
+			assert false;
+			throw new AssertionError();
+		}
 	}
 }

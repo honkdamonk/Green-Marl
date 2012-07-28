@@ -464,7 +464,7 @@ public class GlobalMembersGm_transform_helper {
 			r.get_this_scope(s);
 			return;
 		} else {
-			System.out.printf("node type = %s\n", GlobalMembersGm_misc.gm_get_nodetype_string(n.get_nodetype()));
+			System.out.printf("node type = %s\n", n.get_nodetype().get_nodetype_string());
 			assert false;
 		}
 	}

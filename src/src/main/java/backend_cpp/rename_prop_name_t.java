@@ -26,8 +26,7 @@ public class rename_prop_name_t extends gm_apply {
 		assert graph != null;
 
 		// rename A(G) => G_A
-		String buf = new String(new char[1024]);
-		buf = String.format("%s_%s", graph.get_orgname(), id.get_genname());
+		String buf = String.format("%s_%s", graph.get_orgname(), id.get_genname());
 		String new_name = GlobalMembersGm_main.FE.voca_temp_name(buf, null, true);
 		id.set_genname(new_name);
 		GlobalMembersGm_main.FE.voca_add(new_name);

@@ -32,11 +32,7 @@ public class gm_independent_optimize {
 	// --------------------------------------------
 
 	public final void init_steps() {
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: LinkedList<gm_compile_step*>& LIST = this->opt_steps;
-		LinkedList<gm_compile_step> LIST = new LinkedList<gm_compile_step>(this.opt_steps);
+		LinkedList<gm_compile_step> LIST = opt_steps;
 
 		LIST.addLast(gm_ind_opt_flip_edge_bfs.get_factory());
 		LIST.addLast(gm_ind_opt_syntax_sugar2.get_factory());

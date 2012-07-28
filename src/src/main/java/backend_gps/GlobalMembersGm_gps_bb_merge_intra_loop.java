@@ -1,7 +1,8 @@
 package backend_gps;
 
-import frontend.gm_symtab_entry;
-import inc.GlobalMembersGm_backend_gps;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL;
+import static backend_gps.GPSConstants.GPS_INT_INTRA_MERGED_CONDITIONAL_NO;
+import static backend_gps.GPSConstants.GPS_LIST_INTRA_MERGED_CONDITIONAL;
 
 import java.util.LinkedList;
 
@@ -10,13 +11,15 @@ import ast.gm_rwinfo_map;
 
 import common.GlobalMembersGm_main;
 
+import frontend.gm_symtab_entry;
+
 public class GlobalMembersGm_gps_bb_merge_intra_loop {
 
 	public static void find_linear_while_segments(gm_gps_basic_block entry, LinkedList<gps_intra_merge_candidate_t> L) {
 		// apply this in DFS traversal of basic blocks
 		gps_find_intra_merge_candidate_t T = new gps_find_intra_merge_candidate_t(L);
-		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(entry, T); // in DFS
-																	// order
+		// in DFS order
+		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(entry, T);
 	}
 
 	public static void apply_intra_merge(gps_intra_merge_candidate_t C) {
@@ -33,9 +36,9 @@ public class GlobalMembersGm_gps_bb_merge_intra_loop {
 		// ---------------------------------------------------
 		// mark p_n's sents/receivers as 'conditional'
 		for (ast_sent sent : p_n.get_sents())
-			sent.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
+			sent.add_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
 		for (ast_sent sent : s_n.get_sents())
-			sent.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
+			sent.add_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
 
 		/*
 		 * // don't need this std::list<gm_gps_comm_unit>::iterator J; for(J =
@@ -55,19 +58,19 @@ public class GlobalMembersGm_gps_bb_merge_intra_loop {
 		s_n.copy_info_from(s_1);
 
 		// add tags
-		p_n.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
-		p_n.add_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO, while_cond.get_id());
-		s_n.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
-		s_n.add_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO, while_cond.get_id());
+		p_n.add_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
+		p_n.add_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO, while_cond.get_id());
+		s_n.add_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
+		s_n.add_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO, while_cond.get_id());
 
 		// create new state
 		gm_gps_beinfo BEINFO = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
 		gm_gps_basic_block TAIL2 = new gm_gps_basic_block(BEINFO.issue_basicblock_id(), gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL);
 
 		// add tag that this is merged conditional
-		TAIL2.add_info_int(GlobalMembersGm_backend_gps.GPS_INT_INTRA_MERGED_CONDITIONAL_NO, while_cond.get_id());
-		while_cond.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
-		GlobalMembersGm_main.FE.get_current_proc().add_info_list_element(GlobalMembersGm_backend_gps.GPS_LIST_INTRA_MERGED_CONDITIONAL, while_cond);
+		TAIL2.add_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO, while_cond.get_id());
+		while_cond.add_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
+		GlobalMembersGm_main.FE.get_current_proc().add_info_list_element(GPS_LIST_INTRA_MERGED_CONDITIONAL, while_cond);
 
 		assert s_n.get_num_exits() == 1;
 		assert s_n.get_nth_exit(0) == while_cond;

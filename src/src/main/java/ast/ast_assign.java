@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
 public class ast_assign extends ast_sent {
@@ -144,7 +143,7 @@ public class ast_assign extends ast_sent {
 			Out.push(" = ");
 		} else if (assign_type == gm_assignment_t.GMASSIGN_REDUCE) {
 			Out.SPC();
-			Out.push(GlobalMembersGm_misc.gm_get_reduce_string(reduce_type));
+			Out.push(reduce_type.get_reduce_string());
 			Out.SPC();
 		} else if (assign_type == gm_assignment_t.GMASSIGN_DEFER) {
 			Out.push(" <= ");
@@ -344,7 +343,7 @@ public class ast_assign extends ast_sent {
 			System.out.print("[ASSIGN ");
 		} else if (assign_type == gm_assignment_t.GMASSIGN_REDUCE) {
 			System.out.print("[ASSIGN_REDUCE ");
-			System.out.printf(" <%s @ ", GlobalMembersGm_misc.gm_get_reduce_string(reduce_type));
+			System.out.printf(" <%s @ ", reduce_type.get_reduce_string());
 			if (bound == null)
 				System.out.print("(NULL)>  ");
 			else {

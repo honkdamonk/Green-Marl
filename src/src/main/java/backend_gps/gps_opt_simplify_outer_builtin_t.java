@@ -43,7 +43,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 				outer_iter = ((ast_foreach) s).get_iterator().getSymInfo();
 			}
 		} else if (depth == 2) {
-			if (GlobalMembersGm_gps_opt_simplify_expr1.contains_built_in_through_driver(s, outer_iter)) {
+			if (gm_gps_opt_simplify_expr1.contains_built_in_through_driver(s, outer_iter)) {
 				L1.addLast(s);
 				L2.addLast(outer_iter);
 			}
@@ -79,7 +79,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 			}
 			sent_block_driver_map.put(sb, drv);
 
-			GlobalMembersGm_gps_opt_simplify_expr1.replace_built_in(s, drv, sb, already_defined_map);
+			gm_gps_opt_simplify_expr1.replace_built_in(s, drv, sb, already_defined_map);
 		}
 
 		for (Pair<ast_sentblock, gm_method_id_t> key : already_defined_map.keySet()) {

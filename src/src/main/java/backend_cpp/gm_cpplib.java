@@ -1,26 +1,25 @@
 package backend_cpp;
 
-import static backend_cpp.GlobalMembersGm_cpplib_words.BEGIN;
-import static backend_cpp.GlobalMembersGm_cpplib_words.EDGEITER_T;
-import static backend_cpp.GlobalMembersGm_cpplib_words.EDGE_IDX;
-import static backend_cpp.GlobalMembersGm_cpplib_words.EDGE_T;
-import static backend_cpp.GlobalMembersGm_cpplib_words.FROM_IDX;
-import static backend_cpp.GlobalMembersGm_cpplib_words.GRAPH_T;
-import static backend_cpp.GlobalMembersGm_cpplib_words.NODEITER_T;
-import static backend_cpp.GlobalMembersGm_cpplib_words.NODE_IDX;
-import static backend_cpp.GlobalMembersGm_cpplib_words.NODE_T;
-import static backend_cpp.GlobalMembersGm_cpplib_words.NUM_EDGES;
-import static backend_cpp.GlobalMembersGm_cpplib_words.NUM_NODES;
-import static backend_cpp.GlobalMembersGm_cpplib_words.ORDER_T;
-import static backend_cpp.GlobalMembersGm_cpplib_words.QUEUE_T;
-import static backend_cpp.GlobalMembersGm_cpplib_words.RANDOM_NODE;
-import static backend_cpp.GlobalMembersGm_cpplib_words.R_BEGIN;
-import static backend_cpp.GlobalMembersGm_cpplib_words.R_EDGE_IDX;
-import static backend_cpp.GlobalMembersGm_cpplib_words.R_NODE_IDX;
-import static backend_cpp.GlobalMembersGm_cpplib_words.SEQ_T;
-import static backend_cpp.GlobalMembersGm_cpplib_words.SET_T;
+import static backend_cpp.gm_cpplib_words.BEGIN;
+import static backend_cpp.gm_cpplib_words.EDGEITER_T;
+import static backend_cpp.gm_cpplib_words.EDGE_IDX;
+import static backend_cpp.gm_cpplib_words.EDGE_T;
+import static backend_cpp.gm_cpplib_words.FROM_IDX;
+import static backend_cpp.gm_cpplib_words.GRAPH_T;
+import static backend_cpp.gm_cpplib_words.NODEITER_T;
+import static backend_cpp.gm_cpplib_words.NODE_IDX;
+import static backend_cpp.gm_cpplib_words.NODE_T;
+import static backend_cpp.gm_cpplib_words.NUM_EDGES;
+import static backend_cpp.gm_cpplib_words.NUM_NODES;
+import static backend_cpp.gm_cpplib_words.ORDER_T;
+import static backend_cpp.gm_cpplib_words.QUEUE_T;
+import static backend_cpp.gm_cpplib_words.RANDOM_NODE;
+import static backend_cpp.gm_cpplib_words.R_BEGIN;
+import static backend_cpp.gm_cpplib_words.R_EDGE_IDX;
+import static backend_cpp.gm_cpplib_words.R_NODE_IDX;
+import static backend_cpp.gm_cpplib_words.SEQ_T;
+import static backend_cpp.gm_cpplib_words.SET_T;
 import inc.GMTYPE_T;
-import inc.GlobalMembersGm_backend_cpp;
 import inc.gm_code_writer;
 import inc.gm_graph_library;
 import inc.nop_enum_cpp;
@@ -35,7 +34,6 @@ import ast.ast_sent;
 import ast.ast_typedecl;
 
 import common.GlobalMembersGm_main;
-import common.GlobalMembersGm_misc;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
@@ -45,9 +43,11 @@ import common.gm_vocabulary;
 // interface for graph library Layer
 //  ==> will be deprecated
 //-----------------------------------------------------------------
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class gm_cpp_gen;
 public class gm_cpplib extends gm_graph_library {
+	
+	private String str_buf;
+	private gm_cpp_gen main;
+		
 	public gm_cpplib() {
 		main = null;
 	}
@@ -102,7 +102,7 @@ public class gm_cpplib extends gm_graph_library {
 		} else if (type.is_collection_of_collection_type()) {
 			return QUEUE_T;
 		} else {
-			System.out.printf("type = %d %s\n", type, GlobalMembersGm_misc.gm_get_type_string(type));
+			System.out.printf("type = %d %s\n", type, type.get_type_string());
 			assert false;
 			return "ERROR";
 		}
@@ -134,9 +134,6 @@ public class gm_cpplib extends gm_graph_library {
 
 	public boolean do_local_optimize() {
 		String[] NAMES = { "[(nothing)]" };
-		// C++ TO JAVA CONVERTER WARNING: This 'sizeof' ratio was replaced with
-		// a direct reference to the array length:
-		// ORIGINAL LINE: const int COUNT = sizeof(NAMES) / sizeof(String);
 		final int COUNT = NAMES.length;
 
 		boolean is_okay = true;
@@ -191,13 +188,13 @@ public class gm_cpplib extends gm_graph_library {
 			switch (method_id) {
 			case GM_BLTIN_NODE_DEGREE:
 				assert i.getTypeInfo().get_target_graph_id() != null;
-				String.format(str_buf, "(%s.%s[%s+1] - %s.%s[%s])", i.getTypeInfo().get_target_graph_id().get_genname(), BEGIN, i.get_genname(), i
+				str_buf = String.format("(%s.%s[%s+1] - %s.%s[%s])", i.getTypeInfo().get_target_graph_id().get_genname(), BEGIN, i.get_genname(), i
 						.getTypeInfo().get_target_graph_id().get_genname(), BEGIN, i.get_genname());
 				Body.push(str_buf);
 				break;
 			case GM_BLTIN_NODE_IN_DEGREE:
 				assert i.getTypeInfo().get_target_graph_id() != null;
-				String.format(str_buf, "(%s.%s[%s+1] - %s.%s[%s])", i.getTypeInfo().get_target_graph_id().get_genname(), R_BEGIN, i.get_genname(), i
+				str_buf = String.format("(%s.%s[%s+1] - %s.%s[%s])", i.getTypeInfo().get_target_graph_id().get_genname(), R_BEGIN, i.get_genname(), i
 						.getTypeInfo().get_target_graph_id().get_genname(), R_BEGIN, i.get_genname());
 				Body.push(str_buf);
 				break;
@@ -233,7 +230,7 @@ public class gm_cpplib extends gm_graph_library {
 		case GMTYPE_NODEITER_DOWN_NBRS:
 			switch (method_id) {
 			case GM_BLTIN_NODE_TO_EDGE: {
-				String alias_name = i.getSymInfo().find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR);
+				String alias_name = i.getSymInfo().find_info_string(gm_cpp_gen.CPPBE_INFO_NEIGHBOR_ITERATOR);
 				assert alias_name != null;
 				assert alias_name.length() > 0;
 				str_buf = String.format("%s", alias_name);
@@ -316,7 +313,7 @@ public class gm_cpplib extends gm_graph_library {
 			Body.push(", ");
 
 		if (t.is_order_collection() || t.is_sequence_collection() || t.is_collection_of_collection()) {
-			Body.push(GlobalMembersGm_backend_cpp.MAX_THREADS);
+			Body.push(gm_cpp_gen.MAX_THREADS);
 			Body.push("()");
 		}
 
@@ -382,7 +379,7 @@ public class gm_cpplib extends gm_graph_library {
 			Body.push(str_buf);
 
 			String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(f.get_iterator().get_orgname(), "_I");
-			f.add_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_COLLECTION_ITERATOR, a_name);
+			f.add_info_string(gm_cpp_gen.CPPBE_INFO_COLLECTION_ITERATOR, a_name);
 			str_buf = String.format(" %s", a_name);
 			Body.push(str_buf);
 			a_name = null;
@@ -394,7 +391,7 @@ public class gm_cpplib extends gm_graph_library {
 			ast_id source2 = f.get_source2();
 			assert source2 != null;
 			String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(f.get_iterator().get_orgname(), "_I");
-			f.add_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_COMMON_NBR_ITERATOR, a_name);
+			f.add_info_string(gm_cpp_gen.CPPBE_INFO_COMMON_NBR_ITERATOR, a_name);
 			Body.pushln("// Iterate over Common neighbors");
 			str_buf = String.format("gm_common_neighbor_iter %s(%s, %s, %s);", a_name, graph.get_genname(), source.get_genname(), source2.get_genname());
 			Body.pushln(str_buf);
@@ -407,8 +404,8 @@ public class gm_cpplib extends gm_graph_library {
 		ast_id source = f.get_source();
 
 		if (iter_type.is_iteration_on_collection()) {
-			assert f.find_info(GlobalMembersGm_backend_cpp.CPPBE_INFO_COLLECTION_ITERATOR) != null;
-			String lst_iter_name = f.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_COLLECTION_ITERATOR);
+			assert f.find_info(gm_cpp_gen.CPPBE_INFO_COLLECTION_ITERATOR) != null;
+			String lst_iter_name = f.find_info_string(gm_cpp_gen.CPPBE_INFO_COLLECTION_ITERATOR);
 			String type_name;
 			if (source.getTypeSummary().is_collection_of_collection_type())
 				type_name = get_type_string(source.getTargetTypeInfo());
@@ -418,7 +415,7 @@ public class gm_cpplib extends gm_graph_library {
 			str_buf = String.format("%s %s = %s.get_next();", type_name, f.get_iterator().get_genname(), lst_iter_name);
 			Body.pushln(str_buf);
 		} else if (iter_type.is_iteration_on_neighbors_compatible()) {
-			String alias_name = f.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR);
+			String alias_name = f.find_info_string(gm_cpp_gen.CPPBE_INFO_NEIGHBOR_ITERATOR);
 			String type_name = get_type_string(iter_type);
 			String graph_name = source.getTypeInfo().get_target_graph_id().get_genname();
 			String var_name = iter.get_genname();
@@ -456,13 +453,7 @@ public class gm_cpplib extends gm_graph_library {
 		GMTYPE_T type = fe.get_iter_type();
 
 		if (type.is_iteration_on_all_graph()) {
-			// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent
-			// for pointers to value types:
-			// ORIGINAL LINE: sbyte* graph_name = source->get_genname();
 			String graph_name = source.get_genname();
-			// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent
-			// for pointers to value types:
-			// ORIGINAL LINE: sbyte* it_name = iter->get_genname();
 			String it_name = iter.get_genname();
 			str_buf = String.format("for (%s %s = 0; %s < %s.%s(); %s ++) ", get_type_string(type), it_name, it_name, graph_name,
 					type.is_iteration_on_nodes() ? NUM_NODES : NUM_EDGES, it_name);
@@ -470,7 +461,7 @@ public class gm_cpplib extends gm_graph_library {
 			Body.pushln(str_buf);
 		} else if (type.is_common_nbr_iter_type()) {
 
-			String iter_name = fe.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_COMMON_NBR_ITERATOR);
+			String iter_name = fe.find_info_string(gm_cpp_gen.CPPBE_INFO_COMMON_NBR_ITERATOR);
 			source.get_genname();
 			String it_name = iter.get_genname();
 			str_buf = String.format("for (%s %s = %s.get_next(); %s != gm_graph::NIL_NODE ; %s = %s.get_next()) ", NODE_T, it_name, iter_name, it_name,
@@ -487,13 +478,13 @@ public class gm_cpplib extends gm_graph_library {
 			// create additional information
 			// -----------------------------------------------
 			String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(iter.get_orgname(), "_idx");
-			fe.add_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR, a_name);
+			fe.add_info_string(gm_cpp_gen.CPPBE_INFO_NEIGHBOR_ITERATOR, a_name);
 			ast_id iterator = fe.get_iterator();
-			iterator.getSymInfo().add_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR, a_name);
+			iterator.getSymInfo().add_info_string(gm_cpp_gen.CPPBE_INFO_NEIGHBOR_ITERATOR, a_name);
 			a_name = null;
 
 			// [todo] check name-conflict
-			String alias_name = fe.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_NEIGHBOR_ITERATOR);
+			String alias_name = fe.find_info_string(gm_cpp_gen.CPPBE_INFO_NEIGHBOR_ITERATOR);
 			String graph_name = source.getTypeInfo().get_target_graph_id().get_genname();
 			String array_name = type.is_iteration_use_reverse() ? R_BEGIN : BEGIN;
 			String src_name = source.get_genname();
@@ -509,7 +500,7 @@ public class gm_cpplib extends gm_graph_library {
 			assert !fe.is_parallel();
 			assert type.is_node_collection_iter_type() || type.is_collection_of_collection_iter_type();
 
-			String iter_name = fe.find_info_string(GlobalMembersGm_backend_cpp.CPPBE_INFO_COLLECTION_ITERATOR);
+			String iter_name = fe.find_info_string(gm_cpp_gen.CPPBE_INFO_COLLECTION_ITERATOR);
 			str_buf = String.format("while (%s.has_next())", iter_name);
 			Body.pushln(str_buf);
 
@@ -640,6 +631,4 @@ public class gm_cpplib extends gm_graph_library {
 		body.push(")");
 	}
 
-	private String str_buf = new String(new char[1024 * 8]);
-	private gm_cpp_gen main;
 }

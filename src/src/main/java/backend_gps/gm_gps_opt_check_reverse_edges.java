@@ -1,8 +1,12 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_FLAG_USE_IN_DEGREE;
+import static backend_gps.GPSConstants.GPS_FLAG_USE_REVERSE_EDGE;
+import static backend_gps.GPSConstants.GPS_NAME_IN_DEGREE_PROP;
+import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
-import inc.GlobalMembersGm_backend_gps;
 import inc.gm_assignment_t;
 import inc.gm_compile_step;
 import ast.ast_assign;
@@ -18,20 +22,13 @@ import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_transform_helper;
 
-import frontend.GlobalMembersGm_rw_analysis;
-import frontend.gm_symtab_entry;
-
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-
 //-------------------------------------------
 // [Step 1]
 // Add delaration here
 // declaration of optimization steps
 //-------------------------------------------
 public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
+	
 	private gm_gps_opt_check_reverse_edges() {
 		set_description("Check use of reverse edges");
 	}
@@ -40,14 +37,14 @@ public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
 		gps_check_reverse_edge_t T = new gps_check_reverse_edge_t();
 		p.traverse_pre(T);
 		if (T.use_rev_edge()) {
-			GlobalMembersGm_main.FE.get_proc_info(p).add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE, true);
+			GlobalMembersGm_main.FE.get_proc_info(p).add_info_bool(GPS_FLAG_USE_REVERSE_EDGE, true);
 			// a special basic block will be added in create ebb state.
 		} else if (T.use_in_degree()) {
-			GlobalMembersGm_main.FE.get_proc_info(p).add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_IN_DEGREE, true);
+			GlobalMembersGm_main.FE.get_proc_info(p).add_info_bool(GPS_FLAG_USE_IN_DEGREE, true);
 
 			// define a new node_property for in_degree counting
 			String tmp_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_in_degree", null, true);
-			GlobalMembersGm_main.FE.get_proc_info(p).add_info_string(GlobalMembersGm_backend_gps.GPS_NAME_IN_DEGREE_PROP, tmp_name);
+			GlobalMembersGm_main.FE.get_proc_info(p).add_info_string(GPS_NAME_IN_DEGREE_PROP, tmp_name);
 
 			// create a temporary node property
 			ast_sentblock sb = p.get_body();

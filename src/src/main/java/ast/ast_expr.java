@@ -1,32 +1,16 @@
 package ast;
 
+import frontend.gm_symtab_entry;
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
+
 import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
-import frontend.gm_symtab_entry;
-
 // Numeric or boolean expression
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class gm_builtin_def;
-// defined in gm_builtin.h
 
 public class ast_expr extends ast_node {
-	public void dispose() {
-		if (id1 != null)
-			id1.dispose();
-		if (field != null)
-			field.dispose();
-		if (left != null)
-			left.dispose(); // object is new-ed
-		if (right != null)
-			right.dispose();
-		if (cond != null)
-			cond.dispose();
-	}
 
 	public void reproduce(int ind_level) {
 
@@ -66,7 +50,7 @@ public class ast_expr extends ast_node {
 				Out.push(" | ");
 			} else if (op_type == GM_OPS_T.GMOP_TYPEC) {
 				Out.push(" (");
-				Out.push(GlobalMembersGm_misc.gm_get_type_string(type_of_expression));
+				Out.push(type_of_expression.get_type_string());
 				Out.push(" ) ");
 				left.reproduce(0);
 			} else {
@@ -95,7 +79,7 @@ public class ast_expr extends ast_node {
 			if (up == null)
 				need_para = false;
 			else
-				need_para = GlobalMembersGm_misc.gm_need_paranthesis(get_optype(), up.get_optype(), is_right_op());
+				need_para = get_optype().gm_need_paranthesis(up.get_optype(), is_right_op());
 			if (need_para)
 				Out.push('(');
 			cond.reproduce(0);
@@ -117,7 +101,7 @@ public class ast_expr extends ast_node {
 		}
 
 		// binop
-		String opstr = GlobalMembersGm_misc.gm_get_op_string(op_type);
+		String opstr = op_type.get_op_string();
 		assert is_biop() || is_comp();
 		// numeric or logical
 
@@ -128,7 +112,7 @@ public class ast_expr extends ast_node {
 		else if (is_comp()) {
 			need_para = true;
 		} else if (up.is_biop() || up.is_comp()) {
-			need_para = GlobalMembersGm_misc.gm_need_paranthesis(get_optype(), up.get_optype(), is_right_op());
+			need_para = get_optype().gm_need_paranthesis(up.get_optype(), is_right_op());
 		} else
 			need_para = true;
 
@@ -154,13 +138,13 @@ public class ast_expr extends ast_node {
 			System.out.printf("%cINF", plus_inf ? '+' : '-');
 			return;
 		case GMEXPR_IVAL:
-			System.out.printf("%ld", ival);
+			System.out.print(ival);
 			return;
 		case GMEXPR_FVAL:
-			System.out.printf("%fl", fval);
+			System.out.print(fval);
 			return;
 		case GMEXPR_BVAL:
-			System.out.printf("%s", bval ? "true" : "false");
+			System.out.print(bval ? "true" : "false");
 			return;
 		case GMEXPR_ID:
 			id1.dump_tree(0);
@@ -175,7 +159,7 @@ public class ast_expr extends ast_node {
 			} else if (op_type == GM_OPS_T.GMOP_ABS) {
 				System.out.print("abs \n");
 			} else if (op_type == GM_OPS_T.GMOP_TYPEC) {
-				System.out.printf("( %s )\n", GlobalMembersGm_misc.gm_get_type_string(type_of_expression));
+				System.out.printf("( %s )\n", type_of_expression.get_type_string());
 			}
 			left.dump_tree(ind_level + 1);
 			System.out.print("\n");
@@ -220,7 +204,7 @@ public class ast_expr extends ast_node {
 			// TODO add some print statements for these?
 			return;
 		}
-		String opstr = GlobalMembersGm_misc.gm_get_op_string(op_type);
+		String opstr = op_type.get_op_string();
 
 		assert (expr_class == GMEXPR_CLASS.GMEXPR_BIOP) || (expr_class == GMEXPR_CLASS.GMEXPR_LBIOP) || (expr_class == GMEXPR_CLASS.GMEXPR_COMP);
 

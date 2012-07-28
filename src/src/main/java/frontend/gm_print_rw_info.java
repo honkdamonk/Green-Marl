@@ -1,13 +1,12 @@
 package frontend;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-
-import ast.AST_NODE_TYPE;
+import static ast.AST_NODE_TYPE.AST_PROCDEF;
+import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
 import ast.ast_node;
 import ast.ast_sent;
+import ast.gm_rwinfo_list;
+import ast.gm_rwinfo_map;
 
-import common.GlobalMembersGm_misc;
 import common.gm_apply;
 
 //----------------------------------------------------------------------
@@ -17,19 +16,20 @@ import common.gm_apply;
 // print rw info per sentence
 // (need to make it sentence block, such as then-clause, for best print-out)
 public class gm_print_rw_info extends gm_apply {
-	private int _tab;
+
+	private int _tab = 0;
 
 	private void print_tab(int j) {
 		for (int i = 0; i <= j; i++)
 			System.out.print("..");
 	}
 
-	private void print_set(String c, HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> m) {
+	private void print_set(String c, gm_rwinfo_map m) {
 		print_tab(_tab);
 		System.out.printf(" <%s>", c);
 		int cnt2 = 0;
 		for (gm_symtab_entry e : m.keySet()) {
-			LinkedList<gm_rwinfo> l = m.get(e);
+			gm_rwinfo_list l = m.get(e);
 			assert e != null;
 			assert l != null;
 			if ((cnt2 % 8) == 7) {
@@ -59,42 +59,22 @@ public class gm_print_rw_info extends gm_apply {
 		System.out.print("\n");
 	}
 
-	public gm_print_rw_info() {
-		_tab = 0;
-	}
-
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (s.get_nodetype() == AST_SENTBLOCK) {
 			_tab--;
 		}
 
-		if ((s.get_parent() != null)
-				&& ((s.get_parent().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) && (s.get_parent().get_nodetype() != AST_NODE_TYPE.AST_PROCDEF))) {
+		if ((s.get_parent() != null) && ((s.get_parent().get_nodetype() != AST_SENTBLOCK) && (s.get_parent().get_nodetype() != AST_PROCDEF))) {
 			_tab++;
 		}
 		gm_rwinfo_sets sets = GlobalMembersGm_rw_analysis.get_rwinfo_sets(s);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& R
-		// = sets->read_set;
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> R = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets.read_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& W
-		// = sets->write_set;
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> W = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets.write_set);
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy constructor call - this should be verified and a copy
-		// constructor should be created if it does not yet exist:
-		// ORIGINAL LINE: HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& D
-		// = sets->reduce_set;
-		HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>> D = new HashMap<gm_symtab_entry, LinkedList<gm_rwinfo>>(sets.reduce_set);
+		gm_rwinfo_map R = sets.read_set;
+		gm_rwinfo_map W = sets.write_set;
+		gm_rwinfo_map D = sets.reduce_set;
 
 		print_tab(_tab);
-		System.out.printf("[%s]\n", GlobalMembersGm_misc.gm_get_nodetype_string(s.get_nodetype()));
+		System.out.printf("[%s]\n", s.get_nodetype().get_nodetype_string());
 		if (R.size() > 0)
 			print_set("R", R);
 		if (W.size() > 0)
@@ -102,11 +82,10 @@ public class gm_print_rw_info extends gm_apply {
 		if (D.size() > 0)
 			print_set("D", D);
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (s.get_nodetype() == AST_SENTBLOCK) {
 			_tab++;
 		}
-		if ((s.get_parent() != null)
-				&& ((s.get_parent().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) && (s.get_parent().get_nodetype() != AST_NODE_TYPE.AST_PROCDEF))) {
+		if ((s.get_parent() != null) && ((s.get_parent().get_nodetype() != AST_SENTBLOCK) && (s.get_parent().get_nodetype() != AST_PROCDEF))) {
 			_tab--;
 		}
 		return true;

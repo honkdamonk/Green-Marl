@@ -29,7 +29,6 @@ import ast.gm_rwinfo_map;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_misc;
 import common.GlobalMembersGm_traverse;
 
 public class GlobalMembersGm_rw_analysis {
@@ -96,11 +95,6 @@ public class GlobalMembersGm_rw_analysis {
 	// map from target(symtab entry) to list of rw-info
 	// (one field may have multiple access patterns)
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: boolean gm_add_rwinfo_to_set(HashMap<gm_symtab_entry*,
-	// LinkedList<gm_rwinfo*>*>& info_set, gm_symtab_entry* sym, gm_rwinfo*
-	// new_entry, boolean is_reduce_ops = false)
 	public static boolean gm_add_rwinfo_to_set(gm_rwinfo_map info_set, gm_symtab_entry sym, gm_rwinfo new_entry, boolean is_reduce_ops) {
 		boolean is_error = false;
 
@@ -139,12 +133,6 @@ public class GlobalMembersGm_rw_analysis {
 				} // new_entry is wider
 				else if (GlobalMembersGm_rw_analysis.is_wider_entry(e2, new_entry)) {
 					// hack. copy new entry into old one
-					// C++ TO JAVA CONVERTER WARNING: The following line was
-					// determined to be a copy assignment (rather than a
-					// reference assignment) - this should be verified and a
-					// 'copyFrom' method should be created if it does not yet
-					// exist:
-					// ORIGINAL LINE: *e2 = *new_entry;
 					e2.copyFrom(new_entry);
 					if (new_entry != null)
 						new_entry.dispose(); // not required
@@ -168,8 +156,6 @@ public class GlobalMembersGm_rw_analysis {
 					j.dispose();
 			}
 			l.clear();
-			// if (l != null)
-			// l.dispose();
 		}
 		m.clear();
 	}
@@ -275,32 +261,6 @@ public class GlobalMembersGm_rw_analysis {
 	// unless both-path contain same access
 	// return: is_okay
 	// -----------------------------------------------------------------------------
-
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define TO_STR(X) #X
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define DEF_STRING(X) static const char *X = "X"
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public
-	// gm_compile_step { private: CLASS() {set_description(DESC);}public:
-	// virtual void process(ast_procdef*p); virtual gm_compile_step*
-	// get_instance(){return new CLASS();} static gm_compile_step*
-	// get_factory(){return new CLASS();} };
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define AUX_INFO(X,Y) "X"":""Y"
-	// /#define GM_BLTIN_MUTATE_GROW 1
-	// /#define GM_BLTIN_MUTATE_SHRINK 2
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_BLTIN_FLAG_TRUE true
-
 	public static boolean merge_for_if_else(gm_rwinfo_map Target, gm_rwinfo_map S1, gm_rwinfo_map S2, boolean is_reduce) {
 		boolean is_okay = true;
 
@@ -424,7 +384,7 @@ public class GlobalMembersGm_rw_analysis {
 			// assert(neo->driver->getId() != NULL);
 
 			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_OP, neo.location.get_line(), neo.location.get_col(),
-					GlobalMembersGm_misc.gm_get_reduce_string(old.reduce_op));
+					old.reduce_op.get_reduce_string());
 			return true;
 		}
 
@@ -445,11 +405,6 @@ public class GlobalMembersGm_rw_analysis {
 		traverse_expr_for_readset_adding(e, rset, Default_DriverMap);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void traverse_expr_for_readset_adding(ast_expr* e,
-	// HashMap<gm_symtab_entry*, LinkedList<gm_rwinfo*>*>& rset,
-	// HashMap<gm_symtab_entry*, range_cond_t>& DrvMap = Default_DriverMap)
 	public static void traverse_expr_for_readset_adding(ast_expr e, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
 
 		switch (e.get_opclass()) {
@@ -457,8 +412,7 @@ public class GlobalMembersGm_rw_analysis {
 			gm_rwinfo new_entry = gm_rwinfo.new_scala_inst(e.get_id());
 			gm_symtab_entry sym = e.get_id().getSymInfo();
 			assert sym != null;
-
-			boolean b = GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(rset, sym, new_entry, false);
+			GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(rset, sym, new_entry, false);
 			break;
 		}
 		case GMEXPR_FIELD:
@@ -593,10 +547,6 @@ public class GlobalMembersGm_rw_analysis {
 			DrvMap.remove(it);
 		}
 	}
-
-	// C++ TO JAVA CONVERTER NOTE: Java has no need of forward class
-	// declarations:
-	// class gm_builtin_def;
 
 	public static boolean merge_for_if(gm_rwinfo_map Target, gm_rwinfo_map S1, boolean is_reduce) {
 		boolean is_okay = true;

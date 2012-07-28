@@ -1,5 +1,7 @@
 package inc;
 
+import java.util.HashMap;
+
 public enum GM_ACCESS_T { // 16 bit bitmap
 	GMACCESS_NONE(0x0000), //
 	GMACCESS_EMPTY(0x0001), //
@@ -10,9 +12,9 @@ public enum GM_ACCESS_T { // 16 bit bitmap
 	GMACCESS_COPY(0x0020);//
 
 	private int intValue;
-	private static java.util.HashMap<Integer, GM_ACCESS_T> mappings;
+	private static HashMap<Integer, GM_ACCESS_T> mappings;
 
-	private static java.util.HashMap<Integer, GM_ACCESS_T> getMappings() {
+	private static HashMap<Integer, GM_ACCESS_T> getMappings() {
 		if (mappings == null) {
 			synchronized (GM_ACCESS_T.class) {
 				if (mappings == null) {

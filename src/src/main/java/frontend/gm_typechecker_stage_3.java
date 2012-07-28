@@ -1,5 +1,12 @@
 package frontend;
 
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN_ARG_TYPE;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_BOOLEAN;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH2;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TYPE_CONVERSION;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TYPE_CONVERSION_BOOL_NUM;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
@@ -12,26 +19,9 @@ import ast.ast_expr_builtin;
 import ast.ast_expr_reduce;
 import ast.ast_typedecl;
 
-import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_misc;
 import common.gm_apply;
 import common.gm_builtin_def;
-
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define AUX_INFO(X,Y) "X"":""Y"
-///#define GM_BLTIN_MUTATE_GROW 1
-///#define GM_BLTIN_MUTATE_SHRINK 2
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_BLTIN_FLAG_TRUE true
 
 //----------------------------------------------------------------
 // Type-check Step 3: 
@@ -164,14 +154,14 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			// should be alredy dest_type;
 			GMTYPE_T dest_type = e.get_type_summary();
 			if (!dest_type.is_prim_type()) { // destination type
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TYPE_CONVERSION, l, c);
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_TYPE_CONVERSION, l, c);
 				return false;
 			}
 
 			if (!exp_type.is_prim_type() && !exp_type.is_nodeedge_type()) // source
 																			// type
 			{
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TYPE_CONVERSION, l, c);
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_TYPE_CONVERSION, l, c);
 				return false;
 			}
 
@@ -180,7 +170,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 					|| (dest_type.is_numeric_type() && exp_type.is_nodeedge_type()) || false;
 
 			if (!possible) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TYPE_CONVERSION_BOOL_NUM, l, c, "");
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_TYPE_CONVERSION_BOOL_NUM, l, c, "");
 				return false;
 			}
 
@@ -188,8 +178,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		} // not
 		else if (op_type.is_boolean_op()) {
 			if (!exp_type.is_boolean_type()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
-						GlobalMembersGm_misc.gm_get_type_string(exp_type));
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_OPERATOR_MISMATCH, l, c, op_type.get_op_string(), exp_type.get_type_string());
 				return false;
 			}
 
@@ -198,8 +187,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		} // neg or abs
 		else if (op_type.is_numeric_op()) {
 			if (!exp_type.is_numeric_type()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
-						GlobalMembersGm_misc.gm_get_type_string(exp_type));
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_OPERATOR_MISMATCH, l, c, op_type.get_op_string(), exp_type.get_type_string());
 				return false;
 			}
 
@@ -256,7 +244,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		RefObject<Boolean> tempRef_w2_warn = new RefObject<Boolean>(null);
 		boolean okay = GlobalMembersGm_typecheck_oprules.gm_is_compatible_type(op_type, l_type, r_type, tempRef_result_type, tempRef_l_new, tempRef_r_new,
 				tempRef_w1_warn, tempRef_w2_warn);
-		
+
 		GMTYPE_T result_type = tempRef_result_type.argvalue;
 		GMTYPE_T l_new = tempRef_l_new.argvalue;
 		GMTYPE_T r_new = tempRef_r_new.argvalue;
@@ -264,8 +252,8 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		boolean w2_warn = tempRef_w2_warn.argvalue;
 
 		if (!okay) {
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH2, l, c, GlobalMembersGm_misc.gm_get_op_string(op_type),
-					GlobalMembersGm_misc.gm_get_type_string(l_type), GlobalMembersGm_misc.gm_get_type_string(r_type));
+			GlobalMembersGm_error.gm_type_error(GM_ERROR_OPERATOR_MISMATCH2, l, c, op_type.get_op_string(), l_type.get_type_string(),
+					r_type.get_type_string());
 
 			return false;
 		}
@@ -286,7 +274,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			}
 
 			if ((l_sym != null) && (r_sym != null) && (l_sym != r_sym)) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH, l, c);
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, l, c);
 				return false;
 			}
 
@@ -298,16 +286,14 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		if (w1_warn && l_type.is_prim_type()) {
 			// adding explicit coercions
 			if (!e.get_left_op().is_literal()) {
-				System.out.printf("warning: adding type conversion %s->%s\n", GlobalMembersGm_misc.gm_get_type_string(l_type),
-						GlobalMembersGm_misc.gm_get_type_string(l_new));
+				System.out.printf("warning: adding type conversion %s->%s\n", l_type.get_type_string(), l_new.get_type_string());
 				coercion_targets.put(e.get_left_op(), l_new);
 			}
 		}
 		if (w2_warn && r_type.is_prim_type()) {
 			// adding explicit coercions
 			if (!e.get_right_op().is_literal()) {
-				System.out.printf("warning: adding type conversion %s->%s\n", GlobalMembersGm_misc.gm_get_type_string(r_type),
-						GlobalMembersGm_misc.gm_get_type_string(r_new));
+				System.out.printf("warning: adding type conversion %s->%s\n", r_type.get_type_string(), r_new.get_type_string());
 				coercion_targets.put(e.get_right_op(), r_new);
 			}
 		}
@@ -328,7 +314,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		}
 
 		if (!c_type.is_boolean_type()) {
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_BOOLEAN, l, c);
+			GlobalMembersGm_error.gm_type_error(GM_ERROR_NEED_BOOLEAN, l, c);
 			return false;
 		}
 
@@ -381,10 +367,8 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			boolean warning = warning_ref.argvalue;
 
 			if (!isCompatible) {
-				String temp = new String(new char[20]);
-				temp = String.format("%d", position + 1);
-				GlobalMembersGm_error
-						.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN_ARG_TYPE, b.get_line(), b.get_col(), b.get_callname(), temp);
+				String temp = String.format("%d", position + 1);
+				GlobalMembersGm_error.gm_type_error(GM_ERROR_INVALID_BUILTIN_ARG_TYPE, b.get_line(), b.get_col(), b.get_callname(), temp);
 				okay = false;
 			}
 			if (warning) {

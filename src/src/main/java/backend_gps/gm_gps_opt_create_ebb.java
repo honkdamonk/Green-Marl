@@ -1,7 +1,10 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_DUMMY_ID;
+import static backend_gps.GPSConstants.GPS_FLAG_USE_REVERSE_EDGE;
+import static backend_gps.GPSConstants.GPS_PREPARE_STEP1;
+import static backend_gps.GPSConstants.GPS_PREPARE_STEP2;
 import frontend.gm_symtab_entry;
-import inc.GlobalMembersGm_backend_gps;
 import inc.gm_compile_step;
 
 import java.util.HashMap;
@@ -15,7 +18,7 @@ import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_traverse;
 
 public class gm_gps_opt_create_ebb extends gm_compile_step {
-	
+
 	private gm_gps_opt_create_ebb() {
 		set_description("Create ExtendedBasicBlocks");
 	}
@@ -47,23 +50,23 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		// STEP 3:
 		// merge BASIC BLOCKS
 		// --------------------------------
-		GlobalMembersGm_gps_bb_merge.gm_gps_merge_basic_blocks(T2.get_entry());
+		gm_gps_merge_basic_blocks(T2.get_entry());
 
 		// ---------------------------
 		// STEP 4:
 		// ---------------------------
 		gm_gps_basic_block top = T2.get_entry();
-		if (GlobalMembersGm_main.FE.get_proc_info(proc).find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_REVERSE_EDGE)) {
+		if (GlobalMembersGm_main.FE.get_proc_info(proc).find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
 			// create prepareation state
-			gm_gps_basic_block t1 = new gm_gps_basic_block(GlobalMembersGm_backend_gps.GPS_PREPARE_STEP1, gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1);
-			gm_gps_basic_block t2 = new gm_gps_basic_block(GlobalMembersGm_backend_gps.GPS_PREPARE_STEP2, gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2);
+			gm_gps_basic_block t1 = new gm_gps_basic_block(GPS_PREPARE_STEP1, gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1);
+			gm_gps_basic_block t2 = new gm_gps_basic_block(GPS_PREPARE_STEP2, gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2);
 			t1.add_exit(t2);
 
 			t2.add_exit(top);
 			top = t1;
 
 			// create dummy communication info
-			ast_id dummy = ast_id.new_id(GlobalMembersGm_backend_gps.GPS_DUMMY_ID, 0, 0);
+			ast_id dummy = ast_id.new_id(GPS_DUMMY_ID, 0, 0);
 			ast_id dummy2 = ast_id.new_id("dummy_graph", 0, 0);
 			ast_typedecl t = ast_typedecl.new_nodetype(dummy2);
 			gm_symtab_entry e = new gm_symtab_entry(dummy, t);
@@ -84,5 +87,10 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 
 	public static gm_compile_step get_factory() {
 		return new gm_gps_opt_create_ebb();
+	}
+
+	private static void gm_gps_merge_basic_blocks(gm_gps_basic_block entry) {
+		gps_merge_simple_t T = new gps_merge_simple_t();
+		GlobalMembersGm_gps_misc.gps_bb_apply_until_no_change(entry, T);
 	}
 }

@@ -1,9 +1,17 @@
 package backend_gps;
 
-import tangible.RefObject;
-import frontend.gm_symtab_entry;
+import static backend_gps.GPSConstants.GPS_FLAG_COMM_DEF_ASSIGN;
+import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINING_WRITE;
+import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
+import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
+import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
 import inc.GMTYPE_T;
-import inc.GlobalMembersGm_backend_gps;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+
+import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -18,7 +26,10 @@ import common.GlobalMembersGm_main;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
 
+import frontend.gm_symtab_entry;
+
 public class gps_rewrite_rhs_t extends gm_apply {
+	
 	public gps_rewrite_rhs_t() {
 		set_for_expr(true);
 		set_for_sent(true);
@@ -27,9 +38,9 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
-			if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP)) {
+			if (s.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
 				current_fe = (ast_foreach) s;
-				java.util.HashSet<ast_expr> empty = new java.util.HashSet<ast_expr>();
+				HashSet<ast_expr> empty = new HashSet<ast_expr>();
 				sub_exprs.put(current_fe, empty); // initialization by copying
 			}
 		}
@@ -39,11 +50,11 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 	public final boolean apply(ast_expr e) {
 		ast_sent s = get_current_sent();
-		if (s.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue())
+		if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue())
 			return true;
 
-		if ((e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue())
-				|| (e.find_info_int(GlobalMembersGm_backend_gps.GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_EDGE.getValue())) {
+		if ((e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue())
+				|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_EDGE.getValue())) {
 			// (current traversal engine does not support pruning, so should
 			// look at parents
 			//
@@ -62,11 +73,11 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		}
 	}
 
-	public final void process_foreach(ast_foreach fe, java.util.HashSet<ast_expr> exprs) {
-		java.util.HashMap<gm_symtab_entry, gm_symtab_entry> props_vars = new java.util.HashMap<gm_symtab_entry, gm_symtab_entry>();
-		java.util.HashMap<ast_expr, gm_symtab_entry> expr_vars = new java.util.HashMap<ast_expr, gm_symtab_entry>();
+	public final void process_foreach(ast_foreach fe, HashSet<ast_expr> exprs) {
+		HashMap<gm_symtab_entry, gm_symtab_entry> props_vars = new HashMap<gm_symtab_entry, gm_symtab_entry>();
+		HashMap<ast_expr, gm_symtab_entry> expr_vars = new HashMap<ast_expr, gm_symtab_entry>();
 
-		assert fe.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_IS_INNER_LOOP);
+		assert fe.find_info_bool(GPS_FLAG_IS_INNER_LOOP);
 
 		ast_sentblock sb = (ast_sentblock) (fe.get_body());
 		// printf("(2)fe = %p, sb = %p\n", fe, sb);
@@ -97,7 +108,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 				continue;
 
 			// for future optimization
-			if (GlobalMembersGm_gps_new_rewrite_rhs.is_composed_of(e, props_vars)) {
+			if (is_composed_of(e, props_vars)) {
 				assert false;
 			} else {
 				gm_symtab_entry target;
@@ -115,9 +126,9 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		for (ast_expr e : exprs) {
 			// if not is_composed_of ...
 			if (e.is_field())
-				GlobalMembersGm_gps_new_rewrite_rhs.replace_access_expr(e, props_vars.get(e.get_field().get_second().getSymInfo()), true);
+				replace_access_expr(e, props_vars.get(e.get_field().get_second().getSymInfo()), true);
 			else
-				GlobalMembersGm_gps_new_rewrite_rhs.replace_access_expr(e, expr_vars.get(e), false);
+				replace_access_expr(e, expr_vars.get(e), false);
 		}
 
 		// create definitions
@@ -126,7 +137,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 			ast_id lhs_id = target.getId().copy(true);
 			ast_assign r_assign = ast_assign.new_assign_scala(lhs_id, rhs);
 
-			r_assign.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_COMM_DEF_ASSIGN, true);
+			r_assign.add_info_bool(GPS_FLAG_COMM_DEF_ASSIGN, true);
 
 			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, r_assign);
 		}
@@ -141,15 +152,15 @@ public class gps_rewrite_rhs_t extends gm_apply {
 			ast_expr rhs = ast_expr.new_field_expr(f);
 			ast_assign r_assign = ast_assign.new_assign_scala(lhs_id, rhs);
 
-			r_assign.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_COMM_DEF_ASSIGN, true);
+			r_assign.add_info_bool(GPS_FLAG_COMM_DEF_ASSIGN, true);
 
 			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, r_assign);
 		}
 
 		// move edge-defining writes at the top
-		java.util.LinkedList<ast_sent> sents_to_move = new java.util.LinkedList<ast_sent>();
+		LinkedList<ast_sent> sents_to_move = new LinkedList<ast_sent>();
 		for (ast_sent s : sb.get_sents()) {
-			if (s.find_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_EDGE_DEFINING_WRITE)) {
+			if (s.find_info_bool(GPS_FLAG_EDGE_DEFINING_WRITE)) {
 				sents_to_move.addLast(s);
 			}
 		}
@@ -160,7 +171,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 	}
 
-	private java.util.HashMap<ast_foreach, java.util.HashSet<ast_expr>> sub_exprs = new java.util.HashMap<ast_foreach, java.util.HashSet<ast_expr>>();
+	private HashMap<ast_foreach, HashSet<ast_expr>> sub_exprs = new HashMap<ast_foreach, HashSet<ast_expr>>();
 	private ast_foreach current_fe;
 
 	private gm_symtab_entry define_temp(GMTYPE_T type, ast_sentblock sb, gm_symtab_entry graph) {
@@ -193,5 +204,15 @@ public class gps_rewrite_rhs_t extends gm_apply {
 			e = e.get_up_op();
 		}
 		return false;
+	}
+
+	public static boolean is_composed_of(ast_expr e, HashMap<gm_symtab_entry, gm_symtab_entry> SYMS) {
+		return false;
+	}
+
+	public static void replace_access_expr(ast_expr org, gm_symtab_entry target, boolean destroy) {
+		gm_replace_simple_props_t T = new gm_replace_simple_props_t(org, target, destroy);
+		assert org.get_parent() != null;
+		GlobalMembersGm_transform_helper.gm_replace_expr_general(org.get_parent(), T);
 	}
 }

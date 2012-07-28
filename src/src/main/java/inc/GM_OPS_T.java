@@ -1,5 +1,6 @@
 package inc;
 
+
 public enum GM_OPS_T { // list of operators
 	GMOP_ABS, //
 	GMOP_NEG, //
@@ -64,5 +65,32 @@ public enum GM_OPS_T { // list of operators
 
 	public int get_op_pred() {
 		return GM_OPPRED_LEVEL[this.getValue()];
+	}
+
+	public boolean gm_need_paranthesis(GM_OPS_T up_op, boolean is_right) {
+		if (up_op == GMOP_TER) {
+			// for clarity I prefer adding ()s, except chained ternary-ops.
+			// example (A+B>C) ? (D+1) : (A+C>D) ? (E+1) : (F+1)
+			if ((this == GMOP_TER) && is_right)
+				return false;
+			else
+				return true;
+		} else {
+			if (this.get_op_pred() > up_op.get_op_pred())
+				return true;
+
+			else if (this.get_op_pred() == up_op.get_op_pred() && is_right)
+				return true;
+
+			else
+				return false;
+		}
+	}
+
+	public String get_op_string() {
+		return (this == GMOP_MULT) ? "*" : (this == GMOP_DIV) ? "/" : (this == GMOP_SUB) ? "-" : (this == GMOP_MOD) ? "%" : (this == GMOP_ADD) ? "+"
+				: (this == GMOP_NEG) ? "-" : (this == GMOP_AND) ? "&&" : (this == GMOP_OR) ? "||" : (this == GMOP_NOT) ? "!" : (this == GMOP_EQ) ? "=="
+						: (this == GMOP_NEQ) ? "!=" : (this == GMOP_GT) ? ">" : (this == GMOP_LT) ? "<" : (this == GMOP_GE) ? ">=" : (this == GMOP_LE) ? "<="
+								: (this == GMOP_ABS) ? "|" : (this == GMOP_TYPEC) ? "(type_conversion)" : "??";
 	}
 }

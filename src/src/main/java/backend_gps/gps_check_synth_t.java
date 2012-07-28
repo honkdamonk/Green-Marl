@@ -1,7 +1,7 @@
 package backend_gps;
 
+import static backend_gps.GPSConstants.GPS_FLAG_USE_EDGE_PROP;
 import inc.GMTYPE_T;
-import inc.GlobalMembersGm_backend_gps;
 import ast.AST_NODE_TYPE;
 import ast.ast_procdef;
 import ast.ast_sent;
@@ -12,21 +12,6 @@ import common.gm_apply;
 
 import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab_entry;
-
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define AUX_INFO(X,Y) "X"":""Y"
-///#define GM_BLTIN_MUTATE_GROW 1
-///#define GM_BLTIN_MUTATE_SHRINK 2
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_BLTIN_FLAG_TRUE true
 
 //------------------------------------------------
 // Check basic things about if the program is synthesizable
@@ -44,14 +29,16 @@ import frontend.gm_symtab_entry;
 
 // check condition 1-4
 public class gps_check_synth_t extends gm_apply {
+
+	private boolean _error = false;
+	private boolean _graph_defined = false;
+	private int foreach_depth = 0;
+	private ast_procdef proc;
+
 	public gps_check_synth_t(ast_procdef p) {
-		_error = false;
 		set_for_symtab(true);
 		set_for_sent(true);
 		set_separate_post_apply(true);
-
-		foreach_depth = 0;
-		_graph_defined = false;
 		proc = p;
 	}
 
@@ -105,7 +92,7 @@ public class gps_check_synth_t extends gm_apply {
 			 * e->getId()->get_line(), e->getId()->get_col(),
 			 * e->getId()->get_orgname()); _error = true;
 			 */
-			proc.add_info_bool(GlobalMembersGm_backend_gps.GPS_FLAG_USE_EDGE_PROP, true);
+			proc.add_info_bool(GPS_FLAG_USE_EDGE_PROP, true);
 		}
 
 		else if (type_id.is_graph_type()) {
@@ -123,9 +110,4 @@ public class gps_check_synth_t extends gm_apply {
 	public final boolean is_graph_defined() {
 		return _graph_defined;
 	}
-
-	private boolean _error;
-	private boolean _graph_defined;
-	private int foreach_depth;
-	private ast_procdef proc;
 }

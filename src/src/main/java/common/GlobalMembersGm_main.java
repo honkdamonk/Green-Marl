@@ -18,32 +18,19 @@ public class GlobalMembersGm_main {
 	 * Library Transform (6) (Backend) Code Generation
 	 ***************************************/
 
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define TO_STR(X) #X
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define DEF_STRING(X) static const char *X = "X"
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public
-	// gm_compile_step { private: CLASS() {set_description(DESC);}public:
-	// virtual void process(ast_procdef*p); virtual gm_compile_step*
-	// get_instance(){return new CLASS();} static gm_compile_step*
-	// get_factory(){return new CLASS();} };
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define AUX_INFO(X,Y) "X"":""Y"
-	// /#define GM_BLTIN_MUTATE_GROW 1
-	// /#define GM_BLTIN_MUTATE_SHRINK 2
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_BLTIN_FLAG_TRUE true
+	// -----------------------------------------------------
+	// For compiler debug,
+	// mark begining/end of compiler stage (major or minor).
+	// All numbering should start from 1. (not from 0)
+	private static final int GMSTAGE_PARSE = 1;
+	private static final int GMSTAGE_FRONTEND = 2;
+	private static final int GMSTAGE_INDEPENDENT_OPT = 3;
+	private static final int GMSTAGE_BACKEND_OPT = 4;
+	private static final int GMSTAGE_LIBRARY_OPT = 5;
+	private static final int GMSTAGE_CODEGEN = 6;
 
 	// const char* GM_version_info = "0.1"; // moved to common/gm_verion_string
+	public static String gm_version_string = "0.3.0";
 
 	public static gm_frontend FE = new gm_frontend();
 	public static gm_cpp_gen CPP_BE = new gm_cpp_gen(); // CPP Backend
@@ -194,17 +181,17 @@ public class GlobalMembersGm_main {
 		Path.parsePath(fname);
 
 		String name = OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_TARGET);
-		if (GlobalMembersGm_misc.gm_is_same_string(name, "cpp_seq")) {
+		if (name.equals("cpp_seq")) {
 			CPP_BE.set_target_omp(false);
 			BACK_END = CPP_BE;
-		} else if (GlobalMembersGm_misc.gm_is_same_string(name, "cpp_omp")) {
+		} else if (name.equals("cpp_omp")) {
 			CPP_BE.set_target_omp(true);
 			BACK_END = CPP_BE;
-		} else if (GlobalMembersGm_misc.gm_is_same_string(name, "gps")) {
+		} else if (name.equals("gps")) {
 			BACK_END = GPS_BE;
 			PREGEL_BE = GPS_BE;
 			OPTIONS.set_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_PULL, true);
-		} else if (GlobalMembersGm_misc.gm_is_same_string(name, "giraph")) {
+		} else if (name.equals("giraph")) {
 			BACK_END = GIRAPH_BE;
 			PREGEL_BE = GIRAPH_BE;
 			OPTIONS.set_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_PULL, true);
@@ -225,13 +212,10 @@ public class GlobalMembersGm_main {
 		// -------------------------------------
 		// Parse phase
 		// -------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_PARSE, "Parse");
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_PARSE, "Parse");
 		{
 			// currently there should be only one file
 			assert GM_input_lists.size() == 1;
-			// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent
-			// for pointers to value types:
-			// ORIGINAL LINE: sbyte* fname = GM_input_lists.front();
 			String fname1 = GM_input_lists.getFirst();
 			GlobalMembersGm_error.gm_set_current_filename(fname1);
 			if (GlobalMembersGm_error.GM_is_parse_error())
@@ -248,7 +232,7 @@ public class GlobalMembersGm_main {
 		// - rw analysis (phase 1)
 		// - rw analysis (phase 2)
 		// --------------------------------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_FRONTEND, "Frontend");
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_FRONTEND, "Frontend");
 		{
 			ok = FE.do_local_frontend_process();
 			if (!ok)
@@ -264,7 +248,7 @@ public class GlobalMembersGm_main {
 		// - (Push down assignments)
 		// - (Push down var-defs)
 		// ----------------------------------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_INDEPENDENT_OPT, "Indep-Opt");
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_INDEPENDENT_OPT, "Indep-Opt");
 		{
 			ok = IND_OPT.do_local_optimize();
 			if (!ok)
@@ -275,7 +259,7 @@ public class GlobalMembersGm_main {
 		// -------------------------------------
 		// Backend-Specific Code Modification
 		// -------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_BACKEND_OPT, "Backend Transform");
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_BACKEND_OPT, "Backend Transform");
 		{
 			ok = BACK_END.do_local_optimize();
 			if (!ok)
@@ -286,7 +270,7 @@ public class GlobalMembersGm_main {
 		// -------------------------------------
 		// Library specific Backend-Specific Code Modification
 		// -------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_LIBRARY_OPT, "Backend-Lib Transform");
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_LIBRARY_OPT, "Backend-Lib Transform");
 		{
 			ok = BACK_END.do_local_optimize_lib();
 			if (!ok)
@@ -303,7 +287,7 @@ public class GlobalMembersGm_main {
 			BACK_END.setTargetDir(OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_OUTDIR));
 		BACK_END.setFileName(Path.getFilename());
 
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GlobalMembersGm_misc.GMSTAGE_CODEGEN, "Code Generation");
+		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_CODEGEN, "Code Generation");
 		{
 			ok = BACK_END.do_generate();
 			if (!ok)

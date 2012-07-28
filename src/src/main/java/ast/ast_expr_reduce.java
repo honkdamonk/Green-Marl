@@ -5,7 +5,6 @@ import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
 import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_misc;
 import common.GlobalMembersGm_traverse;
 import common.gm_apply;
 
@@ -59,14 +58,14 @@ public class ast_expr_reduce extends ast_expr
 	public void reproduce(int ind_level)
 	{
 		Out.SPC();
-		Out.push(GlobalMembersGm_misc.gm_get_reduce_expr_string(reduce_type));
+		Out.push(reduce_type.get_reduce_expr_string());
     
 		Out.push('(');
 		iter.reproduce(0);
 		Out.push(": ");
 		src.reproduce(0);
 		Out.push(".");
-		Out.push(GlobalMembersGm_misc.gm_get_iter_type_string(iter_type));
+		Out.push(iter_type.get_iter_type_string());
 		if (iter_type.is_common_nbr_iter_type())
 		{
 			Out.push('(');
@@ -87,13 +86,13 @@ public class ast_expr_reduce extends ast_expr
 	public void dump_tree(int ind_level)
 	{
 		GlobalMembersGm_dumptree.IND(ind_level);
-		System.out.printf("[%s ", GlobalMembersGm_misc.gm_get_reduce_expr_string(reduce_type));
+		System.out.printf("[%s ", reduce_type.get_reduce_expr_string());
 		System.out.print(" (");
 		iter.dump_tree(0);
 		System.out.print(":");
 		src.dump_tree(0);
 		System.out.print(".");
-		System.out.printf("%s)\n", GlobalMembersGm_misc.gm_get_iter_type_string(iter_type));
+		System.out.println(iter_type.get_iter_type_string());
 		if (filter != null)
 		{
 			GlobalMembersGm_dumptree.IND(ind_level + 1);

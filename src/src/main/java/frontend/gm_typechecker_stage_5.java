@@ -113,7 +113,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 
 			RefObject<GMTYPE_T> coed_ref = new RefObject<GMTYPE_T>(null);
 			RefObject<Boolean> warn_ref = new RefObject<Boolean>(null);
-			boolean test = GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
+			boolean test = gm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 			boolean warn = warn_ref.argvalue;
 			if (!test) {
 				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
@@ -175,7 +175,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 
 		RefObject<GMTYPE_T> coed_ref = new RefObject<GMTYPE_T>(null);
 		RefObject<Boolean> warn_ref = new RefObject<Boolean>(null);
-		boolean test = GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
+		boolean test = gm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 		boolean warn = warn_ref.argvalue;
 		if (!test) {
 			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(),

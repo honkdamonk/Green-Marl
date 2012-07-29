@@ -2,10 +2,13 @@ package opt;
 
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_DUPLICATE;
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_UNDEFINED;
-import frontend.GlobalMembersGm_typecheck;
+import frontend.gm_typecheck;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
+
+import java.util.LinkedList;
+
 import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
@@ -71,8 +74,8 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 		iterType = getNewIterType();
 		ast_id sourceGraph = fe.get_source().getTargetTypeInfo().get_target_graph_id();
 		ast_typedecl type = ast_typedecl.new_nodeedge_iterator(sourceGraph.copy(true), iterType);
-		if (!declare_symbol(fe.get_symtab_var(), newIterator, type, GlobalMembersGm_typecheck.GM_READ_AVAILABLE,
-				GlobalMembersGm_typecheck.GM_WRITE_NOT_AVAILABLE))
+		if (!declare_symbol(fe.get_symtab_var(), newIterator, type, gm_typecheck.GM_READ_AVAILABLE,
+				gm_typecheck.GM_WRITE_NOT_AVAILABLE))
 			assert false;
 
 		return newIterator;
@@ -99,7 +102,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 			newBody = ast_sentblock.new_sentblock();
 
 		ast_assign assign = createAssignStatement();
-		java.util.LinkedList<ast_sent> statements = newBody.get_sents();
+		LinkedList<ast_sent> statements = newBody.get_sents();
 		statements.addFirst(assign);
 
 		return newBody;

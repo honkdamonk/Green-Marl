@@ -147,8 +147,9 @@ public class GlobalMembersGm_rw_analysis {
 		return true;
 	}
 
-	// Actual information kept for sentence
-	// Three maps. (readset, writeset, reduce-set)
+	/** Actual information kept for sentence
+	* Three maps. (readset, writeset, reduce-set)
+	*/
 	public static void gm_delete_rwinfo_map(gm_rwinfo_map m) {
 		for (gm_rwinfo_list l : m.values()) {
 			for (gm_rwinfo j : l) {
@@ -176,9 +177,9 @@ public class GlobalMembersGm_rw_analysis {
 		return GlobalMembersGm_rw_analysis.get_rwinfo_sets(n);
 	}
 
-	// -------------------------------------------------------
-	// additional information for foreach statement
-	// -------------------------------------------------------
+	/**
+	* additional information for foreach statement
+	*/
 	public static String GM_INFOKEY_BOUND = "GM_INFOKEY_BOUND";
 
 	public static gm_bound_set_info gm_get_bound_set_info(ast_foreach n) {
@@ -199,14 +200,10 @@ public class GlobalMembersGm_rw_analysis {
 		return bi;
 	}
 
-	// for debug
-	// extern void gm_print_rwinfo_set(HashMap<gm_symtab_entry,
-	// gm_rwinfo_list> m);
-
-	// ----------------------------------------------
-	// re-do rw analysis for IR tree s.
-	// (result does not propagate upward from s though.)
-	// ----------------------------------------------
+	/**
+	* re-do rw analysis for IR tree s.
+	* (result does not propagate upward from s though.)
+	*/
 	public static boolean gm_redo_rw_analysis(ast_sent s) {
 		// nullify previous analysis. (IR tree has been modified)
 		gm_delete_rw_analysis D = new gm_delete_rw_analysis();
@@ -219,48 +216,22 @@ public class GlobalMembersGm_rw_analysis {
 		return RWA.is_success();
 	}
 
-	// --------------------------------------------------------
-	// use of rw analysis result
-	// { P; Q; }
-	// (i.e. P, Q should belong to the same static scope level)
-	//
-	// Is Q dependent on P?
-	// P.writeset && Q.readset ==> true dependency
-	// P.writeset && Q.writeset ==> output dependency
-	// P.readset && Q.writeset ==> anti dependency
-	// --------------------------------------------------------
-	// extern boolean gm_has_dependency(ast_sent P, ast_sent Q);
-
-	// extern boolean gm_has_dependency(gm_rwinfo_sets P1, gm_rwinfo_sets Q1);
-
-	// extern boolean gm_does_intersect(HashMap<gm_symtab_entry,
-	// gm_rwinfo_list> S1, HashMap<gm_symtab_entry,
-	// gm_rwinfo_list> S2, boolean regard_mutate_direction); // return
-	// true, if any of they have same symbool table
-
-	// extern gm_rwinfo_map
-	// gm_get_write_set(ast_sent S);
-	// extern gm_rwinfo_map
-	// gm_get_reduce_set(ast_sent S);
-	// extern boolean gm_is_modified(ast_sent S, gm_symtab_entry e);
-	// extern boolean gm_is_modified_with_condition(ast_sent S, gm_symtab_entry
-	// e, gm_rwinfo_query q);
 	public static boolean gm_is_modified_always_linearly(ast_sent S, gm_symtab_entry e) {
 		gm_rwinfo_query Q = new gm_rwinfo_query();
 		Q.check_range(GM_RANGE_LINEAR);
 		Q.check_always(true);
-		return GlobalMembersGm_rw_analysis_check2.gm_is_modified_with_condition(S, e, Q);
+		return is_modified_with_condition(S, e, Q);
 	}
 
-	// -----------------------------------------------------------------------------
-	// AST_IF
-	// If (expr) [Then sent] [Else sent2]
-	// 1) add expr into read set
-	// 2) merge then-part sets and else-part sets
-	// make all the accesses conditional,
-	// unless both-path contain same access
-	// return: is_okay
-	// -----------------------------------------------------------------------------
+	/**
+	* AST_IF<br>
+	* If (expr) [Then sent] [Else sent2]<br>
+	* 1) add expr into read set<br>
+	* 2) merge then-part sets and else-part sets<br>
+	* make all the accesses conditional,
+	* unless both-path contain same access
+	* @return is_okay
+	*/
 	public static boolean merge_for_if_else(gm_rwinfo_map Target, gm_rwinfo_map S1, gm_rwinfo_map S2, boolean is_reduce) {
 		boolean is_okay = true;
 
@@ -327,14 +298,14 @@ public class GlobalMembersGm_rw_analysis {
 				: (access_range == GM_RANGE_LEVEL_UP) ? "LEVEL_UP" : (access_range == GM_RANGE_LEVEL_DOWN) ? "LEVEL_DOWN" : "???";
 	}
 
-	// ------------------------------------------------------------
-	// Add info to set,
-	// unless the same information already exists in the set
-	//
-	// If current info is 'wider', remove previous information
-	// (i.e. conditional < always)
-	// (note: cannot compare different rages: e.g. linear vs. random)
-	// -----------------------------------------------------------
+	/**
+	* Add info to set,
+	* unless the same information already exists in the set<br>
+	*
+	* If current info is 'wider', remove previous information
+	* (i.e. conditional < always)<br>
+	* (note: cannot compare different rages: e.g. linear vs. random)<br>
+	*/
 	public static boolean is_same_entry(gm_rwinfo old, gm_rwinfo neo) {
 		// compare except location
 		if (old.access_range != neo.access_range)
@@ -356,7 +327,7 @@ public class GlobalMembersGm_rw_analysis {
 		return true;
 	}
 
-	// true if neo is wider
+	/** true if neo is wider */
 	public static boolean is_wider_entry(gm_rwinfo old, gm_rwinfo neo) {
 		// should agree on the range & iterator
 		if (old.access_range != neo.access_range)
@@ -368,11 +339,11 @@ public class GlobalMembersGm_rw_analysis {
 		return false;
 	}
 
-	// ---------------------------------------------------
-	// true if error
-	// check if two symbols bound to the same operator
-	// check if two symbols bound to the same boud
-	// ---------------------------------------------------
+	/**
+	* check if two symbols bound to the same operator
+	* check if two symbols bound to the same boud
+	* @return true if error
+	*/
 	public static boolean is_reduce_error(gm_rwinfo old, gm_rwinfo neo) {
 		assert neo.bound_symbol != null;
 		assert old.bound_symbol != null;
@@ -565,13 +536,13 @@ public class GlobalMembersGm_rw_analysis {
 		return is_okay;
 	}
 
-	// -----------------------------------------------------------------------------
-	// AST_SENTBLOCK
-	// { s1; s2; s3;}
-	// 1) merge sentence sets
-	// 2) remove all the acesses to the varibles defined in the local-scope
-	// return: is_okay
-	// -----------------------------------------------------------------------------
+	/**
+	* AST_SENTBLOCK
+	* { s1; s2; s3;}
+	* 1) merge sentence sets
+	* 2) remove all the acesses to the varibles defined in the local-scope
+	* @return is_okay
+	*/
 	public static boolean merge_for_sentblock(ast_sentblock s, gm_rwinfo_map target, gm_rwinfo_map old, boolean is_reduce) {
 		boolean is_okay = true;
 		for (gm_symtab_entry e : old.keySet()) {
@@ -600,13 +571,13 @@ public class GlobalMembersGm_rw_analysis {
 		return is_okay;
 	}
 
-	// -----------------------------------------------------------------------------
-	// AST_WHILE
-	// while(expr) SB or do SB while (expr);
-	// 1) copy sentence-block (conditionally for while, always for do-while)
-	// 2) add expr
-	// return: is_okay
-	// -----------------------------------------------------------------------------
+	/**
+	* AST_WHILE
+	* while(expr) SB or do SB while (expr);
+	* 1) copy sentence-block (conditionally for while, always for do-while)
+	* 2) add expr
+	* @return is_okay
+	*/
 	public static boolean merge_all(gm_rwinfo_map target, gm_rwinfo_map old, boolean is_reduce) {
 		boolean is_okay = true;
 
@@ -648,43 +619,42 @@ public class GlobalMembersGm_rw_analysis {
 		return is_okay;
 	}
 
-	// -----------------------------------------------------------------------------
-	// AST_FOREACH
-	// foreach(X)<filter> SB
-	// 1) add filter to readset
-	// 2) copy contents of sentence-block (add conditional flag if filter
-	// exists)
-	// 3) Resolve all the references driven via current iterator
-	// 3b) Resolve all the references driven via outside iterator --> all become
-	// random (if parallel)
-	// 4) Create bound-set
-	//
-	// e.g.) Foreach (n:G.Nodes) <<- at here
-	// A += n.val @ n;
-	// [A Reduce n ---> write to A ]
-	// [val Read via n ---> linear read]
-	//
-	// e.g.2) Foreach (n:...) {
-	// Foreach (t:G.Nodes/n.Nbrs ) { <<- at here
-	// t.A = ==> linear/random write
-	// = t.A ==> linear/random read
-	// n.A = ==> random write
-	// = n.A ==> random read
-	// x ==> write
-	// = x ==> read
-	// } }
-	//
-	// e.g.3) Foreach (n:...) {
-	// For (t:G.Nodes/n.Nbrs ) { <<- at here
-	// t.A = ==> linear/random write
-	// = t.A ==> linear/random read
-	// n.A = ==> write via n
-	// = n.A ==> read via n
-	// x ==> write
-	// = x ==> read
-	// } }
-	// -----------------------------------------------------------------------------
-	//
+	/**
+	* AST_FOREACH<br>
+	* foreach(X)<filter> SB<br>
+	* 1) add filter to readset<br>
+	* 2) copy contents of sentence-block (add conditional flag if filter
+	* exists)<br>
+	* 3) Resolve all the references driven via current iterator<br>
+	* 3b) Resolve all the references driven via outside iterator --> all become
+	* random (if parallel)<br>
+	* 4) Create bound-set<br>
+	*
+	* e.g.) Foreach (n:G.Nodes) <<- at here<br>
+	* A += n.val @ n;<br>
+	* [A Reduce n ---> write to A ]<br>
+	* [val Read via n ---> linear read]<br>
+	*
+	* e.g.2) Foreach (n:...) {<br>
+	* Foreach (t:G.Nodes/n.Nbrs ) { <<- at here<br>
+	* t.A = ==> linear/random write<br>
+	* = t.A ==> linear/random read<br>
+	* n.A = ==> random write<br>
+	* = n.A ==> random read<br>
+	* x ==> write<br>
+	* = x ==> read<br>
+	* } }<br>
+	*
+	* e.g.3) Foreach (n:...) {<br>
+	* For (t:G.Nodes/n.Nbrs ) { <<- at here<br>
+	* t.A = ==> linear/random write<br>
+	* = t.A ==> linear/random read<br>
+	* n.A = ==> write via n<br>
+	* = n.A ==> read via n<br>
+	* x ==> write<br>
+	* = x ==> read<br>
+	* } }
+	*/
 	public static boolean cleanup_iterator_access(ast_id iter, gm_rwinfo_map T_temp, gm_rwinfo_map T, GMTYPE_T iter_type, boolean is_parallel) {
 		
 		boolean is_okay = true;
@@ -724,8 +694,9 @@ public class GlobalMembersGm_rw_analysis {
 		return is_okay;
 	}
 
-	// (called after cleanup_iterator_access if called)
-	// replace LEVEL(_UP/_DOWN) -> (LINEAR + conditional)
+	/** (called after cleanup_iterator_access if called)
+	* replace LEVEL(_UP/_DOWN) -> (LINEAR + conditional)
+	*/
 	public static void cleanup_iterator_access_bfs(gm_rwinfo_map T) {
 		// bfs iter ==> conditional, linear iteration
 		boolean new_always = false;
@@ -756,8 +727,9 @@ public class GlobalMembersGm_rw_analysis {
 		}
 	}
 
-	// Nodes or NBRS - bound-set for Foreach - write - reduce map of the
-	// Foreach-statement - reduce map of the body
+	/** Nodes or NBRS - bound-set for Foreach - write - reduce map of the
+	* Foreach-statement - reduce map of the body
+	*/
 	public static boolean cleanup_iterator_access_reduce(ast_id iter, gm_rwinfo_map D_temp, gm_rwinfo_map D, gm_rwinfo_map W, gm_rwinfo_map B,
 			GMTYPE_T iter_type, boolean is_parallel) {
 		boolean is_okay = true;
@@ -813,5 +785,38 @@ public class GlobalMembersGm_rw_analysis {
 			}
 		}
 		return is_okay;
+	}
+	
+	private static boolean is_modified_with_condition(ast_sent S, gm_symtab_entry e, gm_rwinfo_query Q) {
+		assert Q != null;
+		gm_rwinfo_map W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
+		for (gm_symtab_entry w_sym : W.keySet()) {
+			if (e != w_sym)
+				continue;
+
+			// find exact match
+			gm_rwinfo_list list = W.get(w_sym);
+			for (gm_rwinfo R : list) {
+				if (Q._check_range && (Q.range != R.access_range)) {
+					continue;
+				}
+				if (Q._check_driver && (Q.driver != R.driver)) {
+					continue;
+				}
+				if (Q._check_always && (Q.always != R.always)) {
+					continue;
+				}
+				if (Q._check_reduceop && (Q.reduce_op != R.reduce_op)) {
+					continue;
+				}
+				if (Q._check_bound && (Q.bound != R.bound_symbol)) {
+					continue;
+				}
+				return true; // exact match
+			}
+			return false; // no exact match
+		}
+
+		return false;
 	}
 }

@@ -204,11 +204,6 @@ public class GlobalMembersGm_main {
 		// ---------------------------------------
 		GlobalMembersGm_main.parse_stop_string();
 
-		// --------------------------------------
-		// Do additional initalization
-		// --------------------------------------
-		FE.init();
-
 		// -------------------------------------
 		// Parse phase
 		// -------------------------------------

@@ -68,13 +68,13 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		return b;
 	}
 
-	// -----------------------------------------------------------------------
-	// process deferred writes in following ways.
-	// - add symbol-def for A_new
-	// - add initializer
-	// (apply optimization: conditional initializer)
-	// - add updater
-	// -----------------------------------------------------------------------
+	/**
+	* process deferred writes in following ways.
+	* <li>add symbol-def for A_new
+	* <li>add initializer<br>
+	* (apply optimization: conditional initializer)
+	* <li>add updater
+	*/
 	private static void post_process_deferred_writes(LinkedList<gm_symtab_entry> target_syms, LinkedList<ast_foreach> target_foreach) {
 		assert target_syms.size() == target_foreach.size();
 		Iterator<gm_symtab_entry> i = target_syms.iterator();
@@ -326,11 +326,21 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 			for (ast_sent sent : sents) {
 				if (sent == myself)
 					continue;
-				if (GlobalMembersGm_rw_analysis_check2.gm_is_modified(sent, e))
+				if (is_modified(sent, e))
 					return true;
 			}
 		}
 		// move up one level
 		return check_if_modified_elsewhere(e, up, seq_loop);
+	}
+	
+	private static boolean is_modified(ast_sent S, gm_symtab_entry e) {
+
+		gm_rwinfo_map W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
+		for (gm_symtab_entry w_sym : W.keySet()) {
+			if (e == w_sym)
+				return true;
+		}
+		return false;
 	}
 }

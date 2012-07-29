@@ -31,13 +31,8 @@ import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
 
 public class GlobalMembersGm_rw_analysis_check2 {
-	// C++ TO JAVA CONVERTER NOTE: 'extern' variable declarations are not
-	// required in Java:
-	// extern HashMap<gm_symtab_entry*, range_cond_t> Default_DriverMap;
-	// extern void traverse_expr_for_readset_adding(ast_expr e,
-	// gm_rwinfo_map rset,
-	// HashMap<gm_symtab_entry, range_cond_t> DrvMap);
-	public static boolean is_reported(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, gm_conflict_t y) {
+
+	private static boolean is_reported(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, gm_conflict_t y) {
 		for (conf_info_t db : errors) {
 			if ((db.sym1 == t) && (db.sym2 == b) && (db.conflict_type == y))
 				return true;
@@ -45,7 +40,7 @@ public class GlobalMembersGm_rw_analysis_check2 {
 		return false;
 	}
 
-	public static void add_report(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, gm_conflict_t conf_type) {
+	private static void add_report(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, gm_conflict_t conf_type) {
 		conf_info_t T = new conf_info_t();
 		T.sym1 = t;
 		T.sym2 = b;
@@ -277,18 +272,19 @@ public class GlobalMembersGm_rw_analysis_check2 {
 		return false;
 	}
 
-	public static boolean gm_has_dependency(ast_sent P, ast_sent Q) {
-		assert P.get_nodetype() != AST_NODE_TYPE.AST_VARDECL; // temporary hack
 
-		// ---------------------------------------------------------
-		// note: reduced set does not make dependency! (how great!)
-		// [todo] consideration of modified set.
-		// ---------------------------------------------------------
-		gm_rwinfo_sets P_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(P);
-		gm_rwinfo_sets Q_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(Q);
-		return GlobalMembersGm_rw_analysis_check2.gm_has_dependency(P_SET, Q_SET);
+
+	
+	public static gm_rwinfo_map gm_get_reduce_set(ast_sent S) {
+		assert S != null;
+		return GlobalMembersGm_rw_analysis.get_rwinfo_sets(S).reduce_set;
 	}
 
+	public static gm_rwinfo_map gm_get_write_set(ast_sent S) {
+		assert S != null;
+		return GlobalMembersGm_rw_analysis.get_rwinfo_sets(S).write_set;
+	}
+	
 	public static boolean gm_has_dependency(gm_rwinfo_sets P_SET, gm_rwinfo_sets Q_SET) {
 
 		gm_rwinfo_map P_R = P_SET.read_set;
@@ -323,87 +319,16 @@ public class GlobalMembersGm_rw_analysis_check2 {
 
 		return false;
 	}
+	
+	public static boolean gm_has_dependency(ast_sent P, ast_sent Q) {
+		assert P.get_nodetype() != AST_NODE_TYPE.AST_VARDECL; // temporary hack
 
-	public static gm_rwinfo_map gm_get_reduce_set(ast_sent S) {
-		assert S != null;
-		return GlobalMembersGm_rw_analysis.get_rwinfo_sets(S).reduce_set;
-	}
-
-	public static gm_rwinfo_map gm_get_write_set(ast_sent S) {
-		assert S != null;
-		return GlobalMembersGm_rw_analysis.get_rwinfo_sets(S).write_set;
-	}
-
-	public static boolean gm_is_modified(ast_sent S, gm_symtab_entry e) {
-
-		gm_rwinfo_map W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
-		for (gm_symtab_entry w_sym : W.keySet()) {
-			if (e == w_sym)
-				return true;
-		}
-		return false;
-	}
-
-	public static boolean gm_is_modified_with_condition(ast_sent S, gm_symtab_entry e, gm_rwinfo_query Q) {
-		assert Q != null;
-		gm_rwinfo_map W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
-		for (gm_symtab_entry w_sym : W.keySet()) {
-			if (e != w_sym)
-				continue;
-
-			// find exact match
-			gm_rwinfo_list list = W.get(w_sym);
-			for (gm_rwinfo R : list) {
-				if (Q._check_range && (Q.range != R.access_range)) {
-					continue;
-				}
-				if (Q._check_driver && (Q.driver != R.driver)) {
-					continue;
-				}
-				if (Q._check_always && (Q.always != R.always)) {
-					continue;
-				}
-				if (Q._check_reduceop && (Q.reduce_op != R.reduce_op)) {
-					continue;
-				}
-				if (Q._check_bound && (Q.bound != R.bound_symbol)) {
-					continue;
-				}
-				return true; // exact match
-			}
-			return false; // no exact match
-		}
-
-		return false;
-	}
-
-	// -----------------------------------------------------
-	// For debug
-	// -----------------------------------------------------
-	public static void gm_print_rwinfo_set(gm_rwinfo_map m) {
-		boolean first = true;
-		for (gm_symtab_entry e : m.keySet()) {
-			gm_rwinfo_list l = m.get(e);
-			if (first)
-				first = false;
-			else
-				System.out.print(",");
-
-			if (e.getType().is_property())
-				System.out.printf("{%s(%s):", e.getId().get_orgname(), e.getType().get_target_graph_id().get_orgname());
-			else
-				System.out.printf("{%s:", e.getId().get_orgname());
-
-			boolean _first = true;
-			for (gm_rwinfo info : l) {
-				if (_first)
-					_first = false;
-				else
-					System.out.print(",");
-				info.print();
-			}
-			System.out.print("}");
-		}
-		System.out.print("\n");
+		// ---------------------------------------------------------
+		// note: reduced set does not make dependency! (how great!)
+		// [todo] consideration of modified set.
+		// ---------------------------------------------------------
+		gm_rwinfo_sets P_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(P);
+		gm_rwinfo_sets Q_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(Q);
+		return gm_has_dependency(P_SET, Q_SET);
 	}
 }

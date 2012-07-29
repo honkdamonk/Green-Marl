@@ -1,13 +1,22 @@
 package frontend;
 
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_ITOR;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_OP;
+import inc.GM_REDUCE_T;
+
 import java.util.LinkedList;
+
+import tangible.RefObject;
 
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_foreach;
+import ast.ast_id;
 import ast.ast_node;
+import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
+import common.GlobalMembersGm_error;
 import common.gm_apply;
 
 public class gm_check_reduce_error_t extends gm_apply {
@@ -30,18 +39,18 @@ public class gm_check_reduce_error_t extends gm_apply {
 				gm_rwinfo_map B_fw = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
 
 				// check bound error
-				is_okay = GlobalMembersGm_reduce_error_check.check_add_and_report_conflicts(B_scope, B_fw) && is_okay;
+				is_okay = check_add_and_report_conflicts(B_scope, B_fw) && is_okay;
 
 			} else if (n == bfs.get_bbody()) {
 				gm_rwinfo_map B_bw = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
-				is_okay = GlobalMembersGm_reduce_error_check.check_add_and_report_conflicts(B_scope, B_bw) && is_okay;
+				is_okay = check_add_and_report_conflicts(B_scope, B_bw) && is_okay;
 			} else {
 				assert false;
 			}
 		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) n;
 			gm_rwinfo_map B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
-			is_okay = GlobalMembersGm_reduce_error_check.check_add_and_report_conflicts(B_scope, B) && is_okay;
+			is_okay = check_add_and_report_conflicts(B_scope, B) && is_okay;
 		}
 	}
 
@@ -54,22 +63,94 @@ public class gm_check_reduce_error_t extends gm_apply {
 			ast_bfs bfs = (ast_bfs) t;
 			if (n == bfs.get_fbody()) {
 				gm_rwinfo_map B_fw = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
-				GlobalMembersGm_reduce_error_check.remove_all(B_scope, B_fw);
+				remove_all(B_scope, B_fw);
 			} else if (n == bfs.get_bbody()) {
 				gm_rwinfo_map B_bw = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
-				GlobalMembersGm_reduce_error_check.remove_all(B_scope, B_bw);
+				remove_all(B_scope, B_bw);
 			} else {
 				assert false;
 			}
 		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) n;
 			gm_rwinfo_map B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
-			GlobalMembersGm_reduce_error_check.remove_all(B_scope, B);
+			remove_all(B_scope, B);
 		}
 	}
-}
-// =========================================================
-// called from gm_typecheck.cc
-// =========================================================
-// bool gm_frontend::do_reduce_error_check(ast_procdef* p)
 
+	private static void remove_all(LinkedList<bound_info_t> L, gm_rwinfo_map B) {
+		for (gm_symtab_entry e : B.keySet()) {
+			gm_rwinfo_list l = B.get(e);
+			for (gm_rwinfo jj : l) {
+				remove_bound(L, e, jj.bound_symbol, jj.reduce_op);
+			}
+		}
+	}
+
+	private static void add_bound(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type) {
+		bound_info_t T = new bound_info_t();
+		T.target = t;
+		T.bound = b;
+		T.reduce_type = r_type;
+		L.addLast(T);
+	}
+
+	private static void remove_bound(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type) {
+		for (bound_info_t db : L) {
+			if ((db.target == t) && (db.reduce_type == r_type) && (db.bound == b)) {
+				L.remove(db);
+				return;
+			}
+		}
+	}
+
+	private static boolean is_conflict(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type, RefObject<Boolean> is_bound_error,
+			RefObject<Boolean> is_type_error) {
+		is_type_error.argvalue = false;
+		is_bound_error.argvalue = false;
+		for (bound_info_t db : L) {
+			if (db.target == t) {
+				if (db.bound != b) {
+					is_bound_error.argvalue = true;
+					return true;
+				} else if (db.reduce_type != r_type) {
+					is_type_error.argvalue = true;
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/** returns is_okay */
+	private static boolean check_add_and_report_conflicts(LinkedList<bound_info_t> L, gm_rwinfo_map B) {
+		for (gm_symtab_entry e : B.keySet()) {
+			gm_rwinfo_list l = B.get(e);
+			for (gm_rwinfo jj : l) {
+				boolean is_bound_error = false;
+				boolean is_type_error = false;
+				assert jj.bound_symbol != null;
+				assert jj.reduce_op != GM_REDUCE_T.GMREDUCE_NULL;
+				RefObject<Boolean> tempRef_is_bound_error = new RefObject<Boolean>(is_bound_error);
+				RefObject<Boolean> tempRef_is_type_error = new RefObject<Boolean>(is_type_error);
+				boolean tempVar = is_conflict(L, e, jj.bound_symbol, jj.reduce_op, tempRef_is_bound_error, tempRef_is_type_error);
+				is_bound_error = tempRef_is_bound_error.argvalue;
+				is_type_error = tempRef_is_type_error.argvalue;
+				if (tempVar) {
+					ast_id loc = jj.location;
+					if (is_bound_error) {
+						GlobalMembersGm_error.gm_type_error(GM_ERROR_DOUBLE_BOUND_ITOR, loc.get_line(), loc.get_col(), jj.bound_symbol.getId().get_orgname());
+						return false;
+					}
+					if (is_type_error) {
+						GlobalMembersGm_error.gm_type_error(GM_ERROR_DOUBLE_BOUND_OP, loc.get_line(), loc.get_col(), jj.reduce_op.get_reduce_string());
+						return false;
+					}
+				} else {
+					add_bound(L, e, jj.bound_symbol, jj.reduce_op);
+				}
+			}
+		}
+		return true;
+	}
+
+}

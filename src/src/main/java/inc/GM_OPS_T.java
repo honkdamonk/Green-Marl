@@ -20,8 +20,8 @@ public enum GM_OPS_T { // list of operators
 	GMOP_GE, //
 	GMOP_LT, //
 	GMOP_GT, //
-	GMOP_TYPEC, // TYPE Conversion
-	GMOP_TER, // Ternary op
+	GMOP_TYPECONVERSION, // 
+	GMOP_TERNARY, // 
 	GMOP_ASSIGN, // used in typechecking only.
 	GMOP_END;
 	// a marker indicating end of enum
@@ -56,7 +56,7 @@ public enum GM_OPS_T { // list of operators
 	}
 
 	public boolean is_ternary_op() {
-		return (this == GMOP_TER);
+		return (this == GMOP_TERNARY);
 	}
 
 	// see http://cppreference.com/wiki/language/operator_precedence
@@ -68,10 +68,10 @@ public enum GM_OPS_T { // list of operators
 	}
 
 	public boolean gm_need_paranthesis(GM_OPS_T up_op, boolean is_right) {
-		if (up_op == GMOP_TER) {
+		if (up_op == GMOP_TERNARY) {
 			// for clarity I prefer adding ()s, except chained ternary-ops.
 			// example (A+B>C) ? (D+1) : (A+C>D) ? (E+1) : (F+1)
-			if ((this == GMOP_TER) && is_right)
+			if ((this == GMOP_TERNARY) && is_right)
 				return false;
 			else
 				return true;
@@ -91,6 +91,6 @@ public enum GM_OPS_T { // list of operators
 		return (this == GMOP_MULT) ? "*" : (this == GMOP_DIV) ? "/" : (this == GMOP_SUB) ? "-" : (this == GMOP_MOD) ? "%" : (this == GMOP_ADD) ? "+"
 				: (this == GMOP_NEG) ? "-" : (this == GMOP_AND) ? "&&" : (this == GMOP_OR) ? "||" : (this == GMOP_NOT) ? "!" : (this == GMOP_EQ) ? "=="
 						: (this == GMOP_NEQ) ? "!=" : (this == GMOP_GT) ? ">" : (this == GMOP_LT) ? "<" : (this == GMOP_GE) ? ">=" : (this == GMOP_LE) ? "<="
-								: (this == GMOP_ABS) ? "|" : (this == GMOP_TYPEC) ? "(type_conversion)" : "??";
+								: (this == GMOP_ABS) ? "|" : (this == GMOP_TYPECONVERSION) ? "(type_conversion)" : "??";
 	}
 }

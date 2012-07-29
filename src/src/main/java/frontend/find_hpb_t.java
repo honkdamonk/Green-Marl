@@ -1,5 +1,7 @@
 package frontend;
 
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -14,8 +16,10 @@ import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
 
 public class find_hpb_t extends gm_apply {
-	private java.util.LinkedList<find_bound_t> scope = new java.util.LinkedList<find_bound_t>();
-	private boolean opt_seq_bound;
+	
+	private LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
+	private LinkedList<find_bound_t> scope = new LinkedList<find_bound_t>();
+	private boolean opt_seq_bound = false;
 
 	// ------------------------
 	// make a big table
@@ -30,7 +34,6 @@ public class find_hpb_t extends gm_apply {
 		curr_T.iter = null;
 
 		scope.addLast(curr_T);
-		opt_seq_bound = false;
 	}
 
 	public final void set_opt_seq_bound(boolean b) {
@@ -203,9 +206,8 @@ public class find_hpb_t extends gm_apply {
 	public final void post_process() {
 		for (ast_assign a : targets) {
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
-			GlobalMembersGm_fixup_bound_symbol.gm_make_normal_assign(a);
+			FrontendGlobal.gm_make_normal_assign(a);
 		}
 	}
 
-	private java.util.LinkedList<ast_assign> targets = new java.util.LinkedList<ast_assign>();
 }

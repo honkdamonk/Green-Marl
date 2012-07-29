@@ -18,7 +18,6 @@ import common.GlobalMembersGm_main;
 /** backend information per each procedure */
 public class gm_gps_beinfo extends gm_backend_info {
 
-	private ast_procdef body;
 	/** entry for the procedure basic blocks (DAG) */
 	private gm_gps_basic_block bb_entry = null;
 	/** same as above DAG, but flattened as list */
@@ -51,10 +50,7 @@ public class gm_gps_beinfo extends gm_backend_info {
 	private boolean rand_used = false;
 
 	public gm_gps_beinfo(ast_procdef d) {
-		body = d;
-	}
-
-	public void dispose() {
+		//body = d; body was unused 
 	}
 
 	public final void set_entry_basic_block(gm_gps_basic_block b) {

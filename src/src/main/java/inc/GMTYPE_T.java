@@ -1,7 +1,7 @@
 package inc;
 
 import tangible.RefObject;
-import frontend.GlobalMembersGm_typecheck_oprules;
+import frontend.Oprules;
 
 public enum GMTYPE_T {
 	GMTYPE_GRAPH(0), //
@@ -10,7 +10,7 @@ public enum GMTYPE_T {
 	GMTYPE_EDGEPROP(3), //
 	GMTYPE_NODE(4), //
 	GMTYPE_EDGE(5), //
-	GMTYPE_NSET(6), // 
+	GMTYPE_NSET(6), //
 	GMTYPE_NSEQ(7), //
 	GMTYPE_NORDER(8), //
 	GMTYPE_ESET(9), //
@@ -46,8 +46,8 @@ public enum GMTYPE_T {
 	GMTYPE_EDGEITER_ORDER(208), // order
 
 	GMTYPE_PROPERTYITER_SET(209), //
-	GMTYPE_PROPERTYITER_SEQ(210),// 
-	GMTYPE_PROPERTYITER_ORDER(211),//
+	GMTYPE_PROPERTYITER_SEQ(210), //
+	GMTYPE_PROPERTYITER_ORDER(211), //
 
 	GMTYPE_BIT(1000), // 1b (for future extension)
 	GMTYPE_BYTE(1001), // 1B (for future extension)
@@ -65,14 +65,22 @@ public enum GMTYPE_T {
 	GMTYPE_NIL_UNKNOWN(1013), //
 	GMTYPE_NIL_NODE(1014), //
 	GMTYPE_NIL_EDGE(1015), //
-	GMTYPE_FOREIGN_EXPR(1016), // foreign type. Can be matched with any
-	GMTYPE_UNKNOWN(9999), // expression whose type is not identified yet
-							// (variable before typechecking)
-	GMTYPE_UNKNOWN_NUMERIC(10000), // expression whose type should be numeric,
-									// size not determined yet
-	GMTYPE_ITER_ANY(10001), // iterator to some collection. resolved after type
-							// checking
-	GMTYPE_ITER_UNDERSPECIFIED(10002), //
+
+	/** foreign type. Can be matched with any */
+	GMTYPE_FOREIGN_EXPR(1016),
+
+	/**
+	 * expression whose type is not identified yet (variable before
+	 * typechecking)
+	 */
+	GMTYPE_UNKNOWN(9999),
+
+	/** expression whose type should be numeric, size not determined yet */
+	GMTYPE_UNKNOWN_NUMERIC(10000),
+
+	/** iterator to some collection. resolved after type checking */
+	GMTYPE_ITER_ANY(10001), GMTYPE_ITER_UNDERSPECIFIED(10002), //
+
 	GMTYPE_VOID(10003), //
 	GMTYPE_INVALID(99999);
 
@@ -504,18 +512,18 @@ public enum GMTYPE_T {
 		return this.is_collection_of_set_iter_type() || this.is_collection_of_order_iter_type() || this.is_collection_of_seq_iter_type();
 	}
 
-	// checking to apply op (including assignment) between two types.
-	// (not including target-graph checking)
-	// boolean gm_is_compatible_type(int op, int t1, int t2,
-	// RefObject<int> op_result_type, RefObject<int>
-	// t1_coerced, RefObject<int> t2_coerced,
-	// RefObject<boolean> t1_coerced_lost_precision,
-	// RefObject<boolean> t2_coerced_lost_precision);
+	/**
+	 * checking to apply op (including assignment) between two types. (not
+	 * including target-graph checking) boolean gm_is_compatible_type(int op,
+	 * int t1, int t2, RefObject<int> op_result_type, RefObject<int> t1_coerced,
+	 * RefObject<int> t2_coerced, RefObject<boolean> t1_coerced_lost_precision,
+	 * RefObject<boolean> t2_coerced_lost_precision);
+	 */
 	public static boolean gm_is_compatible_type_for_assign(GMTYPE_T t_lhs, GMTYPE_T t_rhs, RefObject<GMTYPE_T> t_new_rhs, RefObject<Boolean> warning) {
-		RefObject<GMTYPE_T> tempRef_dummy1 = new RefObject<GMTYPE_T>(GMTYPE_T.GMTYPE_INVALID);
-		RefObject<GMTYPE_T> tempRef_dummy2 = new RefObject<GMTYPE_T>(GMTYPE_T.GMTYPE_INVALID);
+		RefObject<GMTYPE_T> tempRef_dummy1 = new RefObject<GMTYPE_T>(GMTYPE_INVALID);
+		RefObject<GMTYPE_T> tempRef_dummy2 = new RefObject<GMTYPE_T>(GMTYPE_INVALID);
 		RefObject<Boolean> tempRef_dummy_b = new RefObject<Boolean>(true);
-		return GlobalMembersGm_typecheck_oprules.gm_is_compatible_type(GM_OPS_T.GMOP_ASSIGN, t_lhs, t_rhs, tempRef_dummy1, tempRef_dummy2, t_new_rhs,
+		return Oprules.gm_is_compatible_type(GM_OPS_T.GMOP_ASSIGN, t_lhs, t_rhs, tempRef_dummy1, tempRef_dummy2, t_new_rhs,
 				tempRef_dummy_b, warning);
 	}
 
@@ -526,7 +534,7 @@ public enum GMTYPE_T {
 			return true;
 		return false;
 	}
-	
+
 	public static GMTYPE_T get_iter_type_from_set_type(GMTYPE_T set_type) {
 		switch (set_type) {
 		case GMTYPE_NSET:
@@ -546,7 +554,7 @@ public enum GMTYPE_T {
 			return GMTYPE_INVALID;
 		}
 	}
-	
+
 	public String get_type_string() {
 		switch (this) {
 		case GMTYPE_GRAPH:
@@ -628,7 +636,7 @@ public enum GMTYPE_T {
 			return "Unknown";
 		}
 	}
-	
+
 	public String get_iter_type_string() {
 		switch (this) {
 		case GMTYPE_NODEITER_ALL:
@@ -660,51 +668,51 @@ public enum GMTYPE_T {
 			return "Unknown";
 		}
 	}
-	
+
 	public static GMTYPE_T gm_get_type_from_string(String s) {
 		assert s != null;
 		if (s.equals("Graph"))
-			return GMTYPE_T.GMTYPE_GRAPH;
+			return GMTYPE_GRAPH;
 		else if (s.equals("Node"))
-			return GMTYPE_T.GMTYPE_NODE;
+			return GMTYPE_NODE;
 		else if (s.equals("Edge"))
-			return GMTYPE_T.GMTYPE_EDGE;
+			return GMTYPE_EDGE;
 		else if (s.equals("NI_All"))
-			return GMTYPE_T.GMTYPE_NODEITER_ALL;
+			return GMTYPE_NODEITER_ALL;
 		else if (s.equals("EI_All"))
-			return GMTYPE_T.GMTYPE_EDGEITER_ALL;
+			return GMTYPE_EDGEITER_ALL;
 		else if (s.equals("NI_Out"))
-			return GMTYPE_T.GMTYPE_NODEITER_NBRS;
+			return GMTYPE_NODEITER_NBRS;
 		else if (s.equals("NI_In"))
-			return GMTYPE_T.GMTYPE_NODEITER_IN_NBRS;
+			return GMTYPE_NODEITER_IN_NBRS;
 		else if (s.equals("NI_Up"))
-			return GMTYPE_T.GMTYPE_NODEITER_UP_NBRS;
+			return GMTYPE_NODEITER_UP_NBRS;
 		else if (s.equals("NI_Down"))
-			return GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS;
+			return GMTYPE_NODEITER_DOWN_NBRS;
 		else if (s.equals("Int"))
-			return GMTYPE_T.GMTYPE_INT;
+			return GMTYPE_INT;
 		else if (s.equals("Long"))
-			return GMTYPE_T.GMTYPE_LONG;
+			return GMTYPE_LONG;
 		else if (s.equals("Float"))
-			return GMTYPE_T.GMTYPE_FLOAT;
+			return GMTYPE_FLOAT;
 		else if (s.equals("Double"))
-			return GMTYPE_T.GMTYPE_DOUBLE;
+			return GMTYPE_DOUBLE;
 		else if (s.equals("N_S"))
-			return GMTYPE_T.GMTYPE_NSET;
+			return GMTYPE_NSET;
 		else if (s.equals("E_S"))
-			return GMTYPE_T.GMTYPE_ESET;
+			return GMTYPE_ESET;
 		else if (s.equals("N_O"))
-			return GMTYPE_T.GMTYPE_NORDER;
+			return GMTYPE_NORDER;
 		else if (s.equals("E_O"))
-			return GMTYPE_T.GMTYPE_EORDER;
+			return GMTYPE_EORDER;
 		else if (s.equals("N_Q"))
-			return GMTYPE_T.GMTYPE_NSEQ;
+			return GMTYPE_NSEQ;
 		else if (s.equals("E_Q"))
-			return GMTYPE_T.GMTYPE_ESEQ;
+			return GMTYPE_ESEQ;
 		else if (s.equals("Void"))
-			return GMTYPE_T.GMTYPE_VOID;
+			return GMTYPE_VOID;
 		else if (s.equals("Bool"))
-			return GMTYPE_T.GMTYPE_BOOL;
+			return GMTYPE_BOOL;
 		else {
 			assert false;
 			throw new AssertionError();

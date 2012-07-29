@@ -1,5 +1,7 @@
 package frontend;
 
+import java.util.HashSet;
+
 import tangible.RefObject;
 import ast.ast_id;
 import ast.ast_node;
@@ -7,6 +9,13 @@ import ast.ast_typedecl;
 
 // symbol table
 public class gm_symtab {
+
+	private HashSet<gm_symtab_entry> entries = new HashSet<gm_symtab_entry>();
+	private gm_symtab parent;
+	private SYMTAB_TYPES symtab_type;
+	private ast_node ast; // where this belongs to
+	private boolean default_graph_used;
+
 	public gm_symtab(SYMTAB_TYPES _symtab_type, ast_node _ast) {
 		this.parent = null;
 		this.symtab_type = _symtab_type;
@@ -103,31 +112,23 @@ public class gm_symtab {
 		return entries.size();
 	}
 
-	// std::vector<gm_symtab_entry*>& get_entries() {return entries;}
-	public final java.util.HashSet<gm_symtab_entry> get_entries() {
+	public final HashSet<gm_symtab_entry> get_entries() {
 		return entries;
 	}
 
-	// return true if entry is in the table
+	/** return true if entry is in the table */
 	public final boolean is_entry_in_the_tab(gm_symtab_entry e) {
-		/*
-		 * std::vector<gm_symtab_entry*>::iterator i; for(i=entries.begin();
-		 * i!=entries.end();i++) if (*i == e) return true; return false;
-		 */
 		return entries.contains(e);
 	}
 
 	public final void remove_entry_in_the_tab(gm_symtab_entry e) {
-		/*
-		 * std::vector<gm_symtab_entry*>::iterator i; for(i=entries.begin();
-		 * i!=entries.end();i++) if (*i == e) break; if (i!=entries.end())
-		 * entries.erase(i);
-		 */
 		entries.remove(e);
 	}
 
-	// merge table A into this. table A is emptied.
-	// (assertion: name conflict has been resolved before calling this function)
+	/**
+	 * merge table A into this. table A is emptied. (assertion: name conflict
+	 * has been resolved before calling this function)
+	 */
 	public final void merge(gm_symtab A) {
 		assert A != null;
 		for (gm_symtab_entry entry : A.entries) {
@@ -137,8 +138,9 @@ public class gm_symtab {
 		A.entries.clear();
 	}
 
-	// add symbol entry
-	// (assertion: name conflict has been resolved)
+	/**
+	 * add symbol entry (assertion: name conflict has been resolved)
+	 */
 	public final void add_symbol(gm_symtab_entry e) {
 		entries.add(e);
 	}
@@ -170,19 +172,12 @@ public class gm_symtab {
 			return count + parent.get_graph_declaration_count();
 	}
 
-	// copy of (id) and copy of (type) is added into a new symbol entry
-	private void add_entry(ast_id id, ast_typedecl type, boolean isRA) {
-		add_entry(id, type, isRA, true);
-	}
+//	// copy of (id) and copy of (type) is added into a new symbol entry
+//	private void add_entry(ast_id id, ast_typedecl type, boolean isRA) {
+//		add_entry(id, type, isRA, true);
+//	}
+//	unused
 
-	private void add_entry(ast_id id, ast_typedecl type) {
-		add_entry(id, type, true, true);
-	}
-
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void add_entry(ast_id* id, ast_typedecl* type, boolean
-	// isRA = true, boolean isWA = true)
 	private void add_entry(ast_id id, ast_typedecl type, boolean isRA, boolean isWA) {
 		ast_id id_copy = id.copy();
 		ast_typedecl type_copy = type.copy();
@@ -192,11 +187,5 @@ public class gm_symtab {
 		// entries.push_back(e);
 		entries.add(e);
 	}
-
-	private java.util.HashSet<gm_symtab_entry> entries = new java.util.HashSet<gm_symtab_entry>();
-	private gm_symtab parent;
-	private SYMTAB_TYPES symtab_type;
-	private ast_node ast; // where this belongs to
-	private boolean default_graph_used;
 
 }

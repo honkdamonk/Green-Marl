@@ -78,7 +78,7 @@ public class ast_expr extends ast_node {
 				Out.push(" | ");
 				left.reproduce(0);
 				Out.push(" | ");
-			} else if (op_type == GM_OPS_T.GMOP_TYPEC) {
+			} else if (op_type == GM_OPS_T.GMOP_TYPECONVERSION) {
 				Out.push(" (");
 				Out.push(type_of_expression.get_type_string());
 				Out.push(" ) ");
@@ -188,7 +188,7 @@ public class ast_expr extends ast_node {
 				System.out.print("- \n");
 			} else if (op_type == GM_OPS_T.GMOP_ABS) {
 				System.out.print("abs \n");
-			} else if (op_type == GM_OPS_T.GMOP_TYPEC) {
+			} else if (op_type == GM_OPS_T.GMOP_TYPECONVERSION) {
 				System.out.printf("( %s )\n", type_of_expression.get_type_string());
 			}
 			left.dump_tree(ind_level + 1);
@@ -478,7 +478,7 @@ public class ast_expr extends ast_node {
 	public static ast_expr new_typeconv_expr(GMTYPE_T target_type, ast_expr l) {
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_UOP;
-		E.op_type = GM_OPS_T.GMOP_TYPEC;
+		E.op_type = GM_OPS_T.GMOP_TYPECONVERSION;
 		E.type_of_expression = target_type; // GMTYPE_xxx
 		E.left = l;
 		l.up = E;
@@ -553,7 +553,7 @@ public class ast_expr extends ast_node {
 	public static ast_expr new_ternary_expr(ast_expr cond, ast_expr left, ast_expr right) {
 		ast_expr E = new ast_expr();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_TER;
-		E.op_type = GM_OPS_T.GMOP_TER;
+		E.op_type = GM_OPS_T.GMOP_TERNARY;
 		E.left = left;
 		E.right = right;
 		E.cond = cond;
@@ -702,7 +702,7 @@ public class ast_expr extends ast_node {
 	}
 
 	public final boolean is_type_conv() {
-		return op_type == GM_OPS_T.GMOP_TYPEC;
+		return op_type == GM_OPS_T.GMOP_TYPECONVERSION;
 	}
 
 	public final ast_expr get_left_op() {

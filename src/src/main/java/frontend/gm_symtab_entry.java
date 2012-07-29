@@ -1,20 +1,21 @@
 package frontend;
 
+import java.util.HashMap;
+
 import ast.ast_extra_info;
 import ast.ast_extra_info_string;
 import ast.ast_id;
 import ast.ast_typedecl;
 
-// symbol table entry
+/** symbol table entry */
 public class gm_symtab_entry {
 
-	private gm_symtab_entry() {
-		this.id = null;
-		this.type = null;
-		this.isRA = false;
-		this.isWA = false;
-		this.isArg = false;
-	}
+	private ast_id id = null;
+	private ast_typedecl type = null;
+	private boolean isRA = false;
+	private boolean isWA = false;
+	private boolean isArg = false;
+	private HashMap<String, ast_extra_info> extra = new HashMap<String, ast_extra_info>();
 
 	// always call with a copy of ID
 	public gm_symtab_entry(ast_id _id, ast_typedecl _type, boolean _isRA) {
@@ -57,11 +58,11 @@ public class gm_symtab_entry {
 	}
 
 	public final boolean isReadable() {
-		return (isRA == GlobalMembersGm_typecheck.GM_READ_AVAILABLE);
+		return (isRA == gm_typecheck.GM_READ_AVAILABLE);
 	}
 
 	public final boolean isWriteable() {
-		return (isWA == GlobalMembersGm_typecheck.GM_WRITE_AVAILABLE);
+		return (isWA == gm_typecheck.GM_WRITE_AVAILABLE);
 	}
 
 	public final boolean isArgument() {
@@ -159,16 +160,8 @@ public class gm_symtab_entry {
 		extra.remove(id); // [XXX] need delete extra_info object
 	}
 
-	// void remove_all_info();
-
 	public final void setArgument(boolean b) {
 		isArg = b;
 	}
 
-	private ast_id id;
-	private ast_typedecl type;
-	private boolean isRA;
-	private boolean isWA;
-	private boolean isArg;
-	private java.util.HashMap<String, ast_extra_info> extra = new java.util.HashMap<String, ast_extra_info>();
 }

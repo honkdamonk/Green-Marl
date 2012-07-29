@@ -1,5 +1,9 @@
 package frontend;
 
+import static inc.GMTYPE_T.GMTYPE_EDGE;
+import static inc.GMTYPE_T.GMTYPE_EDGEITER_ALL;
+import static inc.GMTYPE_T.GMTYPE_NODE;
+import static inc.GMTYPE_T.GMTYPE_NODEITER_ALL;
 import inc.GMTYPE_T;
 
 import java.util.LinkedList;
@@ -14,11 +18,17 @@ import ast.ast_id;
 import ast.ast_nop;
 import ast.ast_sent;
 
+import common.GlobalMembersGm_main;
+import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
 
 public class ss2_group_assign extends gm_apply {
-	// traverse sentence
+
+	protected gm_symtab_entry old_driver_sym;
+	protected ast_id new_driver;
+
+	/** traverse sentence */
 	@Override
 	public boolean apply(ast_sent s) {
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
@@ -61,7 +71,7 @@ public class ss2_group_assign extends gm_apply {
 		GlobalMembersGm_transform_helper.gm_add_sent_after(a, NOP);
 		// ast_sentblock *SB = (ast_sentblock*) a->get_parent();
 		GlobalMembersGm_transform_helper.gm_ripoff_sent(a);
-		ast_foreach fe = GlobalMembersGm_expand_group_assignment.create_surrounding_fe(a);
+		ast_foreach fe = create_surrounding_fe(a);
 		GlobalMembersGm_transform_helper.gm_add_sent_after(NOP, fe);
 		GlobalMembersGm_transform_helper.gm_ripoff_sent(NOP);
 
@@ -80,12 +90,12 @@ public class ss2_group_assign extends gm_apply {
 		lhs.set_first(iter);
 
 		// 2.
-		this.old_driver_sym = old.getSymInfo();
-		this.new_driver = iter;
-		this.set_for_expr(true);
+		old_driver_sym = old.getSymInfo();
+		new_driver = iter;
+		set_for_expr(true);
 		ast_expr rhs = a.get_rhs();
 		rhs.traverse_pre(this);
-		this.set_for_expr(false);
+		set_for_expr(false);
 
 		if (old != null)
 			old.dispose();
@@ -93,14 +103,14 @@ public class ss2_group_assign extends gm_apply {
 		return true;
 	}
 
-	// traverse expr
+	/** traverse expr */
 	@Override
 	public boolean apply(ast_expr e) {
 		if (e.is_id()) {
 			ast_id old = e.get_id();
 			// replace G.A -> iter.A
-			if ((old.getSymInfo() == this.old_driver_sym) && ((e.get_type_summary() == GMTYPE_T.GMTYPE_NODE) || (e.get_type_summary() == GMTYPE_T.GMTYPE_EDGE))) {
-				old.setSymInfo(this.new_driver.getSymInfo());
+			if ((old.getSymInfo() == old_driver_sym) && ((e.get_type_summary() == GMTYPE_NODE) || (e.get_type_summary() == GMTYPE_EDGE))) {
+				old.setSymInfo(new_driver.getSymInfo());
 				e.set_type_summary(new_driver.getTypeSummary());
 			}
 		}
@@ -108,7 +118,7 @@ public class ss2_group_assign extends gm_apply {
 			ast_field f = e.get_field();
 			ast_id old = f.get_first();
 			// replace G.A -> iter.A
-			if (old.getSymInfo() == this.old_driver_sym) {
+			if (old.getSymInfo() == old_driver_sym) {
 				ast_id iter = new_driver.copy(true);
 				iter.set_line(old.get_line());
 				iter.set_col(old.get_col());
@@ -119,7 +129,7 @@ public class ss2_group_assign extends gm_apply {
 		} else if (e.is_builtin()) {
 			ast_expr_builtin e2 = (ast_expr_builtin) e;
 			ast_id old = e2.get_driver();
-			if ((old != null) && (old.getSymInfo() == this.old_driver_sym)) {
+			if ((old != null) && (old.getSymInfo() == old_driver_sym)) {
 
 				// If the builtin-op is for graph do not replace!
 				if (old.getTypeSummary() != e2.get_builtin_def().get_source_type_summary()) {
@@ -136,7 +146,40 @@ public class ss2_group_assign extends gm_apply {
 		return true;
 	}
 
-	protected gm_symtab_entry old_driver_sym;
-	protected ast_id new_driver;
+	/**
+	 * syntax sugar elimination (after type resolution)
+	 * --------------------------------------------------- Group assignment ->
+	 * foreach e.g.> G.A = G.B + 1; => Foreach(_t:G.Nodes) _t.A = _t.B + 1;
+	 */
+	private static ast_foreach create_surrounding_fe(ast_assign a) {
+		ast_field lhs = a.get_lhs_field(); // G.A
+		ast_id first = lhs.get_first();
+		ast_id second = lhs.get_second();
+
+		// iterator : temp
+		// source : graph
+		// iter-type all nodes or all edges
+		// body : assignment statement
+		// const char* temp_name =
+		// TEMP_GEN.getTempName("t"); // should I use first->get_orgname())?
+		String temp_name = GlobalMembersGm_main.FE.voca_temp_name("t");
+		ast_id it = ast_id.new_id(temp_name, first.get_line(), first.get_col());
+		ast_id src = first.copy(true);
+		src.set_line(first.get_line());
+		src.set_col(first.get_col());
+		GMTYPE_T iter;
+		if (second.getTypeSummary().is_node_property_type())
+			iter = GMTYPE_NODEITER_ALL;
+		else if (second.getTypeSummary().is_edge_property_type())
+			iter = GMTYPE_EDGEITER_ALL;
+		else {
+			assert false;
+			throw new AssertionError();
+		}
+
+		ast_foreach fe_new = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(it, src, a, iter);
+
+		return fe_new;
+	}
 
 }

@@ -13,7 +13,7 @@ import static backend_gps.GPSConstants.STATE_SHORT_CUT;
 import static backend_gps.gm_gps_comm_t.GPS_COMM_INIT;
 import static backend_gps.gm_gps_comm_t.GPS_COMM_NESTED;
 import static backend_gps.gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
-import static frontend.GlobalMembersGm_frontend.GMUSAGE_PROPERTY;
+import static frontend.gm_frontend.GMUSAGE_PROPERTY;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
@@ -45,6 +45,7 @@ import common.gm_builtin_def;
 
 // Nothing happens in this class
 public class gm_gpslib extends gm_graph_library {
+	
 	public gm_gpslib() {
 		main = null;
 	}

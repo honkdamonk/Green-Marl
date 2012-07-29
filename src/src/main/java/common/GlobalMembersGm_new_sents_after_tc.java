@@ -1,8 +1,8 @@
 package common;
 
-import frontend.GlobalMembersGm_new_typecheck_step1;
 import frontend.gm_scope;
 import frontend.gm_symtab;
+import frontend.gm_typechecker_stage_1;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 import ast.ast_expr;
@@ -85,7 +85,7 @@ public class GlobalMembersGm_new_sents_after_tc
 		boolean success;
 		// enforce type well defined ness (upscope of this foreach is not available yet)
 
-		success = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(vars, it, type, true, false);
+		success = gm_typechecker_stage_1.gm_declare_symbol(vars, it, type, true, false);
 
 		assert success;
 		assert it.getSymInfo() != null;
@@ -140,7 +140,7 @@ public class GlobalMembersGm_new_sents_after_tc
 		gm_symtab vars = R.get_symtab_var();
 		boolean success;
 		// enforce type well defined ness (upscope of this foreach is not available yet)
-		success = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(vars, it, type, true, false);
+		success = gm_typechecker_stage_1.gm_declare_symbol(vars, it, type, true, false);
 
 		assert success;
 		assert it.getSymInfo() != null;

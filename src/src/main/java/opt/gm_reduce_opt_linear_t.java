@@ -21,14 +21,21 @@ import ast.ast_sent;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
 
-import frontend.GlobalMembersGm_fixup_bound_symbol;
+import frontend.FrontendGlobal;
 import frontend.gm_symtab_entry;
 
-// optimize reductions if every assignment is reached linearly
-//
-// condition
-//    no other parallel loops in between
+/**
+ * optimize reductions if every assignment is reached linearly
+ * 
+ * condition no other parallel loops in between
+ */
 public class gm_reduce_opt_linear_t extends gm_apply {
+
+	/** map [(target, bound, is_bfs) ==> list of assign] */
+	private HashMap<triple_t, LinkedList<ast_assign>> candidates = new HashMap<triple_t, LinkedList<ast_assign>>();
+	private LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
+	private boolean under_rev_bfs;
+
 	public gm_reduce_opt_linear_t() {
 		set_for_sent(true);
 		under_rev_bfs = false;
@@ -66,7 +73,6 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 	public final void post_process() {
 
 		for (triple_t key : candidates.keySet()) {
-			gm_symtab_entry target = key.target;
 			gm_symtab_entry bound = key.bound;
 			LinkedList<ast_assign> L = candidates.get(key);
 
@@ -85,7 +91,7 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 		for (ast_assign a : targets) {
 			assert a.is_reduce_assign();
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
-			GlobalMembersGm_fixup_bound_symbol.gm_make_normal_assign(a);
+			FrontendGlobal.gm_make_normal_assign(a);
 		}
 	}
 
@@ -140,13 +146,4 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 		return true;
 	}
 
-	// map [(target, bound, is_bfs) ==> list of assign]
-	// std::map< std::pair<gm_symtab_entry*, gm_symtab_entry*>,
-	// std::list<ast_assign*> > candidates;
-	// private HashMap<triple_t, LinkedList<ast_assign>, triple_comp_t>
-	// candidates = new HashMap<triple_t, LinkedList<ast_assign>,
-	// triple_comp_t>();
-	private HashMap<triple_t, LinkedList<ast_assign>> candidates = new HashMap<triple_t, LinkedList<ast_assign>>();
-	private LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
-	private boolean under_rev_bfs;
 }

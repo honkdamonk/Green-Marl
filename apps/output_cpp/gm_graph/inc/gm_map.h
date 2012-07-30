@@ -372,7 +372,7 @@ private:
 
             #pragma omp for nowait
             for (int i = 0; i < innerSize; i++) {
-                if (innerMaps[i].size() > 0) value_private = getValueAtPosition_generic(i, compare);
+                if (innerMaps[i].size() > 0) value_private = func(value_private, getValueAtPosition_generic(i, compare));
             }
             // reduction
             {

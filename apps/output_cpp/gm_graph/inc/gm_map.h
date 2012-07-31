@@ -237,7 +237,7 @@ private:
     bool * const valid;
 
     template<class Function>
-    inline Value getValue_generic(Function func, const Value initialValue) {
+    inline Value getValue_generic_seq(Function func, const Value initialValue) {
         assert(size() > 0);
 
         Value value = initialValue;
@@ -246,7 +246,7 @@ private:
             Value value_private = value;
 
             #pragma omp for nowait
-            for (Key i = 0; i < size(); i++) {
+            for (Key i = 0; i < size_; i++) {
                 if (valid[i]) value_private = func(value_private, data[i]);
             }
             // reduction
@@ -264,7 +264,35 @@ private:
     }
 
     template<class Function>
-    inline Key getKey_generic(Function compare, const Value initialValue) {
+    inline Value getValue_generic_par(Function func, const Value initialValue) {
+        assert(size() > 0);
+
+        Value value = initialValue;
+        for (Key i = 0; i < size_; i++) {
+            if (valid[i]) value = func(value, data[i]);
+        }
+        return value;
+    }
+
+    template<class Function>
+    inline Key getKey_generic_par(Function compare, const Value initialValue) {
+
+        assert(size() > 0);
+
+        Value value = initialValue;
+        Key key = 0;
+
+        for (Key i = 0; i < size_; i++) {
+            if (valid[i] && compare(data[i], value)) {
+                value = data[i];
+                key = i;
+            }
+        }
+        return key;
+    }
+
+    template<class Function>
+    inline Key getKey_generic_seq(Function compare, const Value initialValue) {
 
         assert(size() > 0);
 
@@ -277,7 +305,7 @@ private:
             Key key_private = key;
 
             #pragma omp for nowait
-            for (Key i = 0; i < size(); i++) {
+            for (Key i = 0; i < size_; i++) {
                 if (valid[i] && compare(data[i], value_private)) {
                     value_private = data[i];
                     key_private = i;
@@ -298,14 +326,22 @@ private:
     }
 
     template<class Function>
-    inline bool hasValue_generic(Function compare, const Key key) {
+    inline bool hasValue_generic_seq(Function compare, const Key key) {
         if (size() == 0 || !hasKey(key)) return false;
         Value value = data[key];
         bool result = true;
         #pragma omp parallel for
-        for (int i = 0; i < size(); i++)
+        for (int i = 0; i < size_; i++)
             if (valid[i] && compare(data[i], value)) result = false;
         return result;
+    }
+
+    template<class Function>
+    inline bool hasValue_generic_par(Function compare, const Key key) {
+        if (size() == 0 || !hasKey(key)) return false;
+        Value value = data[key];
+        for (int i = 0; i < size_; i++)
+            if (valid[i] && compare(data[i], value)) return false;
     }
 
 public:
@@ -343,31 +379,58 @@ public:
     }
 
     bool hasMaxValue(const Key key) {
-        return hasValue_generic(&gm_map<Key, Value>::compare_greater, key);
+        return hasValue_generic_seq(&gm_map<Key, Value>::compare_greater, key);
+    }
+
+    bool hasMaxValue_par(const Key key) {
+        return hasValue_generic_par(&gm_map<Key, Value>::compare_greater, key);
     }
 
     bool hasMinValue(const Key key) {
-        return hasValue_generic(&gm_map<Key, Value>::compare_smaller, key);
+        return hasValue_generic_seq(&gm_map<Key, Value>::compare_smaller, key);
+    }
+
+    bool hasMinValue_par(const Key key) {
+        return hasValue_generic_par(&gm_map<Key, Value>::compare_smaller, key);
     }
 
     Key getMaxKey() {
-        return getKey_generic(&gm_map<Key, Value>::compare_greater, gm_get_min<Value>());
+        return getKey_generic_seq(&gm_map<Key, Value>::compare_greater, gm_get_min<Value>());
+    }
+
+    Key getMaxKey_par() {
+        return getKey_generic_par(&gm_map<Key, Value>::compare_greater, gm_get_min<Value>());
     }
 
     Key getMinKey() {
-        return getKey_generic(&gm_map<Key, Value>::compare_smaller, gm_get_max<Value>());
+        return getKey_generic_seq(&gm_map<Key, Value>::compare_smaller, gm_get_max<Value>());
+    }
+
+    Key getMinKey_par() {
+        return getKey_generic_par(&gm_map<Key, Value>::compare_smaller, gm_get_max<Value>());
     }
 
     Value getMaxValue() {
-        return getValue_generic(&gm_map<Key, Value>::max, gm_get_min<Value>());
+        return getValue_generic_seq(&gm_map<Key, Value>::max, gm_get_min<Value>());
+    }
+
+    Value getMaxValue_par() {
+        return getValue_generic_par(&gm_map<Key, Value>::max, gm_get_min<Value>());
     }
 
     Value getMinValue() {
-        return getValue_generic(&gm_map<Key, Value>::min, gm_get_max<Value>());
+        return getValue_generic_seq(&gm_map<Key, Value>::min, gm_get_max<Value>());
+    }
+
+    Value getMinValue_par() {
+        return getValue_generic_par(&gm_map<Key, Value>::min, gm_get_max<Value>());
     }
 
     size_t size() {
-        return size_;
+        size_t result = 0;
+        for(int i = 0; i < size_; i++)
+            result += valid[i];
+        return result;
     }
 
     void clear() {

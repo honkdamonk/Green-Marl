@@ -121,7 +121,7 @@ private:
         #pragma omp parallel for
         for (int i = 0; i < iteration; i++) {
             Key key = rand();
-            assert(map->hasKey(key) == (key < size));
+            assert(map->hasKey_par(key) == (key < size));
         }
         gettimeofday(&T2, NULL);
         results.push_back(Result("hasKey_par", Time(T2.tv_sec - T1.tv_sec, T2.tv_usec - T1.tv_usec)));
@@ -152,7 +152,7 @@ private:
         Key minKey = map->getMinKey();
         #pragma omp parallel for
         for (int i = 0; i < iteration; i++) {
-            assert(minKey == map->getMinKey());
+            assert(minKey == map->getMinKey_par());
         }
         gettimeofday(&T2, NULL);
         results.push_back(Result("getMinKey_par", Time(T2.tv_sec - T1.tv_sec, T2.tv_usec - T1.tv_usec)));
@@ -183,7 +183,7 @@ private:
         Value minValue = map->getMinValue();
         #pragma omp parallel for
         for (int i = 0; i < iteration; i++) {
-            assert(minValue == map->getMinValue());
+            assert(minValue == map->getMinValue_par());
         }
         gettimeofday(&T2, NULL);
         results.push_back(Result("getMinValue_par", Time(T2.tv_sec - T1.tv_sec, T2.tv_usec - T1.tv_usec)));
@@ -234,7 +234,7 @@ int main(int argc, char** argv) {
         values[i] = (Value)rand();
     }
 
-/*    gm_map_small<Key, Value, 0> smallMap;
+    gm_map_small<Key, Value, 0> smallMap;
     Benchmark benchmarkSmall(((gm_map<Key, Value>*)(&smallMap)), values, runSize, "small");
     benchmarkSmall.start();
     benchmarkSmall.printResults();
@@ -244,7 +244,7 @@ int main(int argc, char** argv) {
     benchmarkLarge.start();
     benchmarkLarge.printResults();
     printf("finished large\n");
-*/
+
     gm_map_medium<Key, Value, 0> mediumMap(threadCount);
     Benchmark benchmarkMedium(((gm_map<Key, Value>*)(&mediumMap)), values, runSize, "medium");
     benchmarkMedium.start();

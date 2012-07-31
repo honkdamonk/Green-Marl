@@ -21,6 +21,10 @@ public:
 
     virtual bool hasKey(const Key key) = 0;
 
+    virtual bool hasKey_par(const Key key) {
+        return hasKey(key);
+    }
+
     /**
      * Return the value that has been set for the key - if none has been specified, the defaultValue is returned
      */
@@ -36,11 +40,19 @@ public:
      */
     virtual bool hasMaxValue(const Key key) = 0;
 
+    virtual bool hasMaxValue_par(const Key key) {
+        return hasMaxValue(key);
+    }
+
     /**
      * Returns true if the key corresponds to the lowest value in the map.
      * If there has no value been set in the map, false is returned
      */
     virtual bool hasMinValue(const Key key) = 0;
+
+    virtual bool hasMinValue_par(const Key key) {
+        return hasMinValue(key);
+    }
 
     /**
      * Returns the key that corresponds to the highest value in the map.
@@ -48,11 +60,19 @@ public:
      */
     virtual Key getMaxKey() = 0;
 
+    virtual Key getMaxKey_par() {
+        return getMaxKey();
+    }
+
     /**
      * Returns the key that corresponds to the lowest value in the map.
      * If there has no value been set in the map, the behavior is unspecified.
      */
     virtual Key getMinKey() = 0;
+
+    virtual Key getMinKey_par() {
+        return getMinKey();
+    }
 
     /**
      * Returns the highest value in the map.
@@ -60,11 +80,19 @@ public:
      */
     virtual Value getMaxValue() = 0;
 
+    virtual Value getMaxValue_par() {
+        return getMaxValue();
+    }
+
     /**
      * Returns the lowest value in the map.
      * If there has no value been set in the map, the behavior is unspecified.
      */
     virtual Value getMinValue() = 0;
+
+    virtual Value getMinValue_par() {
+        return getMinValue();
+    }
 
     virtual size_t size() = 0;
 
@@ -362,7 +390,24 @@ private:
     typedef typename map<Key, Value>::iterator Iterator;
 
     template<class FunctionCompare, class FunctionMinMax>
-    inline Value getValue_generic(FunctionCompare compare, FunctionMinMax func, const Value initialValue) {
+    inline Value getValue_generic_par(FunctionCompare compare, FunctionMinMax func, const Value initialValue) {
+        assert(size() > 0);
+
+        Value value = initialValue;
+        for (int i = 0; i < innerSize; i++) {
+                if (innerMaps[i].size() > 0) {
+                    for (Iterator iter = innerMaps[i].begin(); iter != innerMaps[i].end(); iter++) {
+                        if (compare(iter->second, value)) {
+                            value = iter->second;
+                        }
+                    }
+                }
+        }
+        return value;
+    }
+
+    template<class FunctionCompare, class FunctionMinMax>
+    inline Value getValue_generic_seq(FunctionCompare compare, FunctionMinMax func, const Value initialValue) {
         assert(size() > 0);
 
         Value value = initialValue;
@@ -401,7 +446,7 @@ private:
     }
 
     template<class Function>
-    inline Key getKey_generic(Function compare, const Value initialValue) {
+    inline Key getKey_generic_seq(Function compare, const Value initialValue) {
         assert(size() > 0);
         Key key = 0;
         Value value = initialValue;
@@ -425,6 +470,25 @@ private:
     }
 
     template<class Function>
+    inline Key getKey_generic_par(Function compare, const Value initialValue) {
+        assert(size() > 0);
+        Key key = 0;
+        Value value = initialValue;
+
+        for(int i = 0; i < innerSize; i++) {
+            if(innerMaps[i].size() > 0) {
+                for (Iterator iter = innerMaps[i].begin(); iter != innerMaps[i].end(); iter++) {
+                    if(compare(iter->second, value)) {
+                        value = iter->second;
+                        key = iter->first;
+                    }
+                }
+            }
+        }
+        return key;
+    }
+
+    template<class Function>
     inline Iterator getKeyAtPosition_generic(int position, Function compare) {
         Iterator iter = innerMaps[position].begin();
         Iterator currentBest = iter;
@@ -437,7 +501,22 @@ private:
     }
 
     template<class Function>
-    inline bool hasValue_generic(Function compare, const Key key) {
+    inline bool hasValue_generic_par(Function compare, const Key key) {
+
+        Value reference = getValueFromPosition(key % innerSize, key);
+
+        for(int i = 0; i < innerSize; i++) {
+            if (innerMaps[i].size() > 0) {
+                for (Iterator iter = innerMaps[i].begin(); iter != innerMaps[i].end(); iter++) {
+                    if (compare(iter->second, reference)) return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    template<class Function>
+    inline bool hasValue_generic_seq(Function compare, const Key key) {
         bool result = true;
         Value reference = getValueFromPosition(key % innerSize, key);
         #pragma omp parallel for
@@ -457,11 +536,11 @@ private:
         }
     }
 
-    bool positionHasKey(int position, const Key key) {
+    inline bool positionHasKey(int position, const Key key) {
         return innerMaps[position].find(key) != innerMaps[position].end();
     }
 
-    Value getValueFromPosition(int position, const Key key) {
+    inline Value getValueFromPosition(int position, const Key key) {
         Iterator iter = innerMaps[position].find(key);
         if(iter != innerMaps[position].end())
             return iter->second;
@@ -509,27 +588,43 @@ public:
     }
 
     bool hasMaxValue(const Key key) {
-        return hasValue_generic(&gm_map<Key, Value>::compare_greater, key);
+        return hasValue_generic_par(&gm_map<Key, Value>::compare_greater, key);
     }
 
     bool hasMinValue(const Key key) {
-        return hasValue_generic(&gm_map<Key, Value>::compare_smaller, key);
+        return hasValue_generic_par(&gm_map<Key, Value>::compare_smaller, key);
     }
 
     Key getMaxKey() {
-        return getKey_generic(&gm_map<Key, Value>::compare_greater, gm_get_min<Value>());
+        return getKey_generic_seq(&gm_map<Key, Value>::compare_greater, gm_get_min<Value>());
+    }
+
+    Key getMaxKey_par() {
+        return getKey_generic_par(&gm_map<Key, Value>::compare_greater, gm_get_min<Value>());
     }
 
     Key getMinKey() {
-        return getKey_generic(&gm_map<Key, Value>::compare_smaller, gm_get_max<Value>());
+        return getKey_generic_seq(&gm_map<Key, Value>::compare_smaller, gm_get_max<Value>());
+    }
+
+    Key getMinKey_par() {
+        return getKey_generic_par(&gm_map<Key, Value>::compare_smaller, gm_get_max<Value>());
     }
 
     Value getMaxValue() {
-        return getValue_generic(&gm_map<Key, Value>::compare_greater, &gm_map<Key, Value>::max, gm_get_min<Value>());
+        return getValue_generic_seq(&gm_map<Key, Value>::compare_greater, &gm_map<Key, Value>::max, gm_get_min<Value>());
+    }
+
+    Value getMaxValue_par() {
+        return getValue_generic_par(&gm_map<Key, Value>::compare_greater, &gm_map<Key, Value>::max, gm_get_min<Value>());
     }
 
     Value getMinValue() {
-        return getValue_generic(&gm_map<Key, Value>::compare_smaller, &gm_map<Key, Value>::min, gm_get_max<Value>());
+        return getValue_generic_seq(&gm_map<Key, Value>::compare_smaller, &gm_map<Key, Value>::min, gm_get_max<Value>());
+    }
+
+    Value getMinValue_par() {
+        return getValue_generic_par(&gm_map<Key, Value>::compare_smaller, &gm_map<Key, Value>::min, gm_get_max<Value>());
     }
 
     size_t size() {

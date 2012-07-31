@@ -11,33 +11,28 @@ using namespace std;
 #define READ true
 #define WRITE false
 
-struct Operation {
-    bool type;
-    int key;
-    int value;
-};
-
 class MapBenchmark {
 
 private:
     int operationCount;
-    Operation* operations;
+    bool* operations;
+    int* keys;
+    int* values;
     gm_map<int, int>* map;
 
 public:
-    void run() {
+    inline void run() {
         #pragma omp parallel for
         for(int i = 0; i < operationCount; i++) {
-            Operation* current = operations + i;
-            if(current->type == READ) {
-                int x = map->getValue(current->key);
+            if(operations[i] == READ) {
+                int x = map->getValue(keys[i]);
             } else {
-                map->setValue_par(current->key, current->value);
+                map->setValue_par(keys[i], values[i]);
             }
         }
     }
 
-    MapBenchmark(gm_map<int, int>* sut, int opCount, Operation* ops) : map(sut), operationCount(opCount), operations(ops) {
+    MapBenchmark(gm_map<int, int>* sut, int opCount, bool* ops, int* keys, int* values) : map(sut), operationCount(opCount), operations(ops), keys(keys), values(values) {
     }
 
 
@@ -56,15 +51,17 @@ int main(int argc, char** argv)  {
         int threadCount = atoi(argv[1]);
         int operationCount = atoi(argv[2]);
 
-        Operation* operations = new Operation[operationCount];
+        bool* operations = new bool[operationCount];
+        int* keys = new int[operationCount];
+        int* values = new int[operationCount];
         for(int i = 0; i < operationCount; i++) {
-            operations[i].type = getType();
-            operations[i].key = rand();
-            operations[i].value = rand();
+            operations[i] = getType();
+            keys[i]= rand();
+            values[i] = rand();
         }
 
         gm_map_small<int, int, 0> smallMap;
-        MapBenchmark benchmark_small((gm_map<int, int>*)(&smallMap), operationCount, operations);
+        MapBenchmark benchmark_small((gm_map<int, int>*)(&smallMap), operationCount, operations, keys, values);
         struct timeval T1, T2;
         gettimeofday(&T1, NULL);
         benchmark_small.run();
@@ -72,7 +69,7 @@ int main(int argc, char** argv)  {
         printf("small\t%lf\t%d\t%d\n", 1000 * (T2.tv_sec - T1.tv_sec) + 0.001 * (T2.tv_usec - T1.tv_usec), threadCount, operationCount);
 
         gm_map_small<int, int, 0> medMap;
-        MapBenchmark benchmark_med((gm_map<int, int>*)(&medMap), operationCount, operations);
+        MapBenchmark benchmark_med((gm_map<int, int>*)(&medMap), operationCount, operations, keys, values);
         gettimeofday(&T1, NULL);
         benchmark_med.run();
         gettimeofday(&T2, NULL);

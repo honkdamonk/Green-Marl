@@ -76,7 +76,7 @@ int main(int argc, char** argv)  {
         gettimeofday(&T1, NULL);
         benchmark_med.run();
         gettimeofday(&T2, NULL);
-        printf("small\t%lf\t%d\t%d\n", 1000 * (T2.tv_sec - T1.tv_sec) + 0.001 * (T2.tv_usec - T1.tv_usec), threadCount, operationCount);
+        printf("medium\t%lf\t%d\t%d\n", 1000 * (T2.tv_sec - T1.tv_sec) + 0.001 * (T2.tv_usec - T1.tv_usec), threadCount, operationCount);
 
         return 0;
 }

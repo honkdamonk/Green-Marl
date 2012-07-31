@@ -43,7 +43,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		// -------------------------------------
 		HashMap<ast_foreach, ast_foreach> MAP = new HashMap<ast_foreach, ast_foreach>();
 		HashSet<ast_foreach> SET = new HashSet<ast_foreach>();
-		GlobalMembersGm_gps_opt_find_nested_foreach_loops.gm_gps_find_double_nested_loops(p, MAP);
+		BackendGpsGlobal.gm_gps_find_double_nested_loops(p, MAP);
 
 		// -------------------------------------
 		// Find target inner loops

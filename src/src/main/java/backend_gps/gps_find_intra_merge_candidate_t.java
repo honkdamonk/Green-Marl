@@ -6,9 +6,12 @@ import static backend_gps.GPSConstants.GPS_FLAG_WHILE_HEAD;
 import static backend_gps.GPSConstants.GPS_FLAG_WHILE_TAIL;
 import frontend.GlobalMembersGm_rw_analysis_check2;
 import frontend.gm_rwinfo_sets;
+import frontend.gm_symtab_entry;
 import inc.gps_apply_bb;
 
 import java.util.LinkedList;
+
+import ast.gm_rwinfo_map;
 
 public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 	
@@ -146,7 +149,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 					 */
 
 					// check if argument is modified inside p1 or s1
-					boolean b1 = GlobalMembersGm_gps_bb_merge_intra_loop.check_if_argument_is_modified(rwi.write_set);
+					boolean b1 = check_if_argument_is_modified(rwi.write_set);
 					if (b1)
 						is_okay = false;
 				}
@@ -199,6 +202,14 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 		}
 		current_trace_head = -1;
 		curr_head = null;
+	}
+	
+	private static boolean check_if_argument_is_modified(gm_rwinfo_map M) {
+		for (gm_symtab_entry e : M.keySet()) {
+			if (e.isArgument())
+				return true;
+		}
+		return false;
 	}
 
 }

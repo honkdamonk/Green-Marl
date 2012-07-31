@@ -239,17 +239,21 @@ int main(int argc, char** argv) {
     benchmarkSmall.start();
     benchmarkSmall.printResults();
     printf("finished small\n");
+    fflush(stdout);
+
     gm_map_large<Key, Value, 0> largeMap(runSize);
     Benchmark benchmarkLarge(((gm_map<Key, Value>*)(&largeMap)), values, runSize, "large");
     benchmarkLarge.start();
     benchmarkLarge.printResults();
     printf("finished large\n");
+    fflush(stdout);
 
     gm_map_medium<Key, Value, 0> mediumMap(threadCount);
     Benchmark benchmarkMedium(((gm_map<Key, Value>*)(&mediumMap)), values, runSize, "medium");
     benchmarkMedium.start();
     benchmarkMedium.printResults();
     printf("finished medium\n");
+    fflush(stdout);
 
     return 0;
 }

@@ -442,15 +442,16 @@ public:
 
 };
 
+#include <unordered_map>
 
 template<class Key, class Value, Value defaultValue>
 class gm_map_medium : public gm_map<Key, Value>
 {
 private:
     int innerSize;
-    map<Key, Value>* innerMaps;
+    unordered_map<Key, Value>* innerMaps;
     gm_spinlock_t* locks;
-    typedef typename map<Key, Value>::iterator Iterator;
+    typedef typename unordered_map<Key, Value>::iterator Iterator;
 
     template<class FunctionCompare, class FunctionMinMax>
     inline Value getValue_generic_par(FunctionCompare compare, FunctionMinMax func, const Value initialValue) {
@@ -592,7 +593,7 @@ private:
 
     template<class Function>
     inline bool hasValueAtPosition_generic(int position, Function compare, const Value reference) {
-        map<Key, Value>& currentMap = innerMaps[position];
+        unordered_map<Key, Value>& currentMap = innerMaps[position];
         if (currentMap.size() == 0) return false;
         for (Iterator iter = currentMap.begin(); iter != currentMap.end(); iter++) {
             if (compare(iter->second, reference)) return false;
@@ -618,7 +619,7 @@ private:
 public:
     gm_map_medium(int threadCount) : innerSize(threadCount) {
         locks = new gm_spinlock_t[innerSize];
-        innerMaps = new map<Key, Value>[innerSize];
+        innerMaps = new unordered_map<Key, Value>[innerSize];
         #pragma omp parallel for
         for(int i = 0; i < innerSize; i++) {
             locks[i] = 0;

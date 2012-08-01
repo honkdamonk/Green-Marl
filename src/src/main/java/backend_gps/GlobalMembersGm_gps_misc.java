@@ -7,44 +7,11 @@ import java.util.HashSet;
 
 public class GlobalMembersGm_gps_misc {
 
-	// depth-first recurse
-	public static void bb_apply_recurse(HashSet<gm_gps_basic_block> set, gm_gps_basic_block B, gps_apply_bb apply) {
-		apply.apply(B);
-		set.add(B);
-		for (int i = 0; i < B.get_num_exits(); i++) {
-			gm_gps_basic_block b = B.get_nth_exit(i);
-
-			if (!set.contains(b)) {
-				GlobalMembersGm_gps_misc.bb_apply_recurse(set, b, apply);
-			}
-		}
-	}
-
 	// return or of has_changed
 	public static void gps_bb_apply_only_once(gm_gps_basic_block entry, gps_apply_bb apply) {
 		HashSet<gm_gps_basic_block> set = new HashSet<gm_gps_basic_block>();
 		set.clear();
 		GlobalMembersGm_gps_misc.bb_apply_recurse(set, entry, apply);
-	}
-
-	public static boolean gps_bb_apply_until_no_change(gm_gps_basic_block entry, gps_apply_bb apply) {
-		HashSet<gm_gps_basic_block> set = new HashSet<gm_gps_basic_block>();
-		boolean b = false;
-		do {
-			apply.set_changed(false);
-			set.clear();
-			GlobalMembersGm_gps_misc.bb_apply_recurse(set, entry, apply);
-			if (apply.has_changed())
-				b = true;
-		} while (apply.has_changed());
-
-		return b; // return true if changed at least once
-	}
-
-	// return or of has_changed
-	public static void gps_bb_print_all(gm_gps_basic_block entry) {
-		gps_print_apply G = new gps_print_apply();
-		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(entry, G);
 	}
 
 	public static void gps_bb_traverse_ast(gm_gps_basic_block entry, gps_apply_bb_ast apply, boolean is_post, boolean is_pre) {
@@ -55,10 +22,19 @@ public class GlobalMembersGm_gps_misc {
 		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(entry, apply);
 
 	}
+	
+	// depth-first recurse
+	public static void bb_apply_recurse(HashSet<gm_gps_basic_block> set, gm_gps_basic_block B, gps_apply_bb apply) {
+		apply.apply(B);
+		set.add(B);
+		for (int i = 0; i < B.get_num_exits(); i++) {
+			gm_gps_basic_block b = B.get_nth_exit(i);
 
-	public static void gps_bb_traverse_ast_single(gm_gps_basic_block entry, gps_apply_bb_ast apply, boolean is_post, boolean is_pre) {
-		apply.set_is_post(is_post);
-		apply.set_is_pre(is_pre);
-		apply.apply(entry);
+			if (!set.contains(b)) {
+				bb_apply_recurse(set, b, apply);
+			}
+		}
 	}
+
+
 }

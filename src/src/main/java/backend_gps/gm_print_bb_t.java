@@ -5,15 +5,6 @@ import inc.gm_compile_step;
 
 import common.GlobalMembersGm_main;
 
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-
 public class gm_print_bb_t extends gm_compile_step {
 	
 	@Override
@@ -28,6 +19,12 @@ public class gm_print_bb_t extends gm_compile_step {
 			return;
 		if (info.get_entry_basic_block() == null)
 			return;
-		GlobalMembersGm_gps_misc.gps_bb_print_all(info.get_entry_basic_block());
+		gps_bb_print_all(info.get_entry_basic_block());
+	}
+	
+	// return or of has_changed
+	private static void gps_bb_print_all(gm_gps_basic_block entry) {
+		gps_print_apply G = new gps_print_apply();
+		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(entry, G);
 	}
 }

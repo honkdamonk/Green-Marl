@@ -234,19 +234,19 @@ int main(int argc, char** argv) {
         values[i] = (Value)rand();
     }
 
-    gm_map_small<Key, Value, 0> smallMap;
-    Benchmark benchmarkSmall(((gm_map<Key, Value>*)(&smallMap)), values, runSize, "small");
-    benchmarkSmall.start();
-    benchmarkSmall.printResults();
-    printf("finished small\n");
-    fflush(stdout);
-
-    gm_map_large<Key, Value, 0> largeMap(runSize);
-    Benchmark benchmarkLarge(((gm_map<Key, Value>*)(&largeMap)), values, runSize, "large");
-    benchmarkLarge.start();
-    benchmarkLarge.printResults();
-    printf("finished large\n");
-    fflush(stdout);
+//    gm_map_small<Key, Value, 0> smallMap;
+//    Benchmark benchmarkSmall(((gm_map<Key, Value>*)(&smallMap)), values, runSize, "small");
+//    benchmarkSmall.start();
+//    benchmarkSmall.printResults();
+//    printf("finished small\n");
+//    fflush(stdout);
+//
+//    gm_map_large<Key, Value, 0> largeMap(runSize);
+//    Benchmark benchmarkLarge(((gm_map<Key, Value>*)(&largeMap)), values, runSize, "large");
+//    benchmarkLarge.start();
+//    benchmarkLarge.printResults();
+//    printf("finished large\n");
+//    fflush(stdout);
 
     gm_map_medium<Key, Value, 0> mediumMap(threadCount);
     Benchmark benchmarkMedium(((gm_map<Key, Value>*)(&mediumMap)), values, runSize, "medium");

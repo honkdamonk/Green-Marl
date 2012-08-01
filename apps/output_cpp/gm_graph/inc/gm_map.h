@@ -451,6 +451,7 @@ private:
     map<Key, Value>* innerMaps;
     gm_spinlock_t* locks;
     typedef typename map<Key, Value>::iterator Iterator;
+    unsigned bitmask;
 
     template<class FunctionCompare, class FunctionMinMax>
     inline Value getValue_generic_par(FunctionCompare compare, FunctionMinMax func, const Value initialValue) {
@@ -581,7 +582,7 @@ private:
     template<class Function>
     inline bool hasValue_generic_seq(Function compare, const Key key) {
         bool result = true;
-        Value reference = getValueFromPosition(key % innerSize, key);
+        Value reference = getValueFromPosition(key & bitmask, key);
         #pragma omp parallel for
         for(int i = 0; i < innerSize; i++) {
             bool tmp = hasValueAtPosition_generic(i, compare, reference);
@@ -617,7 +618,12 @@ private:
 
 public:
     gm_map_medium(int threadCount) {
-        innerSize = max(threadCount, 16);
+        innerSize = 32;
+        bitmask = (innerSize) - 1;
+        while(innerSize < threadCount) {
+            innerSize *= 2;
+            bitmask = (bitmask << 1) | 1;
+        }
         locks = new gm_spinlock_t[innerSize];
         innerMaps = new map<Key, Value>[innerSize];
         #pragma omp parallel for
@@ -640,15 +646,14 @@ public:
     }
 
     void setValue_par(const Key key, Value value) {
-        int position = key % innerSize;
+        int position = key & bitmask;
         gm_spinlock_acquire(locks + position);
         setValueAtPosition(position, key, value);
         gm_spinlock_release(locks + position);
     }
 
     void setValue_seq(const Key key, Value value) {
-        int position = key % innerSize;
-        setValueAtPosition(position, key, value);
+        setValueAtPosition(key & bitmask, key, value);
     }
 
     bool hasMaxValue(const Key key) {

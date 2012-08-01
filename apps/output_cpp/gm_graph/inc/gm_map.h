@@ -616,7 +616,8 @@ private:
     }
 
 public:
-    gm_map_medium(int threadCount) : innerSize(threadCount) {
+    gm_map_medium(int threadCount) {
+        innerSize = max(threadCount, 16);
         locks = new gm_spinlock_t[innerSize];
         innerMaps = new map<Key, Value>[innerSize];
         #pragma omp parallel for

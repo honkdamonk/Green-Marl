@@ -9,6 +9,7 @@ import ast.ast_procdef;
 import ast.gm_rwinfo_map;
 
 public class gm_fe_check_property_argument_usage extends gm_compile_step {
+	
 	private gm_fe_check_property_argument_usage() {
 		set_description("Checking property usages");
 	}
@@ -20,13 +21,13 @@ public class gm_fe_check_property_argument_usage extends gm_compile_step {
 		gm_rwinfo_map W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(proc.get_body()).write_set;
 		for (gm_symtab_entry e : SET) {
 			if ((!R.containsKey(e)) && (!W.containsKey(e)))
-				e.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_UNUSED.getValue());
+				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_UNUSED.getValue());
 			else if ((!R.containsKey(e)) && (W.containsKey(e)))
-				e.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_OUT.getValue());
+				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_OUT.getValue());
 			else if ((!W.containsKey(e)) && (R.containsKey(e)))
-				e.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_IN.getValue());
+				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_IN.getValue());
 			else {
-				e.add_info_int(GlobalMembersGm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_INVALID.getValue()); // temporary
+				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_INVALID.getValue()); // temporary
 																														// marking
 			}
 		}

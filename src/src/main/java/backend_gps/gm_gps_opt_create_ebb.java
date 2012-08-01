@@ -6,8 +6,10 @@ import static backend_gps.GPSConstants.GPS_PREPARE_STEP1;
 import static backend_gps.GPSConstants.GPS_PREPARE_STEP2;
 import frontend.gm_symtab_entry;
 import inc.gm_compile_step;
+import inc.gps_apply_bb;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import ast.ast_id;
 import ast.ast_procdef;
@@ -91,6 +93,21 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 
 	private static void gm_gps_merge_basic_blocks(gm_gps_basic_block entry) {
 		gps_merge_simple_t T = new gps_merge_simple_t();
-		GlobalMembersGm_gps_misc.gps_bb_apply_until_no_change(entry, T);
+		gps_bb_apply_until_no_change(entry, T);
 	}
+	
+	private static boolean gps_bb_apply_until_no_change(gm_gps_basic_block entry, gps_apply_bb apply) {
+		HashSet<gm_gps_basic_block> set = new HashSet<gm_gps_basic_block>();
+		boolean b = false;
+		do {
+			apply.set_changed(false);
+			set.clear();
+			GlobalMembersGm_gps_misc.bb_apply_recurse(set, entry, apply);
+			if (apply.has_changed())
+				b = true;
+		} while (apply.has_changed());
+
+		return b; // return true if changed at least once
+	}
+	
 }

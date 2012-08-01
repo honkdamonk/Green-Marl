@@ -17,21 +17,26 @@ import tangible.RefObject;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_reduce;
+import ast.ast_id;
 import ast.ast_typedecl;
 
 import common.GlobalMembersGm_error;
 import common.gm_apply;
 import common.gm_builtin_def;
+import common.gm_method_id_t;
 
-//----------------------------------------------------------------
-// Type-check Step 3: 
-//   (1) Resolve type of each expression
-//   (2) Check function call arguments
-//   (3) Check argminmax assign count
-//----------------------------------------------------------------
-
-// resolve type of every sub-expression
+/**
+* Type-check Step 3: 
+*   (1) Resolve type of each expression
+*   (2) Check function call arguments
+*   (3) Check argminmax assign count
+*----------------------------------------------------------------
+* resolve type of every sub-expression
+*/
 public class gm_typechecker_stage_3 extends gm_apply {
+	
+	/** expression, dest-type */
+	public java.util.HashMap<ast_expr, GMTYPE_T> coercion_targets = new java.util.HashMap<ast_expr, GMTYPE_T>();
 
 	public gm_typechecker_stage_3() {
 		_is_okay = true;
@@ -150,7 +155,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		if (exp_type.is_unknown_type()) {
 			return false; // no need to check
 		}
-		if (op_type == GM_OPS_T.GMOP_TYPEC) {
+		if (op_type == GM_OPS_T.GMOP_TYPECONVERSION) {
 			// should be alredy dest_type;
 			GMTYPE_T dest_type = e.get_type_summary();
 			if (!dest_type.is_prim_type()) { // destination type
@@ -222,7 +227,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			GMTYPE_T alt_type_l = e.get_left_op().get_alternative_type();
 			if (alt_type_l != GMTYPE_T.GMTYPE_UNKNOWN) {
 				assert e.get_left_op().is_id();
-				if (GlobalMembersGm_new_typecheck_step3.check_special_case_inside_group_assign(e.get_left_op().get_id(), alt_type_l, e.get_right_op())) {
+				if (check_special_case_inside_group_assign(e.get_left_op().get_id(), alt_type_l, e.get_right_op())) {
 					e.get_left_op().set_type_summary(alt_type_l);
 					return true;
 				}
@@ -230,7 +235,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			GMTYPE_T alt_type_r = e.get_left_op().get_alternative_type();
 			if (alt_type_r != GMTYPE_T.GMTYPE_UNKNOWN) {
 				assert e.get_right_op().is_id();
-				if (GlobalMembersGm_new_typecheck_step3.check_special_case_inside_group_assign(e.get_right_op().get_id(), alt_type_r, e.get_left_op())) {
+				if (check_special_case_inside_group_assign(e.get_right_op().get_id(), alt_type_r, e.get_left_op())) {
 					e.get_right_op().set_type_summary(alt_type_l);
 					return true;
 				}
@@ -242,7 +247,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		RefObject<GMTYPE_T> tempRef_r_new = new RefObject<GMTYPE_T>(null);
 		RefObject<Boolean> tempRef_w1_warn = new RefObject<Boolean>(null);
 		RefObject<Boolean> tempRef_w2_warn = new RefObject<Boolean>(null);
-		boolean okay = GlobalMembersGm_typecheck_oprules.gm_is_compatible_type(op_type, l_type, r_type, tempRef_result_type, tempRef_l_new, tempRef_r_new,
+		boolean okay = Oprules.gm_is_compatible_type(op_type, l_type, r_type, tempRef_result_type, tempRef_l_new, tempRef_r_new,
 				tempRef_w1_warn, tempRef_w2_warn);
 
 		GMTYPE_T result_type = tempRef_result_type.argvalue;
@@ -359,10 +364,10 @@ public class gm_typechecker_stage_3 extends gm_apply {
 			RefObject<Boolean> warning_ref = new RefObject<Boolean>(null);
 			RefObject<GMTYPE_T> coerced_type_ref = new RefObject<GMTYPE_T>(null);
 			if (b.get_source_type().is_collection_of_collection_type())
-				isCompatible = GlobalMembersGm_new_typecheck_step3.gm_is_compatible_type_collection_of_collection(b.get_driver().getTargetTypeSummary(),
+				isCompatible = is_compatible_type_collection_of_collection(b.get_driver().getTargetTypeSummary(),
 						currentType, def.get_method_id());
 			else
-				isCompatible = GlobalMembersGm_typecheck.gm_is_compatible_type_for_assign(def_type, currentType, coerced_type_ref, warning_ref);
+				isCompatible = gm_typecheck.gm_is_compatible_type_for_assign(def_type, currentType, coerced_type_ref, warning_ref);
 
 			boolean warning = warning_ref.argvalue;
 
@@ -379,7 +384,39 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		}
 		return okay;
 	}
+	
+	private static boolean check_special_case_inside_group_assign(ast_id l_id, GMTYPE_T alt_type_l, ast_expr r) {
 
-	// expression, dest-type
-	public java.util.HashMap<ast_expr, GMTYPE_T> coercion_targets = new java.util.HashMap<ast_expr, GMTYPE_T>();
+		GMTYPE_T r_type = r.get_type_summary();
+
+		if (alt_type_l.is_node_compatible_type() && !r_type.is_node_compatible_type())
+			return false;		
+		if (alt_type_l.is_edge_compatible_type() && !r_type.is_edge_compatible_type())
+			return false;
+
+		assert l_id.getTypeInfo().is_graph() || l_id.getTypeInfo().is_collection();
+
+		if (l_id.getTypeInfo().is_graph() && (l_id.getSymInfo() != r.get_bound_graph()))
+			return false;
+		if (l_id.getTypeInfo().is_collection() && (l_id.getTypeInfo().get_target_graph_sym() != r.get_bound_graph()))
+			return false;
+
+		return true;
+	}
+	
+	private static boolean is_compatible_type_collection_of_collection(GMTYPE_T gmtype_T, GMTYPE_T currentType, gm_method_id_t methodId) {
+		// TODO find better way to do this
+		switch (methodId) {
+		case GM_BLTIN_SET_ADD:
+		case GM_BLTIN_SET_ADD_BACK:
+			return gmtype_T == currentType;
+		case GM_BLTIN_SET_REMOVE:
+		case GM_BLTIN_SET_REMOVE_BACK:
+		case GM_BLTIN_SET_SIZE:
+			return true;
+		default:
+			assert false;
+			return false;
+		}
+	}
 }

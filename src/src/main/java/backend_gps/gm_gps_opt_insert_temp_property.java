@@ -25,7 +25,7 @@ public class gm_gps_opt_insert_temp_property extends gm_compile_step {
 		// Find nested loops
 		// -------------------------------------
 		HashMap<ast_foreach, ast_foreach> MAP = new HashMap<ast_foreach, ast_foreach>();
-		GlobalMembersGm_gps_opt_find_nested_foreach_loops.gm_gps_find_double_nested_loops(p, MAP);
+		BackendGpsGlobal.gm_gps_find_double_nested_loops(p, MAP);
 
 		// -------------------------------------
 		// Find scalar targets

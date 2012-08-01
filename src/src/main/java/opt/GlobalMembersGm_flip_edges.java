@@ -1,7 +1,10 @@
 package opt;
 
-import tangible.RefObject;
 import inc.GMTYPE_T;
+
+import java.util.LinkedList;
+
+import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -118,7 +121,7 @@ public class GlobalMembersGm_flip_edges {
 	}
 
 	// Now actually flip the edges
-	public static void do_flip_edges(java.util.LinkedList<ast_foreach> target) {
+	public static void do_flip_edges(LinkedList<ast_foreach> target) {
 		ast_foreach in;
 		ast_if if1;
 		ast_if if2;

@@ -1,5 +1,8 @@
 package backend_cpp;
 
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_id;
@@ -9,13 +12,13 @@ import ast.ast_sent;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
 
-import frontend.GlobalMembersGm_fixup_bound_symbol;
+import frontend.FrontendGlobal;
 import frontend.gm_symtab_entry;
 
 public class change_reduction_t extends gm_apply {
 	
-	private java.util.HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map;
-	private java.util.LinkedList<ast_assign> to_normals = new java.util.LinkedList<ast_assign>();
+	private HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map;
+	private LinkedList<ast_assign> to_normals = new LinkedList<ast_assign>();
 	
 	public final void set_map(java.util.HashMap<gm_symtab_entry, gm_symtab_entry> m) {
 		symbol_map = m;
@@ -61,11 +64,9 @@ public class change_reduction_t extends gm_apply {
 	public final void post_process() {
 		for (ast_assign a : to_normals) {
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
-			GlobalMembersGm_fixup_bound_symbol.gm_make_normal_assign(a);
+			FrontendGlobal.gm_make_normal_assign(a);
 		}
 	}
 
 }
 // supplimental lhs for argmin/argmax - new symbols - old symbols
-
-// bool gm_cpp_gen::optimize_reduction(ast_procdef *p)

@@ -6,9 +6,13 @@ import static backend_gps.GPSConstants.GPS_FLAG_WHILE_HEAD;
 import static backend_gps.GPSConstants.GPS_FLAG_WHILE_TAIL;
 import frontend.GlobalMembersGm_rw_analysis_check2;
 import frontend.gm_rwinfo_sets;
+import frontend.gm_symtab_entry;
 import inc.gps_apply_bb;
+import inc.gps_apply_bb_ast;
 
 import java.util.LinkedList;
+
+import ast.gm_rwinfo_map;
 
 public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 	
@@ -94,10 +98,10 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 
 					// check dependency between p1 and s_n
 					rwi = new gm_rwinfo_sets();
-					GlobalMembersGm_gps_bb_rw_analysis.gm_gps_get_rwinfo_from_bb(p1, rwi);
+					gm_gps_get_rwinfo_from_bb(p1, rwi);
 
 					gm_rwinfo_sets rwi_n = new gm_rwinfo_sets();
-					GlobalMembersGm_gps_bb_rw_analysis.gm_gps_get_rwinfo_from_bb(s2, rwi_n);
+					gm_gps_get_rwinfo_from_bb(s2, rwi_n);
 
 					if (GlobalMembersGm_rw_analysis_check2.gm_has_dependency(rwi, rwi_n))
 						is_okay = false;
@@ -109,11 +113,11 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 						 */
 
 						gm_rwinfo_sets rwi_0 = new gm_rwinfo_sets(); // s_0
-						GlobalMembersGm_gps_bb_rw_analysis.gm_gps_get_rwinfo_from_bb(s0, rwi_0);
+						gm_gps_get_rwinfo_from_bb(s0, rwi_0);
 
 						// check dependency between s1 and s0
 						gm_rwinfo_sets rwi_s1 = new gm_rwinfo_sets();
-						GlobalMembersGm_gps_bb_rw_analysis.gm_gps_get_rwinfo_from_bb(s1, rwi_s1);
+						gm_gps_get_rwinfo_from_bb(s1, rwi_s1);
 						if (GlobalMembersGm_rw_analysis_check2.gm_has_dependency(rwi_0, rwi_s1))
 							is_okay = false;
 
@@ -133,10 +137,10 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 
 				if (is_okay) {
 					// accumulated rwi
-					GlobalMembersGm_gps_bb_rw_analysis.gm_gps_get_rwinfo_from_bb(s1, rwi);
+					gm_gps_get_rwinfo_from_bb(s1, rwi);
 
 					if (s0 != null)
-						GlobalMembersGm_gps_bb_rw_analysis.gm_gps_get_rwinfo_from_bb(s0, rwi);
+						gm_gps_get_rwinfo_from_bb(s0, rwi);
 
 					/*
 					 * printf("read set for BB:%d,%d\n", p1->get_id(),
@@ -146,7 +150,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 					 */
 
 					// check if argument is modified inside p1 or s1
-					boolean b1 = GlobalMembersGm_gps_bb_merge_intra_loop.check_if_argument_is_modified(rwi.write_set);
+					boolean b1 = check_if_argument_is_modified(rwi.write_set);
 					if (b1)
 						is_okay = false;
 				}
@@ -160,7 +164,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 						next = curr_tail.get_nth_exit(1);
 
 					gm_rwinfo_sets rwi2 = new gm_rwinfo_sets();
-					GlobalMembersGm_gps_bb_rw_analysis.gm_gps_get_rwinfo_from_all_reachable_bb(next, rwi2);
+					gm_gps_get_rwinfo_from_all_reachable_bb(next, rwi2);
 
 					/*
 					 * printf("read set for reachable:\n");
@@ -199,6 +203,65 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 		}
 		current_trace_head = -1;
 		curr_head = null;
+	}
+	
+	private static boolean check_if_argument_is_modified(gm_rwinfo_map M) {
+		for (gm_symtab_entry e : M.keySet()) {
+			if (e.isArgument())
+				return true;
+		}
+		return false;
+	}
+	
+	private static gm_rwinfo_sets gm_gps_get_rwinfo_from_all_reachable_bb(gm_gps_basic_block BB, gm_rwinfo_sets S) {
+		return gm_gps_get_rwinfo_from_all_reachable_bb(BB, S, false);
+	}
+
+	private static gm_rwinfo_sets gm_gps_get_rwinfo_from_all_reachable_bb(gm_gps_basic_block BB, gm_rwinfo_sets S, boolean check_receivers) {
+		if (S == null)
+			S = new gm_rwinfo_sets();
+		assert check_receivers == false;
+
+		// -------------------------------------------
+		// traverse AST inside BB
+		// merge read/write sets
+		// caution for communicating symbols
+		// -------------------------------------------
+		gm_gps_find_rwinfo_simple T = new gm_gps_find_rwinfo_simple(S);
+		T.set_check_receiver(check_receivers);
+
+		// post && pre
+		GlobalMembersGm_gps_misc.gps_bb_traverse_ast(BB, T, true, true); 
+
+		return S;
+	}
+	
+	private static gm_rwinfo_sets gm_gps_get_rwinfo_from_bb(gm_gps_basic_block BB, gm_rwinfo_sets S) {
+		return gm_gps_get_rwinfo_from_bb(BB, S, false);
+	}
+
+	private static gm_rwinfo_sets gm_gps_get_rwinfo_from_bb(gm_gps_basic_block BB, gm_rwinfo_sets S, boolean check_receivers) {
+		if (S == null)
+			S = new gm_rwinfo_sets();
+		assert check_receivers == false;
+
+		// -------------------------------------------
+		// traverse AST inside BB
+		// merge read/write sets
+		// caution for communicating symbols
+		// -------------------------------------------
+		gm_gps_find_rwinfo_simple T = new gm_gps_find_rwinfo_simple(S);
+		T.set_check_receiver(check_receivers);
+		// post && pre
+		gps_bb_traverse_ast_single(BB, T, true, true);
+
+		return S;
+	}
+	
+	private static void gps_bb_traverse_ast_single(gm_gps_basic_block entry, gps_apply_bb_ast apply, boolean is_post, boolean is_pre) {
+		apply.set_is_post(is_post);
+		apply.set_is_pre(is_pre);
+		apply.apply(entry);
 	}
 
 }

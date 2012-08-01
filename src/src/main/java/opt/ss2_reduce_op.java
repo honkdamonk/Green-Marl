@@ -40,18 +40,15 @@ import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
 
-//---------------------------------------------------
-// reduction_op => initialization + foreach + reduction_assign
-// <e.g>
-//     X = Y + Sum(t: G.Nbrs) {t.A + t.B}
-// =>  Int _t =0;
-//     Foreach(t: G.Nbrs) 
-//       _t += t.A + t.B @ t;
-//     X = Y + _t;
-//---------------------------------------------------
+/**
+ * --------------------------------------------------- reduction_op =>
+ * initialization + foreach + reduction_assign <e.g> X = Y + Sum(t: G.Nbrs) {t.A
+ * + t.B} => Int _t =0; Foreach(t: G.Nbrs) _t += t.A + t.B @ t; X = Y + _t;
+ * ---------------------------------------------------
+ */
 public class ss2_reduce_op extends gm_apply {
 
-	// ReduceOps that should be replaced
+	/** ReduceOps that should be replaced */
 	protected LinkedList<ast_expr_reduce> targets = new LinkedList<ast_expr_reduce>();
 
 	public ss2_reduce_op() {

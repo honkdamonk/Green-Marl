@@ -1,33 +1,17 @@
 package common;
 
+import inc.GMTYPE_T;
 import ast.AST_NODE_TYPE;
 import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
-import frontend.GlobalMembersGm_new_typecheck_step1;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
+import frontend.gm_typechecker_stage_1;
 
 public class GlobalMembersGm_add_symbol {
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define TO_STR(X) #X
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define DEF_STRING(X) static const char *X = "X"
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public
-	// gm_compile_step { private: CLASS() {set_description(DESC);}public:
-	// virtual void process(ast_procdef*p); virtual gm_compile_step*
-	// get_instance(){return new CLASS();} static gm_compile_step*
-	// get_factory(){return new CLASS();} };
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
 
 	public static ast_sentblock gm_find_upscope(ast_sent s) {
 		if (s == null)
@@ -43,16 +27,10 @@ public class GlobalMembersGm_add_symbol {
 		return null;
 	}
 
-	// temporary: should be improved
-	// extern boolean gm_check_type_is_well_defined(ast_typedecl type, gm_symtab
-	// SYM_V); // should be called separatedly for property type.
-	// extern boolean gm_declare_symbol(gm_symtab SYM, ast_id id, ast_typedecl
-	// type, boolean is_readable, boolean is_writeable);
-
-	// -------------------------------------------------------
-	// add a new symbol of primitive type into given sentence block
-	// assumption: newname does not have any name-conflicts
-	// --------------------------------------------------------
+	/**
+	 * add a new symbol of primitive type into given sentence block<br>
+	 * assumption: newname does not have any name-conflicts
+	 */
 	public static gm_symtab_entry gm_add_new_symbol_primtype(ast_sentblock sb, GMTYPE_T primtype, tangible.RefObject<String> newname) {
 		assert sb != null;
 
@@ -62,12 +40,12 @@ public class GlobalMembersGm_add_symbol {
 
 		// create type object and check
 		ast_typedecl type = ast_typedecl.new_primtype(primtype);
-		boolean success = GlobalMembersGm_new_typecheck_step1.gm_check_type_is_well_defined(type, target_syms);
+		boolean success = gm_typechecker_stage_1.gm_check_type_is_well_defined(type, target_syms);
 		assert success;
 
 		// create id object and declare
 		ast_id new_id = ast_id.new_id(newname.argvalue, 0, 0);
-		success = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(target_syms, new_id, type, true, true);
+		success = gm_typechecker_stage_1.gm_declare_symbol(target_syms, new_id, type, true, true);
 		assert success;
 
 		// return symbol
@@ -102,12 +80,12 @@ public class GlobalMembersGm_add_symbol {
 			assert false;
 			throw new AssertionError();
 		}
-		boolean success = GlobalMembersGm_new_typecheck_step1.gm_check_type_is_well_defined(type, target_syms);
+		boolean success = gm_typechecker_stage_1.gm_check_type_is_well_defined(type, target_syms);
 		assert success;
 
 		// create id object and declare
 		ast_id new_id = ast_id.new_id(newname.argvalue, 0, 0);
-		success = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(target_syms, new_id, type, true, true);
+		success = gm_typechecker_stage_1.gm_declare_symbol(target_syms, new_id, type, true, true);
 		assert success;
 
 		// return symbol
@@ -124,10 +102,10 @@ public class GlobalMembersGm_add_symbol {
 		return e;
 	}
 
-	// -------------------------------------------------------
-	// add a new symbol of node(edge) property type into given sentence block
-	// assumption: newname does not have any name-conflicts
-	// --------------------------------------------------------
+	/**
+	 * add a new symbol of node(edge) property type into given sentence block<br>
+	 * assumption: newname does not have any name-conflicts
+	 */
 	public static gm_symtab_entry gm_add_new_symbol_property(ast_sentblock sb, GMTYPE_T primtype, boolean is_nodeprop, gm_symtab_entry target_graph,
 			tangible.RefObject<String> newname) // assumtpion: no name-conflict.
 	{
@@ -141,7 +119,7 @@ public class GlobalMembersGm_add_symbol {
 		else
 			type = ast_typedecl.new_edgeprop(target_type, target_graph_id);
 
-		boolean success = GlobalMembersGm_new_typecheck_step1.gm_check_type_is_well_defined(type, sb.get_symtab_var());
+		boolean success = gm_typechecker_stage_1.gm_check_type_is_well_defined(type, sb.get_symtab_var());
 		assert success;
 
 		// create property id object and declare
@@ -149,7 +127,7 @@ public class GlobalMembersGm_add_symbol {
 		gm_symtab target_syms;
 		target_syms = sb.get_symtab_field();
 		assert target_syms != null;
-		success = GlobalMembersGm_new_typecheck_step1.gm_declare_symbol(target_syms, new_id, type, true, true);
+		success = gm_typechecker_stage_1.gm_declare_symbol(target_syms, new_id, type, true, true);
 		assert success;
 
 		// return symbol
@@ -166,13 +144,13 @@ public class GlobalMembersGm_add_symbol {
 		return e;
 	}
 
-	// -------------------------------------------------------------------
-	// - move a symbol entry up into another symbol table
-	// [assumption] new_tab belongs to a sentence block
-	// - name conflict does not happen
-	// [return]
-	// the sentence block which is the new scope
-	// -------------------------------------------------------------------
+	/**
+	 * - move a symbol entry up into another symbol table [assumption] new_tab
+	 * belongs to a sentence block<br>
+	 * - name conflict does not happen
+	 * 
+	 * @return the sentence block which is the new scope
+	 */
 	public static void gm_move_symbol_into(gm_symtab_entry e, gm_symtab old_tab, gm_symtab new_tab, boolean is_scalar) {
 		assert new_tab.get_ast().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 		assert old_tab.is_entry_in_the_tab(e);
@@ -189,12 +167,12 @@ public class GlobalMembersGm_add_symbol {
 		new_tab.add_symbol(e);
 	}
 
-	// -------------------------------------------------------------------
-	// - move a symbol entry up into a sentence block
-	// - name conflict is resolved
-	// [return]
-	// the sentence block which is the new scope
-	// -------------------------------------------------------------------
+	/**
+	 * - move a symbol entry up into a sentence block<br>
+	 * - name conflict is resolved
+	 * 
+	 * @return the sentence block which is the new scope
+	 */
 	public static ast_sentblock gm_move_symbol_up(gm_symtab_entry e, gm_symtab old_tab, boolean is_scalar) {
 		assert old_tab.is_entry_in_the_tab(e);
 
@@ -236,7 +214,7 @@ public class GlobalMembersGm_add_symbol {
 	public static ast_sentblock gm_find_defining_sentblock_up(ast_node node, gm_symtab_entry e) {
 		return gm_find_defining_sentblock_up(node, e, false);
 	}
-	
+
 	public static ast_sentblock gm_find_defining_sentblock_up(ast_node node, gm_symtab_entry e, boolean is_property) {
 		while (node != null) {
 			if (node.has_symtab()) {

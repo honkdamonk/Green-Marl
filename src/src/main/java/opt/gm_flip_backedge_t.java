@@ -4,6 +4,7 @@ import inc.GMTYPE_T;
 import inc.gm_assignment_t;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;
@@ -167,10 +168,11 @@ public class gm_flip_backedge_t extends gm_apply {
 		return true;
 	}
 
-	public final boolean post_process() { // return true if something changed
+	/** return true if something changed */
+	public final boolean post_process() { 
 		if (_cands.size() > 0) {
-			java.util.Iterator<ast_sentblock> P;
-			java.util.Iterator<ast_assign> A;
+			Iterator<ast_sentblock> P;
+			Iterator<ast_assign> A;
 			A = _cands.iterator();
 			P = _tops.iterator();
 			while (A.hasNext()) {
@@ -183,7 +185,6 @@ public class gm_flip_backedge_t extends gm_apply {
 
 			return true;
 		}
-
 		return false;
 	}
 
@@ -232,8 +233,8 @@ public class gm_flip_backedge_t extends gm_apply {
 		// RHS: repalce u -> t.
 		ast_expr new_rhs = old_rhs.get_body(); // reuse old expr structure.
 		GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(old_iter.getSymInfo(), bfs.get_iterator().getSymInfo(), new_rhs);
-		old_rhs.set_body(null); // prevent new_rhs being deleted with old
-								// assignment.
+		// prevent new_rhs being deleted with old assignment.
+		old_rhs.set_body(null); 
 		new_rhs.set_up_op(null);
 
 		ast_assign new_assign = ast_assign.new_assign_field(new_lhs, new_rhs, gm_assignment_t.GMASSIGN_REDUCE, bfs.get_iterator().copy(true),
@@ -249,5 +250,4 @@ public class gm_flip_backedge_t extends gm_apply {
 	}
 
 }
-// bool gm_independent_optimize::do_flip_edges(ast_procdef* p)
 

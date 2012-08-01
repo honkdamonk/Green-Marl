@@ -29,7 +29,7 @@ import backend_gps.gm_gps_comm_unit;
 import common.GlobalMembersGm_main;
 
 public class gps_apply_bb_ast extends gps_apply_bb {
-	
+
 	// set by traverse engine
 	protected gm_gps_basic_block _curr;
 	protected boolean _under_receiver;
@@ -47,7 +47,6 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 		_check_receiver = true;
 	}
 
-	// defined in gm_gps_misc.cc
 	public void apply(gm_gps_basic_block b) {
 		_curr = b;
 		gm_gps_bbtype_t type = _curr.get_type();
@@ -100,7 +99,6 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 		} else if (type == GM_GPS_BBTYPE_IF_COND) {
 			assert _curr.get_num_sents() == 1;
 			// traverse cond expr
-			LinkedList<ast_sent> sents = new LinkedList<ast_sent>();
 			ast_sent s = _curr.get_1st_sent();
 			assert s.get_nodetype() == AST_NODE_TYPE.AST_IF;
 			ast_if i = (ast_if) s;
@@ -111,7 +109,6 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 			assert _curr.get_num_sents() == 1;
 
 			// traverse cond expr
-			LinkedList<ast_sent> sents = new LinkedList<ast_sent>();
 			ast_sent s = _curr.get_1st_sent();
 			assert s.get_nodetype() == AST_NODE_TYPE.AST_WHILE;
 			ast_while w = (ast_while) s;

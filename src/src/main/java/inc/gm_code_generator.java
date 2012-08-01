@@ -208,7 +208,7 @@ public abstract class gm_code_generator {
 			} else if (e.get_optype() == GM_OPS_T.GMOP_ABS) {
 				generate_expr_abs(e);
 				return;
-			} else if (e.get_optype() == GM_OPS_T.GMOP_TYPEC) {
+			} else if (e.get_optype() == GM_OPS_T.GMOP_TYPECONVERSION) {
 				generate_expr_type_conversion(e);
 				return;
 			} else {

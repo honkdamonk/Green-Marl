@@ -10,30 +10,29 @@ import ast.ast_sent;
 
 import common.gm_apply;
 
-//-----------------------------------------------------------------
-// Find highest parallel bound
-//  - The highest parallel scope below where the symbol is defined.
-//    (from the current subtree where the reduce operation is defined)
-//
-// [Example]
-// { Int a;
-//   For(x: ...) {
-//     Foreach(y: x.Nbrs) {
-//       Foreach(z: y.Nbrs) {
-//          a++ [@ y];    // <- Most of the time, one should be bound to HPB
-// } } } }
-//
-//
-// // This is the only exception
-//
-// { N_P<Int>(G) A,B,C;
-//   Foreach(x: G.Nodes) {  // <- HPB
-//      Foreach(y: x.Nbrs)  
-//          x.A += y.C @ y; // <- maynot bound to HPB. (but writing to driver HPB)
-//      x.B = x.A + 1;
-// } }
-//-----------------------------------------------------------------
-
+/**
+ * Find highest parallel bound<br>
+ * - The highest parallel scope below where the symbol is defined.<br>
+ * (from the current subtree where the reduce operation is defined)<br>
+ * <br>
+ * <code>[Example]<br>
+ * Int a;<br>
+ * For(x: ...) {<br>
+ * <dd>    Foreach(y: x.Nbrs) {<br>
+ * <dd><dd>      Foreach(z: y.Nbrs) {<br>
+ * <dd><dd><dd>         a++ [@ y];    * <- Most of the time, one should be bound to HPB<br>
+ * } } } }</code><br>
+ * 
+ * This is the only exception<br>
+ * 
+ * <code>
+ * N_P<Int>(G) A,B,C;<br>
+ * Foreach(x: G.Nodes) {  // <- HPB<br>
+ * <dd>     Foreach(y: x.Nbrs)<br>  
+ * <dd><dd>        x.A += y.C @ y; // <- maynot bound to HPB. (but writing to driver HPB)<br>
+ * <dd>     x.B = x.A + 1;<br>
+ * } }</code><br>
+ */
 public class find_hpb_t1 extends gm_apply {
 	// ------------------------
 	// make a big table
@@ -70,21 +69,20 @@ public class find_hpb_t1 extends gm_apply {
 		}
 	}
 
-	// phase 1: create depth_map
+	/** phase 1: create depth_map */
 	@Override
 	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
 		depth_map.put(e, current_depth);
 		return true;
 	}
 
-	// ----------------------------------------------------------------
-	// phase 2: for every reduction assignment, find HPB.
-	// If HPB is NULL -> change it to normal assign
-	// If current bound is NULL or higher than HPB -> lower it to HPB.
-	// If current bound is lower than HPB,
-	// If parallel -> leave it (can be an error or not)
-	// If sequential-> fix it silently (or leave it to be error).
-	// ----------------------------------------------------------------
+	/**
+	 * phase 2: for every reduction assignment, find HPB. If HPB is NULL ->
+	 * change it to normal assign If current bound is NULL or higher than HPB ->
+	 * lower it to HPB. If current bound is lower than HPB, If parallel -> leave
+	 * it (can be an error or not) If sequential-> fix it silently (or leave it
+	 * to be error).
+	 */
 	@Override
 	public boolean apply(ast_sent s) {
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
@@ -98,7 +96,7 @@ public class find_hpb_t1 extends gm_apply {
 		System.out.printf("finding_bound_for:%p\n", a);
 
 		if (HPB == null) {
-			GlobalMembersGm_fixup_bound_symbol.gm_make_normal_assign(a);
+			FrontendGlobal.gm_make_normal_assign(a);
 		} else if (a.get_bound() == null) {
 			assert HPB.getId() != null;
 			ast_id new_bound = HPB.getId().copy(true);

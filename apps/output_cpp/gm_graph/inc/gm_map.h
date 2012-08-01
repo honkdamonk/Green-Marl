@@ -447,11 +447,11 @@ template<class Key, class Value, Value defaultValue>
 class gm_map_medium : public gm_map<Key, Value>
 {
 private:
-    int innerSize;
+    const int innerSize;
     map<Key, Value>* innerMaps;
     gm_spinlock_t* locks;
     typedef typename map<Key, Value>::iterator Iterator;
-    unsigned bitmask;
+    const unsigned bitmask;
 
     template<class FunctionCompare, class FunctionMinMax>
     inline Value getValue_generic_par(FunctionCompare compare, FunctionMinMax func, const Value initialValue) {
@@ -616,14 +616,21 @@ private:
         innerMaps[position][key] = value;
     }
 
-public:
-    gm_map_medium(int threadCount) {
-        innerSize = 32;
-        bitmask = (innerSize) - 1;
-        while(innerSize < threadCount) {
-            innerSize *= 2;
-            bitmask = (bitmask << 1) | 1;
+    static unsigned getBitMask(int innerSize) {
+        unsigned tmpMask = innerSize - 1;
+        return tmpMask;
+    }
+
+    static int getSize(int threadCount) {
+        int tmpSize = 32;
+        while(tmpSize < threadCount) {
+            tmpSize *= 2;
         }
+        return tmpSize;
+    }
+
+public:
+    gm_map_medium(int threadCount) : innerSize(getSize(threadCount)), bitmask(getBitMask(innerSize)) {
         locks = new gm_spinlock_t[innerSize];
         innerMaps = new map<Key, Value>[innerSize];
         #pragma omp parallel for

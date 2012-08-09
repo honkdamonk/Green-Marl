@@ -7,6 +7,7 @@
 #include "gm_compile_step.h"
 #include "gm_backend_cpp_opt_steps.h"
 #include "gm_backend_cpp_gen_steps.h"
+#include "../backend_cpp/gm_cpplib_words.h"
 
 #include <list>
 
@@ -15,7 +16,7 @@
 //  ==> will be deprecated
 //-----------------------------------------------------------------
 class gm_cpp_gen;
-class gm_cpplib : public gm_graph_library
+class gm_cpplib: public gm_graph_library
 {
 public:
     gm_cpplib() {
@@ -44,9 +45,8 @@ public:
     virtual void generate_sent_nop(ast_nop* n);
     virtual void generate_expr_builtin(ast_expr_builtin* e, gm_code_writer& Body);
     virtual void generate_expr_nil(ast_expr* e, gm_code_writer& Body);
-
     virtual bool add_collection_def(ast_id* set);
-
+    virtual void add_map_def(ast_maptypedecl* map, ast_id* mapId);
     virtual void build_up_language_voca(gm_vocabulary& V);
 
     virtual bool need_up_initializer(ast_foreach* fe);
@@ -56,12 +56,57 @@ public:
     virtual void generate_foreach_header(ast_foreach* fe, gm_code_writer& Body);
 
 private:
+    //map sizes
+    static const int SMALL = 0;
+    static const int MEDIUM = 1;
+    static const int LARGE = 2;
+
     virtual void generate_expr_builtin_field(ast_expr_builtin_field* builtinExpr, gm_code_writer& body);
     const char* get_function_name_graph(int methodId);
     const char* get_function_name_nset(int methodId, bool in_parallel = false);
     const char* get_function_name_nseq(int methodId);
     const char* get_function_name_norder(int methodId);
+    const char* get_function_name_map(int methodId, bool in_parallel = false);
+    const char* get_function_name_map_seq(int methodId);
+    const char* get_function_name_map_par(int methodId);
     void add_arguments_and_thread(gm_code_writer& body, ast_expr_builtin* builtinExpr, bool addThreadId);
+    const char* getMapDefaultValueForType(int type);
+    const char* getMapTypeString(int mapType);
+    void addAdditionalMapParameters(int mapType);
+
+    static const char* get_primitive_type_string(int type_id) {
+        switch (type_id) {
+            case GMTYPE_BYTE:
+                return "int8_t";
+            case GMTYPE_SHORT:
+                return "int16_t";
+            case GMTYPE_INT:
+                return "int32_t";
+            case GMTYPE_LONG:
+                return "int64_t";
+            case GMTYPE_FLOAT:
+                return "float";
+            case GMTYPE_DOUBLE:
+                return "double";
+            case GMTYPE_BOOL:
+                return "bool";
+            default:
+                assert(false);
+                return "??";
+        }
+    }
+
+    static const char* getTypeString(int type) {
+        if (gm_is_prim_type(type))
+            return get_primitive_type_string(type);
+        else if (gm_is_node_type(type))
+            return NODE_T;
+        else if (gm_is_edge_type(type))
+            return EDGE_T;
+        else
+            assert(false);
+        return NULL;
+    }
 
     char str_buf[1024 * 8];
     gm_cpp_gen* main;
@@ -70,7 +115,7 @@ private:
 //-----------------------------------------------------------------
 // interface for graph library Layer
 //-----------------------------------------------------------------
-class gm_cpp_gen : public gm_backend, public gm_code_generator
+class gm_cpp_gen: public gm_backend, public gm_code_generator
 {
     friend class nop_reduce_scalar;
 public:
@@ -183,6 +228,7 @@ public:
     virtual void generate_sent_return(ast_return *r);
     virtual void generate_sent_call(ast_call* c);
     virtual void generate_sent_assign(ast_assign* a);
+    virtual const char* get_function_name_map_reduce_assign(int reduceType);
 
     virtual void generate_sent_block_enter(ast_sentblock *b);
     virtual void generate_sent_block_exit(ast_sentblock* b);
@@ -230,7 +276,7 @@ enum nop_enum_cpp
     NOP_REDUCE_SCALAR = 1000,
 };
 
-class nop_reduce_scalar : public ast_nop
+class nop_reduce_scalar: public ast_nop
 {
 public:
     nop_reduce_scalar() :

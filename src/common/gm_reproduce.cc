@@ -45,6 +45,13 @@ void ast_field::reproduce(int ind_level) {
     second->reproduce(0);
 }
 
+void ast_mapaccess::reproduce(int indLevel) {
+    mapId->reproduce(0);
+    Out.push('[');
+    keyExpr->reproduce(0);
+    Out.push(']');
+}
+
 void ast_typedecl::reproduce(int ind_level) {
     if (is_primitive()) {
         Out.push(gm_get_type_string(type_id));
@@ -94,6 +101,14 @@ void ast_typedecl::reproduce(int ind_level) {
     } else {
         assert(false);
     }
+}
+
+void ast_maptypedecl::reproduce(int indLevel) {
+    Out.push("Map <");
+    keyType->reproduce(0);
+    Out.push(", ");
+    valueType->reproduce(0);
+    Out.push(">");
 }
 
 void ast_argdecl::reproduce(int ind_level) {
@@ -250,6 +265,7 @@ void ast_expr::reproduce(int ind_level) {
         case GMEXPR_BIOP:
         case GMEXPR_LBIOP:
         case GMEXPR_COMP:
+            break;
         case GMEXPR_BUILTIN_FIELD:
         case GMEXPR_FOREIGN:
             //TODO add some print statements for these?
@@ -406,6 +422,18 @@ void ast_assign::reproduce(int ind_level) {
             Out.SPC();
         }
     }
+    Out.pushln(";");
+}
+
+void ast_assign_mapentry::reproduce(int indLevel) {
+    lhs->reproduce(0);
+    Out.SPC();
+    if(is_reduce_assign())
+        Out.push(gm_get_reduce_string(get_reduce_type()));
+    else
+        Out.push("=");
+    Out.SPC();
+    rhs->reproduce(0);
     Out.pushln(";");
 }
 

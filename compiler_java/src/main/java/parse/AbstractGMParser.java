@@ -13,7 +13,7 @@ import org.antlr.runtime.*;
  *
  * @author Jim Idle - Temporal Wave LLC - jimi@temporal-wave.com
  */
-public abstract class AbstractTParser
+public abstract class AbstractGMParser
 
         extends Parser
 
@@ -23,7 +23,7 @@ public abstract class AbstractTParser
      * 
      * @param input The stream of tokens that will be pulled from the lexer
      */
-    protected AbstractTParser(TokenStream input) {
+    protected AbstractGMParser(TokenStream input) {
         super(input);
     }
 
@@ -37,7 +37,7 @@ public abstract class AbstractTParser
      * @param input The stream of tokesn that will be pulled from the lexer
      * @param state The shared state object created by an interconnectd grammar
      */
-    protected AbstractTParser(TokenStream input, RecognizerSharedState state) {
+    protected AbstractGMParser(TokenStream input, RecognizerSharedState state) {
         super(input, state);
     }
 

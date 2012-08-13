@@ -24,10 +24,10 @@ test/giraph/bin
 
 src/parse/gm_grammer.output
 src/parse/gm_grammer.tab.c
-src/target
 
 apps/output_cpp/generated
 apps/output_cpp/gm_graph/src/*.o
 apps/output_cpp/bin
 apps/output_cpp/gm_graph/lib
 apps/output_gps/generated
+

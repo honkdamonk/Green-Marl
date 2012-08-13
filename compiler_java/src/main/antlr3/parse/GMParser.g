@@ -1,14 +1,15 @@
-grammar GMParser;
+parser grammar GMParser;
 
-header {
-}
-
-/*class gm_parser extends Parser;*/
 options {
     language   = Java;
     output     = AST;
     superClass = AbstractGMParser;
     tokenVocab = GMLexer;
+    backtrack  = true;
+}
+
+@header {
+    package parse;
 }
 
 /*
@@ -24,7 +25,7 @@ options {
     extern int yylex();
 %}
 */
-/* Reserved Words */
+
 /* operator precedence, Lower is higher */
 /* %glr-parser */
 prog
@@ -40,10 +41,10 @@ proc_def
 
 proc_head
     :   proc_name
-        '(' arg_declist? ')'
+        T_PAREN_OPEN arg_declist? T_PAREN_CLOSE
         proc_return?
     |   proc_name
-        '(' arg_declist? ';' arg_declist ')'
+        T_PAREN_OPEN arg_declist? T_SEMICOLON arg_declist T_PAREN_CLOSE
         proc_return?
     ;
 
@@ -55,20 +56,20 @@ proc_name
 
 
 arg_declist
-    :   arg_decl ( ',' arg_decl )*
+    :   arg_decl ( T_COMMA arg_decl )*
     ;
 
 
 proc_return
-    :   ':' prim_type
+    :   T_COLON prim_type
         /* return of function should be always primitive type */
-    |   ':' node_type
-    /*| ':' graph_type */
+    |   T_COLON node_type
+    /*| T_COLON graph_type */
     ;
 
 
 arg_decl
-    :   arg_target ':' typedecl
+    :   arg_target T_COLON typedecl
     ;
 
 
@@ -108,47 +109,47 @@ nodeedge_type
 
 node_type
     :   T_NODE
-        ( '(' id ')' )?
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
     ;
 
 
 edge_type
     :   T_EDGE
-        ( '(' id ')' )?
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
     ;
 
 
 set_type
     :   T_NSET
-        ( '(' id ')' )?
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
     |   T_NSEQ
-        ( '(' id ')' )?
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
     |   T_NORDER
-        ( '(' id ')' )?
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
     |   T_COLLECTION
-    	'<' set_type '>'
-    	( '(' id ')' )?
+    	T_ANGLE_OPEN set_type T_ANGLE_CLOSE
+    	( T_PAREN_OPEN id T_PAREN_CLOSE )?
     ;
 
 
 property
-    :   T_NODEPROP '<' prim_type '>'
-        ( '(' id ')' )?
-    |   T_NODEPROP '<' nodeedge_type '>'
-        ( '(' id ')' )?
-    |   T_NODEPROP '<' set_type '>'
-        ( '(' id ')' )?
-    |   T_EDGEPROP '<' prim_type '>'
-        ( '(' id ')' )?
-    |   T_EDGEPROP '<' nodeedge_type '>'
-        ( '(' id ')' )?
-    |   T_EDGEPROP '<' set_type '>'
-        ( '(' id ')' )?
+    :   T_NODEPROP T_ANGLE_OPEN prim_type T_ANGLE_CLOSE
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
+    |   T_NODEPROP T_ANGLE_OPEN nodeedge_type T_ANGLE_CLOSE
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
+    |   T_NODEPROP T_ANGLE_OPEN set_type T_ANGLE_CLOSE
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
+    |   T_EDGEPROP T_ANGLE_OPEN prim_type T_ANGLE_CLOSE
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
+    |   T_EDGEPROP T_ANGLE_OPEN nodeedge_type T_ANGLE_CLOSE
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
+    |   T_EDGEPROP T_ANGLE_OPEN set_type T_ANGLE_CLOSE
+        ( T_PAREN_OPEN id T_PAREN_CLOSE )?
     ;
 
 
 id_comma_list
-    :   id ( ',' id )*
+    :   id ( T_COMMA id )*
     ;
 
 
@@ -165,12 +166,12 @@ sent_block
 
 
 sb_begin
-    :   '{'
+    :   T_CURLY_OPEN
     ;
 
 
 sb_end
-    :   '}'
+    :   T_CURLY_CLOSE
     ;
 
 
@@ -180,22 +181,22 @@ sent_list
 
 
 sent
-    :   sent_assignment ';'
-    |   sent_variable_decl ';'
+    :   sent_assignment T_SEMICOLON
+    |   sent_variable_decl T_SEMICOLON
     |   sent_block
     |   sent_foreach
     |   sent_if
-    |   sent_reduce_assignment ';'
-    |   sent_defer_assignment ';'
-    |   sent_do_while ';'
+    |   sent_reduce_assignment T_SEMICOLON
+    |   sent_defer_assignment T_SEMICOLON
+    |   sent_do_while T_SEMICOLON
     |   sent_while
-    |   sent_return ';'
+    |   sent_return T_SEMICOLON
     |   sent_bfs
     |   sent_dfs
-    |   sent_call ';'
-    |   sent_user ';'
-    |   sent_argminmax_assignment ';'
-    |   ';'
+    |   sent_call T_SEMICOLON
+    |   sent_user T_SEMICOLON
+    |   sent_argminmax_assignment T_SEMICOLON
+    |   T_SEMICOLON
     ;
 
 
@@ -206,7 +207,7 @@ sent_call
 
 sent_while
     :   T_WHILE
-        '(' bool_expr ')'
+        T_PAREN_OPEN bool_expr T_PAREN_CLOSE
         sent_block
     ;
 
@@ -215,7 +216,7 @@ sent_do_while
     :   T_DO
         sent_block
         T_WHILE
-        '(' bool_expr ')'
+        T_PAREN_OPEN bool_expr T_PAREN_CLOSE
     ;
 
 
@@ -232,14 +233,14 @@ sent_foreach
 
 
 foreach_header
-    :   '(' id ':' id     '.' iterator1 ')'
-    |   '(' id ':' id '+' '.' iterator1 ')'
-    |   '(' id ':' id '-' '.' iterator1 ')'
+    :   T_PAREN_OPEN id T_COLON id     T_DOT iterator1 T_PAREN_CLOSE
+    |   T_PAREN_OPEN id T_COLON id T_PLUS T_DOT iterator1 T_PAREN_CLOSE
+    |   T_PAREN_OPEN id T_COLON id T_MINUS T_DOT iterator1 T_PAREN_CLOSE
     ;
 
 
 foreach_filter
-    :   '(' bool_expr ')'
+    :   T_PAREN_OPEN bool_expr T_PAREN_CLOSE
     ;
 
 
@@ -251,7 +252,7 @@ iterator1
     |   T_UP_NBRS
     |   T_DOWN_NBRS
     |   T_ITEMS
-    |   T_COMMON_NBRS '(' id ')'
+    |   T_COMMON_NBRS T_PAREN_OPEN id T_PAREN_CLOSE
     ;
 
 
@@ -288,13 +289,13 @@ bfs_reverse
 
 
 bfs_header_format
-    :   '(' id ':' id '^'? '.' T_NODES from_or_semi id ')'
+    :   T_PAREN_OPEN id T_COLON id T_CARET? T_DOT T_NODES from_or_semi id T_PAREN_CLOSE
     ;
 
 
 from_or_semi
     :   T_FROM
-    |   ';'
+    |   T_SEMICOLON
     ;
 
 
@@ -307,12 +308,12 @@ bfs_filters
 
 
 bfs_navigator
-    :   '[' expr ']'
+    :   T_SQUARE_OPEN expr T_SQUARE_CLOSE
     ;
 
 
 bfs_filter
-    :   '(' expr ')'
+    :   T_PAREN_OPEN expr T_PAREN_CLOSE
     ;
 
 
@@ -321,7 +322,7 @@ sent_variable_decl
     	var_target
     |   typedecl
         id
-        '='
+        T_EQUALS
         rhs
     ;
 
@@ -332,7 +333,7 @@ var_target
 
 
 sent_assignment
-    :   lhs '=' rhs
+    :   lhs T_EQUALS rhs
     ;
 
 
@@ -350,7 +351,7 @@ sent_reduce_assignment
 sent_defer_assignment
     :
     lhs
-    T_LE
+    T_TEST_LE
     rhs
     optional_bind
     ;
@@ -366,7 +367,7 @@ sent_argminmax_assignment
 
 
 optional_bind
-    :   ( '@' id )?
+    :   ( T_AT id )?
     ;
 
 
@@ -395,14 +396,13 @@ sent_return
     :   T_RETURN
     	expr
     |   T_RETURN
-        /* This causes a shift-reduce conflict: What would be If (x) If (y) Else z;
-   * The default action is to interpret it as If (x) {If (y) Else z;}, which is what C does.
-   * */
+   /* This causes a shift-reduce conflict: What would be If (x) If (y) Else z;
+      The default action is to interpret it as If (x) {If (y) Else z;}, which is what C does.*/
     ;
 
 
 sent_if
-    :   T_IF '(' bool_expr ')'
+    :   T_IF T_PAREN_OPEN bool_expr T_PAREN_CLOSE
         sent
         ( T_ELSE sent )?
     ;
@@ -410,39 +410,37 @@ sent_if
 
 sent_user
     :   expr_user
-        ( T_DOUBLE_COLON '[' lhs_list ']' )?
+        ( T_DOUBLE_COLON T_SQUARE_OPEN lhs_list T_SQUARE_CLOSE )?
     ;
 
 
 expr
-    :
-(
-        '(' expr ')'
-    |   '|' expr '|'
-    |   '-' expr
-    |   '!' expr
-    |   '(' prim_type ')' expr
+    :   T_PAREN_OPEN expr T_PAREN_CLOSE
+    |   T_PIPE expr T_PIPE
+    |   T_MINUS expr
+    |   T_EXCLAMATION expr
+    |   T_PAREN_OPEN prim_type T_PAREN_CLOSE expr
     |   reduce_op 
-        '(' id ':' id '.' iterator1 ')'
-        ( '(' expr ')' )?
-        '{' expr '}'
+        T_PAREN_OPEN id T_COLON id T_DOT iterator1 T_PAREN_CLOSE
+        ( T_PAREN_OPEN expr T_PAREN_CLOSE )?
+        T_CURLY_OPEN expr T_CURLY_CLOSE
     |   reduce_op2
-        '(' id ':' id '.' iterator1 ')'
-        ( '(' expr ')' )?
-    |   expr '%'   expr
-    |   expr '*'   expr
-    |   expr '/'   expr
-    |   expr '+'   expr
-    |   expr '-'   expr
-    |   expr T_LE  expr
-    |   expr T_GE  expr
-    |   expr '<'   expr
-    |   expr '>'   expr
-    |   expr T_EQ  expr
-    |   expr T_NEQ expr
+        T_PAREN_OPEN id T_COLON id T_DOT iterator1 T_PAREN_CLOSE
+        ( T_PAREN_OPEN expr T_PAREN_CLOSE )?
+    |   expr T_PERCENT expr
+    |   expr T_STAR expr
+    |   expr T_SLASH expr
+    |   expr T_PLUS expr
+    |   expr T_MINUS expr
+    |   expr T_TEST_LE expr
+    |   expr T_TEST_GE expr
+    |   expr T_ANGLE_OPEN expr
+    |   expr T_ANGLE_CLOSE expr
+    |   expr T_TEST_EQ expr
+    |   expr T_TEST_NEQ expr
     |   expr T_AND expr
-    |   expr T_OR  expr
-    |   expr '?'   expr ':' expr
+    |   expr T_OR expr
+    |   expr T_QUESTION expr T_COLON expr
     |   BOOL_VAL
     |   INT_NUM
     |   FLOAT_NUM
@@ -451,11 +449,8 @@ expr
     |   scala
     |   field
     |   built_in
-    |   expr_user
-        /* cannot be distinguished by the syntax, until type is available. due to vars */
-)*
+    |   expr_user /* cannot be distinguished by the syntax, until type is available. due to vars */
     ;
-
 
 bool_expr
     :   expr
@@ -497,7 +492,7 @@ lhs
 
 lhs_list
     :   lhs
-        ( ',' lhs_list )*
+        ( T_COMMA lhs_list )*
     ;
 
 
@@ -507,49 +502,48 @@ scala
 
 
 field
-    :   id '.' id
+    :   id T_DOT id
     /*| id T_RARROW id                  { $$ = GM_field($1, $3, true);  }*/
     |   T_EDGE
-        '(' id ')'
-        '.' id
+        T_PAREN_OPEN id T_PAREN_CLOSE
+        T_DOT id
     ;
 
 
 built_in
     :   id
-        ( '.' id )?
+        ( T_DOT id )?
         arg_list
     |   field
-        '.' id
+        T_DOT id
         arg_list
     ;
 
 
 arg_list
-    :   '(' expr_list? ')'
+    :   T_PAREN_OPEN expr_list? T_PAREN_CLOSE
     ;
 
 
 expr_list
     :   expr
-    	( ',' expr_list )*
+    	( T_COMMA expr_list )*
     ;
 
 
 lhs_list2
-    :   '<' lhs ';' lhs_list '>'
+    :   T_ANGLE_OPEN lhs T_SEMICOLON lhs_list T_ANGLE_CLOSE
     ;
 
 
 rhs_list2
-    :   '<' expr ';' expr_list '>'
+    :   T_ANGLE_OPEN expr T_SEMICOLON expr_list T_ANGLE_CLOSE
     ;
 
 
 expr_user
-    :   '[' 'XXX' ']'
+    :   T_SQUARE_OPEN USER_TEXT T_SQUARE_CLOSE
     ;
-/* USER_TEXT*/
 
 id
     :   ID

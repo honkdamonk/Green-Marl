@@ -1,14 +1,15 @@
 grammar GMParser;
 
-header {
-}
-
 /*class gm_parser extends Parser;*/
 options {
     language   = Java;
     output     = AST;
-    superClass = AbstractGMParser;
-    tokenVocab = GMLexer;
+/*    superClass = AbstractGMParser;*/
+    backtrack  = true;
+}
+
+@header {
+    package parse;
 }
 
 /*
@@ -27,6 +28,11 @@ options {
 /* Reserved Words */
 /* operator precedence, Lower is higher */
 /* %glr-parser */
+
+/*******************************************************************************
+    Parser section
+*******************************************************************************/
+
 prog
     :   proc_def*
     ;
@@ -415,34 +421,19 @@ sent_user
 
 
 expr
-    :
-(
-        '(' expr ')'
+    :   conditional_expr
+    |   '(' expr ')'
     |   '|' expr '|'
     |   '-' expr
     |   '!' expr
     |   '(' prim_type ')' expr
-    |   reduce_op 
+    |   reduce_op
         '(' id ':' id '.' iterator1 ')'
         ( '(' expr ')' )?
         '{' expr '}'
     |   reduce_op2
         '(' id ':' id '.' iterator1 ')'
         ( '(' expr ')' )?
-    |   expr '%'   expr
-    |   expr '*'   expr
-    |   expr '/'   expr
-    |   expr '+'   expr
-    |   expr '-'   expr
-    |   expr T_LE  expr
-    |   expr T_GE  expr
-    |   expr '<'   expr
-    |   expr '>'   expr
-    |   expr T_EQ  expr
-    |   expr T_NEQ expr
-    |   expr T_AND expr
-    |   expr T_OR  expr
-    |   expr '?'   expr ':' expr
     |   BOOL_VAL
     |   INT_NUM
     |   FLOAT_NUM
@@ -453,9 +444,63 @@ expr
     |   built_in
     |   expr_user
         /* cannot be distinguished by the syntax, until type is available. due to vars */
-)*
     ;
 
+conditional_expr
+    :   conditional_or_expr
+        ('?' expr ':' conditional_expr)?
+    ;
+
+conditional_or_expr
+    :   conditional_and_expr
+        ('||' conditional_and_expr)*
+    ;
+
+conditional_and_expr
+    :   equality_expr
+        ('&&' equality_expr)*
+    ;
+
+equality_expr
+    :   relational_expr
+        (
+            ( '==' | '!=' )
+            relational_expr
+        )*
+    ;
+
+relational_expr
+    :   additive_expr
+        (relational_op additive_expr)*
+    ;
+
+relational_op
+    :   '<='
+    |   '>='
+    |   '<'
+    |   '>'
+    ;
+
+additive_expr
+    :   multiplicative_expr
+        (
+            ('+' | '-')
+            multiplicative_expr
+        )*
+    ;
+
+multiplicative_expr
+    :   primary
+        (
+            ('*' | '/' | '%')
+            primary
+        )*
+    ;
+
+primary
+    :   '(' expr ')'
+    |   prim_type
+    ;
 
 bool_expr
     :   expr
@@ -554,3 +599,84 @@ expr_user
 id
     :   ID
     ;
+
+/*******************************************************************************
+    Lexer section
+*******************************************************************************/
+
+/* Keywords */
+T_LOCAL : 'Local' ;
+T_PROC : 'Procedure' | 'Proc' ;
+T_BFS : 'InBFS' ;
+T_DFS : 'InDFS' ;
+T_POST : 'InPost' ;
+T_RBFS : 'InRBFS' ;
+T_FROM : 'From' ;
+T_TO : 'To' ;
+T_BACK : 'InReverse' ;
+T_GRAPH : 'Graph' ;
+T_NODE : 'Node' ;
+T_EDGE : 'Edge' ;
+T_NODEPROP : 'Node_Property' | 'Node_Prop' | 'N_P' ;
+T_EDGEPROP : 'Edge_Property' | 'Edge_Prop' | 'E_P' ;
+T_NSET : 'Node_Set' | 'N_S' ;
+T_NORDER : 'Node_Order' | 'N_O' ;
+T_NSEQ : 'Node_Seq' | 'Node_Sequence' | 'N_Q' ;
+T_COLLECTION : 'Collection' ;
+T_INT : 'Int' ;
+T_LONG : 'Long' ;
+T_FLOAT : 'Float' ;
+T_DOUBLE : 'Double' ;
+T_BOOL : 'Bool' ;
+T_NODES : 'Nodes' ;
+T_EDGES : 'Edges' ;
+T_NBRS : 'Nbrs' | 'OutNbrs' ;
+T_IN_NBRS : 'InNbrs' ;
+T_UP_NBRS : 'UpNbrs' ;
+T_DOWN_NBRS : 'DownNbrs' ;
+T_ITEMS : 'Items' ;
+T_COMMON_NBRS : 'CommonNbrs' ;
+T_FOREACH : 'Foreach' ;
+T_FOR : 'For' ;
+T_AND : 'And' | '&&' ;
+T_OR : 'Or' | '||' ;
+T_EQ : '==' ;
+T_NEQ : '!=' ;
+T_LE : '<=' ;
+T_GE : '>=' ;
+BOOL_VAL : 'True' | 'False'; /*yylval.bval = true/false;*/
+T_IF : 'If' ;
+T_ELSE : 'Else' ;
+T_WHILE : 'While' ;
+T_RETURN : 'Return' ;
+T_DO : 'Do' ;
+T_PLUSEQ : '+=' ;
+T_PLUSPLUS : '++' ;
+T_MULTEQ : '*=' ;
+T_ANDEQ : '&=' ;
+T_OREQ : '|=' ;
+T_MINEQ : 'min=' ;
+T_MAXEQ : 'max=' ;
+T_SUM : 'Sum' ;
+T_AVG : 'Avg' ;
+T_COUNT : 'Count' ;
+T_PRODUCT : 'Product' ;
+T_MAX : 'Max' ;
+T_MIN : 'Min' ;
+T_P_INF : '+INF' | 'INF' ;
+T_M_INF : '-INF' ;
+T_DOUBLE_COLON : '::' ;
+T_ALL : 'All' ;
+T_EXIST : 'Exist' ;
+T_NIL : 'NIL' ;
+T_RARROW : '->' ;
+
+/* Char classes */
+fragment DIGIT : '0'..'9' ;
+fragment LETTER : 'a'..'z' | 'A'..'Z' ;
+fragment ALPHANUM : (LETTER) (LETTER | DIGIT | '_')* ;
+
+/* Numbers and Identifies */
+ID : ALPHANUM ; /*yylval.text = yytext*/
+FLOAT_NUM : (DIGIT)+ '.' (DIGIT)* ; /*yylval.fval = atof(yytext)*/
+INT_NUM : (DIGIT)+ ; /*yylval.ival = atoi(yytext)*/

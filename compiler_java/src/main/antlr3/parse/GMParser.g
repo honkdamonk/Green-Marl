@@ -323,12 +323,8 @@ bfs_filter
 
 
 sent_variable_decl
-    :   typedecl
-    	var_target
-    |   typedecl
-        id
-        '='
-        rhs
+    :   typedecl id '=' rhs
+    |   typedecl var_target
     ;
 
 
@@ -421,8 +417,13 @@ sent_user
 
 
 expr
-    :   conditional_expr
-    |   '(' expr ')'
+    :   left_recursive_expr
+    |   not_left_recursive_expr
+    ;
+
+
+not_left_recursive_expr
+    :   '(' expr ')'
     |   '|' expr '|'
     |   '-' expr
     |   '!' expr
@@ -446,20 +447,29 @@ expr
         /* cannot be distinguished by the syntax, until type is available. due to vars */
     ;
 
+
+left_recursive_expr
+    :	conditional_expr
+    ;
+
+
 conditional_expr
     :   conditional_or_expr
         ('?' expr ':' conditional_expr)?
     ;
+
 
 conditional_or_expr
     :   conditional_and_expr
         ('||' conditional_and_expr)*
     ;
 
+
 conditional_and_expr
     :   equality_expr
         ('&&' equality_expr)*
     ;
+
 
 equality_expr
     :   relational_expr
@@ -469,10 +479,12 @@ equality_expr
         )*
     ;
 
+
 relational_expr
     :   additive_expr
         (relational_op additive_expr)*
     ;
+
 
 relational_op
     :   '<='
@@ -480,6 +492,7 @@ relational_op
     |   '<'
     |   '>'
     ;
+
 
 additive_expr
     :   multiplicative_expr
@@ -489,18 +502,15 @@ additive_expr
         )*
     ;
 
+
 multiplicative_expr
-    :   primary
+    :   not_left_recursive_expr
         (
             ('*' | '/' | '%')
-            primary
+            not_left_recursive_expr
         )*
     ;
 
-primary
-    :   '(' expr ')'
-    |   prim_type
-    ;
 
 bool_expr
     :   expr
@@ -674,9 +684,9 @@ T_RARROW : '->' ;
 /* Char classes */
 fragment DIGIT : '0'..'9' ;
 fragment LETTER : 'a'..'z' | 'A'..'Z' ;
-fragment ALPHANUM : (LETTER) (LETTER | DIGIT | '_')* ;
+fragment ALPHANUM : LETTER (LETTER | DIGIT | '_')* ;
 
 /* Numbers and Identifies */
 ID : ALPHANUM ; /*yylval.text = yytext*/
-FLOAT_NUM : (DIGIT)+ '.' (DIGIT)* ; /*yylval.fval = atof(yytext)*/
-INT_NUM : (DIGIT)+ ; /*yylval.ival = atoi(yytext)*/
+FLOAT_NUM : DIGIT+ '.' DIGIT* ; /*yylval.fval = atof(yytext)*/
+INT_NUM : DIGIT+ ; /*yylval.ival = atoi(yytext)*/

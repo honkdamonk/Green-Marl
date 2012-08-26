@@ -680,3 +680,21 @@ fragment ALPHANUM : (LETTER) (LETTER | DIGIT | '_')* ;
 ID : ALPHANUM ; /*yylval.text = yytext*/
 FLOAT_NUM : (DIGIT)+ '.' (DIGIT)* ; /*yylval.fval = atof(yytext)*/
 INT_NUM : (DIGIT)+ ; /*yylval.ival = atoi(yytext)*/
+
+/* Whitespace and comments */
+WS  
+    :   (' ' | '\r' | '\t' | '\u000C' | '\n' )
+        { skip(); }          
+    ;
+    
+COMMENT
+    :   '/*'
+        (options {greedy=false;} : . )* 
+        '*/'
+        { skip(); }
+    ;
+
+LINE_COMMENT
+    :   '//' ~('\n'|'\r')*  ('\r\n' | '\r' | '\n')?
+        { skip(); }
+    ;   

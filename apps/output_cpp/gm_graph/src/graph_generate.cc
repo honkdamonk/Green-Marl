@@ -7,9 +7,18 @@
 #include <sys/time.h>
 
 #include "gm_graph.h"
+#include "gm_rand.h"
 
-gm_graph* create_uniform_random_graph(node_t N, edge_t M, long seed) {
-    srand(seed);
+gm_graph* create_uniform_random_graph(node_t N, edge_t M, long seed, bool use_xorshift_rng) {
+    
+#ifdef NODE64
+    gm_rand64 xorshift_rng((int64_t)seed);
+#else
+    gm_rand32 xorshift_rng((int32_t)seed);
+#endif
+    if (!use_xorshift_rng) {
+        srand(seed);
+    }
 
     gm_graph* g = new gm_graph();
     g->prepare_external_creation(N, M);
@@ -20,8 +29,13 @@ gm_graph* create_uniform_random_graph(node_t N, edge_t M, long seed) {
     memset(degree, 0, sizeof(edge_t) * N);
 
     for (edge_t i = 0; i < M; i++) {
-        src[i] = rand() % N;  //TODO 64-bit ?
-        dest[i] = rand() % N; //TODO 64-bit ?
+        node_t r;
+        if (use_xorshift_rng) r = (edge_t)xorshift_rng.rand();
+        else r = rand(); //TODO 64-bit ?
+        src[i] = r % N;  
+        if (use_xorshift_rng) r = (edge_t)xorshift_rng.rand();
+        else r = rand(); //TODO 64-bit ?
+        dest[i] = r % N; 
 
         degree[src[i]]++;
     }
@@ -68,6 +82,30 @@ gm_graph* create_uniform_random_graph2(node_t N, edge_t M, long seed) {
     G->freeze();
     gettimeofday(&T2, NULL);
     printf("time for freeze (ms) = %lf\n", ((T2.tv_sec) - (T1.tv_sec)) * 1000 - (T2.tv_usec - T1.tv_usec) * 0.001);
+
+    return G;
+}
+
+//-----------------------------------------------------------------------------
+// Note: Based on create_uniform_random_graph2
+//-----------------------------------------------------------------------------
+gm_graph* create_uniform_random_nonmulti_graph(node_t N, edge_t M, long seed) {
+    srand(seed);
+
+    gm_graph *G = new gm_graph();
+    for (node_t i = 0; i < N; i++) {
+        G->add_node();
+    }
+    for (edge_t i = 0; i < M; i++) {
+        node_t from = rand() % N;
+        node_t to = rand() % N;
+        if (!G->has_edge(from, to))
+          G->add_edge(from, to);
+        else
+          i--;
+    }
+
+    G->freeze();
 
     return G;
 }

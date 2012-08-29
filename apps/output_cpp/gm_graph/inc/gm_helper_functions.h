@@ -1,72 +1,37 @@
 #ifndef GM_HELPER_FUNCTIONS
 #define GM_HELPER_FUNCTIONS
+
+//----------------------------------------------------
+// This File is not used anymore
+//----------------------------------------------------
+#if 0
+
 #include <list>
 #include <vector>
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h>
+#include "gm_bitmap.h"
+
 #if defined(__x86_64__) || defined(__i386__)
-#include "../platform/x86/inc/gm_platform_helpers.h"
+  #include "../platform/x86/inc/gm_platform_helpers.h"
 #else
-#if defined(__sparc)
-#if defined (__ORACLE__)
-#include "../platform/sparc/inc/gm_platform_helpers.h"
+  #if defined(__sparc)
+    #if defined (__ORACLE__)
+      #include "../platform/sparc/inc/gm_platform_helpers.h"
+    #endif
+  #else
+    #error "We need x86 (32bit or 64bit) or Sparc environment"
+  #endif
 #endif
-#else
-#error "We need x86 (32bit or 64bit) or Sparc environment" 
-#endif
-#endif
+>>>>>>> 4e9a9bd128759e49b69c3a32e01bb5590fb9a423
 
 extern void _gm_init_locktable();
 extern void _gm_lock_addr(void*p);
 extern void _gm_lock_addrs(void*p[], int cnt);
 extern void _gm_unlock_addr(void*p);
 extern void _gm_unlock_addrs(void*p[], int cnt);
-
-static inline unsigned _gm_get_bit(unsigned char* Bit, int n) {
-    int bit_pos = n / 8;
-    int bit_loc = n % 8;
-    unsigned val = (Bit[bit_pos] >> bit_loc) & 0x01;
-    return val;
-}
-
-static inline void _gm_set_bit(unsigned char* BitMap, int n) {
-    int bit_pos = n / 8;
-    int bit_loc = n % 8;
-    unsigned char or_val = 0x1 << bit_loc;
-    unsigned char org_val = BitMap[bit_pos];
-    unsigned char new_val = or_val | org_val;
-    BitMap[bit_pos] = new_val;
-}
-
-// true if I'm the one who set the bit
-static inline bool _gm_set_bit_atomic(unsigned char* BitMap, int n) {
-    int bit_pos = n / 8;
-    int bit_loc = n % 8;
-    unsigned char or_val = 0x1 << bit_loc;
-    unsigned char old_val = __sync_fetch_and_or(&BitMap[bit_pos], or_val);
-    if (((old_val >> bit_loc) & 0x01) == 0) return true;
-    return false;
-}
-
-static inline void _gm_clear_bit(unsigned char* BitMap, int n) {
-    int bit_pos = n / 8;
-    int bit_loc = n % 8;
-    unsigned char and_val = ~(0x1 << bit_loc);
-    unsigned char org_val = BitMap[bit_pos];
-    unsigned char new_val = org_val & and_val;
-    BitMap[bit_pos] = new_val;
-}
-
-static inline bool _gm_clear_bit_atomic(unsigned char* BitMap, int n) {
-    int bit_pos = n / 8;
-    int bit_loc = n % 8;
-    unsigned char and_val = ~(0x1 << bit_loc);
-    unsigned char old_val = __sync_fetch_and_and(&BitMap[bit_pos], and_val);
-    if (((old_val >> bit_loc) & 0x01) == 1) return true; // Am I the one who cleared the bit?
-    return false;
-}
 
 //---------------------------------------------------------
 // A thin runtime for object deletion management
@@ -281,14 +246,14 @@ public:
     }
     inline void copy_local_q(int tid, int32_t local_cnt) {
         assert(tid < num_threads);
-        int idx = __sync_fetch_and_add(&cnt_next, local_cnt);
+        int idx = _gm_atomic_fetch_and_add_int32(&cnt_next, local_cnt);
         memcpy(&(next_Q[idx]), local_Q[tid], local_cnt * sizeof(node_t));
     }
 
     // under parallel execution
     inline void increase_next_count(int tid, int32_t local_cnt) {
         assert(tid < num_threads);
-        __sync_fetch_and_add(&cnt_next, local_cnt);
+        _gm_atomic_fetch_and_add_int32(&cnt_next, local_cnt);
     }
 
     inline void choose_method() {
@@ -615,29 +580,12 @@ public:
 // CAS implementation
 //---------------------------------------------------------
 static inline bool _gm_CAS(int32_t *dest, int32_t old_val, int32_t new_val) {
-    return __sync_bool_compare_and_swap(dest, old_val, new_val);
+    return _gm_atomic_cas_int32(dest, old_val, new_val);
 }
 static inline bool _gm_CAS(int64_t *dest, int64_t old_val, int64_t new_val) {
-    return __sync_bool_compare_and_swap(dest, old_val, new_val);
+    return _gm_atomic_cas_int64(dest, old_val, new_val);
 }
 
-/*
- static inline bool _gm_CAS(double  *dest, double* old_valp,  double* new_valp)
- {
- uint64_t* D = reinterpret_cast<uint64_t*> (dest); // double is 64bit. right?
- uint64_t* O = reinterpret_cast<uint64_t*> (old_valp); // double is 64bit. right?
- uint64_t* P = reinterpret_cast<uint64_t*> (new_valp); // double is 64bit. right?
- return __sync_bool_compare_and_swap(D, *O, *P);
- }
-
- static inline bool _gm_CAS(float   *dest, float*  old_valp,  float* new_valp)
- {
- uint32_t* D = reinterpret_cast<uint32_t*> (dest); // double is 64bit. right?
- uint32_t* O = reinterpret_cast<uint32_t*> (old_valp); // double is 64bit. right?
- uint32_t* P = reinterpret_cast<uint32_t*> (new_valp); // double is 64bit. right?
- return __sync_bool_compare_and_swap(D, *O, *P);
- }
- */
 static inline bool _gm_CAS(double *dest, double old_val, double new_val) {
     return _gm_CAS_asm(dest, old_val, new_val);
 }
@@ -703,4 +651,5 @@ static inline bool _gm_CAS(float *dest, float old_val, float new_val) {
     _gm_unlock_addrs(addrs, 4); \
 }
 
+#endif
 #endif

@@ -1,3 +1,4 @@
+
 #include "common_main.h"
 #include "v_cover.h"
 
@@ -6,6 +7,10 @@ class my_main: public main_t
 public:
     bool* selected;
     int covered;
+
+    ~my_main() {
+        delete[] selected;
+    }
 
     //--------------------------------------------------------
     // create 4 groups randomly
@@ -25,7 +30,6 @@ public:
         // values
         //---------------------------------
         printf("covered (may be non-deterministic) = %d\n", covered);
-        delete[] selected;
         return true;
     }
 };

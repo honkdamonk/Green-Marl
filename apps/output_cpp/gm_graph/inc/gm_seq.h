@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 #include <list>
-#include "gm_graph_typedef.h"
+#include "gm_internal.h"
 #include "gm_runtime.h"
 
 template<typename T>
@@ -93,8 +93,7 @@ public:
     };                                      
 
     ITERATOR_CLASS(seq_iter, std::list<T>::iterator)
-    ;ITERATOR_CLASS(rev_iter, std::list<T>::reverse_iterator)
-    ;
+    ITERATOR_CLASS(rev_iter, std::list<T>::reverse_iterator)
 
 #undef ITERATOR_CLASS
     typedef seq_iter par_iter; // type-alias

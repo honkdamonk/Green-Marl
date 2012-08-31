@@ -3,11 +3,10 @@ grammar GMParser;
 options {
     language   = Java;
     output     = AST;
-/*    superClass = AbstractGMParser;*/
     backtrack  = true;
 }
 
-@header {
+@parser::header {
     package parse;
 }
 

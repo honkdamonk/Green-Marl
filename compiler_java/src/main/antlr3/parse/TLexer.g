@@ -10,12 +10,6 @@ lexer grammar TLexer;
 options {
 
    language=Java;  // Default
-
-   // Tell ANTLR to make the generated lexer class extend the
-   // the named class, which is where any supporting code and 
-   // variables will be placed.
-   //
-   superClass = AbstractTLexer;
 }
 
 // What package should the generated source exist in?

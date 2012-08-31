@@ -1,7 +1,6 @@
 package parse;
 
 import org.antlr.runtime.CharStream;
-import org.antlr.runtime.Lexer;
 import org.antlr.runtime.RecognizerSharedState;
 
 /**
@@ -16,15 +15,15 @@ import org.antlr.runtime.RecognizerSharedState;
  *
  * @author Jim Idle - Temporal Wave LLC (jimi@idle.ws)
  */
-public abstract class AbstractTLexer
-    extends Lexer
+public abstract class Lexer
+    extends org.antlr.runtime.Lexer
 
 {
     /**
      * Default constructor for the lexer, when you do not yet know what
      * the character stream to be provided is.
      */
-    public AbstractTLexer() {
+    public Lexer() {
     }
 
     /**
@@ -34,7 +33,7 @@ public abstract class AbstractTLexer
      * @param input A valid character stream that contains the ruleSrc code you
      *              wish to compile (or lex at least)
      */
-    public AbstractTLexer(CharStream input) {
+    public Lexer(CharStream input) {
         this(input, new RecognizerSharedState());
     }
 
@@ -44,7 +43,7 @@ public abstract class AbstractTLexer
      * @param input The character stream we are going to lex
      * @param state The shared state object, shared between all lexer comonents
      */
-    public AbstractTLexer(CharStream input, RecognizerSharedState state) {
+    public Lexer(CharStream input, RecognizerSharedState state) {
         super(input,state);
     }
 

@@ -1,7 +1,7 @@
 package backend_cpp;
 
 import frontend.GlobalMembersGm_rw_analysis;
-import frontend.GlobalMembersGm_rw_analysis_check2;
+import frontend.gm_rw_analysis_check2;
 import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
@@ -336,7 +336,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 	
 	private static boolean is_modified(ast_sent S, gm_symtab_entry e) {
 
-		gm_rwinfo_map W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(S);
+		gm_rwinfo_map W = gm_rw_analysis_check2.gm_get_write_set(S);
 		for (gm_symtab_entry w_sym : W.keySet()) {
 			if (e == w_sym)
 				return true;

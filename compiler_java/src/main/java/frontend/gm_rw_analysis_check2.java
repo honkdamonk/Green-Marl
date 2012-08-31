@@ -4,7 +4,7 @@ import ast.AST_NODE_TYPE;
 import ast.ast_sent;
 import ast.gm_rwinfo_map;
 
-public class GlobalMembersGm_rw_analysis_check2 {
+public class gm_rw_analysis_check2 {
 		
 	// ==================================================================
 	// For depenendcy detection

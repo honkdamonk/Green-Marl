@@ -39,10 +39,10 @@ public class gm_merge_loop_t extends gm_apply {
 				// If so, merge. delete the second one.
 				if (sent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 					ast_foreach curr = (ast_foreach) sent;
-					if (GlobalMembersGm_merge_loops.gm_is_mergeable_loops(prev, curr)) {
+					if (gm_merge_loops.gm_is_mergeable_loops(prev, curr)) {
 
 						// replace curr's iterator with prev's
-						GlobalMembersGm_merge_loops.replace_iterator_sym(prev, curr);
+						gm_merge_loops.replace_iterator_sym(prev, curr);
 
 						// merge body and delete curr.
 						if (prev.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)

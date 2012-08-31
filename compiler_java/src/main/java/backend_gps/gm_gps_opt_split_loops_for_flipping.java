@@ -1,7 +1,7 @@
 package backend_gps;
 
 import frontend.GlobalMembersGm_rw_analysis;
-import frontend.GlobalMembersGm_rw_analysis_check2;
+import frontend.gm_rw_analysis_check2;
 import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
 import frontend.gm_symtab;
@@ -252,8 +252,8 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 	
 
 	private static void add_scalar_rw(ast_sent s, HashSet<gm_symtab_entry> TARGET) {
-		gm_rwinfo_map W = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
-		gm_rwinfo_map R = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(s);
+		gm_rwinfo_map W = gm_rw_analysis_check2.gm_get_write_set(s);
+		gm_rwinfo_map R = gm_rw_analysis_check2.gm_get_write_set(s);
 		for (gm_symtab_entry e : W.keySet()) {
 			if (!e.getType().is_property()) {
 				TARGET.add(e);
@@ -433,7 +433,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 
 			boolean is_target = false;
 			// check if inner loop requires flipping
-			gm_rwinfo_map WMAP = GlobalMembersGm_rw_analysis_check2.gm_get_write_set(in.get_body());
+			gm_rwinfo_map WMAP = gm_rw_analysis_check2.gm_get_write_set(in.get_body());
 			for (gm_symtab_entry e : WMAP.keySet()) {
 				gm_rwinfo_list LIST = WMAP.get(e);
 				boolean is_field = e.getType().is_property();

@@ -17,7 +17,7 @@ import common.gm_method_id_t;
 
 import frontend.gm_symtab_entry;
 
-public class GlobalMembersGm_syntax_sugar2 {
+public class gm_syntax_sugar2 {
 
 	// ----------------------------------------------------
 	// syntax sugar elimination (after type resolution)
@@ -178,7 +178,7 @@ public class GlobalMembersGm_syntax_sugar2 {
 				return true;
 			} else if (body.is_biop()) {
 				GM_OPS_T op = body.get_optype();
-				if (GlobalMembersGm_syntax_sugar2.check_is_reduce_op(rtype, op)) {
+				if (gm_syntax_sugar2.check_is_reduce_op(rtype, op)) {
 					// check each argument
 					if (((body.get_left_op()).is_reduction() && (((ast_expr_reduce) (body.get_left_op())).get_reduce_type() == rtype))) {
 						b1 = (ast_expr_reduce) body.get_left_op();

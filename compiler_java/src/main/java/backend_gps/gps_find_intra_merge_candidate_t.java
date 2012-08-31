@@ -4,7 +4,7 @@ import static backend_gps.GPSConstants.GPS_FLAG_HAS_COMMUNICATION;
 import static backend_gps.GPSConstants.GPS_FLAG_HAS_COMMUNICATION_RANDOM;
 import static backend_gps.GPSConstants.GPS_FLAG_WHILE_HEAD;
 import static backend_gps.GPSConstants.GPS_FLAG_WHILE_TAIL;
-import frontend.GlobalMembersGm_rw_analysis_check2;
+import frontend.gm_rw_analysis_check2;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
 import inc.gps_apply_bb;
@@ -103,7 +103,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 					gm_rwinfo_sets rwi_n = new gm_rwinfo_sets();
 					gm_gps_get_rwinfo_from_bb(s2, rwi_n);
 
-					if (GlobalMembersGm_rw_analysis_check2.gm_has_dependency(rwi, rwi_n))
+					if (gm_rw_analysis_check2.gm_has_dependency(rwi, rwi_n))
 						is_okay = false;
 
 					if (is_okay && (s0 != null)) {
@@ -118,11 +118,11 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 						// check dependency between s1 and s0
 						gm_rwinfo_sets rwi_s1 = new gm_rwinfo_sets();
 						gm_gps_get_rwinfo_from_bb(s1, rwi_s1);
-						if (GlobalMembersGm_rw_analysis_check2.gm_has_dependency(rwi_0, rwi_s1))
+						if (gm_rw_analysis_check2.gm_has_dependency(rwi_0, rwi_s1))
 							is_okay = false;
 
 						// check dependency between p1 and s0
-						if (GlobalMembersGm_rw_analysis_check2.gm_has_dependency(rwi_0, rwi))
+						if (gm_rw_analysis_check2.gm_has_dependency(rwi_0, rwi))
 							is_okay = false;
 
 						if (rwi_0 != null)
@@ -174,7 +174,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 					 */
 
 					// check if future is modified
-					is_okay = !GlobalMembersGm_rw_analysis_check2.gm_does_intersect(rwi.write_set, rwi2.read_set);
+					is_okay = !gm_rw_analysis_check2.gm_does_intersect(rwi.write_set, rwi2.read_set);
 
 					if (rwi2 != null)
 						rwi2.dispose();

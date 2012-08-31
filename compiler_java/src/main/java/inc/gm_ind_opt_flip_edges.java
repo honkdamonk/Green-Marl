@@ -1,7 +1,7 @@
 package inc;
 
 import ast.ast_procdef;
-import opt.GlobalMembersGm_flip_edges;
+import opt.gm_flip_edges;
 import opt.gm_flip_find_candidate;
 
 import common.gm_argopts;
@@ -30,7 +30,7 @@ public class gm_ind_opt_flip_edges extends gm_compile_step
 		gm_traverse.gm_traverse_sents(p, T);
     
 		// apply flip
-		GlobalMembersGm_flip_edges.do_flip_edges(T.get_target());
+		gm_flip_edges.do_flip_edges(T.get_target());
     
 		return;
     

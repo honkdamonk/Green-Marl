@@ -33,7 +33,7 @@ public class gm_flip_find_candidate extends gm_apply {
 			RefObject<ast_foreach> in_ref = new RefObject<ast_foreach>(null);
 			RefObject<ast_sent> dest_ref = new RefObject<ast_sent>(null);
 
-			boolean test = GlobalMembersGm_flip_edges.capture_pattern(fe, new RefObject<ast_if>(null), in_ref, new RefObject<ast_if>(null), dest_ref);
+			boolean test = gm_flip_edges.capture_pattern(fe, new RefObject<ast_if>(null), in_ref, new RefObject<ast_if>(null), dest_ref);
 			ast_sent dest = dest_ref.argvalue;
 			ast_foreach in = in_ref.argvalue;
 

@@ -15,7 +15,7 @@ import ast.ast_sentblock;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
-public class GlobalMembersGm_flip_edges {
+public class gm_flip_edges {
 
 	// --------------------------------------------------------------------
 	// flip edges
@@ -72,7 +72,7 @@ public class GlobalMembersGm_flip_edges {
 			return false;
 
 		ast_sent body1;
-		body1 = GlobalMembersGm_flip_edges.get_single_destination_sentence(out.get_body());
+		body1 = gm_flip_edges.get_single_destination_sentence(out.get_body());
 		if (body1 == null)
 			return false;
 
@@ -80,7 +80,7 @@ public class GlobalMembersGm_flip_edges {
 			if1 = (ast_if) body1;
 			if (if1.get_else() != null)
 				return false;
-			body1 = GlobalMembersGm_flip_edges.get_single_destination_sentence(if1.get_then());
+			body1 = gm_flip_edges.get_single_destination_sentence(if1.get_then());
 			if (body1 == null)
 				return false;
 		}
@@ -96,7 +96,7 @@ public class GlobalMembersGm_flip_edges {
 		if (in.get_source().getSymInfo() != out.get_iterator().getSymInfo())
 			return false;
 
-		body1 = GlobalMembersGm_flip_edges.get_single_destination_sentence(in.get_body());
+		body1 = gm_flip_edges.get_single_destination_sentence(in.get_body());
 		if (body1 == null)
 			return false;
 		if (body1.get_nodetype() == AST_NODE_TYPE.AST_IF) {
@@ -105,10 +105,10 @@ public class GlobalMembersGm_flip_edges {
 				return false;
 
 			// outer loop iterator must not be used
-			if (GlobalMembersGm_flip_edges.check_if_outer_loop_iterator_used(if2.get_cond(), out.get_iterator().getSymInfo()))
+			if (gm_flip_edges.check_if_outer_loop_iterator_used(if2.get_cond(), out.get_iterator().getSymInfo()))
 				return false;
 
-			body1 = GlobalMembersGm_flip_edges.get_single_destination_sentence(if2.get_then());
+			body1 = gm_flip_edges.get_single_destination_sentence(if2.get_then());
 			if (body1 == null)
 				return false;
 		}
@@ -132,7 +132,7 @@ public class GlobalMembersGm_flip_edges {
 			RefObject<ast_if> if1_ref = new RefObject<ast_if>(null);
 			RefObject<ast_if> if2_ref = new RefObject<ast_if>(null);
 			RefObject<ast_sent> dest_ref = new RefObject<ast_sent>(null);
-			boolean b = GlobalMembersGm_flip_edges.capture_pattern(out, if1_ref, in_ref, if2_ref, dest_ref);
+			boolean b = gm_flip_edges.capture_pattern(out, if1_ref, in_ref, if2_ref, dest_ref);
 			in = in_ref.argvalue;
 			if1 = if1_ref.argvalue;
 			if2 = if2_ref.argvalue;

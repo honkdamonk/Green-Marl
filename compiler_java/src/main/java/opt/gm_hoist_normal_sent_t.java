@@ -10,7 +10,7 @@ import ast.ast_sentblock;
 import common.gm_transform_helper;
 import common.gm_apply;
 
-import frontend.GlobalMembersGm_rw_analysis_check2;
+import frontend.gm_rw_analysis_check2;
 
 //------------------------------------------------------
 // hoist up target-type sentence as far as possible 
@@ -73,7 +73,7 @@ public abstract class gm_hoist_normal_sent_t extends gm_apply {
 			while (stack.size() > 0) {
 				ast_sent S = stack.getFirst();
 				stack.removeFirst();
-				if (GlobalMembersGm_rw_analysis_check2.gm_has_dependency(S, target)) {
+				if (gm_rw_analysis_check2.gm_has_dependency(S, target)) {
 					top_position = S;
 					break;
 				}

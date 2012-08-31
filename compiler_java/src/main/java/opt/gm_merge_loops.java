@@ -13,7 +13,7 @@ import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
 
-public class GlobalMembersGm_merge_loops {
+public class gm_merge_loops {
 
 	// ---------------------------------------------------------
 	// gm_merge_foreach_if_possible(P, Q)
@@ -42,9 +42,9 @@ public class GlobalMembersGm_merge_loops {
 					}
 					return true;
 				} else { // check S1, S2 is linearly accessed only.					
-					if (!GlobalMembersGm_merge_loops.is_linear_access_only(S1.get(e)))
+					if (!gm_merge_loops.is_linear_access_only(S1.get(e)))
 						return true;
-					if (!GlobalMembersGm_merge_loops.is_linear_access_only(S2.get(e)))
+					if (!gm_merge_loops.is_linear_access_only(S2.get(e)))
 						return true;
 					if (check_reduce) 					{ // if e is in the reduce-set,
 						if (S1_reduce.containsKey(e))
@@ -112,21 +112,21 @@ public class GlobalMembersGm_merge_loops {
 		// ---------------------------------------------------
 		// true dependency check. (P.W -> Q.R)
 		// ---------------------------------------------------
-		b = GlobalMembersGm_merge_loops.intersect_check_for_merge(P_W, Q_R, P_D, true);
+		b = gm_merge_loops.intersect_check_for_merge(P_W, Q_R, P_D, true);
 		if (b)
 			return false;
 
 		// ---------------------------------------------------
 		// anti dependency check. (P.R -> Q.W)
 		// ---------------------------------------------------
-		b = GlobalMembersGm_merge_loops.intersect_check_for_merge(P_R, Q_W, P_D, false);
+		b = gm_merge_loops.intersect_check_for_merge(P_R, Q_W, P_D, false);
 		if (b)
 			return false;
 
 		// ---------------------------------------------------
 		// anti dependency check. (P.W -> Q.W)
 		// ---------------------------------------------------
-		b = GlobalMembersGm_merge_loops.intersect_check_for_merge(P_W, Q_W, P_D, true);
+		b = gm_merge_loops.intersect_check_for_merge(P_W, Q_W, P_D, true);
 		if (b)
 			return false;
 
@@ -134,23 +134,23 @@ public class GlobalMembersGm_merge_loops {
 		// mutate dependency checks.
 		// ---------------------------------------------------
 		// 1. write mutate check (P.M -> Q.W) || (P.W -> Q.M)
-		b = GlobalMembersGm_merge_loops.intersect_check_for_merge(P_M, Q_W, P_D, false);
+		b = gm_merge_loops.intersect_check_for_merge(P_M, Q_W, P_D, false);
 		if (b)
 			return false;
-		b = GlobalMembersGm_merge_loops.intersect_check_for_merge(P_W, Q_M, P_D, false);
+		b = gm_merge_loops.intersect_check_for_merge(P_W, Q_M, P_D, false);
 		if (b)
 			return false;
 
 		// 2. read mutate check (P.M -> Q.R) || (P.R -> Q.M)
-		b = GlobalMembersGm_merge_loops.intersect_check_for_merge(P_M, Q_R, P_D, false);
+		b = gm_merge_loops.intersect_check_for_merge(P_M, Q_R, P_D, false);
 		if (b)
 			return false;
-		b = GlobalMembersGm_merge_loops.intersect_check_for_merge(P_R, Q_M, P_D, false);
+		b = gm_merge_loops.intersect_check_for_merge(P_R, Q_M, P_D, false);
 		if (b)
 			return false;
 
 		// 3. mutate mutate check (P.M -> Q.M)
-		b = GlobalMembersGm_merge_loops.intersect_check_for_merge(P_M, Q_M, P_D, false);
+		b = gm_merge_loops.intersect_check_for_merge(P_M, Q_M, P_D, false);
 		if (b)
 			return false;
 

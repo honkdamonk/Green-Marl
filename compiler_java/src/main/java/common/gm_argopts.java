@@ -61,21 +61,25 @@ public class gm_argopts {
 			int t = 0;
 			String message = String.format("  -%s", GM_compiler_options[i].name);
 			t += message.length();
-			System.out.println(message);
+			System.out.print(message);
 			if (GM_compiler_options[i].arg_type == GMARG_NULL) {
 				// do nothing
 			} else if (GM_compiler_options[i].arg_type == GMARG_BOOL) {
 				message = "[=0/1]";
 				t += message.length();
+				System.out.print(message);
 			} else if (GM_compiler_options[i].arg_type == GMARG_STRING) {
 				message = "=<string>";
 				t += message.length();
+				System.out.print(message);
 			} else if (GM_compiler_options[i].arg_type == GMARG_INT) {
 				message = "=<int>";
 				t += message.length();
+				System.out.print(message);
 			}
-			for (; t < 24; t++)
+			for (; t < 24; t++) {
 				System.out.print(" ");
+			}
 			System.out.printf("%s", GM_compiler_options[i].help_string);
 			if (GM_compiler_options[i].arg_type != GMARG_NULL) {
 				System.out.printf(" (Default is %s)", GM_compiler_options[i].def_value);
@@ -102,7 +106,7 @@ public class gm_argopts {
 			int z = argv.argvalue.length();
 			String key_begin = argv.argvalue.charAt(1) + "";
 			String val_begin = null;
-			for (int i = 1; i <= z; i++) {
+			for (int i = 1; i < z; i++) {
 				if (argv.argvalue.charAt(i) == '=') {
 					argv.argvalue = StringFunctions.changeCharacter(argv.argvalue, i, '\0');
 					val_begin = argv.argvalue.charAt(i + 1) + "";

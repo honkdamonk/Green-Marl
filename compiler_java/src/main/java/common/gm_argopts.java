@@ -1,6 +1,5 @@
 package common;
 
-import tangible.RefObject;
 import tangible.StringFunctions;
 
 public class gm_argopts {

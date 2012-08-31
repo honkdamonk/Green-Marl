@@ -23,7 +23,6 @@ public class gm_replace_da_t extends gm_apply {
 		if (a.is_defer_assign()) {
 			if (!a.is_target_scalar()) {
 				ast_field lhs = a.get_lhs_field();
-				ast_id driver = lhs.get_first();
 				ast_id prop = lhs.get_second();
 				if (prop.getSymInfo() == e_old) {
 					// replace it into normal write to new property

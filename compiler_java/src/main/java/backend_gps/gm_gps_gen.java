@@ -332,7 +332,6 @@ public class gm_gps_gen extends BackendGenerator {
 
 	public void do_generate_master_class() {
 		ast_procdef proc = gm_main.FE.get_current_proc();
-		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 
 		// --------------------------------------------------------------------
 		// create master class
@@ -1582,7 +1581,6 @@ public class gm_gps_gen extends BackendGenerator {
 				// assert(false);
 			}
 		} else {
-			ast_field f = a.get_lhs_field();
 			generate_sent_assign(a);
 		}
 	}

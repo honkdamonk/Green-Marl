@@ -64,7 +64,6 @@ public class ast_expr_builtin extends ast_expr {
 	}
 
 	public void traverse(gm_apply a, boolean is_post, boolean is_pre) {
-		boolean for_sent = a.is_for_sent();
 		boolean for_id = a.is_for_id();
 		boolean for_expr = a.is_for_expr();
 		boolean for_rhs = a.is_for_rhs();

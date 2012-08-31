@@ -1,7 +1,6 @@
 package backend_gps;
 
 import static backend_gps.GPSConstants.GPS_FLAG_HAS_DOWN_NBRS;
-import tangible.RefObject;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
@@ -295,7 +294,6 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		assert b.get_navigator() == null;
 
 		gm_transform_helper.gm_make_it_belong_to_sentblock(b);
-		ast_sentblock parent = (ast_sentblock) b.get_parent();
 
 		ast_sentblock sb = ast_sentblock.new_sentblock();
 		gm_transform_helper.gm_add_sent_after(b, sb);

@@ -25,7 +25,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.Extern;
-import tangible.RefObject;
 import ast.ast_argdecl;
 import ast.ast_assign;
 import ast.ast_bfs;

@@ -687,7 +687,6 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		if (t.is_collection_of_collection()) {
 			_Body.push(get_type_string(t));
-			ast_typedecl targetType = t.get_target_type();
 			_Body.push("<");
 			_Body.push(get_type_string(t.getTargetTypeSummary()));
 			_Body.push("> ");

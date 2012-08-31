@@ -307,7 +307,6 @@ public class gm_typechecker_stage_3 extends gm_apply {
 	}
 
 	private boolean check_ter(ast_expr e) {
-		GM_OPS_T op_type = e.get_optype();
 		GMTYPE_T l_type = e.get_left_op().get_type_summary();
 		GMTYPE_T r_type = e.get_right_op().get_type_summary();
 		GMTYPE_T c_type = e.get_cond_op().get_type_summary();

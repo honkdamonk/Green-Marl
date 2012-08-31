@@ -155,8 +155,6 @@ public class gm_add_symbol {
 		assert new_tab.get_ast().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 		assert old_tab.is_entry_in_the_tab(e);
 
-		ast_sentblock sb = (ast_sentblock) new_tab.get_ast();
-
 		// delete from the old-table
 		old_tab.remove_entry_in_the_tab(e);
 

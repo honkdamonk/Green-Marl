@@ -15,7 +15,6 @@ import common.gm_apply;
 
 public class gm_gps_create_basic_block1_t extends gm_apply {
 	
-	private int bb_number;
 	private HashMap<ast_sent, gm_gps_basic_block> prev_map = new HashMap<ast_sent, gm_gps_basic_block>();
 	private HashMap<ast_sent, gm_gps_basic_block> next_map = new HashMap<ast_sent, gm_gps_basic_block>();
 	private HashMap<ast_sent, gps_gps_sentence_t> s_mark;

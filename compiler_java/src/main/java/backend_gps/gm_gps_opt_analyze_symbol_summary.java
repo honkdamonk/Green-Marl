@@ -51,7 +51,6 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 		// --------------------------------------------------------
 		// check if input node parsing parsing is required
 		// --------------------------------------------------------
-		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		boolean need_node_prop_init = false;
 		for (gm_symtab_entry e : prop) {
 			if ((e.find_info_int(gm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue())

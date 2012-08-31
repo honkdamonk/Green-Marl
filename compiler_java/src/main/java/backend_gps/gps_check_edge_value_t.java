@@ -32,7 +32,6 @@ public class gps_check_edge_value_t extends gm_apply {
 	private static final int SENDING = 1;
 	private static final int WRITING = 2;
 
-	private gm_symtab_entry inner_iter = null;
 	private ast_foreach inner_loop = null;
 	private boolean target_is_edge_prop = false;
 	private boolean _error = false;
@@ -66,7 +65,6 @@ public class gps_check_edge_value_t extends gm_apply {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (fe.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
-				inner_iter = fe.get_iterator().getSymInfo();
 				inner_loop = fe;
 			}
 		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
@@ -129,7 +127,6 @@ public class gps_check_edge_value_t extends gm_apply {
 						ast_expr rhs = a.get_rhs();
 						if (rhs.is_builtin()) {
 							ast_expr_builtin b_rhs = (ast_expr_builtin) rhs;
-							gm_symtab_entry drv = b_rhs.get_driver().getSymInfo();
 							gm_method_id_t f_id = b_rhs.get_builtin_def().get_method_id();
 							if (f_id == gm_method_id_t.GM_BLTIN_NODE_TO_EDGE) {
 								a.add_info_bool(GPS_FLAG_EDGE_DEFINING_WRITE, true);
@@ -213,7 +210,6 @@ public class gps_check_edge_value_t extends gm_apply {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			if (((ast_foreach) s) == inner_loop) {
 				inner_loop = null;
-				inner_iter = null;
 			}
 		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 			target_is_edge_prop = false;

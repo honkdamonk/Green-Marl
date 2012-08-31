@@ -6,7 +6,6 @@ import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINED_INNER;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN;
 import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
-import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
 import frontend.gm_symtab_entry;
 import inc.GM_REDUCE_T;
 import inc.gps_apply_bb_ast;
@@ -53,7 +52,6 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 																			// (MASTER,
 																			// VERTEX,
 																			// RECEIVER)
-			boolean scope = s.find_info_bool(GPS_INT_SYNTAX_CONTEXT); // GPS_NEW_SCOPE_GLOBAL/OUT/IN
 
 			ast_assign a = (ast_assign) s;
 
@@ -124,7 +122,6 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 		boolean is_id = e.is_id();
 		boolean sc_type = is_id ? IS_SCALAR : IS_FIELD;
 		ast_id tg = is_id ? e.get_id() : e.get_field().get_second();
-		gm_symtab_entry drv = is_id ? null : e.get_field().get_first().getSymInfo();
 
 		boolean comm_symbol = false; // is this symbol used in communication?
 

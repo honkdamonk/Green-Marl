@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import tangible.Pair;
-import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_expr;
 import ast.ast_expr_builtin;

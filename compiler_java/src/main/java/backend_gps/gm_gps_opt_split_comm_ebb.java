@@ -32,7 +32,7 @@ public class gm_gps_opt_split_comm_ebb extends gm_compile_step {
 		// BB1 (send) -> seq -> BB2 (receive)
 		// -------------------------------------------
 		for (gm_gps_basic_block BB : BB_list) {
-			gm_gps_basic_block BB2 = split_vertex_BB(BB, info);
+			split_vertex_BB(BB, info);
 		}
 	}
 

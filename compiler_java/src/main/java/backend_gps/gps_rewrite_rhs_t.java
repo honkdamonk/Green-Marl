@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;

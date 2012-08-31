@@ -59,7 +59,6 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 	public final void post_process() {
 		for (ast_assign a : targets) {
 			gm_transform_helper.gm_make_it_belong_to_sentblock(a);
-			ast_sentblock sb = (ast_sentblock) a.get_parent();
 
 			String name = gm_main.FE.voca_temp_name_and_add("_t", null, true);
 			ast_id id = ast_id.new_id(name, a.get_line(), a.get_col());

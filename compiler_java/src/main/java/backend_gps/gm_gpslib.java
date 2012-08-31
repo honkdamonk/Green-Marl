@@ -422,9 +422,6 @@ public class gm_gpslib extends gm_graph_library {
 				}
 			} else {
 				Body.pushln("String[] split = inputString.split(\"###\");");
-				boolean firstProperty1 = true; // FIXME: was firstProperty -
-												// seems to be a bug in the cpp
-												// gm-compiler
 				int cnt = 0;
 				for (gm_symtab_entry sym : prop) {
 					if (!is_edge_prop && (sym.find_info_int(GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
@@ -921,7 +918,6 @@ public class gm_gpslib extends gm_graph_library {
 		for (gm_gps_congruent_msg_class c : LOOPS) {
 
 			gm_gps_communication_size_info SYMS = c.sz_info;
-			int sz = get_total_size(SYMS);
 			if (!is_single && is_first) {
 				is_first = false;
 				str_buf = String.format("if (m_type == %d) ", SYMS.id);
@@ -962,7 +958,6 @@ public class gm_gpslib extends gm_graph_library {
 		boolean is_first = true;
 		for (gm_gps_congruent_msg_class c : LOOPS) {
 			gm_gps_communication_size_info SYMS = c.sz_info;
-			int sz = get_total_size(SYMS);
 			if (!is_single && is_first) {
 				is_first = false;
 				str_buf = String.format("if (m_type == %d) ", SYMS.id);
@@ -1001,7 +996,6 @@ public class gm_gpslib extends gm_graph_library {
 		boolean is_first = true;
 		for (gm_gps_congruent_msg_class c : LOOPS) {
 			gm_gps_communication_size_info SYMS = c.sz_info;
-			int sz = get_total_size(SYMS);
 			if (!is_single && is_first) {
 				is_first = false;
 				str_buf = String.format("if (m_type == %d) ", SYMS.id);
@@ -1040,7 +1034,6 @@ public class gm_gpslib extends gm_graph_library {
 		boolean is_first = true;
 		for (gm_gps_congruent_msg_class c : LOOPS) {
 			gm_gps_communication_size_info SYMS = c.sz_info;
-			int sz = get_total_size(SYMS);
 			if (!is_single && is_first) {
 				is_first = false;
 				str_buf = String.format("if (m_type == %d) ", SYMS.id);
@@ -1106,7 +1099,6 @@ public class gm_gpslib extends gm_graph_library {
 		boolean is_first = true;
 		for (gm_gps_congruent_msg_class c : LOOPS) {
 			gm_gps_communication_size_info SYMS = c.sz_info;
-			int sz = get_total_size(SYMS);
 			if (!is_single && is_first) {
 				is_first = false;
 				str_buf = String.format("if (m_type == %d) ", SYMS.id);
@@ -1308,14 +1300,12 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public void generate_message_receive_begin(ast_foreach fe, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
-		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		gm_gps_comm_t comm_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, fe);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
 
 	public void generate_message_receive_begin(ast_sentblock sb, gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
-		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		gm_gps_comm_t comm_type = GPS_COMM_RANDOM_WRITE;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, sb, drv);
 		generate_message_receive_begin(U, Body, b, is_only_comm);

@@ -130,7 +130,6 @@ public class gm_typechecker_stage_5 extends gm_apply {
 	public final boolean check_assign_lhs_rhs(ast_node lhs, ast_expr rhs, int l, int c) {
 		GMTYPE_T summary_lhs;
 		GMTYPE_T summary_rhs;
-		ast_typedecl lhs_typedecl = null;
 		gm_symtab_entry l_sym = null;
 
 		if (lhs.get_nodetype() == AST_NODE_TYPE.AST_ID) {

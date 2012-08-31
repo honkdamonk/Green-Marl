@@ -1,6 +1,5 @@
 package backend_gps;
 
-import inc.GMTYPE_T;
 import ast.AST_NODE_TYPE;
 import ast.ast_foreach;
 import ast.ast_sent;
@@ -54,7 +53,6 @@ public class gps_opt_find_nested_loops_t extends gm_apply {
 					MAP.put(fe, null);
 				}
 			} else if ((depth == 2) && (outer_loop != null)) {
-				GMTYPE_T iter = fe.get_iter_type();
 				if (fe.get_iter_type().is_inout_nbr_node_iter_type()) {
 					MAP.put(fe, outer_loop);
 				}

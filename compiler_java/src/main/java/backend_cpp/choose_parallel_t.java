@@ -46,13 +46,6 @@ public class choose_parallel_t extends gm_apply {
 				gm_traverse.gm_traverse_up_sent(s.get_parent(), T);
 
 				// [XXX] need to think about this
-			} else if (fe.get_iter_type().is_iteration_on_collection()) {
-
-				// make it sequential always
-				set_to_seq_t T = new set_to_seq_t();
-
-				fe.set_sequential(true);
-
 			} else {
 				// sequential
 				fe.set_sequential(true);

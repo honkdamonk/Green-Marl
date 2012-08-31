@@ -11,7 +11,6 @@ public class gm_path_parser {
 	private String extention;
 	private String path;
 
-	// defined in gm_misc.cc
 	public final void parsePath(String fullPath) {
 		
 		File file = new File(fullPath);
@@ -20,7 +19,7 @@ public class gm_path_parser {
 		String fileName = file.getName();
 		
 		String[] fileTokens = fileName.split("[.]");
-		assert fileTokens.length < 2;
+		assert fileTokens.length <= 2;
 		
 		if (fileTokens.length == 1) {
 			extention = "";

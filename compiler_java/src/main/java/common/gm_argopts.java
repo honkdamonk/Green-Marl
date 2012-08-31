@@ -99,17 +99,17 @@ public class gm_argopts {
 		// add here
 	}
 
-	public static void parse_arg(RefObject<String> argv, String bin_name) {
+	public static void parse_arg(String argv, String bin_name) {
 		int s = GM_compiler_options.length;
-		if (argv.argvalue.charAt(0) == '-') {
+		if (argv.charAt(0) == '-') {
 			// search '=' in the argument
-			int z = argv.argvalue.length();
-			String key_begin = argv.argvalue.charAt(1) + "";
+			int z = argv.length();
+			String key_begin = argv.charAt(1) + "";
 			String val_begin = null;
 			for (int i = 1; i < z; i++) {
-				if (argv.argvalue.charAt(i) == '=') {
-					argv.argvalue = StringFunctions.changeCharacter(argv.argvalue, i, '\0');
-					val_begin = argv.argvalue.charAt(i + 1) + "";
+				if (argv.charAt(i) == '=') {
+					argv = StringFunctions.changeCharacter(argv, i, '\0');
+					val_begin = argv.charAt(i + 1) + "";
 					break;
 				}
 			}
@@ -150,11 +150,11 @@ public class gm_argopts {
 				System.out.printf("ignoring unknown option: %s\n", key_begin);
 			}
 		} else {
-			gm_main.GM_input_lists.addLast(argv.argvalue);
+			gm_main.GM_input_lists.addLast(argv);
 		}
 	}
 
-	public static void process_args(RefObject<String[]> args) {
+	public static void process_args(String[] args) {
 
 		int s = GM_compiler_options.length;
 		for (int i = 0; i < s; i++) {
@@ -175,18 +175,14 @@ public class gm_argopts {
 		}
 
 		// process arguments
-		String bin_name = "gm_comp";
-		for (int i = 0; i < args.argvalue.length; i++) {
-			RefObject<String> argvalue = new RefObject<String>(args.argvalue[i]);
-			gm_argopts.parse_arg(argvalue, bin_name);
-			args.argvalue[i] = argvalue.argvalue;
+		String bin_name = gm_main.gm_bin_name;
+		for (int i = 0; i < args.length; i++) {
+			gm_argopts.parse_arg(args[i], bin_name);
 		}
 
 		// check num files
 		if (gm_main.GM_input_lists.size() == 0) {
-			RefObject<String> tempRef_bin_name2 = new RefObject<String>(bin_name);
 			gm_argopts.print_help(bin_name);
-			bin_name = tempRef_bin_name2.argvalue;
 			System.exit(0);
 		} else if (gm_main.GM_input_lists.size() > 1) {
 			System.out.print("[Warning] Current version only can hanle only one input file; only the first input will be processed.\n");

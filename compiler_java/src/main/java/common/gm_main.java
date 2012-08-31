@@ -29,18 +29,16 @@ public class gm_main {
 	private static final int GMSTAGE_LIBRARY_OPT = 5;
 	private static final int GMSTAGE_CODEGEN = 6;
 
-	// const char* GM_version_info = "0.1"; // moved to common/gm_verion_string
-	public static String gm_version_string = "0.3.0";
+	public static String gm_bin_name = "gm_jcomp";
+	public static String gm_version_string = "0.4.0";
 
 	public static gm_frontend FE = new gm_frontend();
 	public static gm_cpp_gen CPP_BE = new gm_cpp_gen(); // CPP Backend
 	public static gm_gps_gen GPS_BE = new gm_gps_gen(); // GPS Backend
-	public static gm_giraph_gen GIRAPH_BE = new gm_giraph_gen(); // Giraph
-																	// Backend
+	public static gm_giraph_gen GIRAPH_BE = new gm_giraph_gen(); // Giraph Backend
 	public static gm_gps_gen PREGEL_BE; // TODO
 	public static gm_backend BACK_END;
 	public static gm_userargs OPTIONS = new gm_userargs();
-	// extern defined in gm_ind_opt.h
 	public static gm_independent_optimize IND_OPT = new gm_independent_optimize();
 	public static gm_builtin_manager BUILT_IN = new gm_builtin_manager();
 
@@ -99,13 +97,7 @@ public class gm_main {
 		if (c == null)
 			return;
 
-		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
-		// pointers to value types:
-		// ORIGINAL LINE: sbyte* d = strdup(c);
-		String d = c;
-		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
-		// pointers to value types:
-		// ORIGINAL LINE: sbyte* p = strtok(d, ".");
+		String d = new String(c);
 		String p = tangible.StringFunctions.strTok(d, ".");
 		if (p == null) {
 			return;
@@ -160,23 +152,15 @@ public class gm_main {
 		}
 	}
 
-	// gm_argopts.cc
-	// extern void process_args(int argc, tangible.RefObject<String[]> argv);
-
 	public static void main(String[] args) {
 		boolean ok = true;
 
 		// -------------------------------------
 		// parse arguments
 		// -------------------------------------
-		tangible.RefObject<String[]> tempRef_args = new tangible.RefObject<String[]>(args);
-		gm_argopts.process_args(tempRef_args);
-		args = tempRef_args.argvalue;
+		gm_argopts.process_args(args);
 
 		gm_path_parser Path = new gm_path_parser();
-		// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for
-		// pointers to value types:
-		// ORIGINAL LINE: sbyte* fname = GM_input_lists.front();
 		String fname = GM_input_lists.getFirst();
 		Path.parsePath(fname);
 
@@ -213,8 +197,9 @@ public class gm_main {
 			assert GM_input_lists.size() == 1;
 			String fname1 = GM_input_lists.getFirst();
 			gm_error.gm_set_current_filename(fname1);
-			if (gm_error.GM_is_parse_error())
+			if (gm_error.GM_is_parse_error()) {
 				System.exit(1);
+			}
 		}
 		gm_main.gm_end_major_compiler_stage();
 

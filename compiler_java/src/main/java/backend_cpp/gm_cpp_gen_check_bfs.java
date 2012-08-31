@@ -1,6 +1,6 @@
 package backend_cpp;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import inc.gm_compile_step;
 
 import java.util.LinkedList;
@@ -16,7 +16,7 @@ public class gm_cpp_gen_check_bfs extends gm_compile_step {
 
 	public void process(ast_procdef d) {
 		// re-do rw analysis
-		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(d.get_body());
+		gm_rw_analysis.gm_redo_rw_analysis(d.get_body());
 
 		check_bfs_main_t T = new check_bfs_main_t(d);
 		d.traverse_both(T);

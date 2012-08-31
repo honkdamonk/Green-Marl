@@ -26,7 +26,7 @@ import common.gm_resolve_nc;
 import common.gm_transform_helper;
 import common.gm_apply;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
@@ -123,7 +123,7 @@ public class gm_flip_backedge_t extends gm_apply {
 		ast_sentblock sb = (ast_sentblock) up;
 
 		for (ast_sent s : sb.get_sents()) {
-			gm_rwinfo_sets RW = GlobalMembersGm_rw_analysis.gm_get_rwinfo_sets(s);
+			gm_rwinfo_sets RW = gm_rw_analysis.gm_get_rwinfo_sets(s);
 			gm_rwinfo_map W = RW.write_set;
 
 			// check if this sentence initializes any target

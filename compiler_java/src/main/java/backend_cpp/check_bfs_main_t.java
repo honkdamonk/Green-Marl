@@ -17,7 +17,7 @@ import ast.gm_rwinfo_map;
 import common.gm_main;
 import common.gm_apply;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
@@ -80,7 +80,7 @@ public class check_bfs_main_t extends gm_apply {
 			S.add(graph);
 
 			// are symbols that are read/writen inside bfs
-			gm_rwinfo_sets RWINFO = GlobalMembersGm_rw_analysis.gm_get_rwinfo_sets(s);
+			gm_rwinfo_sets RWINFO = gm_rw_analysis.gm_get_rwinfo_sets(s);
 			assert RWINFO != null;
 
 			gm_rwinfo_map RS = RWINFO.read_set;

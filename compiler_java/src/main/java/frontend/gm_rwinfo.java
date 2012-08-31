@@ -153,7 +153,7 @@ public class gm_rwinfo {
 			else
 				System.out.printf("(%s, ", driver.getId().get_orgname());
 		} else {
-			System.out.printf("(%s, ", GlobalMembersGm_rw_analysis.gm_get_range_string(access_range));
+			System.out.printf("(%s, ", gm_rw_analysis.gm_get_range_string(access_range));
 		}
 
 		if (always)

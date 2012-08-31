@@ -26,7 +26,7 @@ import common.gm_new_sents_after_tc;
 import common.gm_resolve_nc;
 import common.gm_transform_helper;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_symtab_entry;
 
 //-------------------------------------------
@@ -51,7 +51,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 
 		gm_flat_nested_sentblock.gm_flat_nested_sentblock(p);
 
-		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
+		gm_rw_analysis.gm_redo_rw_analysis(p.get_body());
 	}
 
 	@Override

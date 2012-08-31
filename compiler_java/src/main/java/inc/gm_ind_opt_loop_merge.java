@@ -2,7 +2,7 @@ package inc;
 
 import ast.ast_procdef;
 import opt.gm_merge_loop_t;
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 
 public class gm_ind_opt_loop_merge extends gm_compile_step
 {
@@ -16,7 +16,7 @@ public class gm_ind_opt_loop_merge extends gm_compile_step
 		T.do_loop_merge(proc.get_body());
     
 		// re-do rw-analysis (should be done already inside loop_merge. but to be sure...)
-		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(proc.get_body());
+		gm_rw_analysis.gm_redo_rw_analysis(proc.get_body());
 		//return true;
 	}
 	@Override

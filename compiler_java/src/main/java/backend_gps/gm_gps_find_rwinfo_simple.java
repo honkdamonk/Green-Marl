@@ -3,7 +3,7 @@ package backend_gps;
 import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINED_INNER;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_OUTER_LOOP;
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.SYMTAB_TYPES;
 import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
@@ -93,7 +93,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 
 		// add to write-set
 		gm_rwinfo entry = gm_rwinfo.new_scala_inst(id);
-		GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(S.write_set, id.getSymInfo(), entry, false);
+		gm_rw_analysis.gm_add_rwinfo_to_set(S.write_set, id.getSymInfo(), entry, false);
 
 		return true;
 	}
@@ -139,7 +139,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 		gm_rwinfo entry = gm_rwinfo.new_field_inst(null, field.get_second());
 		entry.access_range = (is_random) ? gm_range_type_t.GM_RANGE_RANDOM : gm_range_type_t.GM_RANGE_LINEAR;
 
-		GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(S.write_set, field.get_second().getSymInfo(), entry, false);
+		gm_rw_analysis.gm_add_rwinfo_to_set(S.write_set, field.get_second().getSymInfo(), entry, false);
 
 		return true;
 	}
@@ -177,7 +177,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 		}
 
 		gm_rwinfo entry = gm_rwinfo.new_scala_inst(id);
-		GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(S.read_set, id.getSymInfo(), entry, false);
+		gm_rw_analysis.gm_add_rwinfo_to_set(S.read_set, id.getSymInfo(), entry, false);
 
 		return true;
 	}
@@ -231,7 +231,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 
 		gm_rwinfo entry = gm_rwinfo.new_field_inst(null, field.get_second());
 		entry.access_range = (is_random) ? gm_range_type_t.GM_RANGE_RANDOM : gm_range_type_t.GM_RANGE_LINEAR;
-		GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(S.read_set, field.get_second().getSymInfo(), entry, false);
+		gm_rw_analysis.gm_add_rwinfo_to_set(S.read_set, field.get_second().getSymInfo(), entry, false);
 		return true;
 	}
 

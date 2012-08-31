@@ -26,7 +26,7 @@ import common.gm_transform_helper;
 import common.gm_traverse;
 import common.gm_apply;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_symtab_entry;
 
 //---------------------------------------------
@@ -56,7 +56,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 			return true;
 
 		ast_foreach fe = (ast_foreach) sent;
-		gm_rwinfo_map B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
+		gm_rwinfo_map B = gm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 		if (B.size() == 0)
 			return true;
 
@@ -115,7 +115,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 		se.add_info(gm_cpp_gen.LABEL_PAR_SCOPE, new ast_extra_info(true));
 
 		// foreach scalar boundsymbol
-		gm_rwinfo_map B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
+		gm_rwinfo_map B = gm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 		for (gm_symtab_entry e : B.keySet()) {
 			if (e.getType().is_property())
 				continue;

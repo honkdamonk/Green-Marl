@@ -14,7 +14,7 @@ import ast.gm_rwinfo_map;
 import common.gm_traverse;
 import common.gm_apply;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_bound_set_info;
 import frontend.gm_rwinfo;
 import frontend.gm_symtab_entry;
@@ -59,7 +59,7 @@ public class gm_defer_write extends gm_apply {
 		ast_foreach fe = (ast_foreach) s;
 
 		// check if it has any deferred assignments are bound to this FE.
-		gm_bound_set_info B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe);
+		gm_bound_set_info B = gm_rw_analysis.gm_get_bound_set_info(fe);
 		assert B != null;
 		gm_rwinfo_map BSET = B.bound_set;
 

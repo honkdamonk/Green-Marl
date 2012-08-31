@@ -11,7 +11,7 @@ import common.gm_merge_sentblock;
 import common.gm_transform_helper;
 import common.gm_apply;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 
 public class gm_merge_loop_t extends gm_apply {
 	
@@ -53,7 +53,7 @@ public class gm_merge_loop_t extends gm_apply {
 						gm_merge_sentblock.gm_merge_sentblock((ast_sentblock) prev.get_body(), (ast_sentblock) curr.get_body());
 
 						// redo-rw-analysis
-						GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(prev);
+						gm_rw_analysis.gm_redo_rw_analysis(prev);
 
 						gm_transform_helper.gm_ripoff_sent(curr, gm_transform_helper.GM_NOFIX_SYMTAB); // it
 																																	// will

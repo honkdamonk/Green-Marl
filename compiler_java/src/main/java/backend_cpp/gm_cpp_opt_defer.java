@@ -1,6 +1,6 @@
 package backend_cpp;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_rw_analysis_check2;
 import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
@@ -46,7 +46,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		boolean b = find_deferred_writes(proc, S, F); 
 		if (b) {
 			post_process_deferred_writes(S, F);
-			GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(proc.get_body());
+			gm_rw_analysis.gm_redo_rw_analysis(proc.get_body());
 		}
 
 		set_affected(b);
@@ -119,7 +119,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 
 			boolean need_initializer = true;
 			if (fe.get_iter_type().is_all_graph_iter_type()) {
-				gm_rwinfo_sets sets = GlobalMembersGm_rw_analysis.gm_get_rwinfo_sets(fe);
+				gm_rwinfo_sets sets = gm_rw_analysis.gm_get_rwinfo_sets(fe);
 				gm_rwinfo_map W = sets.write_set;
 				assert W.containsKey(old_dest);
 				gm_rwinfo_list L = W.get(old_dest);
@@ -192,7 +192,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// 1. check if target modifies *old_target* linearly and
 		// unconditionally.
 		// (note: RW-analysis for target_fe has not updated.)
-		if (!GlobalMembersGm_rw_analysis.gm_is_modified_always_linearly(target_fe, target_old))
+		if (!gm_rw_analysis.gm_is_modified_always_linearly(target_fe, target_old))
 			return false;
 
 		// 2. check if target_fe is inside a seq_loop. (unconditionally)

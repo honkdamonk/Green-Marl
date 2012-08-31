@@ -57,12 +57,12 @@ public class gm_check_conf_t extends gm_apply {
 
 			ast_sent body = fe.get_body();
 
-			gm_rwinfo_map R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(fe).read_set; // body
+			gm_rwinfo_map R = gm_rw_analysis.get_rwinfo_sets(fe).read_set; // body
 																															// +
 																															// filter
-			gm_rwinfo_map W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).write_set;
-			gm_rwinfo_map D = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).reduce_set;
-			gm_rwinfo_map M = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).mutate_set;
+			gm_rwinfo_map W = gm_rw_analysis.get_rwinfo_sets(body).write_set;
+			gm_rwinfo_map D = gm_rw_analysis.get_rwinfo_sets(body).reduce_set;
+			gm_rwinfo_map M = gm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
 			check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W																												// (warning)
 			check_rw_conf_error(W, W, gm_conflict_t.WW_CONFLICT, Report); // W-W																												// (warning)
@@ -90,21 +90,21 @@ public class gm_check_conf_t extends gm_apply {
 			gm_rwinfo_map R_filter = new gm_rwinfo_map();
 			if (bfs.get_navigator() != null) {
 				range_cond_t R = new range_cond_t(gm_range_type_t.GM_RANGE_LEVEL_DOWN, true);
-				GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
-				GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(bfs.get_navigator(), R_filter);
-				GlobalMembersGm_rw_analysis.Default_DriverMap.remove(it);
+				gm_rw_analysis.Default_DriverMap.put(it, R);
+				gm_rw_analysis.traverse_expr_for_readset_adding(bfs.get_navigator(), R_filter);
+				gm_rw_analysis.Default_DriverMap.remove(it);
 			}
 			if (bfs.get_f_filter() != null) {
-				range_cond_t R = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
-				GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
-				GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(bfs.get_f_filter(), R_filter);
-				GlobalMembersGm_rw_analysis.Default_DriverMap.remove(it);
+				range_cond_t R = new range_cond_t(gm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
+				gm_rw_analysis.Default_DriverMap.put(it, R);
+				gm_rw_analysis.traverse_expr_for_readset_adding(bfs.get_f_filter(), R_filter);
+				gm_rw_analysis.Default_DriverMap.remove(it);
 			}
 			if (bfs.get_b_filter() != null) {
-				range_cond_t R = new range_cond_t(GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
-				GlobalMembersGm_rw_analysis.Default_DriverMap.put(it, R);
-				GlobalMembersGm_rw_analysis.traverse_expr_for_readset_adding(bfs.get_b_filter(), R_filter);
-				GlobalMembersGm_rw_analysis.Default_DriverMap.remove(it);
+				range_cond_t R = new range_cond_t(gm_rw_analysis.gm_get_range_from_itertype(iter_type), true);
+				gm_rw_analysis.Default_DriverMap.put(it, R);
+				gm_rw_analysis.traverse_expr_for_readset_adding(bfs.get_b_filter(), R_filter);
+				gm_rw_analysis.Default_DriverMap.remove(it);
 
 			}
 
@@ -114,10 +114,10 @@ public class gm_check_conf_t extends gm_apply {
 			if (bfs.get_fbody() != null) {
 				ast_sent body = bfs.get_fbody();
 
-				gm_rwinfo_map R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).read_set;
-				gm_rwinfo_map W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).write_set;
-				gm_rwinfo_map D = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).reduce_set;
-				gm_rwinfo_map M = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).mutate_set;
+				gm_rwinfo_map R = gm_rw_analysis.get_rwinfo_sets(body).read_set;
+				gm_rwinfo_map W = gm_rw_analysis.get_rwinfo_sets(body).write_set;
+				gm_rwinfo_map D = gm_rw_analysis.get_rwinfo_sets(body).reduce_set;
+				gm_rwinfo_map M = gm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
 				check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W																													// (warning)
 				check_rw_conf_error(R_filter, W, gm_conflict_t.RW_CONFLICT, Report); // R-W																														// (warning)
@@ -137,10 +137,10 @@ public class gm_check_conf_t extends gm_apply {
 			if (bfs.get_bbody() != null) {
 				ast_sent body = bfs.get_bbody();
 
-				gm_rwinfo_map R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).read_set;
-				gm_rwinfo_map W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).write_set;
-				gm_rwinfo_map D = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).reduce_set;
-				gm_rwinfo_map M = GlobalMembersGm_rw_analysis.get_rwinfo_sets(body).mutate_set;
+				gm_rwinfo_map R = gm_rw_analysis.get_rwinfo_sets(body).read_set;
+				gm_rwinfo_map W = gm_rw_analysis.get_rwinfo_sets(body).write_set;
+				gm_rwinfo_map D = gm_rw_analysis.get_rwinfo_sets(body).reduce_set;
+				gm_rwinfo_map M = gm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
 				// printf("R:");gm_print_rwinfo_set(R);
 				// printf("D:");gm_print_rwinfo_set(D);
@@ -276,7 +276,7 @@ public class gm_check_conf_t extends gm_apply {
 			a_range = e1.access_range;
 		} else {
 			GMTYPE_T t = e1.driver.getType().get_typeid();
-			a_range = GlobalMembersGm_rw_analysis.gm_get_range_from_itertype(t);
+			a_range = gm_rw_analysis.gm_get_range_from_itertype(t);
 		}
 
 		if (a_range == GM_RANGE_LEVEL)

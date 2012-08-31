@@ -5,7 +5,7 @@ import inc.gm_compile_step;
 
 import common.gm_traverse;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 
 public class gm_cpp_opt_reduce_scalar extends gm_compile_step
 {
@@ -16,14 +16,14 @@ public class gm_cpp_opt_reduce_scalar extends gm_compile_step
 	public void process(ast_procdef p)
 	{
 		opt_scalar_reduction_t T = new opt_scalar_reduction_t();
-		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
+		gm_rw_analysis.gm_redo_rw_analysis(p.get_body());
 		gm_traverse.gm_traverse_sents(p.get_body(), T);
 		if (T.has_targets())
 		{
 			T.transform_targets();
     
 			// need redo rw analysis
-			GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
+			gm_rw_analysis.gm_redo_rw_analysis(p.get_body());
     
 			set_affected(true);
 		}

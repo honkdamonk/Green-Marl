@@ -7,7 +7,7 @@ import ast.gm_rwinfo_map;
 
 import common.gm_resolve_nc;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
@@ -95,8 +95,8 @@ public class gm_merge_loops {
 
 		// dependency check for loops.
 		// linear access does not make dependency, unless being reduced.
-		gm_rwinfo_sets P_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(P);
-		gm_rwinfo_sets Q_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(Q);
+		gm_rwinfo_sets P_SET = gm_rw_analysis.get_rwinfo_sets(P);
+		gm_rwinfo_sets Q_SET = gm_rw_analysis.get_rwinfo_sets(Q);
 
 		gm_rwinfo_map P_R = P_SET.read_set;
 		gm_rwinfo_map P_W = P_SET.write_set;
@@ -105,7 +105,7 @@ public class gm_merge_loops {
 		gm_rwinfo_map P_M = P_SET.mutate_set;
 		gm_rwinfo_map Q_M = Q_SET.mutate_set;
 
-		gm_rwinfo_sets P_BODY_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(P.get_body());
+		gm_rwinfo_sets P_BODY_SET = gm_rw_analysis.get_rwinfo_sets(P.get_body());
 		gm_rwinfo_map P_D = P_BODY_SET.reduce_set;
 
 		boolean b;

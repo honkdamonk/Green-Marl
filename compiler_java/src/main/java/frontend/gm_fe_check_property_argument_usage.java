@@ -17,8 +17,8 @@ public class gm_fe_check_property_argument_usage extends gm_compile_step {
 	public void process(ast_procdef proc) {
 		gm_symtab props = proc.get_symtab_field();
 		HashSet<gm_symtab_entry> SET = props.get_entries();
-		gm_rwinfo_map R = GlobalMembersGm_rw_analysis.get_rwinfo_sets(proc.get_body()).read_set;
-		gm_rwinfo_map W = GlobalMembersGm_rw_analysis.get_rwinfo_sets(proc.get_body()).write_set;
+		gm_rwinfo_map R = gm_rw_analysis.get_rwinfo_sets(proc.get_body()).read_set;
+		gm_rwinfo_map W = gm_rw_analysis.get_rwinfo_sets(proc.get_body()).write_set;
 		for (gm_symtab_entry e : SET) {
 			if ((!R.containsKey(e)) && (!W.containsKey(e)))
 				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_UNUSED.getValue());

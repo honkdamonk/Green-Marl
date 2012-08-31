@@ -3,7 +3,7 @@ package backend_gps;
 import static backend_gps.GPSConstants.GPS_FLAG_USE_IN_DEGREE;
 import static backend_gps.GPSConstants.GPS_FLAG_USE_REVERSE_EDGE;
 import static backend_gps.GPSConstants.GPS_NAME_IN_DEGREE_PROP;
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
@@ -91,7 +91,7 @@ public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
 			gm_transform_helper.gm_replace_expr_general(p.get_body(), T_2);
 
 			// re-do RW analysis
-			GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
+			gm_rw_analysis.gm_redo_rw_analysis(p.get_body());
 		}
 	}
 

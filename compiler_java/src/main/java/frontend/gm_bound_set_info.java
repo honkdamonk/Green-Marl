@@ -6,7 +6,7 @@ import ast.gm_rwinfo_map;
 public class gm_bound_set_info extends ast_extra_info {
 	
 	public void dispose() {
-		GlobalMembersGm_rw_analysis.gm_delete_rwinfo_map(bound_set);
+		gm_rw_analysis.gm_delete_rwinfo_map(bound_set);
 	}
 
 	// all the reduce/defer ops that are bound to this foreach/bfs

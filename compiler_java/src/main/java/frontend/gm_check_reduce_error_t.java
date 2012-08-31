@@ -36,20 +36,20 @@ public class gm_check_reduce_error_t extends gm_apply {
 				return;
 			ast_bfs bfs = (ast_bfs) t;
 			if (n == bfs.get_fbody()) {
-				gm_rwinfo_map B_fw = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
+				gm_rwinfo_map B_fw = gm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
 
 				// check bound error
 				is_okay = check_add_and_report_conflicts(B_scope, B_fw) && is_okay;
 
 			} else if (n == bfs.get_bbody()) {
-				gm_rwinfo_map B_bw = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
+				gm_rwinfo_map B_bw = gm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
 				is_okay = check_add_and_report_conflicts(B_scope, B_bw) && is_okay;
 			} else {
 				assert false;
 			}
 		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) n;
-			gm_rwinfo_map B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
+			gm_rwinfo_map B = gm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 			is_okay = check_add_and_report_conflicts(B_scope, B) && is_okay;
 		}
 	}
@@ -62,17 +62,17 @@ public class gm_check_reduce_error_t extends gm_apply {
 				return;
 			ast_bfs bfs = (ast_bfs) t;
 			if (n == bfs.get_fbody()) {
-				gm_rwinfo_map B_fw = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
+				gm_rwinfo_map B_fw = gm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
 				remove_all(B_scope, B_fw);
 			} else if (n == bfs.get_bbody()) {
-				gm_rwinfo_map B_bw = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
+				gm_rwinfo_map B_bw = gm_rw_analysis.gm_get_bound_set_info(bfs).bound_set;
 				remove_all(B_scope, B_bw);
 			} else {
 				assert false;
 			}
 		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) n;
-			gm_rwinfo_map B = GlobalMembersGm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
+			gm_rwinfo_map B = gm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 			remove_all(B_scope, B);
 		}
 	}

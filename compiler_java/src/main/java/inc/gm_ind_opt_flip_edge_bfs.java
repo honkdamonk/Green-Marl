@@ -6,7 +6,7 @@ import opt.gm_flip_backedge_t;
 import common.gm_argopts;
 import common.gm_main;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 
 //-------------------------------------------
 // [Step 1]
@@ -30,7 +30,7 @@ public class gm_ind_opt_flip_edge_bfs extends gm_compile_step
     
 		// re-do rw_analysis
 		if (changed)
-			GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
+			gm_rw_analysis.gm_redo_rw_analysis(p.get_body());
 	}
 	@Override
 	public gm_compile_step get_instance()

@@ -3,7 +3,7 @@ package inc;
 import ast.ast_procdef;
 import opt.gm_opt_optimize_single_reduction_t;
 import opt.gm_reduce_opt_linear_t;
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 
 public class gm_ind_opt_nonconf_reduce extends gm_compile_step
 {
@@ -23,7 +23,7 @@ public class gm_ind_opt_nonconf_reduce extends gm_compile_step
 		T2.post_process();
     
 		// re-do rw_analysis
-		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(proc.get_body());
+		gm_rw_analysis.gm_redo_rw_analysis(proc.get_body());
     
 	}
 	@Override

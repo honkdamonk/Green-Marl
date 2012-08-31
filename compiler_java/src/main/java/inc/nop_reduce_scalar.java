@@ -8,7 +8,7 @@ import ast.ast_id;
 import ast.ast_nop;
 import ast.gm_rwinfo_map;
 import backend_cpp.gm_cpp_gen;
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
@@ -31,33 +31,33 @@ public class nop_reduce_scalar extends ast_nop {
 
 	public boolean do_rw_analysis() {
 
-		gm_rwinfo_sets sets = GlobalMembersGm_rw_analysis.get_rwinfo_sets(this);
+		gm_rwinfo_sets sets = gm_rw_analysis.get_rwinfo_sets(this);
 		gm_rwinfo_map R = sets.read_set;
 		gm_rwinfo_map W = sets.write_set;
 
 		// read all old symbols
 		for (gm_symtab_entry entry : old_s) {
 			gm_rwinfo r = gm_rwinfo.new_scala_inst(entry.getId());
-			GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(R, entry, r);
+			gm_rw_analysis.gm_add_rwinfo_to_set(R, entry, r);
 		}
 
 		// write all new symbols
 		for (gm_symtab_entry entry : old_s) {
 			gm_rwinfo w = gm_rwinfo.new_scala_inst(entry.getId());
-			GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(W, entry, w);
+			gm_rw_analysis.gm_add_rwinfo_to_set(W, entry, w);
 		}
 
 		// read all old supple lhs symbols
 		for (LinkedList<gm_symtab_entry> L : old_supple) {
 			for (gm_symtab_entry entry : L) {
 				gm_rwinfo r = gm_rwinfo.new_scala_inst(entry.getId());
-				GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(R, entry, r);
+				gm_rw_analysis.gm_add_rwinfo_to_set(R, entry, r);
 			}
 		}
 		for (LinkedList<gm_symtab_entry> L : new_supple) {
 			for (gm_symtab_entry entry : L) {
 				gm_rwinfo w = gm_rwinfo.new_scala_inst(entry.getId());
-				GlobalMembersGm_rw_analysis.gm_add_rwinfo_to_set(W, entry, w);
+				gm_rw_analysis.gm_add_rwinfo_to_set(W, entry, w);
 			}
 		}
 

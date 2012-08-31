@@ -68,7 +68,7 @@ public class gm_print_rw_info extends gm_apply {
 		if ((s.get_parent() != null) && ((s.get_parent().get_nodetype() != AST_SENTBLOCK) && (s.get_parent().get_nodetype() != AST_PROCDEF))) {
 			_tab++;
 		}
-		gm_rwinfo_sets sets = GlobalMembersGm_rw_analysis.get_rwinfo_sets(s);
+		gm_rwinfo_sets sets = gm_rw_analysis.get_rwinfo_sets(s);
 		gm_rwinfo_map R = sets.read_set;
 		gm_rwinfo_map W = sets.write_set;
 		gm_rwinfo_map D = sets.reduce_set;

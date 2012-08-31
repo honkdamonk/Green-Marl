@@ -12,9 +12,9 @@ public class gm_rwinfo_sets extends ast_extra_info
 
 	public void dispose()
 	{
-		GlobalMembersGm_rw_analysis.gm_delete_rwinfo_map(read_set);
-		GlobalMembersGm_rw_analysis.gm_delete_rwinfo_map(write_set);
-		GlobalMembersGm_rw_analysis.gm_delete_rwinfo_map(reduce_set);
-		GlobalMembersGm_rw_analysis.gm_delete_rwinfo_map(mutate_set);
+		gm_rw_analysis.gm_delete_rwinfo_map(read_set);
+		gm_rw_analysis.gm_delete_rwinfo_map(write_set);
+		gm_rw_analysis.gm_delete_rwinfo_map(reduce_set);
+		gm_rw_analysis.gm_delete_rwinfo_map(mutate_set);
 	}
 }

@@ -2,7 +2,7 @@ package inc;
 
 import ast.ast_procdef;
 import opt.gm_moveup_propdecl_t;
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 
 public class gm_ind_opt_move_propdecl extends gm_compile_step
 {
@@ -16,7 +16,7 @@ public class gm_ind_opt_move_propdecl extends gm_compile_step
 		p.get_body().traverse_both(T);
 		T.post_process();
     
-		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
+		gm_rw_analysis.gm_redo_rw_analysis(p.get_body());
 	}
 	@Override
 	public gm_compile_step get_instance()

@@ -38,7 +38,7 @@ public class gm_rw_analysis_check2 {
 
 	public static gm_rwinfo_map gm_get_write_set(ast_sent S) {
 		assert S != null;
-		return GlobalMembersGm_rw_analysis.get_rwinfo_sets(S).write_set;
+		return gm_rw_analysis.get_rwinfo_sets(S).write_set;
 	}
 	
 	public static boolean gm_has_dependency(gm_rwinfo_sets P_SET, gm_rwinfo_sets Q_SET) {
@@ -83,8 +83,8 @@ public class gm_rw_analysis_check2 {
 		// note: reduced set does not make dependency! (how great!)
 		// [todo] consideration of modified set.
 		// ---------------------------------------------------------
-		gm_rwinfo_sets P_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(P);
-		gm_rwinfo_sets Q_SET = GlobalMembersGm_rw_analysis.get_rwinfo_sets(Q);
+		gm_rwinfo_sets P_SET = gm_rw_analysis.get_rwinfo_sets(P);
+		gm_rwinfo_sets Q_SET = gm_rw_analysis.get_rwinfo_sets(Q);
 		return gm_has_dependency(P_SET, Q_SET);
 	}
 }

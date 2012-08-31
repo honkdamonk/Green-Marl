@@ -1,6 +1,6 @@
 package backend_gps;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_symtab_entry;
 import inc.gm_compile_step;
 
@@ -76,7 +76,7 @@ public class gm_gps_opt_insert_temp_property extends gm_compile_step {
 		// -------------------------------------
 		// Re-do RW analysis
 		// -------------------------------------
-		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
+		gm_rw_analysis.gm_redo_rw_analysis(p.get_body());
 	}
 
 	@Override

@@ -1,6 +1,6 @@
 package backend_gps;
 
-import frontend.GlobalMembersGm_rw_analysis;
+import frontend.gm_rw_analysis;
 import frontend.gm_rw_analysis_check2;
 import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
@@ -65,7 +65,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		// -------------------------------------
 		// Re-do RW analysis
 		// -------------------------------------
-		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
+		gm_rw_analysis.gm_redo_rw_analysis(p.get_body());
 
 	}
 
@@ -324,7 +324,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 	
 	private static gm_rwinfo_map gm_get_reduce_set(ast_sent S) {
 		assert S != null;
-		return GlobalMembersGm_rw_analysis.get_rwinfo_sets(S).reduce_set;
+		return gm_rw_analysis.get_rwinfo_sets(S).reduce_set;
 	}
 	
 	// --------------------------------------------

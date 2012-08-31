@@ -22,10 +22,10 @@ import ast.ast_sentblock;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GlobalMembersGm_flat_nested_sentblock;
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_resolve_nc;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_flat_nested_sentblock;
+import common.gm_new_sents_after_tc;
+import common.gm_resolve_nc;
+import common.gm_transform_helper;
 
 public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 	
@@ -57,7 +57,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 			split_the_loop(fe);
 		}
 
-		GlobalMembersGm_flat_nested_sentblock.gm_flat_nested_sentblock(p);
+		gm_flat_nested_sentblock.gm_flat_nested_sentblock(p);
 
 		// reconstruct_scope implied in flattening
 		// gm_reconstruct_scope(p);
@@ -165,7 +165,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		assert out != null;
 
 		assert out.get_iter_type().is_iteration_on_all_graph();
-		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(out);
+		gm_transform_helper.gm_make_it_belong_to_sentblock(out);
 		assert out.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 
 		// check if there are dependencies via scalar variable
@@ -180,24 +180,24 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 			ast_node old = reconstruct_old_new(frame, older_siblings, true);
 			assert old != null;
 
-			ast_foreach old_loop = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(out.get_iterator().copy(false), out.get_source().copy(true),
+			ast_foreach old_loop = gm_new_sents_after_tc.gm_new_foreach_after_tc(out.get_iterator().copy(false), out.get_source().copy(true),
 					(ast_sent) old, out.get_iter_type());
 			// replace iterator id
-			GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(out.get_iterator().getSymInfo(), old_loop.get_iterator().getSymInfo(), old);
+			gm_resolve_nc.gm_replace_symbol_entry(out.get_iterator().getSymInfo(), old_loop.get_iterator().getSymInfo(), old);
 
-			GlobalMembersGm_transform_helper.gm_add_sent_before(out, old_loop);
+			gm_transform_helper.gm_add_sent_before(out, old_loop);
 
 		}
 
 		if (need_young) {
 			ast_node old = reconstruct_old_new(frame, younger_siblings, false);
 			assert old != null;
-			ast_foreach new_loop = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(out.get_iterator().copy(false), out.get_source().copy(true),
+			ast_foreach new_loop = gm_new_sents_after_tc.gm_new_foreach_after_tc(out.get_iterator().copy(false), out.get_source().copy(true),
 					(ast_sent) old, out.get_iter_type());
 			// replace iterator id
-			GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(out.get_iterator().getSymInfo(), new_loop.get_iterator().getSymInfo(), old);
+			gm_resolve_nc.gm_replace_symbol_entry(out.get_iterator().getSymInfo(), new_loop.get_iterator().getSymInfo(), old);
 
-			GlobalMembersGm_transform_helper.gm_add_sent_after(out, new_loop);
+			gm_transform_helper.gm_add_sent_after(out, new_loop);
 
 		}
 	}

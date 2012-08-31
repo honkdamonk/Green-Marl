@@ -9,7 +9,7 @@ import ast.AST_NODE_TYPE;
 import ast.ast_foreach;
 import ast.ast_sent;
 
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 //-----------------------------------------------------------------
@@ -57,7 +57,7 @@ public class gps_rewrite_rhs_preprocessing_t extends gm_apply {
 	public final void process() {
 		for (ast_foreach fe : inner_loops) {
 			ast_sent s = fe.get_body();
-			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(s);
+			gm_transform_helper.gm_make_it_belong_to_sentblock(s);
 
 			assert s.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 			s.get_parent().add_info_int(GPS_INT_SYNTAX_CONTEXT, gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue());

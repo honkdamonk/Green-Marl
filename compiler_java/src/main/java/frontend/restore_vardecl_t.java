@@ -8,8 +8,8 @@ import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_vardecl;
 
-import common.GlobalMembersGm_transform_helper;
-import common.GlobalMembersGm_traverse;
+import common.gm_transform_helper;
+import common.gm_traverse;
 import common.gm_apply;
 
 public class restore_vardecl_t extends gm_apply
@@ -53,10 +53,10 @@ public class restore_vardecl_t extends gm_apply
 				continue; //we throw away the vardecl here, because we will declare it later at the assignment
 
 			if (top == null)
-				GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, v, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB);
+				gm_transform_helper.gm_insert_sent_begin_of_sb(sb, v, gm_transform_helper.GM_NOFIX_SYMTAB);
 			else
 			{
-				GlobalMembersGm_transform_helper.gm_add_sent_after(top, v, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB);
+				gm_transform_helper.gm_add_sent_after(top, v, gm_transform_helper.GM_NOFIX_SYMTAB);
 			}
 			top = v;
 		}
@@ -69,10 +69,10 @@ public class restore_vardecl_t extends gm_apply
 			ast_vardecl v = ast_vardecl.new_vardecl(type, id);
 			assert v.get_idlist().get_item(0).getSymInfo() != null;
 			if (top == null)
-				GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, v, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB);
+				gm_transform_helper.gm_insert_sent_begin_of_sb(sb, v, gm_transform_helper.GM_NOFIX_SYMTAB);
 			else
 			{
-				GlobalMembersGm_transform_helper.gm_add_sent_after(top, v, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB);
+				gm_transform_helper.gm_add_sent_after(top, v, gm_transform_helper.GM_NOFIX_SYMTAB);
 			}
 			top = v;
 		}
@@ -83,6 +83,6 @@ public class restore_vardecl_t extends gm_apply
 	{
 		set_all(false);
 		set_for_sent(true);
-		GlobalMembersGm_traverse.gm_traverse_sents(p, this, GlobalMembersGm_traverse.GM_POST_APPLY);
+		gm_traverse.gm_traverse_sents(p, this, gm_traverse.GM_POST_APPLY);
 	}
 }

@@ -3,7 +3,7 @@ package common;
 import inc.gm_code_writer;
 import backend_cpp.FILE;
 
-public class GlobalMembersGm_reproduce {
+public class gm_reproduce {
 	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
 	// in-line:
 	// /#define TO_STR(X) #X

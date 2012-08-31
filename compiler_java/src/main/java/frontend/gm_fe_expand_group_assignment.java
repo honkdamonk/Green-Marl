@@ -3,7 +3,7 @@ package frontend;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 
 public class gm_fe_expand_group_assignment extends gm_compile_step
@@ -16,7 +16,7 @@ public class gm_fe_expand_group_assignment extends gm_compile_step
 	{
 		//1. Group Assign -->  Foreach
 		ss2_group_assign ga = new ss2_group_assign();
-		GlobalMembersGm_traverse.gm_traverse_sents(p, ga); // mark
+		gm_traverse.gm_traverse_sents(p, ga); // mark
 		ga.post_process(); // process
 	}
 	@Override

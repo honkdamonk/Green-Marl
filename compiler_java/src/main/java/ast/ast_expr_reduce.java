@@ -4,8 +4,8 @@ import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
-import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_traverse;
+import common.gm_dumptree;
+import common.gm_traverse;
 import common.gm_apply;
 
 // Reduction expression
@@ -85,7 +85,7 @@ public class ast_expr_reduce extends ast_expr
 	}
 	public void dump_tree(int ind_level)
 	{
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.printf("[%s ", reduce_type.get_reduce_expr_string());
 		System.out.print(" (");
 		iter.dump_tree(0);
@@ -95,17 +95,17 @@ public class ast_expr_reduce extends ast_expr
 		System.out.println(iter_type.get_iter_type_string());
 		if (filter != null)
 		{
-			GlobalMembersGm_dumptree.IND(ind_level + 1);
+			gm_dumptree.IND(ind_level + 1);
 			System.out.print("<Filter> \n");
 			filter.dump_tree(ind_level + 1);
 			System.out.print("\n");
 		}
-		GlobalMembersGm_dumptree.IND(ind_level + 1);
+		gm_dumptree.IND(ind_level + 1);
 		System.out.print("<Body> \n");
 		body.dump_tree(ind_level + 1);
 		System.out.print("\n");
     
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("]");
 	}
 	public void traverse(gm_apply a, boolean is_post, boolean is_pre)
@@ -121,7 +121,7 @@ public class ast_expr_reduce extends ast_expr
 		{
 			if (for_symtab)
 			{
-				apply_symtabs(a, GlobalMembersGm_traverse.PRE_APPLY);
+				apply_symtabs(a, gm_traverse.PRE_APPLY);
 			}
 			ast_id src = get_source();
 			ast_id it = get_iterator();
@@ -156,7 +156,7 @@ public class ast_expr_reduce extends ast_expr
 			boolean b = a.has_separate_post_apply();
 			if (for_symtab)
 			{
-				apply_symtabs(a, GlobalMembersGm_traverse.POST_APPLY);
+				apply_symtabs(a, gm_traverse.POST_APPLY);
 			}
 			ast_id src = get_source();
 			ast_id it = get_iterator();

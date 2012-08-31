@@ -7,7 +7,7 @@ import ast.ast_procdef;
 import ast.ast_sent;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 
 import frontend.SYMTAB_TYPES;
@@ -50,13 +50,13 @@ public class gps_check_synth_t extends gm_apply {
 	@Override
 	public boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
-			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "BFS or DFS");
+			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "BFS or DFS");
 			_error = true;
 		}
 
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_RETURN) {
 			if (foreach_depth > 0) {
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "Return inside foreach");
+				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "Return inside foreach");
 				_error = true;
 			}
 		}
@@ -81,7 +81,7 @@ public class gps_check_synth_t extends gm_apply {
 	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
 		GMTYPE_T type_id = e.getType().get_typeid();
 		if (type_id.is_collection_type()) {
-			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_COLLECTION, e.getId().get_line(), e.getId().get_col(), e
+			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_COLLECTION, e.getId().get_line(), e.getId().get_col(), e
 					.getId().get_orgname());
 			_error = true;
 		}
@@ -97,7 +97,7 @@ public class gps_check_synth_t extends gm_apply {
 
 		else if (type_id.is_graph_type()) {
 			if (_graph_defined) {
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_MULTIPLE_GRAPH, e.getId().get_line(), e.getId().get_col(), e.getId()
+				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_MULTIPLE_GRAPH, e.getId().get_line(), e.getId().get_col(), e.getId()
 						.get_orgname());
 				_error = true;
 			}

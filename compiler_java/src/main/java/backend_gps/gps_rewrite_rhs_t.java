@@ -21,9 +21,9 @@ import ast.ast_id;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_add_symbol;
+import common.gm_add_symbol;
 import common.gm_main;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 import frontend.gm_symtab_entry;
@@ -139,7 +139,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 			r_assign.add_info_bool(GPS_FLAG_COMM_DEF_ASSIGN, true);
 
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, r_assign);
+			gm_transform_helper.gm_insert_sent_begin_of_sb(sb, r_assign);
 		}
 
 		for (gm_symtab_entry prop : props_vars.keySet()) {
@@ -154,7 +154,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 			r_assign.add_info_bool(GPS_FLAG_COMM_DEF_ASSIGN, true);
 
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, r_assign);
+			gm_transform_helper.gm_insert_sent_begin_of_sb(sb, r_assign);
 		}
 
 		// move edge-defining writes at the top
@@ -165,8 +165,8 @@ public class gps_rewrite_rhs_t extends gm_apply {
 			}
 		}
 		for (ast_sent s : sb.get_sents()) {
-			GlobalMembersGm_transform_helper.gm_ripoff_sent(s);
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, s);
+			gm_transform_helper.gm_ripoff_sent(s);
+			gm_transform_helper.gm_insert_sent_begin_of_sb(sb, s);
 		}
 
 	}
@@ -178,14 +178,14 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		String temp_name = gm_main.FE.voca_temp_name_and_add("_m");
 		gm_symtab_entry target;
 		if (type.is_prim_type()) {
-			target = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, type, new RefObject<String>(temp_name));
+			target = gm_add_symbol.gm_add_new_symbol_primtype(sb, type, new RefObject<String>(temp_name));
 		} else if (type.is_node_edge_compatible_type()) {
 			if (type.is_node_compatible_type()) {
 				type = GMTYPE_T.GMTYPE_NODE;
 			} else if (type.is_edge_compatible_type()) {
 				type = GMTYPE_T.GMTYPE_EDGE;
 			}
-			target = GlobalMembersGm_add_symbol.gm_add_new_symbol_nodeedge_type(sb, type, graph, new RefObject<String>(temp_name));
+			target = gm_add_symbol.gm_add_new_symbol_nodeedge_type(sb, type, graph, new RefObject<String>(temp_name));
 		} else {
 			assert false;
 			throw new AssertionError();
@@ -213,6 +213,6 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	public static void replace_access_expr(ast_expr org, gm_symtab_entry target, boolean destroy) {
 		gm_replace_simple_props_t T = new gm_replace_simple_props_t(org, target, destroy);
 		assert org.get_parent() != null;
-		GlobalMembersGm_transform_helper.gm_replace_expr_general(org.get_parent(), T);
+		gm_transform_helper.gm_replace_expr_general(org.get_parent(), T);
 	}
 }

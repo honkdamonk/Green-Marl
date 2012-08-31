@@ -3,7 +3,7 @@ package frontend;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 
 public class gm_fe_rw_analysis extends gm_compile_step
@@ -15,7 +15,7 @@ public class gm_fe_rw_analysis extends gm_compile_step
 	public void process(ast_procdef p)
 	{
 		gm_rw_analysis RWA = new gm_rw_analysis();
-		GlobalMembersGm_traverse.gm_traverse_sents(p, RWA, GlobalMembersGm_traverse.GM_POST_APPLY); // post apply
+		gm_traverse.gm_traverse_sents(p, RWA, gm_traverse.GM_POST_APPLY); // post apply
 		set_okay(RWA.is_success());
 	}
 	@Override

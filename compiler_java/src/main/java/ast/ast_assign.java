@@ -7,7 +7,7 @@ import inc.gm_assignment_t;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 
 public class ast_assign extends ast_sent {
@@ -336,7 +336,7 @@ public class ast_assign extends ast_sent {
 	}
 
 	public void dump_tree(int ind_level) {
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		assert parent != null;
 
 		if (assign_type == gm_assignment_t.GMASSIGN_NORMAL) {
@@ -361,7 +361,7 @@ public class ast_assign extends ast_sent {
 		System.out.print("\n");
 		rhs.dump_tree(ind_level + 1);
 		System.out.print("\n");
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("]");
 	}
 

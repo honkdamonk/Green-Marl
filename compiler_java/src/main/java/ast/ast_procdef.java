@@ -1,7 +1,7 @@
 package ast;
 
-import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_traverse;
+import common.gm_dumptree;
+import common.gm_traverse;
 import common.gm_apply;
 
 //-------------------------------------------------------
@@ -63,25 +63,25 @@ public class ast_procdef extends ast_node {
 	}
 
 	public void dump_tree(int ind_level) {
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("[PROC ");
 		id.dump_tree(0);
 		System.out.print("\n");
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print(" IN:\n");
 		for(ast_argdecl d : in_args) {
 			d.dump_tree(ind_level + 1);
 			System.out.print("\n");
 		}
 		System.out.print("\n");
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print(" OUT:\n");
 		for(ast_argdecl d : in_args) {
 			d.dump_tree(ind_level + 1);
 			System.out.print("\n");
 		}
 		System.out.print("\n");
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print(" RET: ");
 		if (ret_type == null)
 			System.out.print("(void)");
@@ -102,9 +102,9 @@ public class ast_procdef extends ast_node {
 
 		if (is_pre) {
 			if (for_symtab)
-				apply_symtabs(a, GlobalMembersGm_traverse.PRE_APPLY);
+				apply_symtabs(a, gm_traverse.PRE_APPLY);
 			if (for_id)
-				apply_id(a, GlobalMembersGm_traverse.PRE_APPLY);
+				apply_id(a, gm_traverse.PRE_APPLY);
 			if (for_proc)
 				a.apply(this);
 		}
@@ -114,9 +114,9 @@ public class ast_procdef extends ast_node {
 
 		if (is_post) {
 			if (for_symtab)
-				apply_symtabs(a, GlobalMembersGm_traverse.POST_APPLY);
+				apply_symtabs(a, gm_traverse.POST_APPLY);
 			if (for_id)
-				apply_id(a, GlobalMembersGm_traverse.POST_APPLY);
+				apply_id(a, gm_traverse.POST_APPLY);
 			if (for_proc) {
 				if (a.has_separate_post_apply())
 					a.apply2(this);

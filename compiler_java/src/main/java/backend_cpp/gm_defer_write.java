@@ -11,7 +11,7 @@ import ast.ast_sent;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 import common.gm_apply;
 
 import frontend.GlobalMembersGm_rw_analysis;
@@ -85,7 +85,7 @@ public class gm_defer_write extends gm_apply {
 
 	public final boolean find_deferred_writes(ast_procdef s) {
 		has_found = false;
-		GlobalMembersGm_traverse.gm_traverse_sents(s, this, GlobalMembersGm_traverse.GM_POST_APPLY);
+		gm_traverse.gm_traverse_sents(s, this, gm_traverse.GM_POST_APPLY);
 		return has_found;
 	}
 

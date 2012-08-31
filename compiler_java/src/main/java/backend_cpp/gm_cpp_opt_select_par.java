@@ -4,7 +4,7 @@ import ast.ast_procdef;
 import inc.gm_compile_step;
 
 import common.gm_main;
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 public class gm_cpp_opt_select_par extends gm_compile_step
 {
@@ -17,12 +17,12 @@ public class gm_cpp_opt_select_par extends gm_compile_step
 		if (!gm_main.CPP_BE.is_target_omp())
 		{
 			make_all_seq_t A = new make_all_seq_t();
-			GlobalMembersGm_traverse.gm_traverse_sents(p, A);
+			gm_traverse.gm_traverse_sents(p, A);
 		}
 		else
 		{
 			choose_parallel_t A = new choose_parallel_t();
-			GlobalMembersGm_traverse.gm_traverse_sents(p, A);
+			gm_traverse.gm_traverse_sents(p, A);
 		}
     
 		return;

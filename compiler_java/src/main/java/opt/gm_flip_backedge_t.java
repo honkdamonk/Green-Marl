@@ -21,9 +21,9 @@ import ast.ast_sentblock;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_resolve_nc;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_new_sents_after_tc;
+import common.gm_resolve_nc;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 import frontend.GlobalMembersGm_rw_analysis;
@@ -215,7 +215,7 @@ public class gm_flip_backedge_t extends gm_apply {
 
 		// new_iter has a valid symtab entry, after foreach creating.
 		// foreach_body has correct symtab hierachy
-		ast_foreach fe_new = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(new_iter, new_source, foreach_body, new_iter_type);
+		ast_foreach fe_new = gm_new_sents_after_tc.gm_new_foreach_after_tc(new_iter, new_source, foreach_body, new_iter_type);
 
 		// ------------------------------------
 		// new assignment and put inside foreach
@@ -232,7 +232,7 @@ public class gm_flip_backedge_t extends gm_apply {
 
 		// RHS: repalce u -> t.
 		ast_expr new_rhs = old_rhs.get_body(); // reuse old expr structure.
-		GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(old_iter.getSymInfo(), bfs.get_iterator().getSymInfo(), new_rhs);
+		gm_resolve_nc.gm_replace_symbol_entry(old_iter.getSymInfo(), bfs.get_iterator().getSymInfo(), new_rhs);
 		// prevent new_rhs being deleted with old assignment.
 		old_rhs.set_body(null); 
 		new_rhs.set_up_op(null);
@@ -240,13 +240,13 @@ public class gm_flip_backedge_t extends gm_apply {
 		ast_assign new_assign = ast_assign.new_assign_field(new_lhs, new_rhs, gm_assignment_t.GMASSIGN_REDUCE, bfs.get_iterator().copy(true),
 				old_rhs.get_reduce_type());
 
-		GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(foreach_body, new_assign);
+		gm_transform_helper.gm_insert_sent_begin_of_sb(foreach_body, new_assign);
 
 		// now put new foreach in place of old assignment.
 		// rip-off and delete old assignment
-		GlobalMembersGm_transform_helper.gm_add_sent_before(a, fe_new);
+		gm_transform_helper.gm_add_sent_before(a, fe_new);
 		// no need to fix symtab for a -- it will be deleted.
-		GlobalMembersGm_transform_helper.gm_ripoff_sent(a, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB);
+		gm_transform_helper.gm_ripoff_sent(a, gm_transform_helper.GM_NOFIX_SYMTAB);
 	}
 
 }

@@ -7,7 +7,7 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 
 //-----------------------------------------------------------------
@@ -41,7 +41,7 @@ public class gps_check_random_read_t extends gm_apply {
 					System.out.printf("%s.%s\n", f.get_field().get_first().get_genname(), f.get_field().get_second().get_genname());
 				else
 					System.out.printf("%s->..()\n", ((ast_expr_builtin) f).get_driver().get_genname());
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_RANDOM_NODE_READ, f.get_line(), f.get_col(), "");
+				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_RANDOM_NODE_READ, f.get_line(), f.get_col(), "");
 				_error = true;
 			}
 		}

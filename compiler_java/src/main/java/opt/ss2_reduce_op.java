@@ -31,11 +31,11 @@ import ast.ast_node;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_add_symbol;
+import common.gm_add_symbol;
 import common.gm_main;
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_resolve_nc;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_new_sents_after_tc;
+import common.gm_resolve_nc;
+import common.gm_transform_helper;
 import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
@@ -180,7 +180,7 @@ public class ss2_reduce_op extends gm_apply {
 
 			// 1.2 initial value
 			assert expr_type.is_prim_type();
-			ast_expr init_val = GlobalMembersGm_new_sents_after_tc.gm_new_bottom_symbol(rtype, expr_type);
+			ast_expr init_val = gm_new_sents_after_tc.gm_new_bottom_symbol(rtype, expr_type);
 
 			// 1.3 add init
 			String temp_name = gm_main.FE.voca_temp_name(t_name_base);
@@ -194,7 +194,7 @@ public class ss2_reduce_op extends gm_apply {
 
 				cnt_symbol = insert_def_and_init_before(temp_cnt, GMTYPE_LONG, holder, ast_expr.new_ival_expr(0));
 
-				avg_val_symbol = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, (expr_type == GMTYPE_FLOAT) ? GMTYPE_FLOAT : GMTYPE_DOUBLE,
+				avg_val_symbol = gm_add_symbol.gm_add_new_symbol_primtype(sb, (expr_type == GMTYPE_FLOAT) ? GMTYPE_FLOAT : GMTYPE_DOUBLE,
 						new RefObject<String>(temp_avg));
 			}
 		}
@@ -205,7 +205,7 @@ public class ss2_reduce_op extends gm_apply {
 		// 2.1. rip-off body
 		ast_expr body = target.get_body();
 		target.set_body(null);
-		GlobalMembersGm_transform_helper.gm_ripoff_upper_scope(body);
+		gm_transform_helper.gm_ripoff_upper_scope(body);
 		body.set_up_op(null);
 
 		// 2.2. new assignment state (as for the body of for-each)
@@ -241,8 +241,8 @@ public class ss2_reduce_op extends gm_apply {
 				ast_assign r_assign2 = ast_assign.new_assign_scala(lhs_id1, ast_expr.new_ival_expr(1), gm_assignment_t.GMASSIGN_REDUCE, bound_id2,
 						GM_REDUCE_T.GMREDUCE_PLUS);
 
-				GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(sb, r_assign);
-				GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(sb, r_assign2);
+				gm_transform_helper.gm_insert_sent_end_of_sb(sb, r_assign);
+				gm_transform_helper.gm_insert_sent_end_of_sb(sb, r_assign2);
 
 				foreach_body = sb;
 			}
@@ -256,14 +256,14 @@ public class ss2_reduce_op extends gm_apply {
 				ast_expr r_assign_body = (left_nested == left) ? right : left;
 				r_assign_body.set_up_op(null);
 				r_assign = ast_assign.new_assign_scala(lhs_id, r_assign_body, gm_assignment_t.GMASSIGN_REDUCE, bound_id, rtype);
-				GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(nested_sentblock, r_assign);
+				gm_transform_helper.gm_insert_sent_end_of_sb(nested_sentblock, r_assign);
 			}
 		}
 
 		ast_expr filter = target.get_filter();
 		if (filter != null) {
 			target.set_filter(null);
-			GlobalMembersGm_transform_helper.gm_ripoff_upper_scope(filter);
+			gm_transform_helper.gm_ripoff_upper_scope(filter);
 
 			ast_if iff = ast_if.new_if(filter, foreach_body, null);
 			foreach_body = iff;
@@ -284,15 +284,15 @@ public class ss2_reduce_op extends gm_apply {
 		GMTYPE_T iter_type = target.get_iter_type();
 
 		// see common/new_sent_after_tc.cc
-		ast_foreach fe_new = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(foreach_it, foreach_src, foreach_body, iter_type);
+		ast_foreach fe_new = gm_new_sents_after_tc.gm_new_foreach_after_tc(foreach_it, foreach_src, foreach_body, iter_type);
 		fe_new.set_source2(foreach_src2); // xxx: what was this again?
 
 		// 3.2 add foreach
 		if (!is_nested) {
-			GlobalMembersGm_transform_helper.gm_add_sent_before(holder, fe_new);
+			gm_transform_helper.gm_add_sent_before(holder, fe_new);
 		} else {
 			assert nested_up_sentblock != null;
-			GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(nested_up_sentblock, fe_new);
+			gm_transform_helper.gm_insert_sent_end_of_sb(nested_up_sentblock, fe_new);
 		}
 
 		// -------------------------------------------------
@@ -309,9 +309,9 @@ public class ss2_reduce_op extends gm_apply {
 
 		// 4.2 replace every iterator (symbol) in the body_expression with the
 		// new foreach iterator
-		GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(old_iter.getSymInfo(), foreach_it.getSymInfo(), foreach_body);
+		gm_resolve_nc.gm_replace_symbol_entry(old_iter.getSymInfo(), foreach_it.getSymInfo(), foreach_body);
 		if (has_nested)
-			GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(old_iter.getSymInfo(), foreach_it.getSymInfo(), body);
+			gm_resolve_nc.gm_replace_symbol_entry(old_iter.getSymInfo(), foreach_it.getSymInfo(), body);
 
 		// ----------------------------------------------
 		// 5. replace <Sum(..){}> with <lhs_var>
@@ -340,7 +340,7 @@ public class ss2_reduce_op extends gm_apply {
 
 			ast_assign a = ast_assign.new_assign_scala(avg_val_symbol.getId().copy(true), ter);
 
-			GlobalMembersGm_transform_helper.gm_add_sent_after(fe_new, a);
+			gm_transform_helper.gm_add_sent_after(fe_new, a);
 
 			if (!need_count_for_avg) {
 				GMTYPE_T iter_type1 = target.get_iter_type();
@@ -355,7 +355,7 @@ public class ss2_reduce_op extends gm_apply {
 				ast_expr_builtin rhs = ast_expr_builtin.new_builtin_expr(target.get_source().copy(true), def, null);
 				ast_assign a1 = ast_assign.new_assign_scala(cnt_symbol.getId().copy(true), rhs);
 
-				GlobalMembersGm_transform_helper.gm_add_sent_after(fe_new, a1);
+				gm_transform_helper.gm_add_sent_after(fe_new, a1);
 			}
 		}
 

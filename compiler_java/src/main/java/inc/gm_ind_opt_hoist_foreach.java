@@ -3,7 +3,7 @@ package inc;
 import ast.ast_procdef;
 import opt.gm_hoist_foreach_t;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 public class gm_ind_opt_hoist_foreach extends gm_compile_step
 {
@@ -14,7 +14,7 @@ public class gm_ind_opt_hoist_foreach extends gm_compile_step
 	public void process(ast_procdef p)
 	{
 		gm_hoist_foreach_t T1 = new gm_hoist_foreach_t();
-		GlobalMembersGm_traverse.gm_traverse_sents(p, T1, GlobalMembersGm_traverse.GM_POST_APPLY); // hoist const defs up
+		gm_traverse.gm_traverse_sents(p, T1, gm_traverse.GM_POST_APPLY); // hoist const defs up
     
 		// host final defs down
 		//return true;

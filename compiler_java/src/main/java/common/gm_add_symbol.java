@@ -11,7 +11,7 @@ import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import frontend.gm_typechecker_stage_1;
 
-public class GlobalMembersGm_add_symbol {
+public class gm_add_symbol {
 
 	public static ast_sentblock gm_find_upscope(ast_sent s) {
 		if (s == null)
@@ -23,7 +23,7 @@ public class GlobalMembersGm_add_symbol {
 		if (up.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK)
 			return (ast_sentblock) up;
 		if (up.is_sentence())
-			return GlobalMembersGm_add_symbol.gm_find_upscope((ast_sent) up);
+			return gm_add_symbol.gm_find_upscope((ast_sent) up);
 		return null;
 	}
 
@@ -193,7 +193,7 @@ public class GlobalMembersGm_add_symbol {
 		ast_sentblock sb = (ast_sentblock) up.get_ast();
 		gm_symtab new_tab = is_scalar ? sb.get_symtab_var() : sb.get_symtab_field();
 
-		GlobalMembersGm_add_symbol.gm_move_symbol_into(e, old_tab, new_tab, is_scalar);
+		gm_add_symbol.gm_move_symbol_into(e, old_tab, new_tab, is_scalar);
 
 		return sb;
 	}

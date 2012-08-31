@@ -13,7 +13,7 @@ import ast.ast_sentblock;
 import ast.ast_while;
 import frontend.gm_scope;
 
-public class GlobalMembersGm_transform_helper {
+public class gm_transform_helper {
 
 	public static final boolean GM_FIX_SYMTAB = true;
 	public static final boolean GM_NOFIX_SYMTAB = false;
@@ -42,7 +42,7 @@ public class GlobalMembersGm_transform_helper {
 	// (case. b) make it a nested sentence block. ==> ...belong_to_sentblock_nested(s)
 	// --------------------------------------------------------------------
 	public static void gm_make_it_belong_to_sentblock(ast_sent s, boolean need_fix_symtab) {
-		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock_main(s, false, need_fix_symtab);
+		gm_transform_helper.gm_make_it_belong_to_sentblock_main(s, false, need_fix_symtab);
 	}
 
 	public static void gm_make_it_belong_to_sentblock_nested(ast_sent s) {
@@ -51,7 +51,7 @@ public class GlobalMembersGm_transform_helper {
 
 	public static void gm_make_it_belong_to_sentblock_nested(ast_sent s, boolean need_fix_symtab) {
 		// similar to previous function. But if the up-node is already a sent block,
-		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock_main(s, true, need_fix_symtab);
+		gm_transform_helper.gm_make_it_belong_to_sentblock_main(s, true, need_fix_symtab);
 	}
 
 	// --------------------------------------------------------------------
@@ -65,14 +65,14 @@ public class GlobalMembersGm_transform_helper {
 	
 	public static void gm_ripoff_sent(ast_sent target, boolean need_fix_symtab) {
 		// make sure that target belongs to a sent block
-		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(target, need_fix_symtab);
+		gm_transform_helper.gm_make_it_belong_to_sentblock(target, need_fix_symtab);
 
 		ast_sentblock sb = (ast_sentblock) target.get_parent();
 		assert sb.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 
 		if (need_fix_symtab) // rip-off
 		{
-			GlobalMembersGm_transform_helper.gm_ripoff_upper_scope(target);
+			gm_transform_helper.gm_ripoff_upper_scope(target);
 		}
 
 		java.util.LinkedList<ast_sent> sents = sb.get_sents();
@@ -91,7 +91,7 @@ public class GlobalMembersGm_transform_helper {
 	}
 
 	public static void gm_add_sent_begin(ast_sent current, ast_sent target, boolean need_fix_symtab) {
-		GlobalMembersGm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_BEGIN, need_fix_symtab);
+		gm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_BEGIN, need_fix_symtab);
 	}
 
 	public static void gm_add_sent_end(ast_sent current, ast_sent target) {
@@ -99,7 +99,7 @@ public class GlobalMembersGm_transform_helper {
 	}
 
 	public static void gm_add_sent_end(ast_sent current, ast_sent target, boolean need_fix_symtab) {
-		GlobalMembersGm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_BEGIN, need_fix_symtab);
+		gm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_BEGIN, need_fix_symtab);
 	}
 
 
@@ -111,7 +111,7 @@ public class GlobalMembersGm_transform_helper {
 	}
 
 	public static void gm_add_sent_before(ast_sent current, ast_sent target, boolean need_fix_symtab) {
-		GlobalMembersGm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_BEFORE, need_fix_symtab);
+		gm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_BEFORE, need_fix_symtab);
 	}
 
 	public static void gm_add_sent_after(ast_sent current, ast_sent target) {
@@ -119,7 +119,7 @@ public class GlobalMembersGm_transform_helper {
 	}
 
 	public static void gm_add_sent_after(ast_sent current, ast_sent target, boolean need_fix_symtab) {
-		GlobalMembersGm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_AFTER, need_fix_symtab);
+		gm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_AFTER, need_fix_symtab);
 	}
 
 	// --------------------------------------------------------------------
@@ -130,7 +130,7 @@ public class GlobalMembersGm_transform_helper {
 	}
 
 	public static void gm_insert_sent_begin_of_sb(ast_sentblock sb, ast_sent target, boolean need_fix_symtab) {
-		GlobalMembersGm_transform_helper.gm_insert_sent_in_sb(sb, target, gm_insert_location_t.GM_INSERT_BEGIN, need_fix_symtab);
+		gm_transform_helper.gm_insert_sent_in_sb(sb, target, gm_insert_location_t.GM_INSERT_BEGIN, need_fix_symtab);
 	}
 
 	public static void gm_insert_sent_end_of_sb(ast_sentblock sb, ast_sent target) {
@@ -138,7 +138,7 @@ public class GlobalMembersGm_transform_helper {
 	}
 
 	public static void gm_insert_sent_end_of_sb(ast_sentblock sb, ast_sent target, boolean need_fix_symtab) {
-		GlobalMembersGm_transform_helper.gm_insert_sent_in_sb(sb, target, gm_insert_location_t.GM_INSERT_END, need_fix_symtab);
+		gm_transform_helper.gm_insert_sent_in_sb(sb, target, gm_insert_location_t.GM_INSERT_END, need_fix_symtab);
 	}
 
 	public static void gm_insert_sent_body_begin(ast_foreach fe, ast_sent target) {
@@ -148,9 +148,9 @@ public class GlobalMembersGm_transform_helper {
 	public static void gm_insert_sent_body_begin(ast_foreach fe, ast_sent target, boolean need_fix_symtab) {
 		ast_sent s = fe.get_body();
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb((ast_sentblock) s, target, need_fix_symtab);
+			gm_transform_helper.gm_insert_sent_begin_of_sb((ast_sentblock) s, target, need_fix_symtab);
 		} else {
-			GlobalMembersGm_transform_helper.gm_add_sent_begin(s, target, need_fix_symtab);
+			gm_transform_helper.gm_add_sent_begin(s, target, need_fix_symtab);
 		}
 	}
 
@@ -161,9 +161,9 @@ public class GlobalMembersGm_transform_helper {
 	public static void gm_insert_sent_body_end(ast_foreach fe, ast_sent target, boolean need_fix_symtab) {
 		ast_sent s = fe.get_body();
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
-			GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb((ast_sentblock) s, target, need_fix_symtab);
+			gm_transform_helper.gm_insert_sent_end_of_sb((ast_sentblock) s, target, need_fix_symtab);
 		} else {
-			GlobalMembersGm_transform_helper.gm_add_sent_end(s, target, need_fix_symtab);
+			gm_transform_helper.gm_add_sent_end(s, target, need_fix_symtab);
 		}
 	}
 
@@ -179,7 +179,7 @@ public class GlobalMembersGm_transform_helper {
 
 	public static void gm_ripoff_upper_scope(ast_node n) {
 		gm_scope s = new gm_scope();
-		GlobalMembersGm_transform_helper.find_enclosing_scope(n, s);
+		gm_transform_helper.find_enclosing_scope(n, s);
 
 		ripoff_upper_scope R = new ripoff_upper_scope();
 		R.set_scope_to_remove(s);
@@ -196,8 +196,8 @@ public class GlobalMembersGm_transform_helper {
 
 	public static void gm_put_new_upper_scope(ast_node n, gm_scope new_s) {
 		gm_scope old_s = new gm_scope();
-		GlobalMembersGm_transform_helper.find_enclosing_scope(n, old_s);
-		GlobalMembersGm_transform_helper.gm_replace_upper_scope(n, old_s, new_s);
+		gm_transform_helper.find_enclosing_scope(n, old_s);
+		gm_transform_helper.gm_replace_upper_scope(n, old_s, new_s);
 	}
 
 	// re-construct scope
@@ -366,7 +366,7 @@ public class GlobalMembersGm_transform_helper {
 				return fe;
 		}
 
-		return GlobalMembersGm_transform_helper.gm_find_enclosing_seq_loop(up);
+		return gm_transform_helper.gm_find_enclosing_seq_loop(up);
 	}
 
 	// --------------------------------------------------------------------
@@ -429,7 +429,7 @@ public class GlobalMembersGm_transform_helper {
 		else if (up.is_sentence())
 			return (ast_sent) up;
 		else if (up.is_expr())
-			return GlobalMembersGm_transform_helper.gm_find_parent_sentence((ast_expr) up);
+			return gm_transform_helper.gm_find_parent_sentence((ast_expr) up);
 		else
 			return null;
 	}
@@ -440,7 +440,7 @@ public class GlobalMembersGm_transform_helper {
 	public static void find_enclosing_scope(ast_node n, gm_scope s) {
 		assert n != null;
 		if (!n.has_symtab()) {
-			GlobalMembersGm_transform_helper.find_enclosing_scope(n.get_parent(), s);
+			gm_transform_helper.find_enclosing_scope(n.get_parent(), s);
 			return;
 		}
 		if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
@@ -486,14 +486,14 @@ public class GlobalMembersGm_transform_helper {
 		// ---------------------------------------------
 		if (need_fix_symtab) {
 			gm_scope up_scope = new gm_scope();
-			GlobalMembersGm_transform_helper.find_enclosing_scope(s, up_scope); // old enclosing scope for s
+			gm_transform_helper.find_enclosing_scope(s, up_scope); // old enclosing scope for s
 
-			GlobalMembersGm_transform_helper.gm_put_new_upper_scope_on_null(sb, up_scope); // new enclosing scope for sb
+			gm_transform_helper.gm_put_new_upper_scope_on_null(sb, up_scope); // new enclosing scope for sb
 
 			gm_scope SB_scope = new gm_scope();
 			sb.get_this_scope(SB_scope);
 
-			GlobalMembersGm_transform_helper.gm_replace_upper_scope(s, up_scope, SB_scope); // new enclosing scope for s
+			gm_transform_helper.gm_replace_upper_scope(s, up_scope, SB_scope); // new enclosing scope for s
 		}
 
 		sb.add_sent(s);
@@ -551,7 +551,7 @@ public class GlobalMembersGm_transform_helper {
 
 	public static void gm_add_sent(ast_sent current, ast_sent target, gm_insert_location_t gmInsertBegin, boolean need_fix_symtab) {
 		// make sure that current belongs to a sent block
-		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(current, need_fix_symtab);
+		gm_transform_helper.gm_make_it_belong_to_sentblock(current, need_fix_symtab);
 
 		ast_sentblock sb = (ast_sentblock) current.get_parent();
 		assert sb.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
@@ -561,7 +561,7 @@ public class GlobalMembersGm_transform_helper {
 			gm_scope S = new gm_scope();
 			sb.get_this_scope(S);
 
-			GlobalMembersGm_transform_helper.gm_put_new_upper_scope_on_null(target, S);
+			gm_transform_helper.gm_put_new_upper_scope_on_null(target, S);
 		}
 
 		java.util.LinkedList<ast_sent> sents = sb.get_sents();
@@ -591,7 +591,7 @@ public class GlobalMembersGm_transform_helper {
 			gm_scope S = new gm_scope();
 			sb.get_this_scope(S);
 
-			GlobalMembersGm_transform_helper.gm_put_new_upper_scope_on_null(target, S);
+			gm_transform_helper.gm_put_new_upper_scope_on_null(target, S);
 		}
 
 		java.util.LinkedList<ast_sent> sents = sb.get_sents();

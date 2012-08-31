@@ -11,8 +11,8 @@ import ast.ast_node;
 import ast.ast_sent;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_error;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 public class find_hpb_t extends gm_apply {
@@ -158,7 +158,7 @@ public class find_hpb_t extends gm_apply {
 			if (a.get_bound() == null) {
 				gm_symtab_entry bound = find_closest_any_boundary_iterator();
 				if (bound == null) {
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_UNBOUND_REDUCE, a.get_line(), a.get_col());
+					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_UNBOUND_REDUCE, a.get_line(), a.get_col());
 					return false;
 				}
 
@@ -205,7 +205,7 @@ public class find_hpb_t extends gm_apply {
 
 	public final void post_process() {
 		for (ast_assign a : targets) {
-			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
+			gm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			FrontendGlobal.gm_make_normal_assign(a);
 		}
 	}

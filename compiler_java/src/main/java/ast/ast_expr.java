@@ -5,7 +5,7 @@ import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 
 // Numeric or boolean expression
@@ -161,7 +161,7 @@ public class ast_expr extends ast_node {
 
 	public void dump_tree(int ind_level) {
 
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		assert parent != null;
 		switch (expr_class) {
 		case GMEXPR_INF:
@@ -193,29 +193,29 @@ public class ast_expr extends ast_node {
 			}
 			left.dump_tree(ind_level + 1);
 			System.out.print("\n");
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 			System.out.print("]");
 			return;
 		case GMEXPR_LUOP:
 			System.out.print("[ !\n");
 			left.dump_tree(ind_level + 1);
 			System.out.print("\n");
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 			System.out.print("]");
 			return;
 		case GMEXPR_TER:
 			System.out.print("[(cond)\n");
 			cond.dump_tree(ind_level + 1);
 			System.out.print("\n");
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 			System.out.print("(left)\n");
 			left.dump_tree(ind_level + 1);
 			System.out.print("\n");
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 			System.out.print("(right)\n");
 			right.dump_tree(ind_level + 1);
 			System.out.print("\n");
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 			System.out.print("]");
 			return;
 		case GMEXPR_BUILTIN:
@@ -243,7 +243,7 @@ public class ast_expr extends ast_node {
 		System.out.print("\n");
 		right.dump_tree(ind_level + 1);
 		System.out.print("\n");
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("]");
 	}
 

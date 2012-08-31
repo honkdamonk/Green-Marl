@@ -19,8 +19,8 @@ import ast.ast_nop;
 import ast.ast_sent;
 
 import common.gm_main;
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_new_sents_after_tc;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 public class ss2_group_assign extends gm_apply {
@@ -68,12 +68,12 @@ public class ss2_group_assign extends gm_apply {
 		// 4. add s' after nop
 		// 5. rip off nop.
 		// ----------------------------------------------------
-		GlobalMembersGm_transform_helper.gm_add_sent_after(a, NOP);
+		gm_transform_helper.gm_add_sent_after(a, NOP);
 		// ast_sentblock *SB = (ast_sentblock*) a->get_parent();
-		GlobalMembersGm_transform_helper.gm_ripoff_sent(a);
+		gm_transform_helper.gm_ripoff_sent(a);
 		ast_foreach fe = create_surrounding_fe(a);
-		GlobalMembersGm_transform_helper.gm_add_sent_after(NOP, fe);
-		GlobalMembersGm_transform_helper.gm_ripoff_sent(NOP);
+		gm_transform_helper.gm_add_sent_after(NOP, fe);
+		gm_transform_helper.gm_ripoff_sent(NOP);
 
 		if (NOP != null)
 			NOP.dispose(); // no need after this
@@ -177,7 +177,7 @@ public class ss2_group_assign extends gm_apply {
 			throw new AssertionError();
 		}
 
-		ast_foreach fe_new = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(it, src, a, iter);
+		ast_foreach fe_new = gm_new_sents_after_tc.gm_new_foreach_after_tc(it, src, a, iter);
 
 		return fe_new;
 	}

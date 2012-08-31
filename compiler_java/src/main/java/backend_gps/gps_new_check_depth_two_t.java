@@ -8,7 +8,7 @@ import ast.ast_foreach;
 import ast.ast_sent;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 
 //------------------------------------------------------------------------
@@ -47,12 +47,12 @@ public class gps_new_check_depth_two_t extends gm_apply {
 		if (foreach_depth == 1) {
 			// check if node-wide foreach
 			if (fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_ALL) {
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_RANGE_MASTER, s.get_line(), s.get_col(), "");
+				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_RANGE_MASTER, s.get_line(), s.get_col(), "");
 				_error = true;
 			}
 
 			if (fe.is_sequential()) {
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NEED_PARALLEL, s.get_line(), s.get_col(), "");
+				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NEED_PARALLEL, s.get_line(), s.get_col(), "");
 				_error = true;
 			}
 
@@ -63,11 +63,11 @@ public class gps_new_check_depth_two_t extends gm_apply {
 		else if (foreach_depth == 2) {
 			// check if out-nbr iteration
 			if ((fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_NBRS) && (fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_IN_NBRS)) {
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_RANGE_VERTEX, s.get_line(), s.get_col(), "");
+				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_RANGE_VERTEX, s.get_line(), s.get_col(), "");
 				_error = true;
 			}
 			if (fe.is_sequential()) {
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NEED_PARALLEL, s.get_line(), s.get_col(), "");
+				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NEED_PARALLEL, s.get_line(), s.get_col(), "");
 				_error = true;
 			}
 
@@ -76,7 +76,7 @@ public class gps_new_check_depth_two_t extends gm_apply {
 		} // (depth > 3)
 		else {
 			_error = true;
-			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NBR_LOOP_TOO_DEEP, s.get_line(), s.get_col(), "");
+			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NBR_LOOP_TOO_DEEP, s.get_line(), s.get_col(), "");
 		}
 
 		return true;

@@ -20,8 +20,8 @@ import ast.ast_node;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_error;
+import common.gm_add_symbol;
+import common.gm_error;
 import common.gm_apply;
 
 import frontend.gm_symtab_entry;
@@ -46,7 +46,7 @@ public class gps_check_random_access_t2 extends gm_apply {
 				&& (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue())) {
 			// redefined;
 			if (is_defined(sym)) {
-				GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_REDEF, i.get_line(), i.get_col());
+				gm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_REDEF, i.get_line(), i.get_col());
 				_error = true;
 			} else {
 				add_define(sym);
@@ -67,21 +67,21 @@ public class gps_check_random_access_t2 extends gm_apply {
 			} else if (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue()) {
 				if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue()) {
 					_error = true;
-					GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_USE_SCOPE, f.get_line(), f.get_col());
+					gm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_USE_SCOPE, f.get_line(), f.get_col());
 				} else if (check_if_met_conditional_before(s, sym)) {
 					_error = true;
-					GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_CONDITIONAL, f.get_line(), f.get_col());
+					gm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_CONDITIONAL, f.get_line(), f.get_col());
 				}
 
 				// okay
 				is_random_write = true;
 			} else {
 				_error = true;
-				GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_DEF_SCOPE, f.get_line(), f.get_col());
+				gm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_DEF_SCOPE, f.get_line(), f.get_col());
 			}
 
 			if (is_random_write) {
-				ast_sentblock sb = GlobalMembersGm_add_symbol.gm_find_defining_sentblock_up(s, sym);
+				ast_sentblock sb = gm_add_symbol.gm_find_defining_sentblock_up(s, sym);
 				assert sb != null;
 				assert s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN;
 				s.add_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN, sb);

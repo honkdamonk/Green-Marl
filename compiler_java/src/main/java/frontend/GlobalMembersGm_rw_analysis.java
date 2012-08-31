@@ -28,8 +28,8 @@ import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_traverse;
+import common.gm_error;
+import common.gm_traverse;
 
 public class GlobalMembersGm_rw_analysis {
 
@@ -207,11 +207,11 @@ public class GlobalMembersGm_rw_analysis {
 	public static boolean gm_redo_rw_analysis(ast_sent s) {
 		// nullify previous analysis. (IR tree has been modified)
 		gm_delete_rw_analysis D = new gm_delete_rw_analysis();
-		GlobalMembersGm_traverse.gm_traverse_sents(s, D, GlobalMembersGm_traverse.GM_POST_APPLY);
+		gm_traverse.gm_traverse_sents(s, D, gm_traverse.GM_POST_APPLY);
 
 		// do-it again RW analysis
 		gm_rw_analysis RWA = new gm_rw_analysis();
-		GlobalMembersGm_traverse.gm_traverse_sents(s, RWA, GlobalMembersGm_traverse.GM_POST_APPLY); // post
+		gm_traverse.gm_traverse_sents(s, RWA, gm_traverse.GM_POST_APPLY); // post
 																									// apply
 		return RWA.is_success();
 	}
@@ -354,7 +354,7 @@ public class GlobalMembersGm_rw_analysis {
 			assert neo.location != null;
 			// assert(neo->driver->getId() != NULL);
 
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_OP, neo.location.get_line(), neo.location.get_col(),
+			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_OP, neo.location.get_line(), neo.location.get_col(),
 					old.reduce_op.get_reduce_string());
 			return true;
 		}
@@ -362,7 +362,7 @@ public class GlobalMembersGm_rw_analysis {
 		// check if they are bound to the same symbol
 		if (old.bound_symbol != neo.bound_symbol) {
 			// generate error message
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_ITOR, neo.location.get_line(), neo.location.get_col(),
+			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_ITOR, neo.location.get_line(), neo.location.get_col(),
 					old.bound_symbol.getId().get_orgname());
 			return true;
 		}

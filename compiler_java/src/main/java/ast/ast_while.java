@@ -1,6 +1,6 @@
 package ast;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 
 public class ast_while extends ast_sent
@@ -62,7 +62,7 @@ public class ast_while extends ast_sent
 	}
 	public void dump_tree(int ind_level)
 	{
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		assert parent != null;
 		if (is_do_while())
 		{
@@ -71,7 +71,7 @@ public class ast_while extends ast_sent
 			System.out.print(" WHILE ");
 			cond.dump_tree(0);
 			System.out.print("\n");
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 			System.out.print("]");
 		}
 		else
@@ -81,7 +81,7 @@ public class ast_while extends ast_sent
 			System.out.print("  BODY: \n");
 			body.dump_tree(ind_level + 1);
 			System.out.print("\n");
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 			System.out.print("]");
 		}
 	}

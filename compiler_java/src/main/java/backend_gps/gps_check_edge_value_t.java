@@ -20,7 +20,7 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_sent;
 
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 import common.gm_method_id_t;
 
@@ -94,7 +94,7 @@ public class gps_check_edge_value_t extends gm_apply {
 						}
 
 						if (conditional) {
-							GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_EDGE_WRITE_CONDITIONAL, a.get_lhs_field().get_line(), a.get_lhs_field()
+							gm_error.gm_backend_error(GM_ERROR_GPS_EDGE_WRITE_CONDITIONAL, a.get_lhs_field().get_line(), a.get_lhs_field()
 									.get_col());
 							set_error(true);
 						}
@@ -176,11 +176,11 @@ public class gps_check_edge_value_t extends gm_apply {
 					|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_RANDOM.getValue())) {
 				if (e.is_field()) {
 					ast_field f = e.get_field();
-					GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_EDGE_WRITE_RHS, f.get_line(), f.get_col(), f.get_first().get_orgname());
+					gm_error.gm_backend_error(GM_ERROR_GPS_EDGE_WRITE_RHS, f.get_line(), f.get_col(), f.get_first().get_orgname());
 					set_error(true);
 				} else if (e.is_id()) {
 					ast_id f = e.get_id();
-					GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_EDGE_WRITE_RHS, f.get_line(), f.get_col(), f.get_orgname());
+					gm_error.gm_backend_error(GM_ERROR_GPS_EDGE_WRITE_RHS, f.get_line(), f.get_col(), f.get_orgname());
 					set_error(true);
 				}
 			}
@@ -191,14 +191,14 @@ public class gps_check_edge_value_t extends gm_apply {
 			if (f.getSourceTypeInfo().is_edge_compatible()) {
 				// check if random reading (case 1)
 				if (!f.get_first().getSymInfo().find_info_bool(GPS_FLAG_EDGE_DEFINED_INNER)) {
-					GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_EDGE_READ_RANDOM, f.get_line(), f.get_col());
+					gm_error.gm_backend_error(GM_ERROR_GPS_EDGE_READ_RANDOM, f.get_line(), f.get_col());
 					set_error(true);
 				} else {
 					// (case 3)
 					boolean b = manage_edge_prop_access_state(inner_loop, f.get_second().getSymInfo(), SENDING);
 
 					if (b) {
-						GlobalMembersGm_error.gm_backend_error(GM_ERROR_GPS_EDGE_SEND_VERSIONS, f.get_line(), f.get_col(), f.get_first().get_orgname());
+						gm_error.gm_backend_error(GM_ERROR_GPS_EDGE_SEND_VERSIONS, f.get_line(), f.get_col(), f.get_first().get_orgname());
 						set_error(true);
 					}
 				}

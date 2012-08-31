@@ -1,6 +1,6 @@
 package ast;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 
 public class ast_if extends ast_sent {
@@ -55,7 +55,7 @@ public class ast_if extends ast_sent {
 	}
 
 	public void dump_tree(int ind_level) {
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		assert parent != null;
 		System.out.print("[IF ");
 		cond.dump_tree(0);
@@ -66,7 +66,7 @@ public class ast_if extends ast_sent {
 			else_part.dump_tree(ind_level + 1);
 		}
 		System.out.print("\n");
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("]");
 	}
 

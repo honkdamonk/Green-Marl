@@ -5,7 +5,7 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import frontend.gm_symtab;
 
-public class GlobalMembersGm_merge_sentblock
+public class gm_merge_sentblock
 {
 	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 	///#define TO_STR(X) #X
@@ -65,19 +65,19 @@ public class GlobalMembersGm_merge_sentblock
 		java.util.LinkedList<ast_sent> Qs = Q.get_sents(); // work on a copy
 		for (ast_sent s : Qs)
 		{
-			GlobalMembersGm_transform_helper.gm_ripoff_sent(s);
+			gm_transform_helper.gm_ripoff_sent(s);
 			if (s.get_nodetype() == AST_NODE_TYPE.AST_VARDECL)
 			{
 				if (anchor == null)
-					GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(P, s);
+					gm_transform_helper.gm_insert_sent_begin_of_sb(P, s);
 				else
-					GlobalMembersGm_transform_helper.gm_add_sent_after(anchor, s);
+					gm_transform_helper.gm_add_sent_after(anchor, s);
 
 				anchor = s;
 			}
 			else
 			{
-				GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(P, s);
+				gm_transform_helper.gm_insert_sent_end_of_sb(P, s);
 			}
 		}
 

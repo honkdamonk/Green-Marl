@@ -6,8 +6,8 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_vardecl;
 
-import common.GlobalMembersGm_transform_helper;
-import common.GlobalMembersGm_traverse;
+import common.gm_transform_helper;
+import common.gm_traverse;
 import common.gm_apply;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -48,7 +48,7 @@ public class remove_vardecl_t extends gm_apply
 		for (ast_sent z : stack)
 		{
 			// now delete
-			GlobalMembersGm_transform_helper.gm_ripoff_sent(z, false);
+			gm_transform_helper.gm_ripoff_sent(z, false);
 			if (z != null)
 				z.dispose();
 		}
@@ -59,6 +59,6 @@ public class remove_vardecl_t extends gm_apply
 	{
 		set_all(false);
 		set_for_sent(true);
-		GlobalMembersGm_traverse.gm_traverse_sents(p, this, GlobalMembersGm_traverse.GM_POST_APPLY);
+		gm_traverse.gm_traverse_sents(p, this, gm_traverse.GM_POST_APPLY);
 	}
 }

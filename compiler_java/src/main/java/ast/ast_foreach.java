@@ -2,7 +2,7 @@ package ast;
 
 import inc.GMTYPE_T;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 
 public class ast_foreach extends ast_sent {
@@ -91,7 +91,7 @@ public class ast_foreach extends ast_sent {
 	}
 
 	public void dump_tree(int ind_level) {
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		assert parent != null;
 		if (!is_sequential())
 			System.out.print("[FOREACH ");
@@ -111,7 +111,7 @@ public class ast_foreach extends ast_sent {
 		}
 		body.dump_tree(ind_level + 1);
 		System.out.print("\n");
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("]");
 	}
 

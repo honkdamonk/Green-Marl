@@ -9,7 +9,7 @@ import ast.ast_foreach;
 import ast.ast_node;
 import ast.ast_sent;
 
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 import frontend.FrontendGlobal;
@@ -77,7 +77,7 @@ public class gm_opt_optimize_single_reduction_t extends gm_apply {
 	public final void post_process() {
 		for (ast_assign a : targets) {
 			assert a.is_reduce_assign();
-			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
+			gm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			FrontendGlobal.gm_make_normal_assign(a);
 		}
 	}

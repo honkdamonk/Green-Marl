@@ -17,10 +17,10 @@ import ast.ast_id;
 import ast.ast_procdef;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_add_symbol;
+import common.gm_add_symbol;
 import common.gm_main;
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_new_sents_after_tc;
+import common.gm_transform_helper;
 
 //-------------------------------------------
 // [Step 1]
@@ -49,7 +49,7 @@ public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
 			// create a temporary node property
 			ast_sentblock sb = p.get_body();
 			tangible.RefObject<String> tempRef_tmp_name = new tangible.RefObject<String>(tmp_name);
-			gm_symtab_entry new_prop = GlobalMembersGm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, T.get_target_graph(),
+			gm_symtab_entry new_prop = gm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, T.get_target_graph(),
 					tempRef_tmp_name);
 			tmp_name = tempRef_tmp_name.argvalue;
 
@@ -58,37 +58,37 @@ public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
 			ast_sentblock sb2 = ast_sentblock.new_sentblock();
 			ast_id it2 = ast_id.new_id(tmp_iter, 0, 0);
 			ast_id src = T.get_target_graph().getId().copy(true);
-			ast_foreach fe = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(it2, src, sb2, GMTYPE_T.GMTYPE_NODEITER_ALL);
+			ast_foreach fe = gm_new_sents_after_tc.gm_new_foreach_after_tc(it2, src, sb2, GMTYPE_T.GMTYPE_NODEITER_ALL);
 			ast_expr rhs = ast_expr.new_ival_expr(0);
 			ast_field f = ast_field.new_field(fe.get_iterator().copy(true), new_prop.getId().copy(true));
 			ast_assign a = ast_assign.new_assign_field(f, rhs);
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb2, a);
+			gm_transform_helper.gm_insert_sent_begin_of_sb(sb2, a);
 
 			it2 = it2.copy(false);
 			src = src.copy(true);
 			sb2 = ast_sentblock.new_sentblock();
-			ast_foreach fe2 = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(it2, src, sb2, GMTYPE_T.GMTYPE_NODEITER_ALL);
+			ast_foreach fe2 = gm_new_sents_after_tc.gm_new_foreach_after_tc(it2, src, sb2, GMTYPE_T.GMTYPE_NODEITER_ALL);
 
 			String tmp_iter2 = gm_main.FE.voca_temp_name_and_add("u");
 			ast_sentblock sb3 = ast_sentblock.new_sentblock();
 			ast_id it3 = ast_id.new_id(tmp_iter2, 0, 0);
 			src = fe2.get_iterator().copy(true);
-			ast_foreach fe3 = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(it3, src, sb3, GMTYPE_T.GMTYPE_NODEITER_NBRS);
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb2, fe3);
+			ast_foreach fe3 = gm_new_sents_after_tc.gm_new_foreach_after_tc(it3, src, sb3, GMTYPE_T.GMTYPE_NODEITER_NBRS);
+			gm_transform_helper.gm_insert_sent_begin_of_sb(sb2, fe3);
 
 			rhs = ast_expr.new_ival_expr(1);
 			f = ast_field.new_field(fe3.get_iterator().copy(true), new_prop.getId().copy(true));
 			a = ast_assign.new_assign_field(f, rhs, gm_assignment_t.GMASSIGN_REDUCE, fe2.get_iterator().copy(true), GM_REDUCE_T.GMREDUCE_PLUS);
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb3, a);
+			gm_transform_helper.gm_insert_sent_begin_of_sb(sb3, a);
 
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(p.get_body(), fe2);
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(p.get_body(), fe);
+			gm_transform_helper.gm_insert_sent_begin_of_sb(p.get_body(), fe2);
+			gm_transform_helper.gm_insert_sent_begin_of_sb(p.get_body(), fe);
 
 			// Rename every InDegree() access with
 			// access to the new property
 			replace_in_degree_t T_2 = new replace_in_degree_t();
 			T_2.set_new_prop(new_prop);
-			GlobalMembersGm_transform_helper.gm_replace_expr_general(p.get_body(), T_2);
+			gm_transform_helper.gm_replace_expr_general(p.get_body(), T_2);
 
 			// re-do RW analysis
 			GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());

@@ -20,7 +20,7 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_main;
 import common.gm_apply;
 
@@ -159,7 +159,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 		RefObject<gm_symtab_entry> old_e = new RefObject<gm_symtab_entry>(null);
 		boolean is_okay = SYM.check_duplicate_and_add_symbol(id, type, old_e, is_readable, is_writeable);
 		if (!is_okay)
-			GlobalMembersGm_error.gm_type_error(GM_ERROR_DUPLICATE, id, old_e.argvalue.getId());
+			gm_error.gm_type_error(GM_ERROR_DUPLICATE, id, old_e.argvalue.getId());
 
 		find_and_connect_symbol(id, SYM);
 
@@ -175,7 +175,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 
 		gm_symtab_entry se = begin.find_symbol(id);
 		if (se == null) {
-			GlobalMembersGm_error.gm_type_error(GM_ERROR_UNDEFINED, id);
+			gm_error.gm_type_error(GM_ERROR_UNDEFINED, id);
 			return false;
 		}
 

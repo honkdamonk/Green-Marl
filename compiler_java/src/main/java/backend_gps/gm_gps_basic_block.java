@@ -10,7 +10,7 @@ import ast.ast_sentblock;
 import ast.ast_while;
 
 import common.gm_main;
-import common.GlobalMembersGm_reproduce;
+import common.gm_reproduce;
 
 import frontend.gm_symtab_entry;
 
@@ -201,8 +201,8 @@ public class gm_gps_basic_block {
 			ast_if i = (ast_if) s;
 			i.get_cond().reproduce(1);
 
-			GlobalMembersGm_reproduce.gm_newline_reproduce();
-			GlobalMembersGm_reproduce.gm_flush_reproduce();
+			gm_reproduce.gm_newline_reproduce();
+			gm_reproduce.gm_flush_reproduce();
 		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND) {
 			prepare_iter();
 			ast_sent s = get_next(); // should be only one sentence (if)
@@ -210,8 +210,8 @@ public class gm_gps_basic_block {
 			ast_while i = (ast_while) s;
 			i.get_cond().reproduce(1);
 
-			GlobalMembersGm_reproduce.gm_newline_reproduce();
-			GlobalMembersGm_reproduce.gm_flush_reproduce();
+			gm_reproduce.gm_newline_reproduce();
+			gm_reproduce.gm_flush_reproduce();
 		} else if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ)) {
 
 			if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) && (has_receiver()) && reproduce_receiver) {
@@ -219,13 +219,13 @@ public class gm_gps_basic_block {
 				java.util.LinkedList<gm_gps_comm_unit> L = get_receivers();
 				for (gm_gps_comm_unit U : L) {
 					if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_NESTED) {
-						GlobalMembersGm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Nested Loop"));
-						GlobalMembersGm_reproduce.gm_newline_reproduce();
+						gm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Nested Loop"));
+						gm_reproduce.gm_newline_reproduce();
 						ast_foreach fe = U.fe;
 						fe.reproduce(0);
 					} else if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_RANDOM_WRITE) {
-						GlobalMembersGm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Random Write Sent"));
-						GlobalMembersGm_reproduce.gm_newline_reproduce();
+						gm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Random Write Sent"));
+						gm_reproduce.gm_newline_reproduce();
 						java.util.LinkedList<ast_sent> LL = info.get_random_write_sents(U);
 						for (ast_sent s : LL) {
 							s.reproduce(0);
@@ -242,9 +242,9 @@ public class gm_gps_basic_block {
 				s.reproduce(0);
 				s = get_next();
 				if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) && (s != null))
-					GlobalMembersGm_reproduce.gm_newline_reproduce();
+					gm_reproduce.gm_newline_reproduce();
 			}
-			GlobalMembersGm_reproduce.gm_flush_reproduce();
+			gm_reproduce.gm_flush_reproduce();
 		} else if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2)
 				|| (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_IF)) {
 			// do nothing;

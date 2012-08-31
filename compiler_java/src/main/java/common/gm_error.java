@@ -3,7 +3,7 @@ package common;
 import ast.ast_id;
 import frontend.gm_symtab_entry;
 
-public class GlobalMembersGm_error {
+public class gm_error {
 
 	public static String curr_file = null;
 	public static String curr_proc = null;
@@ -19,7 +19,7 @@ public class GlobalMembersGm_error {
 	}
 
 	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id, String str1, String str2) {
-		GlobalMembersGm_error.gm_print_error_header();
+		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
 		System.out.printf("%d: %d: error: ", id.get_line(), id.get_col());
@@ -75,7 +75,7 @@ public class GlobalMembersGm_error {
 	}
 
 	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id1, ast_id id2) {
-		GlobalMembersGm_error.gm_print_error_header();
+		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
 		System.out.printf("%d: %d: error: ", id1.get_line(), id1.get_col());
@@ -124,7 +124,7 @@ public class GlobalMembersGm_error {
 	}
 
 	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1, String str2, String str3) {
-		GlobalMembersGm_error.gm_print_error_header();
+		gm_error.gm_print_error_header();
 
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
@@ -224,7 +224,7 @@ public class GlobalMembersGm_error {
 	}
 
 	public static void gm_conf_error(GM_ERRORS_AND_WARNINGS errno, gm_symtab_entry target, ast_id ev1, ast_id ev2, boolean is_warning) {
-		GlobalMembersGm_error.gm_print_error_header();
+		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
 
@@ -274,7 +274,7 @@ public class GlobalMembersGm_error {
 	// extern void gm_conf_warning(int errnumber, gm_symtab_entry* target,
 	// ast_id* evidence1, ast_id* evidence2);
 	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, String str1, String str2) {
-		GlobalMembersGm_error.gm_print_error_header();
+		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
 		switch (errno) {
@@ -299,7 +299,7 @@ public class GlobalMembersGm_error {
 	}
 
 	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1) {
-		GlobalMembersGm_error.gm_print_error_header();
+		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
 		System.out.printf("%d: %d: error: ", l, c);

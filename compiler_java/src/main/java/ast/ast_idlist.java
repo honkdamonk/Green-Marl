@@ -2,7 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 
 public class ast_idlist extends ast_node {
@@ -61,7 +61,7 @@ public class ast_idlist extends ast_node {
 
 	public void dump_tree(int ind_lv) {
 		assert parent != null;
-		GlobalMembersGm_dumptree.IND(ind_lv);
+		gm_dumptree.IND(ind_lv);
 		System.out.print("[");
 		for (int i = 0; i < (int) lst.size(); i++) {
 			ast_id id = lst.get(i);

@@ -1,7 +1,7 @@
 package ast;
 
 import inc.GMTYPE_T;
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 
 public class ast_field extends ast_node
 { // access of node/edge property
@@ -21,7 +21,7 @@ public class ast_field extends ast_node
 	public void dump_tree(int ind_level)
 	{
 		assert parent != null;
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("[");
 		first.dump_tree(0);
 		System.out.print(".");

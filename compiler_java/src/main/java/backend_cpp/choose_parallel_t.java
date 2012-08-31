@@ -6,7 +6,7 @@ import ast.ast_foreach;
 import ast.ast_node;
 import ast.ast_sent;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 import common.gm_apply;
 
 public class choose_parallel_t extends gm_apply {
@@ -43,7 +43,7 @@ public class choose_parallel_t extends gm_apply {
 				fe.set_sequential(false);
 
 				// negate all the up-way
-				GlobalMembersGm_traverse.gm_traverse_up_sent(s.get_parent(), T);
+				gm_traverse.gm_traverse_up_sent(s.get_parent(), T);
 
 				// [XXX] need to think about this
 			} else if (fe.get_iter_type().is_iteration_on_collection()) {

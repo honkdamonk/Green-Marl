@@ -31,7 +31,7 @@ import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 
 /**
@@ -232,7 +232,7 @@ public class gm_check_conf_t extends gm_apply {
 				if (is_error_or_warn) {
 					if (!is_reported(Report, sym1, sym2, conf_type)) {
 						add_report(Report, sym1, sym2, conf_type);
-						GlobalMembersGm_error.gm_conf_error(error_code, sym1, e1.location, e2.location, is_warning);
+						gm_error.gm_conf_error(error_code, sym1, e1.location, e2.location, is_warning);
 					}
 				}
 			}

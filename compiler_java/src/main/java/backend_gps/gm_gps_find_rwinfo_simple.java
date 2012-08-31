@@ -18,7 +18,7 @@ import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
 
-import common.GlobalMembersGm_reproduce;
+import common.gm_reproduce;
 
 //-------------------------------------------------------
 // simple RW info; believe every access is random
@@ -219,7 +219,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 				while (!n.is_sentence())
 					n = n.get_parent();
 				n.reproduce(0);
-				GlobalMembersGm_reproduce.gm_flush_reproduce();
+				gm_reproduce.gm_flush_reproduce();
 				assert false;
 			}
 		} else if (is_outer_loop_only()) {

@@ -3,7 +3,7 @@ package backend_cpp;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 public class gm_cpp_gen_prop_decl extends gm_compile_step {
 	private gm_cpp_gen_prop_decl() {
@@ -12,7 +12,7 @@ public class gm_cpp_gen_prop_decl extends gm_compile_step {
 
 	public void process(ast_procdef proc) {
 		property_decl_check_t T1 = new property_decl_check_t();
-		GlobalMembersGm_traverse.gm_traverse_sents(proc.get_body(), T1);
+		gm_traverse.gm_traverse_sents(proc.get_body(), T1);
 
 		proc.add_info_bool(gm_cpp_gen.CPPBE_INFO_HAS_PROPDECL, T1.has_prop_decl);
 

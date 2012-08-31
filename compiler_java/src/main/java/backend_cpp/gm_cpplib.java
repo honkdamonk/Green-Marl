@@ -34,7 +34,7 @@ import ast.ast_sent;
 import ast.ast_typedecl;
 
 import common.gm_main;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
 import common.gm_vocabulary;
@@ -171,7 +171,7 @@ public class gm_cpplib extends gm_graph_library {
 
 		ast_id i = e.get_driver(); // driver
 		gm_builtin_def def = e.get_builtin_def();
-		ast_sent s = GlobalMembersGm_transform_helper.gm_find_parent_sentence(e);
+		ast_sent s = gm_transform_helper.gm_find_parent_sentence(e);
 		assert def != null;
 		assert s != null;
 		GMTYPE_T src_type = def.get_source_type_summary();
@@ -515,7 +515,7 @@ public class gm_cpplib extends gm_graph_library {
 
 		ast_field driver = builtinExpr.get_field_driver();
 		gm_builtin_def definition = builtinExpr.get_builtin_def();
-		ast_sent sent = GlobalMembersGm_transform_helper.gm_find_parent_sentence(builtinExpr);
+		ast_sent sent = gm_transform_helper.gm_find_parent_sentence(builtinExpr);
 
 		assert definition != null;
 		assert sent != null;

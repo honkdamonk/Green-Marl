@@ -11,9 +11,9 @@ import ast.ast_foreach;
 import ast.ast_procdef;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_add_symbol;
+import common.gm_add_symbol;
 import common.gm_main;
-import common.GlobalMembersGm_replace_sym_access;
+import common.gm_replace_sym_access;
 
 public class gm_gps_opt_insert_temp_property extends gm_compile_step {
 	private gm_gps_opt_insert_temp_property() {
@@ -43,18 +43,18 @@ public class gm_gps_opt_insert_temp_property extends gm_compile_step {
 			ast_foreach out_loop = MAP2.get(sym);
 
 			// scope where the temp property will be defined
-			ast_sentblock sb = GlobalMembersGm_add_symbol.gm_find_upscope(out_loop);
+			ast_sentblock sb = gm_add_symbol.gm_find_upscope(out_loop);
 			assert sb != null;
 
 			String temp_name = gm_main.FE.voca_temp_name_and_add(sym.getId().get_orgname(), "prop", null, true);
 			tangible.RefObject<String> tempRef_temp_name = new tangible.RefObject<String>(temp_name);
-			gm_symtab_entry temp_prop = GlobalMembersGm_add_symbol.gm_add_new_symbol_property(sb, sym.getType().getTypeSummary(), true, out_loop.get_iterator()
+			gm_symtab_entry temp_prop = gm_add_symbol.gm_add_new_symbol_property(sb, sym.getType().getTypeSummary(), true, out_loop.get_iterator()
 					.getTypeInfo().get_target_graph_sym(), tempRef_temp_name);
 			temp_name = tempRef_temp_name.argvalue;
 
 			// replace accesses:
 			// sym ==> out_iter.temp_prop
-			GlobalMembersGm_replace_sym_access.gm_replace_symbol_access_scalar_field(out_loop, sym, out_loop.get_iterator().getSymInfo(), temp_prop);
+			gm_replace_sym_access.gm_replace_symbol_access_scalar_field(out_loop, sym, out_loop.get_iterator().getSymInfo(), temp_prop);
 
 			/*
 			 * printf("target %s inside loop %s ==> %s (temp_name)\n",
@@ -71,7 +71,7 @@ public class gm_gps_opt_insert_temp_property extends gm_compile_step {
 			Set.add(sym);
 		}
 
-		GlobalMembersGm_add_symbol.gm_remove_symbols(p.get_body(), Set);
+		gm_add_symbol.gm_remove_symbols(p.get_body(), Set);
 
 		// -------------------------------------
 		// Re-do RW analysis

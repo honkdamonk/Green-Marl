@@ -19,12 +19,12 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_while;
 
-import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_flat_nested_sentblock;
+import common.gm_add_symbol;
+import common.gm_flat_nested_sentblock;
 import common.gm_main;
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_resolve_nc;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_new_sents_after_tc;
+import common.gm_resolve_nc;
+import common.gm_transform_helper;
 
 import frontend.GlobalMembersGm_rw_analysis;
 import frontend.gm_symtab_entry;
@@ -49,7 +49,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 			gm_gps_rewrite_bfs(b);
 		}
 
-		GlobalMembersGm_flat_nested_sentblock.gm_flat_nested_sentblock(p);
+		gm_flat_nested_sentblock.gm_flat_nested_sentblock(p);
 
 		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
 	}
@@ -82,7 +82,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		ast_sentblock inner_sb = ast_sentblock.new_sentblock();
 		String i_name = gm_main.FE.voca_temp_name_and_add("i", null, true);
 		ast_id it = ast_id.new_id(i_name, bfs.get_iterator().get_line(), bfs.get_iterator().get_col());
-		ast_foreach fe = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(it, bfs.get_source().copy(true), inner_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
+		ast_foreach fe = gm_new_sents_after_tc.gm_new_foreach_after_tc(it, bfs.get_source().copy(true), inner_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
 
 		sb.add_sent(fe);
 		sb.add_sent(a_curr);
@@ -103,7 +103,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 	private static ast_sentblock create_fw_body_prepare(ast_sentblock while_sb, ast_bfs bfs, gm_symtab_entry lev_sym, gm_symtab_entry curr_sym, ast_foreach out) {
 		// outer loop
 		ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
-		ast_foreach foreach_out = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
+		ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
 				foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
 		while_sb.add_sent(foreach_out);
 
@@ -125,15 +125,15 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 
 		// rip-off body from bfs
 		ast_sent body = (is_fw) ? bfs.get_fbody() : bfs.get_bbody();
-		GlobalMembersGm_transform_helper.gm_ripoff_sent(body);
+		gm_transform_helper.gm_ripoff_sent(body);
 
 		// replace iterator
 		// printf("repalce :%s -> %s\n", bfs->get_iterator()->get_genname(),
 		// out_loop->get_iterator()->get_genname());
-		GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(bfs.get_iterator().getSymInfo(), out_loop.get_iterator().getSymInfo(), body);
+		gm_resolve_nc.gm_replace_symbol_entry(bfs.get_iterator().getSymInfo(), out_loop.get_iterator().getSymInfo(), body);
 		// what was iterator 2 again?
 		if (bfs.get_iterator2() != null)
-			GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(bfs.get_iterator2().getSymInfo(), out_loop.get_iterator().getSymInfo(), body);
+			gm_resolve_nc.gm_replace_symbol_entry(bfs.get_iterator2().getSymInfo(), out_loop.get_iterator().getSymInfo(), body);
 
 		// replace up/down nbr
 		gps_opt_find_updown_foreach_t T = new gps_opt_find_updown_foreach_t(curr_sym, lev_sym);
@@ -191,7 +191,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 
 		// outer loop
 		ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
-		ast_foreach foreach_out = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
+		ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
 				foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
 		while_sb.add_sent(foreach_out);
 
@@ -207,7 +207,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		ast_sentblock inner_sb = ast_sentblock.new_sentblock();
 		String inner_name = gm_main.FE.voca_temp_name_and_add("_t", null, true);
 		ast_id inner_id = ast_id.new_id(inner_name, 0, 0);
-		ast_foreach foreach_in = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(inner_id, foreach_out.get_iterator().copy(true), inner_sb,
+		ast_foreach foreach_in = gm_new_sents_after_tc.gm_new_foreach_after_tc(inner_id, foreach_out.get_iterator().copy(true), inner_sb,
 				GMTYPE_T.GMTYPE_NODEITER_NBRS);
 		lev_check_out_sb.add_sent(foreach_in);
 
@@ -268,7 +268,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 
 		// outer loop
 		ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
-		ast_foreach foreach_out = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
+		ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
 				foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
 		while_sb.add_sent(foreach_out);
 
@@ -294,11 +294,11 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		assert b.get_f_filter() == null;
 		assert b.get_navigator() == null;
 
-		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(b);
+		gm_transform_helper.gm_make_it_belong_to_sentblock(b);
 		ast_sentblock parent = (ast_sentblock) b.get_parent();
 
 		ast_sentblock sb = ast_sentblock.new_sentblock();
-		GlobalMembersGm_transform_helper.gm_add_sent_after(b, sb);
+		gm_transform_helper.gm_add_sent_after(b, sb);
 
 		// replace BFS with a sentence block
 		// InBFS(v: G.Nodes From root) {
@@ -322,14 +322,14 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		String curr_name = gm_main.FE.voca_temp_name_and_add("curr_level", null, true);
 		String fin_name = gm_main.FE.voca_temp_name_and_add("bfs_finished", null, true);
 		RefObject<String> tempRef_lev_name = new RefObject<String>(lev_name);
-		gm_symtab_entry lev_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, b.get_source().getSymInfo(),
+		gm_symtab_entry lev_sym = gm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, b.get_source().getSymInfo(),
 				tempRef_lev_name);
 		lev_name = tempRef_lev_name.argvalue;
 		RefObject<String> tempRef_curr_name = new RefObject<String>(curr_name);
-		gm_symtab_entry curr_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_INT, tempRef_curr_name);
+		gm_symtab_entry curr_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_INT, tempRef_curr_name);
 		curr_name = tempRef_curr_name.argvalue;
 		RefObject<String> tempRef_fin_name = new RefObject<String>(fin_name);
-		gm_symtab_entry fin_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_BOOL, tempRef_fin_name);
+		gm_symtab_entry fin_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_BOOL, tempRef_fin_name);
 		fin_name = tempRef_fin_name.argvalue;
 
 		create_initializer(sb, b, lev_sym, curr_sym, fin_sym);
@@ -340,7 +340,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 			create_bw_iteration(sb, b, lev_sym, curr_sym, fin_sym);
 
 		// replace bfs with sb
-		GlobalMembersGm_transform_helper.gm_ripoff_sent(b);
+		gm_transform_helper.gm_ripoff_sent(b);
 
 	}
 }

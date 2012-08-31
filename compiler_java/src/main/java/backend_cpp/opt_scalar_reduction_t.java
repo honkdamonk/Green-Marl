@@ -19,11 +19,11 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.gm_rwinfo_map;
 
-import common.GlobalMembersGm_add_symbol;
+import common.gm_add_symbol;
 import common.gm_main;
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_transform_helper;
-import common.GlobalMembersGm_traverse;
+import common.gm_new_sents_after_tc;
+import common.gm_transform_helper;
+import common.gm_traverse;
 import common.gm_apply;
 
 import frontend.GlobalMembersGm_rw_analysis;
@@ -116,7 +116,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 		LinkedList<LinkedList<gm_symtab_entry>> new_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
 
 		// make scope
-		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock_nested(fe);
+		gm_transform_helper.gm_make_it_belong_to_sentblock_nested(fe);
 		assert fe.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 		ast_sentblock se = (ast_sentblock) fe.get_parent();
 
@@ -143,12 +143,12 @@ public class opt_scalar_reduction_t extends gm_apply {
 			// add local variable at scope
 			gm_symtab_entry _thread_local;
 			if (e_type.is_prim_type()) {
-				_thread_local = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(se, e_type, new RefObject<String>(new_name));
+				_thread_local = gm_add_symbol.gm_add_new_symbol_primtype(se, e_type, new RefObject<String>(new_name));
 			} else if (e_type.is_node_compatible_type()) {
-				_thread_local = GlobalMembersGm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_NODE, e.getType().get_target_graph_sym(),
+				_thread_local = gm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_NODE, e.getType().get_target_graph_sym(),
 						new RefObject<String>(new_name));
 			} else if (e_type.is_edge_compatible_type()) {
-				_thread_local = GlobalMembersGm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_EDGE, e.getType().get_target_graph_sym(),
+				_thread_local = gm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_EDGE, e.getType().get_target_graph_sym(),
 						new RefObject<String>(new_name));
 			} else {
 				_thread_local = null;
@@ -183,11 +183,11 @@ public class opt_scalar_reduction_t extends gm_apply {
 				if ((reduce_type == GM_REDUCE_T.GMREDUCE_MIN) || (reduce_type == GM_REDUCE_T.GMREDUCE_MAX)) {
 					init_val = ast_expr.new_id_expr(e.getId().copy(true));
 				} else {
-					init_val = GlobalMembersGm_new_sents_after_tc.gm_new_bottom_symbol(reduce_type, expr_type);
+					init_val = gm_new_sents_after_tc.gm_new_bottom_symbol(reduce_type, expr_type);
 				}
 				ast_assign init_a = ast_assign.new_assign_scala(_thread_local.getId().copy(true), init_val, gm_assignment_t.GMASSIGN_NORMAL);
 
-				GlobalMembersGm_transform_helper.gm_add_sent_before(fe, init_a);
+				gm_transform_helper.gm_add_sent_before(fe, init_a);
 			}
 
 			new_name = null;
@@ -215,7 +215,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 		// -------------------------------------------------
 		change_reduction_t T = new change_reduction_t();
 		T.set_map(symbol_map);
-		GlobalMembersGm_traverse.gm_traverse_sents(fe.get_body(), T);
+		gm_traverse.gm_traverse_sents(fe.get_body(), T);
 		T.post_process();
 
 		// -------------------------------------------------
@@ -223,7 +223,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 		// -------------------------------------------------
 		nop_reduce_scalar N = new nop_reduce_scalar();
 		N.set_symbols(old_s, new_s, reduce_op, old_supple, new_supple);
-		GlobalMembersGm_transform_helper.gm_insert_sent_end_of_sb(se, N, false);
+		gm_transform_helper.gm_insert_sent_end_of_sb(se, N, false);
 
 	}
 

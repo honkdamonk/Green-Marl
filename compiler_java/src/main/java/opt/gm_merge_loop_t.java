@@ -7,8 +7,8 @@ import ast.ast_foreach;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_merge_sentblock;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_merge_sentblock;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 import frontend.GlobalMembersGm_rw_analysis;
@@ -46,16 +46,16 @@ public class gm_merge_loop_t extends gm_apply {
 
 						// merge body and delete curr.
 						if (prev.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
-							GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(prev.get_body());
+							gm_transform_helper.gm_make_it_belong_to_sentblock(prev.get_body());
 						if (curr.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
-							GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(curr.get_body());
+							gm_transform_helper.gm_make_it_belong_to_sentblock(curr.get_body());
 
-						GlobalMembersGm_merge_sentblock.gm_merge_sentblock((ast_sentblock) prev.get_body(), (ast_sentblock) curr.get_body());
+						gm_merge_sentblock.gm_merge_sentblock((ast_sentblock) prev.get_body(), (ast_sentblock) curr.get_body());
 
 						// redo-rw-analysis
 						GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(prev);
 
-						GlobalMembersGm_transform_helper.gm_ripoff_sent(curr, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB); // it
+						gm_transform_helper.gm_ripoff_sent(curr, gm_transform_helper.GM_NOFIX_SYMTAB); // it
 																																	// will
 																																	// be
 																																	// deleted

@@ -3,7 +3,7 @@ package common;
 import ast.ast_procdef;
 import inc.gm_procinfo;
 
-public class GlobalMembersGm_prepare_genname
+public class gm_prepare_genname
 {
 
 	//--------------------------------------------------------

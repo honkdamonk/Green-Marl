@@ -50,10 +50,10 @@ import ast.ast_typedecl;
 import ast.ast_vardecl;
 import ast.ast_while;
 
-import common.GlobalMembersGm_apply_compiler_stage;
-import common.GlobalMembersGm_error;
+import common.gm_apply_compiler_stage;
+import common.gm_error;
 import common.gm_main;
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 import common.gm_vocabulary;
 
 public class gm_frontend {
@@ -138,7 +138,7 @@ public class gm_frontend {
 		}
 
 		// now apply frontend steps
-		return GlobalMembersGm_apply_compiler_stage.gm_apply_compiler_stage(local_steps);
+		return gm_apply_compiler_stage.gm_apply_compiler_stage(local_steps);
 	}
 
 	/** reproduce: method implementations for ast debuggin */
@@ -171,11 +171,11 @@ public class gm_frontend {
 	public final ast_procdef get_next_proc() {
 		ast_procdef p = I.next();
 		if (p == null) {
-			GlobalMembersGm_error.gm_set_curr_procname("");
+			gm_error.gm_set_curr_procname("");
 			set_current_proc(null);
 			return null;
 		} else {
-			GlobalMembersGm_error.gm_set_curr_procname(p.get_procname().get_orgname());
+			gm_error.gm_set_curr_procname(p.get_procname().get_orgname());
 			set_current_proc(p);
 			return p;
 		}
@@ -290,7 +290,7 @@ public class gm_frontend {
 	}
 
 	public void restore_vardecl_all() {
-		GlobalMembersGm_apply_compiler_stage.gm_apply_all_proc(gm_fe_restore_vardecl.get_factory());
+		gm_apply_compiler_stage.gm_apply_all_proc(gm_fe_restore_vardecl.get_factory());
 	}
 
 	public void print_rwinfo() {
@@ -298,7 +298,7 @@ public class gm_frontend {
 			ast_procdef proc = get_procedure(i);
 			System.out.printf("PROC: %s\n", proc.get_procname().get_orgname());
 			gm_print_rw_info P = new gm_print_rw_info();
-			GlobalMembersGm_traverse.gm_traverse_sents(proc, P);
+			gm_traverse.gm_traverse_sents(proc, P);
 			System.out.print("\n");
 		}
 		return;

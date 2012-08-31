@@ -16,7 +16,7 @@ import ast.ast_node;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 
 public class gm_check_reduce_error_t extends gm_apply {
@@ -138,11 +138,11 @@ public class gm_check_reduce_error_t extends gm_apply {
 				if (tempVar) {
 					ast_id loc = jj.location;
 					if (is_bound_error) {
-						GlobalMembersGm_error.gm_type_error(GM_ERROR_DOUBLE_BOUND_ITOR, loc.get_line(), loc.get_col(), jj.bound_symbol.getId().get_orgname());
+						gm_error.gm_type_error(GM_ERROR_DOUBLE_BOUND_ITOR, loc.get_line(), loc.get_col(), jj.bound_symbol.getId().get_orgname());
 						return false;
 					}
 					if (is_type_error) {
-						GlobalMembersGm_error.gm_type_error(GM_ERROR_DOUBLE_BOUND_OP, loc.get_line(), loc.get_col(), jj.reduce_op.get_reduce_string());
+						gm_error.gm_type_error(GM_ERROR_DOUBLE_BOUND_OP, loc.get_line(), loc.get_col(), jj.reduce_op.get_reduce_string());
 						return false;
 					}
 				} else {

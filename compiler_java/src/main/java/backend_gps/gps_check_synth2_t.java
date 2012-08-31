@@ -5,7 +5,7 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 import common.gm_builtin_def;
 
@@ -55,7 +55,7 @@ public class gps_check_synth2_t extends gm_apply
 				case GM_BLTIN_TOP_POW: // pow function
 					break;
 				default:
-					GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, e.get_line(), e.get_col(), "Builtin (function)");
+					gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, e.get_line(), e.get_col(), "Builtin (function)");
 					_error = true;
 					break;
 			}

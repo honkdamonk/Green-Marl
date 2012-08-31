@@ -6,7 +6,7 @@ import ast.ast_foreach;
 import ast.ast_sent;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -45,7 +45,7 @@ public class gm_check_par_return_t extends gm_apply
 		{
 			if (par_depth > 0)
 			{
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_PAR_RETURN, s.get_line(), s.get_col());
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_PAR_RETURN, s.get_line(), s.get_col());
 				_is_okay = false;
 			}
 		}

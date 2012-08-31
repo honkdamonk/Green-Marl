@@ -9,7 +9,7 @@ import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
 
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 import frontend.FrontendGlobal;
@@ -63,7 +63,7 @@ public class change_reduction_t extends gm_apply {
 
 	public final void post_process() {
 		for (ast_assign a : to_normals) {
-			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
+			gm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			FrontendGlobal.gm_make_normal_assign(a);
 		}
 	}

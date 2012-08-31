@@ -3,7 +3,7 @@ package backend_gps;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 
 public class gm_gps_new_rewrite_rhs extends gm_compile_step {
 
@@ -15,7 +15,7 @@ public class gm_gps_new_rewrite_rhs extends gm_compile_step {
 
 		// TODO--> get rid of 'parent' pointer of symtabs. (It is hard to move
 		// sentences around with this)
-		GlobalMembersGm_transform_helper.gm_reconstruct_scope(proc);
+		gm_transform_helper.gm_reconstruct_scope(proc);
 
 		gps_rewrite_rhs_preprocessing_t T1 = new gps_rewrite_rhs_preprocessing_t();
 		proc.traverse_pre(T1);

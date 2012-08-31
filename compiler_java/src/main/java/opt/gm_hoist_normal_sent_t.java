@@ -7,7 +7,7 @@ import ast.ast_assign;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 import frontend.GlobalMembersGm_rw_analysis_check2;
@@ -79,13 +79,13 @@ public abstract class gm_hoist_normal_sent_t extends gm_apply {
 				}
 			}
 
-			GlobalMembersGm_transform_helper.gm_ripoff_sent(target, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB);
+			gm_transform_helper.gm_ripoff_sent(target, gm_transform_helper.GM_NOFIX_SYMTAB);
 			if (top_position == null) // move it to the beginning
 			{
-				GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, target, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB);
+				gm_transform_helper.gm_insert_sent_begin_of_sb(sb, target, gm_transform_helper.GM_NOFIX_SYMTAB);
 			} // move to the top
 			else {
-				GlobalMembersGm_transform_helper.gm_add_sent_after(top_position, target, GlobalMembersGm_transform_helper.GM_NOFIX_SYMTAB);
+				gm_transform_helper.gm_add_sent_after(top_position, target, gm_transform_helper.GM_NOFIX_SYMTAB);
 			}
 		}
 		return true;

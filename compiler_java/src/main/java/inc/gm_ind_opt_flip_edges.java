@@ -4,9 +4,9 @@ import ast.ast_procdef;
 import opt.GlobalMembersGm_flip_edges;
 import opt.gm_flip_find_candidate;
 
-import common.GlobalMembersGm_argopts;
+import common.gm_argopts;
 import common.gm_main;
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 public class gm_ind_opt_flip_edges extends gm_compile_step
 {
@@ -20,14 +20,14 @@ public class gm_ind_opt_flip_edges extends gm_compile_step
 		gm_flip_find_candidate T = new gm_flip_find_candidate();
     
 		// cannot set both options
-		if (gm_main.OPTIONS.is_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_PULL))
+		if (gm_main.OPTIONS.is_arg_bool(gm_argopts.GMARGFLAG_FLIP_PULL))
 			T.set_to_avoid_pull_computation(true);
-		else if (gm_main.OPTIONS.is_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_REVERSE))
+		else if (gm_main.OPTIONS.is_arg_bool(gm_argopts.GMARGFLAG_FLIP_REVERSE))
 			T.set_to_avoid_reverse_edges(true);
 		else
 			return; // no need to do
     
-		GlobalMembersGm_traverse.gm_traverse_sents(p, T);
+		gm_traverse.gm_traverse_sents(p, T);
     
 		// apply flip
 		GlobalMembersGm_flip_edges.do_flip_edges(T.get_target());

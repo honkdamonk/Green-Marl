@@ -5,7 +5,7 @@ import ast.ast_id;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GlobalMembersGm_resolve_nc;
+import common.gm_resolve_nc;
 
 import frontend.GlobalMembersGm_rw_analysis;
 import frontend.gm_range_type_t;
@@ -168,7 +168,7 @@ public class GlobalMembersGm_merge_loops {
 		assert Q.get_filter() == null;
 		assert P.get_filter() == null;
 
-		GlobalMembersGm_resolve_nc.gm_replace_symbol_entry(e_q, e_p, Q.get_body());
+		gm_resolve_nc.gm_replace_symbol_entry(e_q, e_p, Q.get_body());
 
 	}
 }

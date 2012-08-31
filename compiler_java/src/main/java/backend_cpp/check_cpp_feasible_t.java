@@ -5,7 +5,7 @@ import ast.ast_sent;
 import frontend.gm_symtab_entry;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -34,7 +34,7 @@ public class check_cpp_feasible_t extends gm_apply
 		{
 			if (bfs_depth > 0)
 			{
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_CPP_UNSUPPORTED_SYNTAX, s.get_line(), s.get_col(), "nested DFS/BFS.");
+				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_CPP_UNSUPPORTED_SYNTAX, s.get_line(), s.get_col(), "nested DFS/BFS.");
 				set_okay(false);
 			}
 			bfs_depth++;

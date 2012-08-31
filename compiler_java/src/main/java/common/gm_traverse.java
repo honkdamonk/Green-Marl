@@ -8,7 +8,7 @@ import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
-public class GlobalMembersGm_traverse
+public class gm_traverse
 {
 
 	// [todo make stop traverse]
@@ -154,7 +154,7 @@ public static void gm_traverse_exprs(ast_expr top, gm_apply a)
 				return false;
 		}
 
-		return GlobalMembersGm_traverse.gm_traverse_up_sent(n.get_parent(), a);
+		return gm_traverse.gm_traverse_up_sent(n.get_parent(), a);
 	}
 
 

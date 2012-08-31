@@ -3,7 +3,7 @@ package frontend;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 
 public class gm_fe_fixup_bound_symbol extends gm_compile_step
@@ -17,7 +17,7 @@ public class gm_fe_fixup_bound_symbol extends gm_compile_step
 		find_hpb_t T = new find_hpb_t();
 		T.set_opt_seq_bound(true);
     
-		GlobalMembersGm_traverse.gm_traverse_sents(p, T);
+		gm_traverse.gm_traverse_sents(p, T);
 		T.post_process();
 	}
 	@Override

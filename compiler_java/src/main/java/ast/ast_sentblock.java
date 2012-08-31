@@ -1,6 +1,6 @@
 package ast;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 
 public class ast_sentblock extends ast_sent {
@@ -31,13 +31,13 @@ public class ast_sentblock extends ast_sent {
 
 	public void dump_tree(int ind_level) {
 		assert parent != null;
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("[ \n");
 		for (ast_sent s : sents) {
 			s.dump_tree(ind_level + 1);
 			System.out.print("\n");
 		}
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("]");
 	}
 

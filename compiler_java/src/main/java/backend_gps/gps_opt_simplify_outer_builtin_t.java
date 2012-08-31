@@ -14,7 +14,7 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.gm_main;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
@@ -70,7 +70,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 			gm_symtab_entry drv = J.next();
 
 			// make the sentence belong to a sent-block
-			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(s);
+			gm_transform_helper.gm_make_it_belong_to_sentblock(s);
 			assert s.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
 
 			ast_sentblock sb = (ast_sentblock) s.get_parent();
@@ -103,7 +103,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 			rhs.set_builtin_def(bin);
 
 			ast_assign r_assign = ast_assign.new_assign_scala(lhs_id, rhs);
-			GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(sb, r_assign);
+			gm_transform_helper.gm_insert_sent_begin_of_sb(sb, r_assign);
 
 		}
 	}

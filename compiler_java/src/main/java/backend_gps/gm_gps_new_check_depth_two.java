@@ -4,7 +4,7 @@ import inc.gm_compile_step;
 import ast.ast_procdef;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_main;
 
 public class gm_gps_new_check_depth_two extends gm_compile_step
@@ -20,7 +20,7 @@ public class gm_gps_new_check_depth_two extends gm_compile_step
 		assert fname != null;
 		if (!proc.get_procname().get_genname().equals(fname))
 		{
-			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
+			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
 			set_okay(false);
 			return;
 		}

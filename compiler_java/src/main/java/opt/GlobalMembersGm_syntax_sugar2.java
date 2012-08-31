@@ -11,8 +11,8 @@ import ast.ast_expr_reduce;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_add_symbol;
+import common.gm_transform_helper;
 import common.gm_method_id_t;
 
 import frontend.gm_symtab_entry;
@@ -38,13 +38,13 @@ public class GlobalMembersGm_syntax_sugar2 {
 		// -------------------------------------------------------------
 		// 1. find enclosing sentence block
 		// -------------------------------------------------------------
-		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(curr);
+		gm_transform_helper.gm_make_it_belong_to_sentblock(curr);
 		ast_sentblock sb = (ast_sentblock) curr.get_parent();
 
 		// -------------------------------------------------------------
 		// 2. Add new symbol to the current bound
 		// -------------------------------------------------------------
-		gm_symtab_entry e = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, prim_type, new tangible.RefObject<String>(vname));
+		gm_symtab_entry e = gm_add_symbol.gm_add_new_symbol_primtype(sb, prim_type, new tangible.RefObject<String>(vname));
 
 		// -------------------------------------------------------------
 		// 3. add initialization sentence
@@ -54,7 +54,7 @@ public class GlobalMembersGm_syntax_sugar2 {
 			// assert(gm_is_compatible_type_for_assign(prim_type,
 			// default_val->get_type_summary()));
 			ast_assign init_a = ast_assign.new_assign_scala(e.getId().copy(true), default_val, gm_assignment_t.GMASSIGN_NORMAL);
-			GlobalMembersGm_transform_helper.gm_add_sent_before(curr, init_a);
+			gm_transform_helper.gm_add_sent_before(curr, init_a);
 		}
 
 		return e;
@@ -62,7 +62,7 @@ public class GlobalMembersGm_syntax_sugar2 {
 
 	public static void replace_avg_to_varaible(ast_sent s, ast_expr rhs, gm_symtab_entry e) {
 		replace_avg_to_varaible_t T = new replace_avg_to_varaible_t(rhs, e);
-		GlobalMembersGm_transform_helper.gm_replace_expr_general(s, T);
+		gm_transform_helper.gm_replace_expr_general(s, T);
 	}
 
 	// static void mark_

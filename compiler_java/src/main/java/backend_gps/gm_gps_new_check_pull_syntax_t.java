@@ -13,7 +13,7 @@ import ast.ast_node;
 import ast.ast_sent;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 
 import frontend.gm_symtab_entry;
@@ -59,7 +59,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply {
 
 			// writing to out-scope inside inner-loop.
 			if ((context == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue()) && (scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT)) {
-				GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PULL_SYNTAX, s.get_line(), s.get_col());
+				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PULL_SYNTAX, s.get_line(), s.get_col());
 				_error = true;
 			}
 		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_CALL) {

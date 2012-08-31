@@ -16,7 +16,7 @@ import ast.ast_if;
 import ast.ast_node;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 
 public final class FrontendGlobal {
 	
@@ -98,8 +98,8 @@ public final class FrontendGlobal {
 			ast_if iff = ast_if.new_if(cond, sb, null);
 
 			// adding if, in place of original assignment
-			GlobalMembersGm_transform_helper.gm_add_sent_after(a, iff);
-			GlobalMembersGm_transform_helper.gm_ripoff_sent(a, true);
+			gm_transform_helper.gm_add_sent_after(a, iff);
+			gm_transform_helper.gm_ripoff_sent(a, true);
 
 			// adding a inside sb
 			sb.add_sent(a);

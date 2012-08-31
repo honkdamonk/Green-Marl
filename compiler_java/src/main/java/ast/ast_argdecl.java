@@ -1,6 +1,6 @@
 package ast;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 
 public class ast_argdecl extends ast_node {
 	
@@ -35,7 +35,7 @@ public class ast_argdecl extends ast_node {
 
 	public void dump_tree(int ind_level) {
 		assert parent != null;
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("[");
 		idlist.dump_tree(0);
 		System.out.print(" : \n");

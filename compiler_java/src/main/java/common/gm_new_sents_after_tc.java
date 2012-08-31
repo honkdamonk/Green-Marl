@@ -13,7 +13,7 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 
-public class GlobalMembersGm_new_sents_after_tc
+public class gm_new_sents_after_tc
 {
 	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 	///#define TO_STR(X) #X
@@ -96,7 +96,7 @@ public class GlobalMembersGm_new_sents_after_tc
 		//----------------------------------------------
 		gm_scope S = new gm_scope();
 		fe.get_this_scope(S);
-		GlobalMembersGm_transform_helper.gm_put_new_upper_scope_on_null(body, S);
+		gm_transform_helper.gm_put_new_upper_scope_on_null(body, S);
 
 		return fe;
 	}
@@ -152,9 +152,9 @@ public class GlobalMembersGm_new_sents_after_tc
 		gm_scope S = new gm_scope();
 		R.get_this_scope(S);
 
-		GlobalMembersGm_transform_helper.gm_put_new_upper_scope_on_null(body, S);
+		gm_transform_helper.gm_put_new_upper_scope_on_null(body, S);
 		if (filter != null)
-			GlobalMembersGm_transform_helper.gm_put_new_upper_scope_on_null(filter, S);
+			gm_transform_helper.gm_put_new_upper_scope_on_null(filter, S);
 
 		return R;
 	}

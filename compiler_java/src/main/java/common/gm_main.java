@@ -71,7 +71,7 @@ public class gm_main {
 		 * printf("\n"); }
 		 */
 
-		if (OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_REPRODUCE)) {
+		if (OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_REPRODUCE)) {
 			System.out.print("======================================================\n");
 			FE.reproduce();
 			System.out.print("======================================================\n");
@@ -79,14 +79,14 @@ public class gm_main {
 
 		}
 
-		if (OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_PRINTRW)) {
+		if (OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_PRINTRW)) {
 			System.out.print("======================================================\n");
 			FE.print_rwinfo();
 			System.out.print("======================================================\n");
 			System.out.print("\n");
 		}
 
-		if (OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_PRINTBB)) {
+		if (OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_PRINTBB)) {
 			System.out.print("======================================================\n");
 			PREGEL_BE.print_basicblock();
 			System.out.print("======================================================\n");
@@ -95,7 +95,7 @@ public class gm_main {
 	}
 
 	public static void parse_stop_string() {
-		String c = OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_STOP_STRING);
+		String c = OPTIONS.get_arg_string(gm_argopts.GMARGFLAG_STOP_STRING);
 		if (c == null)
 			return;
 
@@ -143,7 +143,7 @@ public class gm_main {
 		assert m > 0;
 		gm_stage_minor = m;
 		gm_minor_desc = desc;
-		if (OPTIONS.get_arg_int(GlobalMembersGm_argopts.GMARGFLAG_VERB_LEV) > 0) {
+		if (OPTIONS.get_arg_int(gm_argopts.GMARGFLAG_VERB_LEV) > 0) {
 			System.out.printf("...Stage %d.%d: %s.[%s]\n", gm_stage_major, gm_stage_minor, gm_major_desc, gm_minor_desc);
 		}
 
@@ -170,7 +170,7 @@ public class gm_main {
 		// parse arguments
 		// -------------------------------------
 		tangible.RefObject<String[]> tempRef_args = new tangible.RefObject<String[]>(args);
-		GlobalMembersGm_argopts.process_args(tempRef_args);
+		gm_argopts.process_args(tempRef_args);
 		args = tempRef_args.argvalue;
 
 		gm_path_parser Path = new gm_path_parser();
@@ -180,7 +180,7 @@ public class gm_main {
 		String fname = GM_input_lists.getFirst();
 		Path.parsePath(fname);
 
-		String name = OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_TARGET);
+		String name = OPTIONS.get_arg_string(gm_argopts.GMARGFLAG_TARGET);
 		if (name.equals("cpp_seq")) {
 			CPP_BE.set_target_omp(false);
 			BACK_END = CPP_BE;
@@ -190,11 +190,11 @@ public class gm_main {
 		} else if (name.equals("gps")) {
 			BACK_END = GPS_BE;
 			PREGEL_BE = GPS_BE;
-			OPTIONS.set_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_PULL, true);
+			OPTIONS.set_arg_bool(gm_argopts.GMARGFLAG_FLIP_PULL, true);
 		} else if (name.equals("giraph")) {
 			BACK_END = GIRAPH_BE;
 			PREGEL_BE = GIRAPH_BE;
-			OPTIONS.set_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_PULL, true);
+			OPTIONS.set_arg_bool(gm_argopts.GMARGFLAG_FLIP_PULL, true);
 		} else {
 			System.out.printf("Unsupported target = %s\n", name);
 		}
@@ -212,8 +212,8 @@ public class gm_main {
 			// currently there should be only one file
 			assert GM_input_lists.size() == 1;
 			String fname1 = GM_input_lists.getFirst();
-			GlobalMembersGm_error.gm_set_current_filename(fname1);
-			if (GlobalMembersGm_error.GM_is_parse_error())
+			gm_error.gm_set_current_filename(fname1);
+			if (gm_error.GM_is_parse_error())
 				System.exit(1);
 		}
 		gm_main.gm_end_major_compiler_stage();
@@ -276,10 +276,10 @@ public class gm_main {
 		// -------------------------------------------------
 		// Final Code Generation
 		// -------------------------------------------------
-		if (OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_OUTDIR) == null)
+		if (OPTIONS.get_arg_string(gm_argopts.GMARGFLAG_OUTDIR) == null)
 			BACK_END.setTargetDir(".");
 		else
-			BACK_END.setTargetDir(OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_OUTDIR));
+			BACK_END.setTargetDir(OPTIONS.get_arg_string(gm_argopts.GMARGFLAG_OUTDIR));
 		BACK_END.setFileName(Path.getFilename());
 
 		gm_main.gm_begin_major_compiler_stage(GMSTAGE_CODEGEN, "Code Generation");

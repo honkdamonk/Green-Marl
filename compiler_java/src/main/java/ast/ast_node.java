@@ -21,7 +21,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 import common.gm_apply;
 
 public abstract class ast_node {
@@ -121,21 +121,21 @@ public abstract class ast_node {
 		} else {
 			a.apply(get_symtab_var(), t);
 		}
-		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_var(), t, is_post);
+		gm_traverse.apply_symtab_each(a, get_symtab_var(), t, is_post);
 
 		if (post_apply) {
 			a.apply2(get_symtab_field(), GM_SYMTAB_FIELD);
 		} else {
 			a.apply(get_symtab_field(), GM_SYMTAB_FIELD);
 		}
-		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_field(), GM_SYMTAB_FIELD, is_post);
+		gm_traverse.apply_symtab_each(a, get_symtab_field(), GM_SYMTAB_FIELD, is_post);
 
 		if (post_apply) {
 			a.apply2(get_symtab_proc(), GM_SYMTAB_PROC);
 		} else {
 			a.apply(get_symtab_proc(), GM_SYMTAB_PROC);
 		}
-		GlobalMembersGm_traverse.apply_symtab_each(a, get_symtab_proc(), GM_SYMTAB_PROC, is_post);
+		gm_traverse.apply_symtab_each(a, get_symtab_proc(), GM_SYMTAB_PROC, is_post);
 	}
 
 	// scoped elements

@@ -4,7 +4,7 @@ import ast.AST_NODE_TYPE;
 import ast.ast_node;
 import ast.ast_procdef;
 
-public class GlobalMembersGm_flat_nested_sentblock
+public class gm_flat_nested_sentblock
 {
 
 	public static void gm_flat_nested_sentblock(ast_node n)
@@ -16,7 +16,7 @@ public class GlobalMembersGm_flat_nested_sentblock
 
 		// need to re-build scope
 		if (n.get_nodetype() == AST_NODE_TYPE.AST_PROCDEF)
-			GlobalMembersGm_transform_helper.gm_reconstruct_scope(((ast_procdef)n).get_body());
+			gm_transform_helper.gm_reconstruct_scope(((ast_procdef)n).get_body());
 		else
 		{
 			while (!n.has_scope())
@@ -24,7 +24,7 @@ public class GlobalMembersGm_flat_nested_sentblock
 				n = n.get_parent();
 				assert n != null;
 			}
-			GlobalMembersGm_transform_helper.gm_reconstruct_scope(n);
+			gm_transform_helper.gm_reconstruct_scope(n);
 		}
 	}
 }

@@ -28,10 +28,10 @@ import ast.ast_typedecl;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GlobalMembersGm_add_symbol;
+import common.gm_add_symbol;
 import common.gm_main;
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_new_sents_after_tc;
+import common.gm_transform_helper;
 
 public class gm_cpp_opt_defer extends gm_compile_step {
 	
@@ -88,7 +88,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 			assert type.is_property();
 			// [TODO] hack. Think about deferred-write to scalar, later.
 			// make sure fe belongs to a sentblock
-			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(fe);
+			gm_transform_helper.gm_make_it_belong_to_sentblock(fe);
 
 			// ---------------------------------------
 			// add entry declaration
@@ -97,12 +97,12 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 			boolean is_nodeprop = type.is_node_property();
 			GMTYPE_T target_type = type.getTargetTypeSummary();
 			assert target_type.is_prim_type();
-			ast_sentblock scope = GlobalMembersGm_add_symbol.gm_find_upscope(fe);
+			ast_sentblock scope = gm_add_symbol.gm_find_upscope(fe);
 			gm_symtab_entry target_graph = type.get_target_graph_sym();
 
 			String fname = gm_main.FE.voca_temp_name_and_add(id.get_orgname(), "_nxt");
 			tangible.RefObject<String> tempRef_fname = new tangible.RefObject<String>(fname);
-			gm_symtab_entry new_dest = GlobalMembersGm_add_symbol.gm_add_new_symbol_property(scope, target_type, is_nodeprop, target_graph, tempRef_fname);
+			gm_symtab_entry new_dest = gm_add_symbol.gm_add_new_symbol_property(scope, target_type, is_nodeprop, target_graph, tempRef_fname);
 			fname = tempRef_fname.argvalue;
 			fname = null;
 
@@ -164,14 +164,14 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 				if (need_initializer)
 					add_conditional_initialize(seq_loop, fe, init, old_dest, new_dest);
 			} else {
-				GlobalMembersGm_transform_helper.gm_add_sent_before(fe, init);
+				gm_transform_helper.gm_add_sent_before(fe, init);
 			}
 
 			// ---------------------------------------
 			// add updater
 			// ---------------------------------------
 			ast_foreach update = create_updater(src.copy(true), is_nodeprop, old_dest, new_dest);
-			GlobalMembersGm_transform_helper.gm_add_sent_after(fe, update);
+			gm_transform_helper.gm_add_sent_after(fe, update);
 		}
 	}
 
@@ -196,7 +196,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 			return false;
 
 		// 2. check if target_fe is inside a seq_loop. (unconditionally)
-		seq_loop = GlobalMembersGm_transform_helper.gm_find_enclosing_seq_loop(target_fe);
+		seq_loop = gm_transform_helper.gm_find_enclosing_seq_loop(target_fe);
 		if (seq_loop == null)
 			return false;
 
@@ -207,16 +207,16 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 	private static void add_conditional_initialize(ast_sent seq_loop, ast_foreach target_fe, ast_foreach init, gm_symtab_entry target_old,
 			gm_symtab_entry target_new) {
 		// make sure fe belongs to a sentblock
-		GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(seq_loop);
+		gm_transform_helper.gm_make_it_belong_to_sentblock(seq_loop);
 
 		// ------------------------------------------------------
 		// move up target_new definition over sequential loop
 		// ------------------------------------------------------
-		ast_sentblock up = GlobalMembersGm_add_symbol.gm_find_upscope(target_fe);
+		ast_sentblock up = gm_add_symbol.gm_find_upscope(target_fe);
 		gm_symtab up_symtab = up.get_symtab_field();
-		ast_sentblock upup = GlobalMembersGm_add_symbol.gm_find_upscope(seq_loop);
+		ast_sentblock upup = gm_add_symbol.gm_find_upscope(seq_loop);
 		gm_symtab upup_symtab_f = upup.get_symtab_field();
-		GlobalMembersGm_add_symbol.gm_move_symbol_into(target_new, up_symtab, upup_symtab_f, false);
+		gm_add_symbol.gm_move_symbol_into(target_new, up_symtab, upup_symtab_f, false);
 
 		// --------------------------------------------
 		// create first-access flag and init into upup
@@ -230,12 +230,12 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// --------------------------------------------
 		upup.get_symtab_var(); // to assert it has scope
 		String flag_name = gm_main.FE.voca_temp_name_and_add("is_first");
-		gm_symtab_entry flag_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(upup, GMTYPE_T.GMTYPE_BOOL, new RefObject<String>(flag_name)); // symbol
+		gm_symtab_entry flag_sym = gm_add_symbol.gm_add_new_symbol_primtype(upup, GMTYPE_T.GMTYPE_BOOL, new RefObject<String>(flag_name)); // symbol
 		ast_id lhs = flag_sym.getId().copy(true);
 		ast_expr rhs = ast_expr.new_bval_expr(true);
 		ast_assign a_init = ast_assign.new_assign_scala(lhs, rhs); // "is_first = true"
 		// no need to fix symtab for assign.
-		GlobalMembersGm_transform_helper.gm_insert_sent_begin_of_sb(upup, a_init, false);
+		gm_transform_helper.gm_insert_sent_begin_of_sb(upup, a_init, false);
 
 		// -------------------------------------------
 		// create conditional init:
@@ -258,7 +258,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// ---------------------------------------------
 		// Add cond-init
 		// ---------------------------------------------
-		GlobalMembersGm_transform_helper.gm_add_sent_before(target_fe, cond_init);
+		gm_transform_helper.gm_add_sent_before(target_fe, cond_init);
 
 		return;
 	}
@@ -295,7 +295,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		String iter_name = gm_main.FE.voca_temp_name_and_add("i");
 		ast_id itor = ast_id.new_id(iter_name, 0, 0);
 		GMTYPE_T iter_type = is_nodeprop ? GMTYPE_T.GMTYPE_NODEITER_ALL : GMTYPE_T.GMTYPE_EDGEITER_ALL;
-		ast_foreach fe = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(itor, src, a, iter_type);
+		ast_foreach fe = gm_new_sents_after_tc.gm_new_foreach_after_tc(itor, src, a, iter_type);
 		assert itor.getSymInfo() != null;
 		iter_name = null;
 

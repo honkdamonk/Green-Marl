@@ -1,6 +1,6 @@
 package common;
 
-public class GlobalMembersGm_dumptree
+public class gm_dumptree
 {
 	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 	///#define TO_STR(X) #X

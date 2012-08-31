@@ -3,7 +3,7 @@ package ast;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 
 //==========================================================================
 
@@ -383,7 +383,7 @@ public class ast_typedecl extends ast_node { // property or type
 
 	public void dump_tree(int ind_level) {
 		assert parent != null;
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("<TYPE ");
 		System.out.printf(" type:%s", type_id.get_type_string());
 		if (is_property()) {
@@ -391,12 +391,12 @@ public class ast_typedecl extends ast_node { // property or type
 			target_type.dump_tree(ind_level + 1);
 			target_graph.dump_tree(0);
 			System.out.print("\n");
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 		}
 		if (is_nodeedge()) {
 			target_graph.dump_tree(0);
 			System.out.print("\n");
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 		}
 		System.out.print(">");
 	}

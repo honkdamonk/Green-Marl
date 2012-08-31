@@ -3,7 +3,7 @@ package common;
 import ast.ast_node;
 import frontend.gm_symtab_entry;
 
-public class GlobalMembersGm_resolve_nc
+public class gm_resolve_nc
 {
 	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
 	///#define TO_STR(X) #X

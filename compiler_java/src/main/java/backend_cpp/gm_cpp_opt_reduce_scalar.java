@@ -3,7 +3,7 @@ package backend_cpp;
 import ast.ast_procdef;
 import inc.gm_compile_step;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 import frontend.GlobalMembersGm_rw_analysis;
 
@@ -17,7 +17,7 @@ public class gm_cpp_opt_reduce_scalar extends gm_compile_step
 	{
 		opt_scalar_reduction_t T = new opt_scalar_reduction_t();
 		GlobalMembersGm_rw_analysis.gm_redo_rw_analysis(p.get_body());
-		GlobalMembersGm_traverse.gm_traverse_sents(p.get_body(), T);
+		gm_traverse.gm_traverse_sents(p.get_body(), T);
 		if (T.has_targets())
 		{
 			T.transform_targets();

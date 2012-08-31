@@ -3,7 +3,7 @@ package frontend;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 
 public class gm_fe_reduce_error_check extends gm_compile_step
@@ -15,7 +15,7 @@ public class gm_fe_reduce_error_check extends gm_compile_step
 	public void process(ast_procdef p)
 	{
 		gm_check_reduce_error_t CHECK_1 = new gm_check_reduce_error_t();
-		GlobalMembersGm_traverse.gm_traverse_sents(p, CHECK_1);
+		gm_traverse.gm_traverse_sents(p, CHECK_1);
 		set_okay(CHECK_1.is_okay);
 	}
 	@Override

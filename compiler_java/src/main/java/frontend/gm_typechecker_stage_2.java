@@ -12,7 +12,7 @@ import ast.ast_sent;
 import ast.ast_typedecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_main;
 import common.gm_apply;
 import common.gm_builtin_def;
@@ -58,7 +58,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 	public boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
 			if (bfs_level > 0) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NESTED_BFS, s.get_line(), s.get_col());
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NESTED_BFS, s.get_line(), s.get_col());
 				set_okay(false);
 			}
 			bfs_level++;
@@ -81,7 +81,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 					_group_sym = f.get_first().getSymInfo();
 
 					if (a.is_reduce_assign() || a.is_defer_assign()) {
-						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GROUP_REDUCTION, a.get_line(), a.get_col());
+						gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GROUP_REDUCTION, a.get_line(), a.get_col());
 						set_okay(false);
 						return false;
 					}
@@ -200,7 +200,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 
 		boolean isOkay = true;
 		if (builtinDef == null) {
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN, builtinExpr.get_line(), builtinExpr.get_col(),
+			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN, builtinExpr.get_line(), builtinExpr.get_col(),
 					builtinExpr.get_callname());
 			isOkay = false;
 		}
@@ -211,7 +211,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 
 			int argCount = arguments.size();
 			if (argCount != builtinDef.get_num_args()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN_ARG_COUNT, builtinExpr.get_line(), builtinExpr.get_col(),
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN_ARG_COUNT, builtinExpr.get_line(), builtinExpr.get_col(),
 						builtinExpr.get_callname());
 				isOkay = false;
 			}
@@ -227,19 +227,19 @@ public class gm_typechecker_stage_2 extends gm_apply {
 		if (t.is_graph() || t.is_collection()) // group assignment
 		{
 			if ((!_is_group_assignment) || (_group_sym != driver.getSymInfo())) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_GROUP_DRIVER, driver);
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_GROUP_DRIVER, driver);
 				return false;
 			}
 			// check node property
 			ast_typedecl prop_type = f.get_second().getTypeInfo();
 			if (_is_group_assignment_node_prop) {
 				if (!prop_type.is_node_property()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, f.get_second(), "Node_Property");
+					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, f.get_second(), "Node_Property");
 					return false;
 				}
 			} else {
 				if (!prop_type.is_edge_property()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, f.get_second(), "Edge_Property");
+					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, f.get_second(), "Edge_Property");
 					return false;
 				}
 			}

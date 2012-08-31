@@ -4,7 +4,7 @@ import ast.ast_procdef;
 import inc.gm_compile_step;
 
 import common.gm_main;
-import common.GlobalMembersGm_prepare_genname;
+import common.gm_prepare_genname;
 import common.gm_vocabulary;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -27,7 +27,7 @@ public class gm_cpp_gen_sanitize_name extends gm_compile_step
 	{
 		// (1) create gen-name
 		gm_vocabulary V = gm_main.CPP_BE.get_language_voca();
-		GlobalMembersGm_prepare_genname.gm_prepare_genname(proc, V);
+		gm_prepare_genname.gm_prepare_genname(proc, V);
     
 		// (2) rename property names  A --> G_A
 		rename_prop_name_t T = new rename_prop_name_t();

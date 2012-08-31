@@ -3,7 +3,7 @@ package common;
 import ast.ast_node;
 import frontend.gm_symtab_entry;
 
-public class GlobalMembersGm_replace_sym_access {
+public class gm_replace_sym_access {
 
 	public static boolean replace_symbol_access(ast_node top, gm_sym_change_info I) {
 		// traverse the nodes
@@ -23,7 +23,7 @@ public class GlobalMembersGm_replace_sym_access {
 		S.tgt_scalar = true;
 		S.src = src;
 		S.tgt = target;
-		return GlobalMembersGm_replace_sym_access.replace_symbol_access(top, S);
+		return gm_replace_sym_access.replace_symbol_access(top, S);
 	}
 
 	public static boolean gm_replace_symbol_access_scalar_field(ast_node top, gm_symtab_entry src, gm_symtab_entry t_drv, gm_symtab_entry target) {
@@ -40,7 +40,7 @@ public class GlobalMembersGm_replace_sym_access {
 		S.src = src;
 		S.tgt = target;
 		S.t_drv = t_drv;
-		return GlobalMembersGm_replace_sym_access.replace_symbol_access(top, S);
+		return gm_replace_sym_access.replace_symbol_access(top, S);
 	}
 
 	public static boolean gm_replace_symbol_access_field_scalar(ast_node top, gm_symtab_entry src_drv, gm_symtab_entry src, gm_symtab_entry target,
@@ -53,7 +53,7 @@ public class GlobalMembersGm_replace_sym_access {
 		S.src = src;
 		S.s_drv = src_drv;
 		S.tgt = target;
-		return GlobalMembersGm_replace_sym_access.replace_symbol_access(top, S);
+		return gm_replace_sym_access.replace_symbol_access(top, S);
 	}
 
 	public static boolean gm_replace_symbol_access_field_field(ast_node top, gm_symtab_entry src_drv, gm_symtab_entry src, gm_symtab_entry t_drv,
@@ -68,6 +68,6 @@ public class GlobalMembersGm_replace_sym_access {
 		S.tgt = target;
 		S.t_drv = t_drv;
 
-		return GlobalMembersGm_replace_sym_access.replace_symbol_access(top, S);
+		return gm_replace_sym_access.replace_symbol_access(top, S);
 	}
 }

@@ -1,7 +1,7 @@
 package ast;
 
 import inc.GMTYPE_T;
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 
 import frontend.gm_symtab_entry;
 
@@ -155,7 +155,7 @@ public class ast_id extends ast_node {
 
 	public void dump_tree(int ind_lv) {
 		// assert(parent!=NULL);
-		GlobalMembersGm_dumptree.IND(ind_lv);
+		gm_dumptree.IND(ind_lv);
 		System.out.printf("%s", get_orgname());
 	}
 

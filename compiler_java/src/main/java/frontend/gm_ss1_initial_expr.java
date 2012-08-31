@@ -10,7 +10,7 @@ import ast.ast_idlist;
 import ast.ast_sent;
 import ast.ast_vardecl;
 
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 public class gm_ss1_initial_expr extends gm_apply
@@ -39,7 +39,7 @@ public class gm_ss1_initial_expr extends gm_apply
 		ast_assign a = ast_assign.new_assign_scala(id, e, gm_assignment_t.GMASSIGN_NORMAL, null, GM_REDUCE_T.GMREDUCE_NULL);
 
 		// add this sententence next to current statement
-		GlobalMembersGm_transform_helper.gm_add_sent_after(v, a, false); // no fix symtab
+		gm_transform_helper.gm_add_sent_after(v, a, false); // no fix symtab
 
 		return true;
 	}

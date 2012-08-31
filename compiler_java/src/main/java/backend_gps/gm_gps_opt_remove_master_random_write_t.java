@@ -13,8 +13,8 @@ import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 
 import common.gm_main;
-import common.GlobalMembersGm_new_sents_after_tc;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_new_sents_after_tc;
+import common.gm_transform_helper;
 import common.gm_apply;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -73,17 +73,17 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 
 	public final void post_process() {
 		for (ast_assign a : targets) {
-			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
+			gm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			ast_sentblock sb = (ast_sentblock) a.get_parent();
 
 			String name = gm_main.FE.voca_temp_name_and_add("_t", null, true);
 			ast_id id = ast_id.new_id(name, a.get_line(), a.get_col());
 			ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
-			ast_foreach foreach_out = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(id, a.get_lhs_field().get_first().getTypeInfo()
+			ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(id, a.get_lhs_field().get_first().getTypeInfo()
 					.get_target_graph_id().copy(true), foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
-			GlobalMembersGm_transform_helper.gm_add_sent_after(a, foreach_out);
+			gm_transform_helper.gm_add_sent_after(a, foreach_out);
 			name = null;
-			GlobalMembersGm_transform_helper.gm_ripoff_sent(a);
+			gm_transform_helper.gm_ripoff_sent(a);
 
 			ast_expr check = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ, ast_expr.new_id_expr(foreach_out.get_iterator().copy(true)),
 					ast_expr.new_id_expr(a.get_lhs_field().get_first().copy(true)));

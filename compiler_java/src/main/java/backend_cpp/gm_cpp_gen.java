@@ -46,10 +46,10 @@ import ast.ast_typedecl;
 import ast.ast_vardecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_apply_compiler_stage;
-import common.GlobalMembersGm_error;
+import common.gm_apply_compiler_stage;
+import common.gm_error;
 import common.gm_main;
-import common.GlobalMembersGm_transform_helper;
+import common.gm_transform_helper;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
 import common.gm_vocabulary;
@@ -172,7 +172,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 	public boolean do_local_optimize() {
 		// apply all the optimize steps to all procedures
-		return GlobalMembersGm_apply_compiler_stage.gm_apply_compiler_stage(opt_steps);
+		return gm_apply_compiler_stage.gm_apply_compiler_stage(opt_steps);
 	}
 
 	public boolean do_generate() {
@@ -181,7 +181,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		do_generate_begin();
 
-		boolean b = GlobalMembersGm_apply_compiler_stage.gm_apply_compiler_stage(this.gen_steps);
+		boolean b = gm_apply_compiler_stage.gm_apply_compiler_stage(this.gen_steps);
 		assert b == true;
 
 		do_generate_end();
@@ -322,7 +322,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		temp = String.format("%s/%s.h", dname, fname);
 		f_header = FILE.fopen(temp, "w");
 		if (f_header == null) {
-			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
+			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
 		Header.setOutputFile(f_header);
@@ -330,7 +330,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		temp = String.format("%s/%s.cc", dname, fname);
 		f_body = FILE.fopen(temp, "w");
 		if (f_body == null) {
-			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
+			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
 		_Body.setOutputFile(f_body);
@@ -969,7 +969,7 @@ public class gm_cpp_gen extends BackendGenerator {
 	public void generate_sent_block_exit(ast_sentblock sb) {
 		boolean has_prop_decl = sb.find_info_bool(CPPBE_INFO_HAS_PROPDECL);
 		boolean is_proc_entry = sb.find_info_bool(CPPBE_INFO_IS_PROC_ENTRY);
-		boolean has_return_ahead = GlobalMembersGm_transform_helper.gm_check_if_end_with_return(sb);
+		boolean has_return_ahead = gm_transform_helper.gm_check_if_end_with_return(sb);
 
 		if (has_prop_decl && !has_return_ahead) {
 			if (is_proc_entry) {

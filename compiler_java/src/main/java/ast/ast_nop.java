@@ -1,7 +1,7 @@
 package ast;
 
 import inc.nop_enum_cpp;
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 
 // a dummy nop IR.
@@ -36,7 +36,7 @@ public class ast_nop extends ast_sent {
 	}
 
 	public void dump_tree(int ind_level) {
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		assert parent != null;
 		System.out.printf("[NOP %d]\n", get_subtype());
 	}

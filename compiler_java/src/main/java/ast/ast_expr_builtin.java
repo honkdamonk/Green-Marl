@@ -4,7 +4,7 @@ import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.expr_list;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 import common.gm_builtin_def;
 
@@ -44,7 +44,7 @@ public class ast_expr_builtin extends ast_expr {
 	}
 
 	public void dump_tree(int ind_level) {
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("[ ");
 		if (driver == null)
 			System.out.print("_");
@@ -57,7 +57,7 @@ public class ast_expr_builtin extends ast_expr {
 				e.dump_tree(ind_level + 1);
 				System.out.print("\n");
 			}
-			GlobalMembersGm_dumptree.IND(ind_level);
+			gm_dumptree.IND(ind_level);
 			System.out.print(")]");
 		} else
 			System.out.print(")]");

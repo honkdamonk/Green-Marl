@@ -1,6 +1,5 @@
 grammar GMParser;
 
-/*class gm_parser extends Parser;*/
 options {
     language   = Java;
     output     = AST;
@@ -10,6 +9,10 @@ options {
 
 @header {
     package parse;
+}
+
+@lexer::header {
+	package parse;
 }
 
 /*

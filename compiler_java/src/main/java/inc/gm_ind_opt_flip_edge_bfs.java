@@ -3,7 +3,7 @@ package inc;
 import ast.ast_procdef;
 import opt.gm_flip_backedge_t;
 
-import common.GlobalMembersGm_argopts;
+import common.gm_argopts;
 import common.gm_main;
 
 import frontend.GlobalMembersGm_rw_analysis;
@@ -27,7 +27,7 @@ public class gm_ind_opt_flip_edge_bfs extends gm_compile_step
 	}
 	public void process(ast_procdef p)
 	{
-		if (gm_main.OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_FLIP_BFSUP) == false)
+		if (gm_main.OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_FLIP_BFSUP) == false)
 			return;
     
 		gm_flip_backedge_t T = new gm_flip_backedge_t();

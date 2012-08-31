@@ -22,7 +22,7 @@ import ast.ast_typedecl;
 import ast.ast_while;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_apply;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -104,7 +104,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 				break;
 
 			if (r.get_expr() == null) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
 						GMTYPE_T.GMTYPE_VOID.get_type_string());
 				break;
 			}
@@ -116,7 +116,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			boolean test = gm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 			boolean warn = warn_ref.argvalue;
 			if (!test) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
 						summary_rhs.get_type_string());
 
 				okay = false;
@@ -157,7 +157,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			}
 
 			if (!l2.getSymInfo().isWriteable()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_READONLY, l2);
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_READONLY, l2);
 				return false;
 			}
 		} else {
@@ -178,7 +178,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		boolean test = gm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 		boolean warn = warn_ref.argvalue;
 		if (!test) {
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(),
+			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(),
 					summary_rhs.get_type_string());
 			return false;
 		}
@@ -194,7 +194,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 				assert summary_rhs.is_nil_type() || summary_rhs.is_foreign_expr_type();
 			} else {
 				if (l_sym != r_sym) {
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH, l, c);
+					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH, l, c);
 					return false;
 				}
 			}
@@ -225,12 +225,12 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			GM_REDUCE_T reduce_op = a.get_reduce_type();
 			if (reduce_op.is_numeric_reduce_op()) {
 				if (!summary_lhs.is_numeric_type()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_NUMERIC_REDUCE, l, c);
+					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_NUMERIC_REDUCE, l, c);
 					return false;
 				}
 			} else if (reduce_op.is_boolean_reduce_op()) {
 				if (!summary_lhs.is_boolean_type()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_BOOLEAN_REDUCE, l, c);
+					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_BOOLEAN_REDUCE, l, c);
 					return false;
 				}
 			}
@@ -259,7 +259,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 
 	public final boolean should_be_boolean(ast_expr e) {
 		if (!e.get_type_summary().is_boolean_type()) {
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_BOOLEAN, e.get_line(), e.get_col());
+			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_BOOLEAN, e.get_line(), e.get_col());
 			return false;
 		}
 		return true;

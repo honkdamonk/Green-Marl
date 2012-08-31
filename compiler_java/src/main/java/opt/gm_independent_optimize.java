@@ -12,7 +12,7 @@ import inc.gm_ind_opt_syntax_sugar2;
 
 import java.util.LinkedList;
 
-import common.GlobalMembersGm_apply_compiler_stage;
+import common.gm_apply_compiler_stage;
 
 public class gm_independent_optimize {
 	public gm_independent_optimize() {
@@ -24,7 +24,7 @@ public class gm_independent_optimize {
 
 	// return true if successful
 	public boolean do_local_optimize() {
-		return GlobalMembersGm_apply_compiler_stage.gm_apply_compiler_stage(opt_steps);
+		return gm_apply_compiler_stage.gm_apply_compiler_stage(opt_steps);
 	}
 
 	// --------------------------------------------

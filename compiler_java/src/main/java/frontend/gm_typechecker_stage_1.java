@@ -40,7 +40,7 @@ import ast.ast_typedecl;
 import ast.ast_vardecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_error;
+import common.gm_error;
 import common.gm_main;
 import common.gm_apply;
 
@@ -124,7 +124,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				// ast_idlist idlist = a.get_idlist();
 				// only primitives or nodes or edges can be an output
 				if (!type.is_primitive() && !type.is_nodeedge()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERROR_INVALID_OUTPUT_TYPE, type.get_line(), type.get_col());
+					gm_error.gm_type_error(GM_ERROR_INVALID_OUTPUT_TYPE, type.get_line(), type.get_col());
 					is_okay = false;
 				} else {
 					ast_idlist idlist = a.get_idlist();
@@ -150,7 +150,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		}
 		is_okay = gm_check_type_is_well_defined(ret, curr_sym) && is_okay;
 		if (!ret.is_void() && !ret.is_primitive() && !ret.is_nodeedge()) {
-			GlobalMembersGm_error.gm_type_error(GM_ERROR_INVALID_OUTPUT_TYPE, ret.get_line(), ret.get_col());
+			gm_error.gm_type_error(GM_ERROR_INVALID_OUTPUT_TYPE, ret.get_line(), ret.get_col());
 			is_okay = false;
 		}
 
@@ -280,7 +280,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				if (is_okay) {
 					// bound symbol must be iterator
 					if (!bound.getTypeInfo().is_node_edge_iterator() && !bound.getTypeInfo().is_collection_iterator()) {
-						GlobalMembersGm_error.gm_type_error(GM_ERROR_NEED_ITERATOR, bound);
+						gm_error.gm_type_error(GM_ERROR_NEED_ITERATOR, bound);
 						is_okay = false;
 					}
 				}
@@ -420,12 +420,12 @@ public class gm_typechecker_stage_1 extends gm_apply {
 					.is_collection_iterator())) // for group assignment - for
 												// group assignment
 			{
-				GlobalMembersGm_error.gm_type_error(GM_ERROR_NONGRAPH_FIELD, driver);
+				gm_error.gm_type_error(GM_ERROR_NONGRAPH_FIELD, driver);
 				is_okay = false;
 			}
 
 			if (!field_type.is_property()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "property");
+				gm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "property");
 				is_okay = false;
 			}
 
@@ -440,11 +440,11 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				GMTYPE_T type = name_type.getTypeSummary();
 				if (!(type.is_inout_nbr_node_iter_type() || (type == GMTYPE_T.GMTYPE_NODEITER_BFS))) {
 					// not BFS, not in-out
-					GlobalMembersGm_error.gm_type_error(GM_ERROR_INVALID_ITERATOR_FOR_RARROW, driver);
+					gm_error.gm_type_error(GM_ERROR_INVALID_ITERATOR_FOR_RARROW, driver);
 					return false;
 				}
 				if (!field_type.is_edge_property()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "Edge_Property");
+					gm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "Edge_Property");
 					return false;
 				}
 			} else {
@@ -453,12 +453,12 @@ public class gm_typechecker_stage_1 extends gm_apply {
 					// to be resolved more later (group assignment)
 				} else if (name_type.is_node_compatible()) {
 					if (!field_type.is_node_property()) {
-						GlobalMembersGm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "Node_Property");
+						gm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "Node_Property");
 						return false;
 					}
 				} else if (name_type.is_edge_compatible()) {
 					if (!field_type.is_edge_property()) {
-						GlobalMembersGm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "Edge_Property");
+						gm_error.gm_type_error(GM_ERROR_WRONG_PROPERTY, field, "Edge_Property");
 						return false;
 					}
 				} else {
@@ -468,7 +468,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 
 			// check target graph matches
 			if (!gm_check_target_graph(driver, field)) {
-				GlobalMembersGm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, driver, field);
+				gm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, driver, field);
 				return false;
 			}
 		}
@@ -511,14 +511,14 @@ public class gm_typechecker_stage_1 extends gm_apply {
 
 				ast_typedecl type = n.getTypeInfo();
 				if (!type.is_node_compatible()) {
-					GlobalMembersGm_error.gm_type_error(GM_ERROR_NONNODE_TARGET, n, n);
+					gm_error.gm_type_error(GM_ERROR_NONNODE_TARGET, n, n);
 					is_okay = false;
 				}
 
 				// In/Down is only available inside BFS -> checked at step 2
 				if (iter_type.is_iteration_on_updown_levels()) {
 					if (n.getTypeSummary().is_iteration_bfs()) {
-						GlobalMembersGm_error.gm_type_error(GM_ERROR_NEED_BFS_ITERATION, n);
+						gm_error.gm_type_error(GM_ERROR_NEED_BFS_ITERATION, n);
 						is_okay = false;
 					}
 				}
@@ -533,7 +533,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 						gm_symtab_entry e2 = src2.getTypeInfo().get_target_graph_sym();
 						assert e1 != null;
 						if (e1 != e2) {
-							GlobalMembersGm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, src2.get_line(), src2.get_col());
+							gm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, src2.get_line(), src2.get_col());
 							is_okay = false;
 						}
 					}
@@ -586,7 +586,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			// root should be a node. and target should be the graph
 			ast_typedecl t_root = root.getTypeInfo();
 			if (!t_root.is_node_compatible()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERROR_NONNODE_TARGET, root, root);
+				gm_error.gm_type_error(GM_ERROR_NONNODE_TARGET, root, root);
 				is_okay = false;
 			}
 		}
@@ -595,7 +595,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			// check root is a node of src
 			is_okay = gm_check_target_graph(src, root);
 			if (!is_okay)
-				GlobalMembersGm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, src, root);
+				gm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, src, root);
 		}
 
 		// -----------------------------------------
@@ -684,7 +684,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		gm_symtab_entry se = begin.find_symbol(id);
 		if (se == null) {
 			if (print_error)
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_UNDEFINED, id);
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_UNDEFINED, id);
 			return false;
 		}
 
@@ -710,25 +710,25 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		switch (should_be_what) {
 		case SHOULD_BE_A_GRAPH:
 			if ((!target.getTypeInfo().is_graph())) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONGRAPH_TARGET, target, target);
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONGRAPH_TARGET, target, target);
 				return false;
 			}
 			break;
 		case SHOULD_BE_A_COLLECTION:
 			if ((!target.getTypeInfo().is_collection())) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONSET_TARGET, target, target);
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONSET_TARGET, target, target);
 				return false;
 			}
 			break;
 		case SHOULD_BE_A_NODE_COMPATIBLE:
 			if ((!target.getTypeInfo().is_node_compatible())) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONNODE_TARGET, target, target);
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONNODE_TARGET, target, target);
 				return false;
 			}
 			break;
 		case SHOULD_BE_A_PROPERTY:
 			if (!target.getTypeInfo().is_property()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONSET_TARGET, target, target);
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NONSET_TARGET, target, target);
 				return false;
 			}
 			break;
@@ -753,7 +753,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				if (entryType.is_graph()) {
 					foundCount++;
 					if (foundCount > 1) {
-						GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS, targetGraph, e.getId());
+						gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS, targetGraph, e.getId());
 						return null;
 					}
 					targetGraph = e.getId();
@@ -805,7 +805,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		} else if (type.is_graph()) {
 			// if default graph is used, check if no other graph is defined
 			if (SYM_V.is_default_graph_used() && SYM_V.get_graph_declaration_count() > 0) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS, type.get_line(), type.get_col(), "");
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS, type.get_line(), type.get_col(), "");
 				return false;
 			}
 		} else if (type.is_collection() || type.is_nodeedge() || type.is_all_graph_iterator() || type.is_collection_of_collection()) {
@@ -823,7 +823,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				if (!is_okay)
 					return false;
 			} else if (!target_type.is_primitive()) {
-				GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_PRIMITIVE, type.get_line(), type.get_col());
+				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_PRIMITIVE, type.get_line(), type.get_col());
 				return false;
 			}
 		} else if (type.is_collection_iterator()) {
@@ -895,7 +895,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		RefObject<gm_symtab_entry> old_e = new RefObject<gm_symtab_entry>(null);
 		boolean is_okay = SYM.check_duplicate_and_add_symbol(id, type, old_e, is_readable, is_writeable);
 		if (!is_okay)
-			GlobalMembersGm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DUPLICATE, id, old_e.argvalue.getId());
+			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DUPLICATE, id, old_e.argvalue.getId());
 
 		gm_find_and_connect_symbol(id, SYM);
 

@@ -53,7 +53,7 @@ import backend_gps.gm_gps_opt_split_comm_ebb;
 import backend_gps.gps_syminfo;
 
 import common.gm_main;
-import common.GlobalMembersGm_reproduce;
+import common.gm_reproduce;
 
 //-----------------------------------------------------------------
 // interface for graph library Layer
@@ -183,15 +183,15 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("}");
 		Body.NL();
 
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(f_body); // for
+		gm_reproduce.gm_redirect_reproduce(f_body); // for
 																	// temporary
-		GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
+		gm_reproduce.gm_baseindent_reproduce(3);
 
 		for (gm_gps_basic_block b : bb_blocks) {
 			do_generate_master_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(new FILE(System.out));
-		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
+		gm_reproduce.gm_redirect_reproduce(new FILE(System.out));
+		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 
 	public void do_generate_master_class() {
@@ -801,16 +801,16 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 		Body.pushln("}");
 
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(f_body); // for
+		gm_reproduce.gm_redirect_reproduce(f_body); // for
 																	// temporary
-		GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
+		gm_reproduce.gm_baseindent_reproduce(3);
 		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			do_generate_vertex_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(new FILE(System.out));
-		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
+		gm_reproduce.gm_redirect_reproduce(new FILE(System.out));
+		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 
 	public void do_generate_vertex_state_body(gm_gps_basic_block b) {
@@ -863,11 +863,11 @@ public class gm_giraph_gen extends gm_gps_gen {
 					Body.pushln("(Nested Loop)");
 					Body.flush();
 					if (is_conditional)
-						GlobalMembersGm_reproduce.gm_baseindent_reproduce(5);
+						gm_reproduce.gm_baseindent_reproduce(5);
 					else
-						GlobalMembersGm_reproduce.gm_baseindent_reproduce(4);
+						gm_reproduce.gm_baseindent_reproduce(4);
 					fe.reproduce(0);
-					GlobalMembersGm_reproduce.gm_flush_reproduce();
+					gm_reproduce.gm_flush_reproduce();
 					Body.pushln("-----*/");
 					get_lib().generate_message_receive_begin(fe, Body, b, R.size() == 1);
 
@@ -886,14 +886,14 @@ public class gm_giraph_gen extends gm_gps_gen {
 					Body.pushln("{");
 					Body.flush();
 					if (is_conditional)
-						GlobalMembersGm_reproduce.gm_baseindent_reproduce(6);
+						gm_reproduce.gm_baseindent_reproduce(6);
 					else
-						GlobalMembersGm_reproduce.gm_baseindent_reproduce(5);
+						gm_reproduce.gm_baseindent_reproduce(5);
 					for (ast_sent s : sb.get_sents()) {
 						if (s.find_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb)
 							s.reproduce(0);
 					}
-					GlobalMembersGm_reproduce.gm_flush_reproduce();
+					gm_reproduce.gm_flush_reproduce();
 					Body.pushln("}");
 					Body.pushln("-----*/");
 					get_lib().generate_message_receive_begin(sb, U.sym, Body, b, R.size() == 1);
@@ -914,7 +914,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 				Body.pushln("}");
 			}
 			Body.NL();
-			GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
+			gm_reproduce.gm_baseindent_reproduce(3);
 		}
 
 		// ---------------------------------------------------------

@@ -57,10 +57,10 @@ import backend_cpp.FILE;
 import backend_cpp.gm_cpp_opt_defer;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.GlobalMembersGm_apply_compiler_stage;
-import common.GlobalMembersGm_error;
+import common.gm_apply_compiler_stage;
+import common.gm_error;
 import common.gm_main;
-import common.GlobalMembersGm_reproduce;
+import common.gm_reproduce;
 import common.gm_builtin_def;
 
 //-----------------------------------------------------------------
@@ -113,7 +113,7 @@ public class gm_gps_gen extends BackendGenerator {
 		// currently, there should be one and only one top-level procedure
 		// -----------------------------------
 		if (gm_main.FE.get_num_procs() != 1) {
-			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NUM_PROCS, "");
+			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NUM_PROCS, "");
 			return false;
 		}
 
@@ -129,7 +129,7 @@ public class gm_gps_gen extends BackendGenerator {
 		// -----------------------------------
 		// Now apply all the steps
 		// -----------------------------------
-		return GlobalMembersGm_apply_compiler_stage.gm_apply_compiler_stage(get_opt_steps());
+		return gm_apply_compiler_stage.gm_apply_compiler_stage(get_opt_steps());
 	}
 
 	public boolean do_generate() {
@@ -137,7 +137,7 @@ public class gm_gps_gen extends BackendGenerator {
 		if (!open_output_files())
 			return false;
 
-		boolean b = GlobalMembersGm_apply_compiler_stage.gm_apply_compiler_stage(get_gen_steps());
+		boolean b = gm_apply_compiler_stage.gm_apply_compiler_stage(get_gen_steps());
 
 		close_output_files();
 
@@ -150,7 +150,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 	public void print_basicblock() {
 		gm_print_bb_t T = new gm_print_bb_t();
-		GlobalMembersGm_apply_compiler_stage.gm_apply_all_proc(T);
+		gm_apply_compiler_stage.gm_apply_all_proc(T);
 	}
 
 	public void init_opt_steps() {
@@ -243,7 +243,7 @@ public class gm_gps_gen extends BackendGenerator {
 		String temp = String.format("%s/%s.java", dname, fname);
 		f_body = FILE.fopen(temp, "w");
 		if (f_body == null) {
-			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
+			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
 		Body.setOutputFile(f_body);
@@ -319,15 +319,15 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("}");
 		Body.NL();
 
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(f_body); // for
+		gm_reproduce.gm_redirect_reproduce(f_body); // for
 																	// temporary
-		GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
+		gm_reproduce.gm_baseindent_reproduce(3);
 
 		for (gm_gps_basic_block b : bb_blocks) {
 			do_generate_master_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(new FILE(System.out));
-		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
+		gm_reproduce.gm_redirect_reproduce(new FILE(System.out));
+		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 
 	public void do_generate_master_class() {
@@ -901,16 +901,16 @@ public class gm_gps_gen extends BackendGenerator {
 
 		Body.pushln("}");
 
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(f_body); // for
+		gm_reproduce.gm_redirect_reproduce(f_body); // for
 																	// temporary
-		GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
+		gm_reproduce.gm_baseindent_reproduce(3);
 		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			do_generate_vertex_state_body(b);
 		}
-		GlobalMembersGm_reproduce.gm_redirect_reproduce(new FILE(System.out));
-		GlobalMembersGm_reproduce.gm_baseindent_reproduce(0);
+		gm_reproduce.gm_redirect_reproduce(new FILE(System.out));
+		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 
 	public void do_generate_vertex_state_body(gm_gps_basic_block b) {
@@ -962,11 +962,11 @@ public class gm_gps_gen extends BackendGenerator {
 					Body.pushln("(Nested Loop)");
 					Body.flush();
 					if (is_conditional)
-						GlobalMembersGm_reproduce.gm_baseindent_reproduce(5);
+						gm_reproduce.gm_baseindent_reproduce(5);
 					else
-						GlobalMembersGm_reproduce.gm_baseindent_reproduce(4);
+						gm_reproduce.gm_baseindent_reproduce(4);
 					fe.reproduce(0);
-					GlobalMembersGm_reproduce.gm_flush_reproduce();
+					gm_reproduce.gm_flush_reproduce();
 					Body.pushln("-----*/");
 					get_lib().generate_message_receive_begin(fe, Body, b, R.size() == 1);
 
@@ -985,15 +985,15 @@ public class gm_gps_gen extends BackendGenerator {
 					Body.pushln("{");
 					Body.flush();
 					if (is_conditional)
-						GlobalMembersGm_reproduce.gm_baseindent_reproduce(6);
+						gm_reproduce.gm_baseindent_reproduce(6);
 					else
-						GlobalMembersGm_reproduce.gm_baseindent_reproduce(5);
+						gm_reproduce.gm_baseindent_reproduce(5);
 					LinkedList<ast_sent> sents = sb.get_sents();
 					for (ast_sent s : sents) {
 						if (s.find_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) == sb)
 							s.reproduce(0);
 					}
-					GlobalMembersGm_reproduce.gm_flush_reproduce();
+					gm_reproduce.gm_flush_reproduce();
 					Body.pushln("}");
 					Body.pushln("-----*/");
 					get_lib().generate_message_receive_begin(sb, U.sym, Body, b, R.size() == 1);
@@ -1014,7 +1014,7 @@ public class gm_gps_gen extends BackendGenerator {
 				Body.pushln("}");
 			}
 			Body.NL();
-			GlobalMembersGm_reproduce.gm_baseindent_reproduce(3);
+			gm_reproduce.gm_baseindent_reproduce(3);
 		}
 
 		// ---------------------------------------------------------

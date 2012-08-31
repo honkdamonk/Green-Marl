@@ -17,7 +17,7 @@ import ast.ast_sent;
 import ast.ast_typedecl;
 
 import common.gm_main;
-import common.GlobalMembersGm_traverse;
+import common.gm_traverse;
 
 public class gm_gps_opt_create_ebb extends gm_compile_step {
 
@@ -32,7 +32,7 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		// --------------------------------
 		HashMap<ast_sent, gps_gps_sentence_t> s_mark = new HashMap<ast_sent, gps_gps_sentence_t>();
 		gm_stage_create_pre_process_t T1 = new gm_stage_create_pre_process_t(s_mark);
-		GlobalMembersGm_traverse.gm_traverse_sents_pre_post(proc, T1);
+		gm_traverse.gm_traverse_sents_pre_post(proc, T1);
 
 		// --------------------------------
 		// STEP 2:
@@ -40,7 +40,7 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		// --------------------------------
 		gm_gps_beinfo beinfo = (gm_gps_beinfo) gm_main.FE.get_backend_info(proc);
 		gm_gps_create_basic_block1_t T2 = new gm_gps_create_basic_block1_t(s_mark, beinfo);
-		GlobalMembersGm_traverse.gm_traverse_sents_pre_post(proc, T2);
+		gm_traverse.gm_traverse_sents_pre_post(proc, T2);
 
 		// Debug Print
 		/*

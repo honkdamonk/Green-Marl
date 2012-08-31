@@ -1,7 +1,7 @@
 package ast;
 
-import common.GlobalMembersGm_dumptree;
-import common.GlobalMembersGm_traverse;
+import common.gm_dumptree;
+import common.gm_traverse;
 import common.gm_apply;
 
 public class ast_vardecl extends ast_sent {
@@ -66,10 +66,10 @@ public class ast_vardecl extends ast_sent {
 			ast_idlist idl = get_idlist();
 
 			if (is_pre)
-				idl.apply_id(a, GlobalMembersGm_traverse.PRE_APPLY);
+				idl.apply_id(a, gm_traverse.PRE_APPLY);
 
 			if (is_post)
-				idl.apply_id(a, GlobalMembersGm_traverse.POST_APPLY);
+				idl.apply_id(a, gm_traverse.POST_APPLY);
 		}
 	}
 
@@ -81,7 +81,7 @@ public class ast_vardecl extends ast_sent {
 	}
 
 	public void dump_tree(int ind_level) {
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		assert parent != null;
 		System.out.print("[DECL ");
 		System.out.print("\n");
@@ -90,7 +90,7 @@ public class ast_vardecl extends ast_sent {
 		idlist.dump_tree(ind_level + 1);
 
 		System.out.print("\n");
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("]");
 	}
 

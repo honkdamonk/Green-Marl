@@ -13,9 +13,9 @@ package common;
 //----------------------------------------------
 // Compiler Options
 //----------------------------------------------
-public class GM_comp_args
+public class gm_comp_args
 {
-	public GM_comp_args(String name, int argType, String helpString, String defValue) {
+	public gm_comp_args(String name, int argType, String helpString, String defValue) {
 		this.name = name;
 		arg_type = argType;
 		help_string = helpString;

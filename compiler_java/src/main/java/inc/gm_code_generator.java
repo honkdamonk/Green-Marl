@@ -22,7 +22,7 @@ import ast.ast_sentblock;
 import ast.ast_vardecl;
 import ast.ast_while;
 
-import common.GlobalMembersGm_reproduce;
+import common.gm_reproduce;
 
 // default code generator
 public abstract class gm_code_generator {
@@ -138,7 +138,7 @@ public abstract class gm_code_generator {
 			generate_expr_nil(e);
 		else {
 			e.reproduce(0);
-			GlobalMembersGm_reproduce.gm_flush_reproduce();
+			gm_reproduce.gm_flush_reproduce();
 			assert false;
 		}
 	}

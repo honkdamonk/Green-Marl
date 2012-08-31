@@ -1,6 +1,6 @@
 package ast;
 
-import common.GlobalMembersGm_dumptree;
+import common.gm_dumptree;
 import common.gm_apply;
 
 public class ast_call extends ast_sent {
@@ -16,12 +16,12 @@ public class ast_call extends ast_sent {
 	}
 
 	public void dump_tree(int ind_level) {
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("[CALL\n");
 		assert is_builtin_call();
 		b_in.dump_tree(ind_level + 1);
 		System.out.print("\n");
-		GlobalMembersGm_dumptree.IND(ind_level);
+		gm_dumptree.IND(ind_level);
 		System.out.print("]");
 
 	}

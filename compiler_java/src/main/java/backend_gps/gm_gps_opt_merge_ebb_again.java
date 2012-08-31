@@ -9,7 +9,7 @@ import ast.ast_procdef;
 import ast.ast_sent;
 
 import common.GlobalMembersGm_argopts;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 public class gm_gps_opt_merge_ebb_again extends gm_compile_step {
 
@@ -22,10 +22,10 @@ public class gm_gps_opt_merge_ebb_again extends gm_compile_step {
 	}
 
 	public void process(ast_procdef p) {
-		if (!GlobalMembersGm_main.OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_MERGE_BB))
+		if (!gm_main.OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_MERGE_BB))
 			return;
 
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_backend_info(p);
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_backend_info(p);
 		gm_gps_basic_block entry = info.get_entry_basic_block();
 
 		// gps_bb_print_all(entry);

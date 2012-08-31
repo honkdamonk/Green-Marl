@@ -22,7 +22,7 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
 
@@ -175,7 +175,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	private ast_foreach current_fe;
 
 	private gm_symtab_entry define_temp(GMTYPE_T type, ast_sentblock sb, gm_symtab_entry graph) {
-		String temp_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_m");
+		String temp_name = gm_main.FE.voca_temp_name_and_add("_m");
 		gm_symtab_entry target;
 		if (type.is_prim_type()) {
 			target = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, type, new RefObject<String>(temp_name));

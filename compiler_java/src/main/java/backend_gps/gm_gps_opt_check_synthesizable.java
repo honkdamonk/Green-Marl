@@ -5,7 +5,7 @@ import ast.ast_procdef;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 public class gm_gps_opt_check_synthesizable extends gm_compile_step
 {
@@ -42,7 +42,7 @@ public class gm_gps_opt_check_synthesizable extends gm_compile_step
 			return;
 		}
     
-		gm_gps_beinfo beinfo = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo beinfo = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
     
 		if (T2.is_rand_used())
 			beinfo.set_rand_used(true);

@@ -9,7 +9,7 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_while;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_reproduce;
 
 import frontend.gm_symtab_entry;
@@ -215,7 +215,7 @@ public class gm_gps_basic_block {
 		} else if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ)) {
 
 			if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) && (has_receiver()) && reproduce_receiver) {
-				gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+				gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 				java.util.LinkedList<gm_gps_comm_unit> L = get_receivers();
 				for (gm_gps_comm_unit U : L) {
 					if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_NESTED) {

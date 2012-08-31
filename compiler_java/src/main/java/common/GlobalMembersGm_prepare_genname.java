@@ -16,7 +16,7 @@ public class GlobalMembersGm_prepare_genname
 	{
 		assert lang_voca != null;
 		assert p != null;
-		gm_procinfo info = GlobalMembersGm_main.FE.get_proc_info(p);
+		gm_procinfo info = gm_main.FE.get_proc_info(p);
 		assert info != null;
 		gm_prepare_genname_T T = new gm_prepare_genname_T(info, lang_voca);
 

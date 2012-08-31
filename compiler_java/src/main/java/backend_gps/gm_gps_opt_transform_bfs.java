@@ -21,7 +21,7 @@ import ast.ast_while;
 
 import common.GlobalMembersGm_add_symbol;
 import common.GlobalMembersGm_flat_nested_sentblock;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_resolve_nc;
 import common.GlobalMembersGm_transform_helper;
@@ -80,7 +80,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		ast_assign a_fin = ast_assign.new_assign_scala(lhs_fin, rhs_fin);
 
 		ast_sentblock inner_sb = ast_sentblock.new_sentblock();
-		String i_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("i", null, true);
+		String i_name = gm_main.FE.voca_temp_name_and_add("i", null, true);
 		ast_id it = ast_id.new_id(i_name, bfs.get_iterator().get_line(), bfs.get_iterator().get_col());
 		ast_foreach fe = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(it, bfs.get_source().copy(true), inner_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
 
@@ -205,7 +205,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 
 		// inner loop
 		ast_sentblock inner_sb = ast_sentblock.new_sentblock();
-		String inner_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_t", null, true);
+		String inner_name = gm_main.FE.voca_temp_name_and_add("_t", null, true);
 		ast_id inner_id = ast_id.new_id(inner_name, 0, 0);
 		ast_foreach foreach_in = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(inner_id, foreach_out.get_iterator().copy(true), inner_sb,
 				GMTYPE_T.GMTYPE_NODEITER_NBRS);
@@ -318,9 +318,9 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		//
 		// }
 		//
-		String lev_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("level", null, true);
-		String curr_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("curr_level", null, true);
-		String fin_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("bfs_finished", null, true);
+		String lev_name = gm_main.FE.voca_temp_name_and_add("level", null, true);
+		String curr_name = gm_main.FE.voca_temp_name_and_add("curr_level", null, true);
+		String fin_name = gm_main.FE.voca_temp_name_and_add("bfs_finished", null, true);
 		RefObject<String> tempRef_lev_name = new RefObject<String>(lev_name);
 		gm_symtab_entry lev_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, b.get_source().getSymInfo(),
 				tempRef_lev_name);

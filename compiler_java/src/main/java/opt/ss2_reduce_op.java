@@ -32,7 +32,7 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_resolve_nc;
 import common.GlobalMembersGm_transform_helper;
@@ -183,13 +183,13 @@ public class ss2_reduce_op extends gm_apply {
 			ast_expr init_val = GlobalMembersGm_new_sents_after_tc.gm_new_bottom_symbol(rtype, expr_type);
 
 			// 1.3 add init
-			String temp_name = GlobalMembersGm_main.FE.voca_temp_name(t_name_base);
+			String temp_name = gm_main.FE.voca_temp_name(t_name_base);
 			assert holder != null;
 			lhs_symbol = insert_def_and_init_before(temp_name, expr_type, holder, init_val);
 
 			if (is_avg) {
-				String temp_cnt = GlobalMembersGm_main.FE.voca_temp_name("_cnt");
-				String temp_avg = GlobalMembersGm_main.FE.voca_temp_name("_avg");
+				String temp_cnt = gm_main.FE.voca_temp_name("_cnt");
+				String temp_avg = gm_main.FE.voca_temp_name("_avg");
 				ast_sentblock sb = (ast_sentblock) holder.get_parent();
 
 				cnt_symbol = insert_def_and_init_before(temp_cnt, GMTYPE_LONG, holder, ast_expr.new_ival_expr(0));
@@ -349,7 +349,7 @@ public class ss2_reduce_op extends gm_apply {
 				assert method_id != gm_method_id_t.GM_BLTIN_END;
 
 				// make a call to built-in funciton
-				gm_builtin_def def = GlobalMembersGm_main.BUILT_IN.find_builtin_def(src_type, method_id);
+				gm_builtin_def def = gm_main.BUILT_IN.find_builtin_def(src_type, method_id);
 				assert def != null;
 
 				ast_expr_builtin rhs = ast_expr_builtin.new_builtin_expr(target.get_source().copy(true), def, null);

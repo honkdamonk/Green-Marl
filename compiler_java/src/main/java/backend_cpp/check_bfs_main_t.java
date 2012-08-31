@@ -14,7 +14,7 @@ import ast.ast_sent;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.gm_apply;
 
 import frontend.GlobalMembersGm_rw_analysis;
@@ -97,7 +97,7 @@ public class check_bfs_main_t extends gm_apply {
 
 			String temp = String.format("%s", proc.get_procname().get_genname());
 			String suffix = bfs.is_bfs() ? "_bfs" : "_dfs";
-			String c = GlobalMembersGm_main.FE.voca_temp_name_and_add(temp, suffix);
+			String c = gm_main.FE.voca_temp_name_and_add(temp, suffix);
 
 			s.add_info_string(gm_cpp_gen.CPPBE_INFO_BFS_NAME, c);
 

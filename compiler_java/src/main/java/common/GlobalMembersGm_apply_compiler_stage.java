@@ -21,11 +21,11 @@ public class GlobalMembersGm_apply_compiler_stage
 
 		// for each compilation step
 		for (gm_compile_step step : LIST) {
-			GlobalMembersGm_main.gm_begin_minor_compiler_stage(i + 1, step.get_description());
+			gm_main.gm_begin_minor_compiler_stage(i + 1, step.get_description());
 
 			is_okay = GlobalMembersGm_apply_compiler_stage.gm_apply_all_proc(step) && is_okay;
 
-			GlobalMembersGm_main.gm_end_minor_compiler_stage();
+			gm_main.gm_end_minor_compiler_stage();
 			if (!is_okay)
 				break;
 		}
@@ -37,9 +37,9 @@ public class GlobalMembersGm_apply_compiler_stage
 		boolean is_okay = true;
 
 		// apply to every procedure
-		GlobalMembersGm_main.FE.prepare_proc_iteration();
+		gm_main.FE.prepare_proc_iteration();
 		ast_procdef p;
-		while ((p = GlobalMembersGm_main.FE.get_next_proc()) != null)
+		while ((p = gm_main.FE.get_next_proc()) != null)
 		{
 			gm_compile_step step = org.get_instance();
 

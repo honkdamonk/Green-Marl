@@ -33,7 +33,7 @@ import ast.ast_nop;
 import ast.ast_sent;
 import ast.ast_typedecl;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
@@ -139,14 +139,14 @@ public class gm_cpplib extends gm_graph_library {
 		boolean is_okay = true;
 
 		for (int i = 0; i < COUNT; i++) {
-			GlobalMembersGm_main.gm_begin_minor_compiler_stage(i + 1, NAMES[i]);
+			gm_main.gm_begin_minor_compiler_stage(i + 1, NAMES[i]);
 			{
 				if (i != 0) {
 					assert false;
 					break;
 				}
 			}
-			GlobalMembersGm_main.gm_end_minor_compiler_stage();
+			gm_main.gm_end_minor_compiler_stage();
 			if (!is_okay)
 				break;
 		}
@@ -378,7 +378,7 @@ public class gm_cpplib extends gm_graph_library {
 				str_buf = String.format("%s::%s", get_type_string(source.getTypeInfo()), iter_type_str);
 			Body.push(str_buf);
 
-			String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(f.get_iterator().get_orgname(), "_I");
+			String a_name = gm_main.FE.voca_temp_name_and_add(f.get_iterator().get_orgname(), "_I");
 			f.add_info_string(gm_cpp_gen.CPPBE_INFO_COLLECTION_ITERATOR, a_name);
 			str_buf = String.format(" %s", a_name);
 			Body.push(str_buf);
@@ -390,7 +390,7 @@ public class gm_cpplib extends gm_graph_library {
 			ast_id graph = source.getTypeInfo().get_target_graph_id();
 			ast_id source2 = f.get_source2();
 			assert source2 != null;
-			String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(f.get_iterator().get_orgname(), "_I");
+			String a_name = gm_main.FE.voca_temp_name_and_add(f.get_iterator().get_orgname(), "_I");
 			f.add_info_string(gm_cpp_gen.CPPBE_INFO_COMMON_NBR_ITERATOR, a_name);
 			Body.pushln("// Iterate over Common neighbors");
 			str_buf = String.format("gm_common_neighbor_iter %s(%s, %s, %s);", a_name, graph.get_genname(), source.get_genname(), source2.get_genname());
@@ -477,7 +477,7 @@ public class gm_cpplib extends gm_graph_library {
 			// -----------------------------------------------
 			// create additional information
 			// -----------------------------------------------
-			String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(iter.get_orgname(), "_idx");
+			String a_name = gm_main.FE.voca_temp_name_and_add(iter.get_orgname(), "_idx");
 			fe.add_info_string(gm_cpp_gen.CPPBE_INFO_NEIGHBOR_ITERATOR, a_name);
 			ast_id iterator = fe.get_iterator();
 			iterator.getSymInfo().add_info_string(gm_cpp_gen.CPPBE_INFO_NEIGHBOR_ITERATOR, a_name);

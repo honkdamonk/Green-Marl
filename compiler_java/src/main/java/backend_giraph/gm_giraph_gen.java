@@ -52,7 +52,7 @@ import backend_gps.gm_gps_opt_merge_ebb_intra_loop;
 import backend_gps.gm_gps_opt_split_comm_ebb;
 import backend_gps.gps_syminfo;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_reproduce;
 
 //-----------------------------------------------------------------
@@ -105,7 +105,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void begin_class() {
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		Body.push("public class ");
 		Body.push(proc.get_procname().get_genname());
 		Body.push(" implements Tool {");
@@ -118,7 +118,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void do_generate_global_variables() {
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		Body.pushln("// Class logger");
 		String temp = String.format("private static final Logger LOG = Logger.getLogger(%s.class);", proc.get_procname().get_genname());
 		Body.pushln(temp);
@@ -150,7 +150,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("do {");
 		Body.pushln("_master_state = _master_state_nxt ;");
 		Body.pushln("switch(_master_state) {");
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 
 		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
 
@@ -195,8 +195,8 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void do_generate_master_class() {
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		ast_procdef proc = gm_main.FE.get_current_proc();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 
 		// --------------------------------------------------------------------
 		// create master class
@@ -204,7 +204,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		String temp = String.format("public static class %sMaster extends MasterCompute {", proc.get_procname().get_genname());
 		Body.pushln(temp);
 		Body.pushln("// Control fields");
-		boolean prep = GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE);
+		boolean prep = gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE);
 		temp = String.format("private int     _master_state                = %d;", !prep ? 0 : GPS_PREPARE_STEP1);
 		Body.pushln(temp);
 		temp = String.format("private int     _master_state_nxt            = %d;", !prep ? 0 : GPS_PREPARE_STEP1);
@@ -333,7 +333,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("//----------------------------------------------------------");
 		Body.pushln("// Scalar Variables ");
 		Body.pushln("//----------------------------------------------------------");
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry e : scalar) {
@@ -345,7 +345,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			Body.pushln(temp);
 		}
 
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		ast_typedecl t = proc.get_return_type();
 		if ((t != null) && (!t.is_void())) {
 			String temp = String.format("private %s %s; // the final return value of the procedure", get_type_string(t, true), GPS_RET_VALUE);
@@ -366,7 +366,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void do_generate_master_serialization() {
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 		get_lib().generate_master_class_details(scalar, Body);
 	}
@@ -569,7 +569,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 	public void do_generate_shared_variables_keys() {
 		Body.pushln("// Keys for shared_variables ");
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry sym : scalar) {
@@ -596,15 +596,15 @@ public class gm_giraph_gen extends gm_gps_gen {
 		do_generate_worker_context_class();
 		do_generate_vertex_property_class(false);
 
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP))
+		if (gm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP))
 			do_generate_vertex_property_class(true);
 
 		do_generate_message_class();
 	}
 
 	public void do_generate_worker_context_class() {
-		String proc_name = GlobalMembersGm_main.FE.get_current_proc().get_procname().get_genname();
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		String proc_name = gm_main.FE.get_current_proc().get_procname().get_genname();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 
 		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
@@ -692,14 +692,14 @@ public class gm_giraph_gen extends gm_gps_gen {
 		else
 			Body.pushln("// Vertex Property Class");
 		Body.pushln("//----------------------------------------------");
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		assert proc != null;
 		String temp = String.format("public static class %s implements Writable {", is_edge_prop ? "EdgeData" : "VertexData");
 		Body.pushln(temp);
 
 		// list out property
 		Body.pushln("// properties");
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> prop = is_edge_prop ? info.get_edge_prop_symbols() : info.get_node_prop_symbols();
 		for (gm_symtab_entry sym : prop) {
 			// gps_syminfo* syminfo = (gps_syminfo*)
@@ -709,8 +709,8 @@ public class gm_giraph_gen extends gm_gps_gen {
 			Body.pushln(temp);
 		}
 
-		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
-			temp = String.format("%s[] %s; //reverse edges (node IDs)", GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable"
+		if (gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
+			temp = String.format("%s[] %s; //reverse edges (node IDs)", gm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable"
 					: "LongWritable", GPS_REV_NODE_ID);
 			Body.pushln(temp);
 		}
@@ -724,18 +724,18 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void do_generate_vertex_class() {
-		String proc_name = GlobalMembersGm_main.FE.get_current_proc().get_procname().get_genname();
+		String proc_name = gm_main.FE.get_current_proc().get_procname().get_genname();
 		Body.pushln("//----------------------------------------------");
 		Body.pushln("// Main Vertex Class");
 		Body.pushln("//----------------------------------------------");
 		String temp = String.format("public static class %sVertex", proc_name);
 		Body.pushln(temp);
 		Body.pushIndent();
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
-			temp = String.format("extends EdgeListVertex< %s, VertexData, EdgeData, MessageData > {", GlobalMembersGm_main.PREGEL_BE.get_lib()
+		if (gm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
+			temp = String.format("extends EdgeListVertex< %s, VertexData, EdgeData, MessageData > {", gm_main.PREGEL_BE.get_lib()
 					.is_node_type_int() ? "IntWritable" : "LongWritable");
 		} else {
-			temp = String.format("extends EdgeListVertex< %s, VertexData, NullWritable, MessageData > {", GlobalMembersGm_main.PREGEL_BE.get_lib()
+			temp = String.format("extends EdgeListVertex< %s, VertexData, NullWritable, MessageData > {", gm_main.PREGEL_BE.get_lib()
 					.is_node_type_int() ? "IntWritable" : "LongWritable");
 		}
 		Body.pushln(temp);
@@ -753,9 +753,9 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("// Message Data ");
 		Body.pushln("//----------------------------------------------");
 
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		assert proc != null;
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		Body.pushln("public static class MessageData implements Writable {");
 
 		Body.pushln("public MessageData() {}");
@@ -783,7 +783,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		get_lib().generate_receive_state_vertex("_state_vertex", Body);
 
 		Body.pushln("switch(_state_vertex) { ");
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
 		int cnt = 0;
 		for (gm_gps_basic_block b : bb_blocks) {
@@ -999,10 +999,10 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void do_generate_input_output_formats() {
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 
 		String proc_name = proc.get_procname().get_genname();
-		String vertex_id = GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable";
+		String vertex_id = gm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable";
 		String edge_data = proc.find_info_bool(GPS_FLAG_USE_EDGE_PROP) ? "EdgeData" : "NullWritable";
 
 		Body.pushln("//----------------------------------------------");
@@ -1042,7 +1042,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 		Body.pushln("Text line = getRecordReader().getCurrentValue();");
 		Body.pushln("String[] values = line.toString().split(\"\\t\");");
-		if (GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int()) {
+		if (gm_main.PREGEL_BE.get_lib().is_node_type_int()) {
 			Body.pushln("IntWritable vertexId = new IntWritable(Integer.parseInt(values[0]));");
 		} else {
 			Body.pushln("LongWritable vertexId = new LongWritable(Long.parseLong(values[0]));");
@@ -1051,7 +1051,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		temp = String.format("Map<%s, %s> edges = Maps.newHashMap();", vertex_id, edge_data);
 		Body.pushln(temp);
 		Body.pushln("for (int i = 2; i < values.length; i += 2) {");
-		if (GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int()) {
+		if (gm_main.PREGEL_BE.get_lib().is_node_type_int()) {
 			Body.pushln("IntWritable edgeId = new IntWritable(Integer.parseInt(values[i]));");
 		} else {
 			Body.pushln("LongWritable edgeId = new LongWritable(Long.parseLong(values[i]));");
@@ -1133,7 +1133,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 	}
 
 	public void do_generate_job_configuration() {
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 
 		// Iterate symbol table
 		gm_symtab args = proc.get_symtab_var();

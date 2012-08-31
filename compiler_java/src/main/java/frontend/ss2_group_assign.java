@@ -18,7 +18,7 @@ import ast.ast_id;
 import ast.ast_nop;
 import ast.ast_sent;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
@@ -162,7 +162,7 @@ public class ss2_group_assign extends gm_apply {
 		// body : assignment statement
 		// const char* temp_name =
 		// TEMP_GEN.getTempName("t"); // should I use first->get_orgname())?
-		String temp_name = GlobalMembersGm_main.FE.voca_temp_name("t");
+		String temp_name = gm_main.FE.voca_temp_name("t");
 		ast_id it = ast_id.new_id(temp_name, first.get_line(), first.get_col());
 		ast_id src = first.copy(true);
 		src.set_line(first.get_line());

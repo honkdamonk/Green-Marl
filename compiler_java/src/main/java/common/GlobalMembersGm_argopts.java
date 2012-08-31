@@ -91,7 +91,7 @@ public class GlobalMembersGm_argopts {
 			bin_name.argvalue = tempRef_bin_name.argvalue;
 			System.exit(0);
 		} else if (c.argvalue.equals("v")) {
-			System.out.printf("version %s\n", GlobalMembersGm_main.gm_version_string);
+			System.out.printf("version %s\n", gm_main.gm_version_string);
 			System.exit(0);
 		}
 		// add here
@@ -129,17 +129,17 @@ public class GlobalMembersGm_argopts {
 				} else if (t.arg_type == GMARG_STRING) {
 					if (val_begin == null)
 						val_begin = (String) "";
-					GlobalMembersGm_main.OPTIONS.set_arg_string(key_begin, val_begin);
+					gm_main.OPTIONS.set_arg_string(key_begin, val_begin);
 				} else if (t.arg_type == GMARG_INT) {
 					if (val_begin == null)
-						GlobalMembersGm_main.OPTIONS.set_arg_int(key_begin, 0);
+						gm_main.OPTIONS.set_arg_int(key_begin, 0);
 					else
-						GlobalMembersGm_main.OPTIONS.set_arg_int(key_begin, Integer.parseInt(val_begin));
+						gm_main.OPTIONS.set_arg_int(key_begin, Integer.parseInt(val_begin));
 				} else if (t.arg_type == GMARG_BOOL) {
 					if (val_begin == null)
-						GlobalMembersGm_main.OPTIONS.set_arg_bool(key_begin, true);
+						gm_main.OPTIONS.set_arg_bool(key_begin, true);
 					else {
-						GlobalMembersGm_main.OPTIONS.set_arg_bool(key_begin, Integer.parseInt(val_begin) == 0 ? false : true);
+						gm_main.OPTIONS.set_arg_bool(key_begin, Integer.parseInt(val_begin) == 0 ? false : true);
 					}
 				} else {
 					assert false;
@@ -150,11 +150,11 @@ public class GlobalMembersGm_argopts {
 				System.out.printf("ignoring unknown option: %s\n", key_begin);
 			}
 		} else {
-			GlobalMembersGm_main.GM_input_lists.addLast(argv.argvalue);
+			gm_main.GM_input_lists.addLast(argv.argvalue);
 		}
 	}
 
-	public static void process_args(int argc, RefObject<String[]> argv) {
+	public static void process_args(RefObject<String[]> args) {
 
 		int s = GM_compiler_options.length;
 		for (int i = 0; i < s; i++) {
@@ -164,33 +164,33 @@ public class GlobalMembersGm_argopts {
 			else if (t.arg_type == GMARG_NULL) {
 				continue;
 			} else if (t.arg_type == GMARG_STRING) {
-				GlobalMembersGm_main.OPTIONS.set_arg_string(t.name, t.def_value);
+				gm_main.OPTIONS.set_arg_string(t.name, t.def_value);
 			} else if (t.arg_type == GMARG_INT) {
-				GlobalMembersGm_main.OPTIONS.set_arg_int(t.name, Integer.parseInt(t.def_value));
+				gm_main.OPTIONS.set_arg_int(t.name, Integer.parseInt(t.def_value));
 			} else if (t.arg_type == GMARG_BOOL) {
-				GlobalMembersGm_main.OPTIONS.set_arg_bool(t.name, (Integer.parseInt(t.def_value) == 0) ? false : true);
+				gm_main.OPTIONS.set_arg_bool(t.name, (Integer.parseInt(t.def_value) == 0) ? false : true);
 			} else {
 				assert false;
 			}
 		}
 
 		// process arguments
-		String bin_name = argv.argvalue[0];
-		for (int i = 1; i < argc; i++) {
+		String bin_name = "gm_comp";
+		for (int i = 0; i < args.argvalue.length; i++) {
 			RefObject<String> tempRef_bin_name = new RefObject<String>(bin_name);
-			RefObject<String> argvalue = new RefObject<String>(argv.argvalue[i]);
+			RefObject<String> argvalue = new RefObject<String>(args.argvalue[i]);
 			GlobalMembersGm_argopts.parse_arg(argvalue, tempRef_bin_name);
-			argv.argvalue[i] = argvalue.argvalue;
+			args.argvalue[i] = argvalue.argvalue;
 			bin_name = tempRef_bin_name.argvalue;
 		}
 
 		// check num files
-		if (GlobalMembersGm_main.GM_input_lists.size() == 0) {
+		if (gm_main.GM_input_lists.size() == 0) {
 			RefObject<String> tempRef_bin_name2 = new RefObject<String>(bin_name);
 			GlobalMembersGm_argopts.print_help(tempRef_bin_name2);
 			bin_name = tempRef_bin_name2.argvalue;
 			System.exit(0);
-		} else if (GlobalMembersGm_main.GM_input_lists.size() > 1) {
+		} else if (gm_main.GM_input_lists.size() > 1) {
 			System.out.print("[Warning] Current version only can hanle only one input file; only the first input will be processed.\n");
 		}
 	}

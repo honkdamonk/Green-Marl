@@ -12,7 +12,7 @@ import ast.ast_sentblock;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
@@ -76,7 +76,7 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 			GlobalMembersGm_transform_helper.gm_make_it_belong_to_sentblock(a);
 			ast_sentblock sb = (ast_sentblock) a.get_parent();
 
-			String name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_t", null, true);
+			String name = gm_main.FE.voca_temp_name_and_add("_t", null, true);
 			ast_id id = ast_id.new_id(name, a.get_line(), a.get_col());
 			ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
 			ast_foreach foreach_out = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(id, a.get_lhs_field().get_first().getTypeInfo()

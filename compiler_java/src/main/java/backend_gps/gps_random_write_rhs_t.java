@@ -5,7 +5,7 @@ import ast.ast_sentblock;
 import frontend.gm_symtab_entry;
 import inc.gm_code_writer;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.gm_apply;
 
 //C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
@@ -39,7 +39,7 @@ public class gps_random_write_rhs_t extends gm_apply {
 		Body = b;
 		set_for_expr(true);
 		U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_RANDOM_WRITE, sb, sym);
-		INFO = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		INFO = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 	}
 
 	public final boolean apply(ast_expr e) {

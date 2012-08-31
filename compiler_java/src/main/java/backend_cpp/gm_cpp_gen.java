@@ -48,7 +48,7 @@ import ast.ast_vardecl;
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_apply_compiler_stage;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_builtin_def;
 import common.gm_method_id_t;
@@ -615,8 +615,8 @@ public class gm_cpp_gen extends BackendGenerator {
 		String temp_var_new;
 		boolean is_scalar = (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA);
 
-		temp_var_old = GlobalMembersGm_main.FE.voca_temp_name_and_add(temp_var_base, "_old");
-		temp_var_new = GlobalMembersGm_main.FE.voca_temp_name_and_add(temp_var_base, "_new");
+		temp_var_old = gm_main.FE.voca_temp_name_and_add(temp_var_base, "_old");
+		temp_var_new = gm_main.FE.voca_temp_name_and_add(temp_var_base, "_new");
 
 		_Body.pushln("// reduction");
 		_Body.pushln("{ ");
@@ -763,7 +763,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		// (1) create BFS object
 		// -------------------------------------------
 		String bfs_name = bfs.find_info_string(CPPBE_INFO_BFS_NAME);
-		String bfs_inst_name = bfs.is_bfs() ? GlobalMembersGm_main.FE.voca_temp_name_and_add("_BFS", "") : GlobalMembersGm_main.FE.voca_temp_name_and_add(
+		String bfs_inst_name = bfs.is_bfs() ? gm_main.FE.voca_temp_name_and_add("_BFS", "") : gm_main.FE.voca_temp_name_and_add(
 				"_DFS", "");
 		temp = String.format("%s %s", bfs_name, bfs_inst_name);
 		_Body.push(temp);
@@ -864,7 +864,7 @@ public class gm_cpp_gen extends BackendGenerator {
 	}
 
 	public void generate_sent_return(ast_return r) {
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(CPPBE_INFO_HAS_PROPDECL)) {
+		if (gm_main.FE.get_current_proc().find_info_bool(CPPBE_INFO_HAS_PROPDECL)) {
 			_Body.push(CLEANUP_PTR);
 			_Body.pushln("();");
 		}
@@ -907,7 +907,7 @@ public class gm_cpp_gen extends BackendGenerator {
 	}
 
 	public void generate_sent_block_enter(ast_sentblock sb) {
-		if (sb.find_info_bool(CPPBE_INFO_IS_PROC_ENTRY) && !GlobalMembersGm_main.FE.get_current_proc().is_local()) {
+		if (sb.find_info_bool(CPPBE_INFO_IS_PROC_ENTRY) && !gm_main.FE.get_current_proc().is_local()) {
 			_Body.pushln("//Initializations");
 			temp = String.format("%s();", RT_INIT);
 			_Body.pushln(temp);
@@ -915,7 +915,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			// ----------------------------------------------------
 			// freeze graph instances
 			// ----------------------------------------------------
-			ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+			ast_procdef proc = gm_main.FE.get_current_proc();
 			gm_symtab vars = proc.get_symtab_var();
 			gm_symtab fields = proc.get_symtab_field();
 			// std::vector<gm_symtab_entry*>& E = vars-> get_entries();
@@ -1196,10 +1196,10 @@ public class gm_cpp_gen extends BackendGenerator {
 		GMTYPE_T t;
 		if (a.is_target_scalar()) {
 			t = a.get_lhs_scala().getTypeSummary();
-			rhs_temp = (String) GlobalMembersGm_main.FE.voca_temp_name_and_add(a.get_lhs_scala().get_genname(), "_new");
+			rhs_temp = (String) gm_main.FE.voca_temp_name_and_add(a.get_lhs_scala().get_genname(), "_new");
 		} else {
 			t = a.get_lhs_field().get_second().getTargetTypeSummary();
-			rhs_temp = (String) GlobalMembersGm_main.FE.voca_temp_name_and_add(a.get_lhs_field().get_second().get_genname(), "_new");
+			rhs_temp = (String) gm_main.FE.voca_temp_name_and_add(a.get_lhs_field().get_second().get_genname(), "_new");
 		}
 		_Body.push(get_type_string(t));
 		_Body.SPC();
@@ -1240,7 +1240,7 @@ public class gm_cpp_gen extends BackendGenerator {
 				id = f.get_second();
 				type = id.getTargetTypeSummary();
 			}
-			names[i] = (String) GlobalMembersGm_main.FE.voca_temp_name_and_add(id.get_genname(), "_arg");
+			names[i] = (String) gm_main.FE.voca_temp_name_and_add(id.get_genname(), "_arg");
 			_Body.push(get_type_string(type));
 			_Body.SPC();
 			_Body.push(names[i]);
@@ -1353,7 +1353,7 @@ public class gm_cpp_gen extends BackendGenerator {
 				.get_second().get_orgname();
 
 		String temp_var_new;
-		temp_var_new = GlobalMembersGm_main.FE.voca_temp_name_and_add(temp_var_base, "_new");
+		temp_var_new = gm_main.FE.voca_temp_name_and_add(temp_var_base, "_new");
 		boolean is_scalar = (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA);
 
 		_Body.pushln("// boolean reduction (no need CAS)");
@@ -1522,7 +1522,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		_Body.pushIndent();
 
 		ast_id iter = bfs.get_iterator();
-		String a_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(iter.get_orgname(), "_idx");
+		String a_name = gm_main.FE.voca_temp_name_and_add(iter.get_orgname(), "_idx");
 		iter.getSymInfo().add_info_string(CPPBE_INFO_NEIGHBOR_ITERATOR, a_name);
 		a_name = null;
 

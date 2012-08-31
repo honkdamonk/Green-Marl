@@ -16,7 +16,7 @@ import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_typedecl;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_traverse;
 
 public class gm_gps_opt_create_ebb extends gm_compile_step {
@@ -38,7 +38,7 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		// STEP 2:
 		// create Basic Blocks
 		// --------------------------------
-		gm_gps_beinfo beinfo = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_backend_info(proc);
+		gm_gps_beinfo beinfo = (gm_gps_beinfo) gm_main.FE.get_backend_info(proc);
 		gm_gps_create_basic_block1_t T2 = new gm_gps_create_basic_block1_t(s_mark, beinfo);
 		GlobalMembersGm_traverse.gm_traverse_sents_pre_post(proc, T2);
 
@@ -58,7 +58,7 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		// STEP 4:
 		// ---------------------------
 		gm_gps_basic_block top = T2.get_entry();
-		if (GlobalMembersGm_main.FE.get_proc_info(proc).find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
+		if (gm_main.FE.get_proc_info(proc).find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
 			// create prepareation state
 			gm_gps_basic_block t1 = new gm_gps_basic_block(GPS_PREPARE_STEP1, gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1);
 			gm_gps_basic_block t2 = new gm_gps_basic_block(GPS_PREPARE_STEP2, gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2);

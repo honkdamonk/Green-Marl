@@ -21,7 +21,7 @@ import ast.ast_sentblock;
 import ast.ast_typedecl;
 
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.gm_apply;
 
 public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
@@ -151,7 +151,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 	}
 
 	private static String getUniqueName() {
-		return GlobalMembersGm_main.FE.voca_temp_name_and_add("iter_aux", "");
+		return gm_main.FE.voca_temp_name_and_add("iter_aux", "");
 	}
 
 	private static boolean declare_symbol(gm_symtab SYM, ast_id id, ast_typedecl type, boolean is_readable, boolean is_writeable) {
@@ -164,7 +164,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 		find_and_connect_symbol(id, SYM);
 
 		if (is_okay)
-			GlobalMembersGm_main.FE.voca_add(id.get_orgname());
+			gm_main.FE.voca_add(id.get_orgname());
 
 		return is_okay;
 	}

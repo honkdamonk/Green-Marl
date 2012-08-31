@@ -3,7 +3,7 @@ package frontend;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 
 public class gm_fe_remove_vardecl extends gm_compile_step
@@ -20,7 +20,7 @@ public class gm_fe_remove_vardecl extends gm_compile_step
 		rename_all_t T2 = new rename_all_t();
 		T2.do_rename_all_potential(p);
     
-		GlobalMembersGm_main.FE.set_vardecl_removed(true);
+		gm_main.FE.set_vardecl_removed(true);
 	}
 	@Override
 	public gm_compile_step get_instance()

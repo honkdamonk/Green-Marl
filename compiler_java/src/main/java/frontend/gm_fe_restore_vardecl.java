@@ -3,7 +3,7 @@ package frontend;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 
 public class gm_fe_restore_vardecl extends gm_compile_step
@@ -14,7 +14,7 @@ public class gm_fe_restore_vardecl extends gm_compile_step
 	}
 	public void process(ast_procdef p)
 	{
-		GlobalMembersGm_main.FE.set_vardecl_removed(false);
+		gm_main.FE.set_vardecl_removed(false);
 		restore_vardecl_t T = new restore_vardecl_t();
 		T.do_restore(p);
 	}

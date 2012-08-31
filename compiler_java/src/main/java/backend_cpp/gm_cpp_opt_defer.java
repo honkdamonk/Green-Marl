@@ -29,7 +29,7 @@ import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
 import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_transform_helper;
 
@@ -100,7 +100,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 			ast_sentblock scope = GlobalMembersGm_add_symbol.gm_find_upscope(fe);
 			gm_symtab_entry target_graph = type.get_target_graph_sym();
 
-			String fname = GlobalMembersGm_main.FE.voca_temp_name_and_add(id.get_orgname(), "_nxt");
+			String fname = gm_main.FE.voca_temp_name_and_add(id.get_orgname(), "_nxt");
 			tangible.RefObject<String> tempRef_fname = new tangible.RefObject<String>(fname);
 			gm_symtab_entry new_dest = GlobalMembersGm_add_symbol.gm_add_new_symbol_property(scope, target_type, is_nodeprop, target_graph, tempRef_fname);
 			fname = tempRef_fname.argvalue;
@@ -229,7 +229,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// }
 		// --------------------------------------------
 		upup.get_symtab_var(); // to assert it has scope
-		String flag_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("is_first");
+		String flag_name = gm_main.FE.voca_temp_name_and_add("is_first");
 		gm_symtab_entry flag_sym = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(upup, GMTYPE_T.GMTYPE_BOOL, new RefObject<String>(flag_name)); // symbol
 		ast_id lhs = flag_sym.getId().copy(true);
 		ast_expr rhs = ast_expr.new_bval_expr(true);
@@ -292,7 +292,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// ------------------------------
 		// create foreach statement
 		// ------------------------------
-		String iter_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("i");
+		String iter_name = gm_main.FE.voca_temp_name_and_add("i");
 		ast_id itor = ast_id.new_id(iter_name, 0, 0);
 		GMTYPE_T iter_type = is_nodeprop ? GMTYPE_T.GMTYPE_NODEITER_ALL : GMTYPE_T.GMTYPE_EDGEITER_ALL;
 		ast_foreach fe = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(itor, src, a, iter_type);

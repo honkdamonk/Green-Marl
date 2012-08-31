@@ -52,7 +52,7 @@ import ast.ast_while;
 
 import common.GlobalMembersGm_apply_compiler_stage;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_traverse;
 import common.gm_vocabulary;
 
@@ -308,27 +308,27 @@ public class gm_frontend {
 		assert id.get_nodetype() == AST_ID;
 		ast_procdef def = ast_procdef.begin_new_procdef((ast_id) id);
 		def.set_local(b);
-		GlobalMembersGm_main.FE.start_new_procdef(def);
+		gm_main.FE.start_new_procdef(def);
 	}
 
 	public static void GM_procdef_finish() {
-		GlobalMembersGm_main.FE.finish_procdef();
+		gm_main.FE.finish_procdef();
 	}
 
 	public static void GM_procdef_add_argdecl(ast_node n) {
 		assert n.get_nodetype() == AST_ARGDECL;
-		GlobalMembersGm_main.FE.get_current_procdef().add_argdecl((ast_argdecl) n);
+		gm_main.FE.get_current_procdef().add_argdecl((ast_argdecl) n);
 	}
 
 	public static void GM_procdef_add_out_argdecl(ast_node n) {
 		assert n.get_nodetype() == AST_ARGDECL;
-		GlobalMembersGm_main.FE.get_current_procdef().add_out_argdecl((ast_argdecl) n);
+		gm_main.FE.get_current_procdef().add_out_argdecl((ast_argdecl) n);
 	}
 
 	public static void GM_procdef_setbody(ast_node v) {
 		assert v.get_nodetype() == AST_SENTBLOCK;
 		ast_sentblock b = (ast_sentblock) v;
-		GlobalMembersGm_main.FE.get_current_procdef().set_sentblock(b);
+		gm_main.FE.get_current_procdef().set_sentblock(b);
 		// FE.finish_procdef();
 	}
 
@@ -342,17 +342,17 @@ public class gm_frontend {
 
 	public static void GM_procdef_return_type(ast_node rt) {
 		assert rt.get_nodetype() == AST_TYPEDECL;
-		GlobalMembersGm_main.FE.get_current_procdef().set_return_type((ast_typedecl) rt);
+		gm_main.FE.get_current_procdef().set_return_type((ast_typedecl) rt);
 	}
 
 	public static void GM_start_sentblock() {
 		ast_sentblock newblock = ast_sentblock.new_sentblock();
-		GlobalMembersGm_main.FE.start_sentblock(newblock);
+		gm_main.FE.start_sentblock(newblock);
 	}
 
 	public static ast_node GM_finish_sentblock() {
-		ast_sentblock b = GlobalMembersGm_main.FE.get_current_sentblock();
-		GlobalMembersGm_main.FE.end_sentblock();
+		ast_sentblock b = gm_main.FE.get_current_sentblock();
+		gm_main.FE.end_sentblock();
 		return b;
 	}
 
@@ -361,7 +361,7 @@ public class gm_frontend {
 	public static void GM_add_sent(ast_node s) {
 		assert s.is_sentence();
 		ast_sent sent = (ast_sent) s;
-		ast_sentblock b = GlobalMembersGm_main.FE.get_current_sentblock();
+		ast_sentblock b = gm_main.FE.get_current_sentblock();
 		assert b != null;
 		b.add_sent(sent);
 		sent.set_empty_lines_before(Extern.GM_get_empty_lines());
@@ -630,14 +630,14 @@ public class gm_frontend {
 
 	public static void GM_add_id_comma_list(ast_node id) {
 		assert id.get_nodetype() == AST_ID;
-		ast_idlist idlist = GlobalMembersGm_main.FE.get_current_idlist();
+		ast_idlist idlist = gm_main.FE.get_current_idlist();
 		idlist.add_id((ast_id) id);
 		id.set_parent(idlist);
 	}
 
 	public static ast_node GM_finish_id_comma_list() {
-		ast_idlist idlist = GlobalMembersGm_main.FE.get_current_idlist();
-		GlobalMembersGm_main.FE.finish_id_comma_list();
+		ast_idlist idlist = gm_main.FE.get_current_idlist();
+		gm_main.FE.finish_id_comma_list();
 		return idlist;
 	}
 

@@ -11,7 +11,7 @@ import java.util.HashSet;
 
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 	
@@ -33,7 +33,7 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 		// -------------------------------------
 		// make a flat symbol table
 		// -------------------------------------
-		gm_gps_beinfo beinfo = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_backend_info(p);
+		gm_gps_beinfo beinfo = (gm_gps_beinfo) gm_main.FE.get_backend_info(p);
 
 		HashSet<gm_symtab_entry> prop = beinfo.get_node_prop_symbols();
 		HashSet<gm_symtab_entry> e_prop = beinfo.get_edge_prop_symbols();
@@ -51,7 +51,7 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 		// --------------------------------------------------------
 		// check if input node parsing parsing is required
 		// --------------------------------------------------------
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		boolean need_node_prop_init = false;
 		for (gm_symtab_entry e : prop) {
 			if ((e.find_info_int(gm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
@@ -64,7 +64,7 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 			}
 		}
 
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		proc.add_info_bool(GPS_FLAG_NODE_VALUE_INIT, need_node_prop_init);
 
 		set_okay(true);
@@ -84,7 +84,7 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 		for (gm_symtab_entry sym : prop) {
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
 
-			int size = GlobalMembersGm_main.PREGEL_BE.get_lib().get_type_size(sym.getType().get_target_type());
+			int size = gm_main.PREGEL_BE.get_lib().get_type_size(sym.getType().get_target_type());
 			syminfo.set_start_byte(byte_begin);
 			byte_begin += size;
 		}

@@ -41,7 +41,7 @@ import ast.ast_vardecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.gm_apply;
 
 /**
@@ -309,7 +309,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			// ---------------------------------------------
 			// create 2nd iteator
 			// ---------------------------------------------
-			String tname = GlobalMembersGm_main.FE.voca_temp_name("nx");
+			String tname = gm_main.FE.voca_temp_name("nx");
 			ast_id iter2 = ast_id.new_id(tname, bfs.get_iterator().get_line(), bfs.get_iterator().get_col());
 			ast_typedecl type = ast_typedecl.new_nbr_iterator(bfs.get_iterator().copy(true), bfs.get_iter_type2());
 			is_okay = gm_declare_symbol(curr_sym, iter2, type, GM_READ_AVAILABLE, GM_WRITE_NOT_AVAILABLE) && is_okay;
@@ -900,7 +900,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		gm_find_and_connect_symbol(id, SYM);
 
 		if (is_okay)
-			GlobalMembersGm_main.FE.voca_add(id.get_orgname());
+			gm_main.FE.voca_add(id.get_orgname());
 
 		return is_okay;
 	}

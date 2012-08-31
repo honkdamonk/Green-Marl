@@ -3,7 +3,7 @@ package backend_cpp;
 import ast.ast_procdef;
 import inc.gm_compile_step;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_traverse;
 
 public class gm_cpp_opt_select_par extends gm_compile_step
@@ -14,7 +14,7 @@ public class gm_cpp_opt_select_par extends gm_compile_step
 	}
 	public void process(ast_procdef p)
 	{
-		if (!GlobalMembersGm_main.CPP_BE.is_target_omp())
+		if (!gm_main.CPP_BE.is_target_omp())
 		{
 			make_all_seq_t A = new make_all_seq_t();
 			GlobalMembersGm_traverse.gm_traverse_sents(p, A);

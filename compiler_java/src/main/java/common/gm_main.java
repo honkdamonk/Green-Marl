@@ -10,7 +10,7 @@ import backend_giraph.gm_giraph_gen;
 import backend_gps.gm_gps_gen;
 import frontend.gm_frontend;
 
-public class GlobalMembersGm_main {
+public class gm_main {
 	/***************************************
 	 * Main - Process command line arguments - Call functions in following order
 	 * (1) (Frontend) Parser (2) (Frontend) Frontend Transform (3) (Frontend)
@@ -134,7 +134,7 @@ public class GlobalMembersGm_main {
 	public static void gm_end_major_compiler_stage() {
 		if (gm_stop_major == gm_stage_major) {
 			System.out.printf("...Stopping compiler after Stage %d:%s\n", gm_stop_major, gm_major_desc);
-			GlobalMembersGm_main.do_compiler_action_at_stop();
+			gm_main.do_compiler_action_at_stop();
 			System.exit(0);
 		}
 	}
@@ -155,7 +155,7 @@ public class GlobalMembersGm_main {
 
 		if ((gm_stop_major == gm_stage_major) && (gm_stop_minor == gm_stage_minor)) {
 			System.out.printf("...Stopping compiler after Stage %d.%d:%s.[%s]\n", gm_stage_major, gm_stage_minor, gm_major_desc, gm_minor_desc);
-			GlobalMembersGm_main.do_compiler_action_at_stop();
+			gm_main.do_compiler_action_at_stop();
 			System.exit(0);
 		}
 	}
@@ -170,7 +170,7 @@ public class GlobalMembersGm_main {
 		// parse arguments
 		// -------------------------------------
 		tangible.RefObject<String[]> tempRef_args = new tangible.RefObject<String[]>(args);
-		GlobalMembersGm_argopts.process_args(args.length, tempRef_args);
+		GlobalMembersGm_argopts.process_args(tempRef_args);
 		args = tempRef_args.argvalue;
 
 		gm_path_parser Path = new gm_path_parser();
@@ -202,12 +202,12 @@ public class GlobalMembersGm_main {
 		// ---------------------------------------
 		// parse compiler stop string
 		// ---------------------------------------
-		GlobalMembersGm_main.parse_stop_string();
+		gm_main.parse_stop_string();
 
 		// -------------------------------------
 		// Parse phase
 		// -------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_PARSE, "Parse");
+		gm_main.gm_begin_major_compiler_stage(GMSTAGE_PARSE, "Parse");
 		{
 			// currently there should be only one file
 			assert GM_input_lists.size() == 1;
@@ -216,7 +216,7 @@ public class GlobalMembersGm_main {
 			if (GlobalMembersGm_error.GM_is_parse_error())
 				System.exit(1);
 		}
-		GlobalMembersGm_main.gm_end_major_compiler_stage();
+		gm_main.gm_end_major_compiler_stage();
 
 		// ---------------------------------------------------------------
 		// Front-End Phase
@@ -227,13 +227,13 @@ public class GlobalMembersGm_main {
 		// - rw analysis (phase 1)
 		// - rw analysis (phase 2)
 		// --------------------------------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_FRONTEND, "Frontend");
+		gm_main.gm_begin_major_compiler_stage(GMSTAGE_FRONTEND, "Frontend");
 		{
 			ok = FE.do_local_frontend_process();
 			if (!ok)
 				System.exit(1);
 		}
-		GlobalMembersGm_main.gm_end_major_compiler_stage();
+		gm_main.gm_end_major_compiler_stage();
 
 		// ----------------------------------------------------------------
 		// Backend-Independnet Optimization
@@ -243,35 +243,35 @@ public class GlobalMembersGm_main {
 		// - (Push down assignments)
 		// - (Push down var-defs)
 		// ----------------------------------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_INDEPENDENT_OPT, "Indep-Opt");
+		gm_main.gm_begin_major_compiler_stage(GMSTAGE_INDEPENDENT_OPT, "Indep-Opt");
 		{
 			ok = IND_OPT.do_local_optimize();
 			if (!ok)
 				System.exit(1);
 		}
-		GlobalMembersGm_main.gm_end_major_compiler_stage();
+		gm_main.gm_end_major_compiler_stage();
 
 		// -------------------------------------
 		// Backend-Specific Code Modification
 		// -------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_BACKEND_OPT, "Backend Transform");
+		gm_main.gm_begin_major_compiler_stage(GMSTAGE_BACKEND_OPT, "Backend Transform");
 		{
 			ok = BACK_END.do_local_optimize();
 			if (!ok)
 				System.exit(1);
 		}
-		GlobalMembersGm_main.gm_end_major_compiler_stage();
+		gm_main.gm_end_major_compiler_stage();
 
 		// -------------------------------------
 		// Library specific Backend-Specific Code Modification
 		// -------------------------------------
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_LIBRARY_OPT, "Backend-Lib Transform");
+		gm_main.gm_begin_major_compiler_stage(GMSTAGE_LIBRARY_OPT, "Backend-Lib Transform");
 		{
 			ok = BACK_END.do_local_optimize_lib();
 			if (!ok)
 				System.exit(1);
 		}
-		GlobalMembersGm_main.gm_end_major_compiler_stage();
+		gm_main.gm_end_major_compiler_stage();
 
 		// -------------------------------------------------
 		// Final Code Generation
@@ -282,12 +282,12 @@ public class GlobalMembersGm_main {
 			BACK_END.setTargetDir(OPTIONS.get_arg_string(GlobalMembersGm_argopts.GMARGFLAG_OUTDIR));
 		BACK_END.setFileName(Path.getFilename());
 
-		GlobalMembersGm_main.gm_begin_major_compiler_stage(GMSTAGE_CODEGEN, "Code Generation");
+		gm_main.gm_begin_major_compiler_stage(GMSTAGE_CODEGEN, "Code Generation");
 		{
 			ok = BACK_END.do_generate();
 			if (!ok)
 				System.exit(1);
 		}
-		GlobalMembersGm_main.gm_end_major_compiler_stage();
+		gm_main.gm_end_major_compiler_stage();
 	}
 }

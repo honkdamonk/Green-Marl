@@ -13,7 +13,7 @@ import ast.ast_typedecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.gm_apply;
 import common.gm_builtin_def;
 
@@ -185,7 +185,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 
 	private boolean set_and_check_builtin_definition(ast_expr_builtin builtinExpr, GMTYPE_T sourceType) {
 
-		gm_builtin_def builtinDef = GlobalMembersGm_main.BUILT_IN.find_builtin_def(sourceType, builtinExpr.get_callname());
+		gm_builtin_def builtinDef = gm_main.BUILT_IN.find_builtin_def(sourceType, builtinExpr.get_callname());
 
 		if (builtinDef == null) {
 			if (_is_group_assignment && (sourceType.is_graph_type() || sourceType.is_collection_type())) {
@@ -194,7 +194,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 				else
 					sourceType = GMTYPE_T.GMTYPE_EDGE;
 
-				builtinDef = GlobalMembersGm_main.BUILT_IN.find_builtin_def(sourceType, builtinExpr.get_callname());
+				builtinDef = gm_main.BUILT_IN.find_builtin_def(sourceType, builtinExpr.get_callname());
 			}
 		}
 

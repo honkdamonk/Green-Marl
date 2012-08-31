@@ -3,7 +3,7 @@ package backend_cpp;
 import ast.ast_id;
 import ast.ast_typedecl;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.gm_apply;
 
 import frontend.SYMTAB_TYPES;
@@ -27,9 +27,9 @@ public class rename_prop_name_t extends gm_apply {
 
 		// rename A(G) => G_A
 		String buf = String.format("%s_%s", graph.get_orgname(), id.get_genname());
-		String new_name = GlobalMembersGm_main.FE.voca_temp_name(buf, null, true);
+		String new_name = gm_main.FE.voca_temp_name(buf, null, true);
 		id.set_genname(new_name);
-		GlobalMembersGm_main.FE.voca_add(new_name);
+		gm_main.FE.voca_add(new_name);
 		return true;
 	}
 }

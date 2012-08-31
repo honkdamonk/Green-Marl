@@ -59,7 +59,7 @@ import backend_cpp.gm_cpp_opt_defer;
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_apply_compiler_stage;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_reproduce;
 import common.gm_builtin_def;
 
@@ -112,7 +112,7 @@ public class gm_gps_gen extends BackendGenerator {
 		// [TODO]
 		// currently, there should be one and only one top-level procedure
 		// -----------------------------------
-		if (GlobalMembersGm_main.FE.get_num_procs() != 1) {
+		if (gm_main.FE.get_num_procs() != 1) {
 			GlobalMembersGm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NUM_PROCS, "");
 			return false;
 		}
@@ -120,10 +120,10 @@ public class gm_gps_gen extends BackendGenerator {
 		// -----------------------------------
 		// prepare backend information struct
 		// -----------------------------------
-		GlobalMembersGm_main.FE.prepare_proc_iteration();
+		gm_main.FE.prepare_proc_iteration();
 		ast_procdef p;
-		while ((p = GlobalMembersGm_main.FE.get_next_proc()) != null) {
-			GlobalMembersGm_main.FE.get_proc_info(p).set_be_info(new gm_gps_beinfo(p));
+		while ((p = gm_main.FE.get_next_proc()) != null) {
+			gm_main.FE.get_proc_info(p).set_be_info(new gm_gps_beinfo(p));
 		}
 
 		// -----------------------------------
@@ -213,7 +213,7 @@ public class gm_gps_gen extends BackendGenerator {
 	// ----------------------------------
 
 	public void write_headers() {
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 
 		String temp = String.format("package gps.examples.gm.%s;", proc.get_procname().get_genname());
 		Body.pushln(temp); // hardcoded
@@ -223,7 +223,7 @@ public class gm_gps_gen extends BackendGenerator {
 	}
 
 	public void begin_class() {
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		Body.push("public class ");
 		Body.push(proc.get_procname().get_genname());
 		Body.push("{");
@@ -284,7 +284,7 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("do {");
 		Body.pushln("_master_state = _master_state_nxt ;");
 		Body.pushln("switch(_master_state) {");
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 
 		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
 
@@ -331,8 +331,8 @@ public class gm_gps_gen extends BackendGenerator {
 	}
 
 	public void do_generate_master_class() {
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		ast_procdef proc = gm_main.FE.get_current_proc();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 
 		// --------------------------------------------------------------------
 		// create master class
@@ -341,7 +341,7 @@ public class gm_gps_gen extends BackendGenerator {
 		String temp = String.format("public static class %sMaster extends Master {", proc.get_procname().get_genname());
 		Body.pushln(temp);
 		Body.pushln("// Control fields");
-		boolean prep = GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE);
+		boolean prep = gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE);
 		temp = String.format("private int     _master_state                = %d;", !prep ? 0 : GPS_PREPARE_STEP1);
 		Body.pushln(temp);
 		temp = String.format("private int     _master_state_nxt            = %d;", !prep ? 0 : GPS_PREPARE_STEP1);
@@ -437,7 +437,7 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("// Scalar Variables ");
 		Body.pushln("//----------------------------------------------------------");
 
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry e : scalar) {
@@ -459,7 +459,7 @@ public class gm_gps_gen extends BackendGenerator {
 			Body.pushln(temp);
 		}
 
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		ast_typedecl t = proc.get_return_type();
 		if ((t != null) && (!t.is_void())) {
 			String temp = String.format("private %s %s; // the final return value of the procedure", get_type_string(t, true), GPS_RET_VALUE);
@@ -685,7 +685,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 	public void do_generate_shared_variables_keys() {
 		Body.pushln("// Keys for shared_variables ");
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry sym : scalar) {
@@ -718,7 +718,7 @@ public class gm_gps_gen extends BackendGenerator {
 		do_generate_vertex_class();
 		do_generate_vertex_property_class(false);
 
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP))
+		if (gm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP))
 			do_generate_vertex_property_class(true);
 
 		do_generate_message_class();
@@ -732,14 +732,14 @@ public class gm_gps_gen extends BackendGenerator {
 			Body.pushln("// Vertex Property Class");
 		Body.pushln("//----------------------------------------------");
 
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		assert proc != null;
 		String temp = String.format("public static class %s extends MinaWritable {", is_edge_prop ? "EdgeData" : "VertexData");
 		Body.pushln(temp);
 
 		// list out property
 		Body.pushln("// properties");
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> prop = is_edge_prop ? info.get_edge_prop_symbols() : info.get_node_prop_symbols();
 		for (gm_symtab_entry sym : prop) {
 			// gps_syminfo* syminfo = (gps_syminfo*)
@@ -749,8 +749,8 @@ public class gm_gps_gen extends BackendGenerator {
 			Body.pushln(temp);
 		}
 
-		if (GlobalMembersGm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
-			temp = String.format("%s [] %s; //reverse edges (node IDs) {should this to be marshalled?}", GlobalMembersGm_main.PREGEL_BE.get_lib()
+		if (gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
+			temp = String.format("%s [] %s; //reverse edges (node IDs) {should this to be marshalled?}", gm_main.PREGEL_BE.get_lib()
 					.is_node_type_int() ? "int" : "long", GPS_REV_NODE_ID);
 			Body.pushln(temp);
 		}
@@ -765,14 +765,14 @@ public class gm_gps_gen extends BackendGenerator {
 
 	public void do_generate_vertex_class() {
 
-		String proc_name = GlobalMembersGm_main.FE.get_current_proc().get_procname().get_genname();
+		String proc_name = gm_main.FE.get_current_proc().get_procname().get_genname();
 		Body.pushln("//----------------------------------------------");
 		Body.pushln("// Main Vertex Class");
 		Body.pushln("//----------------------------------------------");
 		String temp = String.format("public static class %sVertex", proc_name);
 		Body.pushln(temp);
 		Body.pushIndent();
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
+		if (gm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
 			temp = String.format("extends Vertex< %s.VertexData, %s.EdgeData, %s.MessageData > {", proc_name, proc_name, proc_name);
 		} else {
 			temp = String.format("extends NullEdgeVertex< %s.VertexData, %s.MessageData > {", proc_name, proc_name);
@@ -793,7 +793,7 @@ public class gm_gps_gen extends BackendGenerator {
 		temp = String.format("public static class %sVertexFactory", proc_name);
 		Body.pushln(temp);
 		Body.pushIndent();
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
+		if (gm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
 			temp = String.format("extends VertexFactory< %s.VertexData, %s.EdgeData, %s.MessageData > {", proc_name, proc_name, proc_name);
 		} else {
 			temp = String.format("extends NullEdgeVertexFactory< %s.VertexData, %s.MessageData > {", proc_name, proc_name);
@@ -801,7 +801,7 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln(temp);
 		Body.popIndent();
 		Body.pushln("@Override");
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
+		if (gm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
 			temp = String
 					.format("public Vertex< %s.VertexData, %s.EdgeData, %s.MessageData > newInstance(CommandLine line) {", proc_name, proc_name, proc_name);
 		} else {
@@ -819,7 +819,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 	public void do_generate_vertex_constructor() {
 
-		String proc_name = GlobalMembersGm_main.FE.get_current_proc().get_procname().get_genname();
+		String proc_name = gm_main.FE.get_current_proc().get_procname().get_genname();
 		Body.NL();
 		String temp = String.format("public %sVertex(CommandLine line) {", proc_name);
 		Body.pushln(temp);
@@ -841,9 +841,9 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("// Message Data ");
 		Body.pushln("//----------------------------------------------");
 
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		assert proc != null;
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		String temp = String.format("public static class MessageData extends MinaWritable {");
 		Body.pushln(temp);
 
@@ -873,7 +873,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 	public void do_generate_vertex_states() {
 
-		String proc_name = GlobalMembersGm_main.FE.get_current_proc().get_procname().get_genname();
+		String proc_name = gm_main.FE.get_current_proc().get_procname().get_genname();
 		Body.NL();
 		Body.pushln("@Override");
 		String temp = String.format("public void compute(Iterable<%s.MessageData> _msgs, int _superStepNo) {", proc_name);
@@ -883,7 +883,7 @@ public class gm_gps_gen extends BackendGenerator {
 		get_lib().generate_receive_state_vertex("_state_vertex", Body);
 
 		Body.pushln("switch(_state_vertex) { ");
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		LinkedList<gm_gps_basic_block> bb_blocks = info.get_basic_blocks();
 		int cnt = 0;
 		for (gm_gps_basic_block b : bb_blocks) {
@@ -917,7 +917,7 @@ public class gm_gps_gen extends BackendGenerator {
 		int id = b.get_id();
 		gm_gps_bbtype_t type = b.get_type();
 
-		String temp = String.format("private void _vertex_state_%d(Iterable<%s.MessageData> _msgs) {", id, GlobalMembersGm_main.FE.get_current_proc()
+		String temp = String.format("private void _vertex_state_%d(Iterable<%s.MessageData> _msgs) {", id, gm_main.FE.get_current_proc()
 				.get_procname().get_genname());
 		Body.pushln(temp);
 
@@ -1111,7 +1111,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 	public void do_generate_job_configuration() {
 
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 
 		Body.NL();
 		Body.pushln("// job description for the system");
@@ -1142,7 +1142,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 		Body.pushln("@Override");
 		Body.pushln("public Class<?> getEdgeValueClass() {");
-		if (GlobalMembersGm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
+		if (gm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
 			temp = String.format("return EdgeData.class;");
 		} else {
 			temp = String.format("return NullWritable.class;");

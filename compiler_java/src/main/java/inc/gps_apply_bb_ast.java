@@ -26,7 +26,7 @@ import backend_gps.gm_gps_beinfo;
 import backend_gps.gm_gps_comm_t;
 import backend_gps.gm_gps_comm_unit;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 public class gps_apply_bb_ast extends gps_apply_bb {
 
@@ -72,7 +72,7 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 						ast_foreach fe = U.fe;
 						fe.traverse(this, is_post(), is_pre());
 					} else if (U.get_type() == GPS_COMM_RANDOM_WRITE) {
-						gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+						gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 						LinkedList<ast_sent> LL = info.get_random_write_sents(U);
 						Iterator<ast_sent> II;
 						for (II = LL.iterator(); II.hasNext();) {

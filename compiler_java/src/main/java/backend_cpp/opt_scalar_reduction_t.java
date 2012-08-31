@@ -20,7 +20,7 @@ import ast.ast_sentblock;
 import ast.gm_rwinfo_map;
 
 import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_transform_helper;
 import common.GlobalMembersGm_traverse;
@@ -138,7 +138,7 @@ public class opt_scalar_reduction_t extends gm_apply {
 				assert e.getType().is_node_compatible() || e.getType().is_edge_compatible();
 				assert (reduce_type == GM_REDUCE_T.GMREDUCE_MAX) || (reduce_type == GM_REDUCE_T.GMREDUCE_MIN);
 			}
-			String new_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(e.getId().get_genname(), "_prv");
+			String new_name = gm_main.FE.voca_temp_name_and_add(e.getId().get_genname(), "_prv");
 
 			// add local variable at scope
 			gm_symtab_entry _thread_local;

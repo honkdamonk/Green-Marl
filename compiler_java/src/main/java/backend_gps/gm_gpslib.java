@@ -36,7 +36,7 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.gm_builtin_def;
 
 //-----------------------------------------------------------------
@@ -314,8 +314,8 @@ public class gm_gpslib extends gm_graph_library {
 
 	public void generate_vertex_prop_class_details(java.util.HashSet<gm_symtab_entry> prop, gm_code_writer Body, boolean is_edge_prop) {
 
-		int total = is_edge_prop ? ((gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info()).get_total_edge_property_size()
-				: ((gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info()).get_total_node_property_size();
+		int total = is_edge_prop ? ((gm_gps_beinfo) gm_main.FE.get_current_backend_info()).get_total_edge_property_size()
+				: ((gm_gps_beinfo) gm_main.FE.get_current_backend_info()).get_total_node_property_size();
 
 		Body.pushln("@Override");
 		Body.push("public int numBytes() {return ");
@@ -391,7 +391,7 @@ public class gm_gpslib extends gm_graph_library {
 
 		// Edge Property is read-only
 		// if (is_edge_prop && prop.size() > 0) {
-		ast_procdef proc = GlobalMembersGm_main.FE.get_current_proc();
+		ast_procdef proc = gm_main.FE.get_current_proc();
 		if ((is_edge_prop && prop.size() > 0) || (!is_edge_prop && proc.find_info_bool(GPS_FLAG_NODE_VALUE_INIT))) {
 			Body.pushln("//Input Data Parsing");
 			Body.pushln("@Override");
@@ -551,7 +551,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	// random write
 	public void generate_message_create_for_random_write(ast_sentblock sb, gm_symtab_entry sym, gm_code_writer Body) {
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		gm_gps_comm_t m_type = GPS_COMM_RANDOM_WRITE;
 
 		gm_gps_comm_unit U = new gm_gps_comm_unit(m_type, sb, sym);
@@ -1187,7 +1187,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	public void generate_message_send(ast_foreach fe, gm_code_writer Body) {
 
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 
 		gm_gps_comm_t m_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
 
@@ -1308,21 +1308,21 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public void generate_message_receive_begin(ast_foreach fe, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		gm_gps_comm_t comm_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, fe);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
 
 	public void generate_message_receive_begin(ast_sentblock sb, gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		gm_gps_comm_t comm_type = GPS_COMM_RANDOM_WRITE;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, sb, drv);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
 
 	public void generate_message_receive_begin(gm_gps_comm_unit U, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 
 		LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
 		// int comm_id = info->find_communication_size_info(fe).id;
@@ -1449,7 +1449,7 @@ public class gm_gpslib extends gm_graph_library {
 		boolean is_okay = true;
 
 		for (int i = 0; i < COUNT; i++) {
-			GlobalMembersGm_main.gm_begin_minor_compiler_stage(i + 1, NAMES[i]);
+			gm_main.gm_begin_minor_compiler_stage(i + 1, NAMES[i]);
 			switch (i) {
 			case 0:
 				break;
@@ -1457,7 +1457,7 @@ public class gm_gpslib extends gm_graph_library {
 				assert false;
 				break;
 			}
-			GlobalMembersGm_main.gm_end_minor_compiler_stage();
+			gm_main.gm_end_minor_compiler_stage();
 			if (!is_okay)
 				break;
 		}

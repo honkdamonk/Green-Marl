@@ -18,7 +18,7 @@ import ast.ast_procdef;
 import ast.ast_sentblock;
 
 import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_new_sents_after_tc;
 import common.GlobalMembersGm_transform_helper;
 
@@ -37,14 +37,14 @@ public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
 		gps_check_reverse_edge_t T = new gps_check_reverse_edge_t();
 		p.traverse_pre(T);
 		if (T.use_rev_edge()) {
-			GlobalMembersGm_main.FE.get_proc_info(p).add_info_bool(GPS_FLAG_USE_REVERSE_EDGE, true);
+			gm_main.FE.get_proc_info(p).add_info_bool(GPS_FLAG_USE_REVERSE_EDGE, true);
 			// a special basic block will be added in create ebb state.
 		} else if (T.use_in_degree()) {
-			GlobalMembersGm_main.FE.get_proc_info(p).add_info_bool(GPS_FLAG_USE_IN_DEGREE, true);
+			gm_main.FE.get_proc_info(p).add_info_bool(GPS_FLAG_USE_IN_DEGREE, true);
 
 			// define a new node_property for in_degree counting
-			String tmp_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("_in_degree", null, true);
-			GlobalMembersGm_main.FE.get_proc_info(p).add_info_string(GPS_NAME_IN_DEGREE_PROP, tmp_name);
+			String tmp_name = gm_main.FE.voca_temp_name_and_add("_in_degree", null, true);
+			gm_main.FE.get_proc_info(p).add_info_string(GPS_NAME_IN_DEGREE_PROP, tmp_name);
 
 			// create a temporary node property
 			ast_sentblock sb = p.get_body();
@@ -54,7 +54,7 @@ public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
 			tmp_name = tempRef_tmp_name.argvalue;
 
 			// create a routine that initializes reverse degree
-			String tmp_iter = GlobalMembersGm_main.FE.voca_temp_name_and_add("t");
+			String tmp_iter = gm_main.FE.voca_temp_name_and_add("t");
 			ast_sentblock sb2 = ast_sentblock.new_sentblock();
 			ast_id it2 = ast_id.new_id(tmp_iter, 0, 0);
 			ast_id src = T.get_target_graph().getId().copy(true);
@@ -69,7 +69,7 @@ public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
 			sb2 = ast_sentblock.new_sentblock();
 			ast_foreach fe2 = GlobalMembersGm_new_sents_after_tc.gm_new_foreach_after_tc(it2, src, sb2, GMTYPE_T.GMTYPE_NODEITER_ALL);
 
-			String tmp_iter2 = GlobalMembersGm_main.FE.voca_temp_name_and_add("u");
+			String tmp_iter2 = gm_main.FE.voca_temp_name_and_add("u");
 			ast_sentblock sb3 = ast_sentblock.new_sentblock();
 			ast_id it3 = ast_id.new_id(tmp_iter2, 0, 0);
 			src = fe2.get_iterator().copy(true);

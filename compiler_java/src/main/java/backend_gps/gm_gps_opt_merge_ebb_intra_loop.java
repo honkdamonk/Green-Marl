@@ -11,7 +11,7 @@ import ast.ast_procdef;
 import ast.ast_sent;
 
 import common.GlobalMembersGm_argopts;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 public class gm_gps_opt_merge_ebb_intra_loop extends gm_compile_step {
 	
@@ -20,10 +20,10 @@ public class gm_gps_opt_merge_ebb_intra_loop extends gm_compile_step {
 	}
 
 	public void process(ast_procdef p) {
-		if (!GlobalMembersGm_main.OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_MERGE_BB_INTRA))
+		if (!gm_main.OPTIONS.get_arg_bool(GlobalMembersGm_argopts.GMARGFLAG_MERGE_BB_INTRA))
 			return;
 
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_backend_info(p);
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_backend_info(p);
 		gm_gps_basic_block entry = info.get_entry_basic_block();
 
 		// gps_bb_print_all(entry);
@@ -100,13 +100,13 @@ public class gm_gps_opt_merge_ebb_intra_loop extends gm_compile_step {
 		s_n.add_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO, while_cond.get_id());
 
 		// create new state
-		gm_gps_beinfo BEINFO = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_current_backend_info();
+		gm_gps_beinfo BEINFO = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		gm_gps_basic_block TAIL2 = new gm_gps_basic_block(BEINFO.issue_basicblock_id(), gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL);
 
 		// add tag that this is merged conditional
 		TAIL2.add_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO, while_cond.get_id());
 		while_cond.add_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL, true);
-		GlobalMembersGm_main.FE.get_current_proc().add_info_list_element(GPS_LIST_INTRA_MERGED_CONDITIONAL, while_cond);
+		gm_main.FE.get_current_proc().add_info_list_element(GPS_LIST_INTRA_MERGED_CONDITIONAL, while_cond);
 
 		assert s_n.get_num_exits() == 1;
 		assert s_n.get_nth_exit(0) == while_cond;

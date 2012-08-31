@@ -5,7 +5,7 @@ import ast.ast_procdef;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.GlobalMembersGm_error;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 public class gm_gps_new_check_depth_two extends gm_compile_step
 {
@@ -16,7 +16,7 @@ public class gm_gps_new_check_depth_two extends gm_compile_step
 	public void process(ast_procdef proc)
 	{
 		// Check number of procedure name is same to the filename
-		String fname = GlobalMembersGm_main.PREGEL_BE.getFileName();
+		String fname = gm_main.PREGEL_BE.getFileName();
 		assert fname != null;
 		if (!proc.get_procname().get_genname().equals(fname))
 		{

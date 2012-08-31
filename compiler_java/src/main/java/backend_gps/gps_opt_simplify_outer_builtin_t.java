@@ -13,7 +13,7 @@ import ast.ast_id;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_transform_helper;
 import common.gm_apply;
 import common.gm_builtin_def;
@@ -94,7 +94,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 
 			// add initializer
 			ast_id lhs_id = target.getId().copy(true);
-			gm_builtin_def bin = GlobalMembersGm_main.BUILT_IN.find_builtin_def(drv.getType().getTypeSummary(), method_id);
+			gm_builtin_def bin = gm_main.BUILT_IN.find_builtin_def(drv.getType().getTypeSummary(), method_id);
 			assert bin != null;
 			assert bin.get_num_args() == 0;
 			ast_id driver = drv.getId().copy(true);

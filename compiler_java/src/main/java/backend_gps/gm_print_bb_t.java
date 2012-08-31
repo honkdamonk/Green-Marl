@@ -3,7 +3,7 @@ package backend_gps;
 import ast.ast_procdef;
 import inc.gm_compile_step;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 public class gm_print_bb_t extends gm_compile_step {
 	
@@ -14,7 +14,7 @@ public class gm_print_bb_t extends gm_compile_step {
 
 	@Override
 	public void process(ast_procdef p) {
-		gm_gps_beinfo info = (gm_gps_beinfo) GlobalMembersGm_main.FE.get_backend_info(p);
+		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_backend_info(p);
 		if (info == null)
 			return;
 		if (info.get_entry_basic_block() == null)

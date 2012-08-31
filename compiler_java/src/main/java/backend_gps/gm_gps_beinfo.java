@@ -13,7 +13,7 @@ import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 /** backend information per each procedure */
 public class gm_gps_beinfo extends gm_backend_info {
@@ -147,7 +147,7 @@ public class gm_gps_beinfo extends gm_backend_info {
 		} else if (sym.getType().is_primitive()) {
 			target_type = sym.getType().getTypeSummary();
 		} else if (sym.getType().is_node_compatible()) {
-			if (GlobalMembersGm_main.PREGEL_BE.get_lib().is_node_type_int())
+			if (gm_main.PREGEL_BE.get_lib().is_node_type_int())
 				target_type = GMTYPE_T.GMTYPE_INT;
 			else
 				target_type = GMTYPE_T.GMTYPE_LONG;

@@ -3,7 +3,7 @@ package frontend;
 import ast.ast_id;
 import ast.ast_procdef;
 
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.gm_apply;
 
 //---------------------------------------------------
@@ -22,16 +22,16 @@ public class rename_all_t extends gm_apply {
 		// if name is already in -> generate-new-name
 		String name = id.get_orgname();
 
-		if (GlobalMembersGm_main.FE.voca_isin(name)) {
+		if (gm_main.FE.voca_isin(name)) {
 			// should use a new name
-			String new_name = GlobalMembersGm_main.FE.voca_temp_name(name);
+			String new_name = gm_main.FE.voca_temp_name(name);
 			id.set_orgname(new_name); // new name is copied & old name is
 										// deleted inside
 			new_name = null;
 		}
 
 		// add to vocabulary
-		GlobalMembersGm_main.FE.voca_add(id.get_orgname());
+		gm_main.FE.voca_add(id.get_orgname());
 		// assert(FE.voca_isin(id->get_orgname()));
 		return true;
 	}
@@ -40,9 +40,9 @@ public class rename_all_t extends gm_apply {
 	// rename all potential name conflicts
 	// -------------------------------------------------
 	public final void do_rename_all_potential(ast_procdef p) {
-		assert p == GlobalMembersGm_main.FE.get_current_proc();
+		assert p == gm_main.FE.get_current_proc();
 
-		GlobalMembersGm_main.FE.voca_clear(); // rebuild vocaburary
+		gm_main.FE.voca_clear(); // rebuild vocaburary
 		p.traverse_pre(this);
 	}
 }

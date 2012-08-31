@@ -20,7 +20,7 @@ public class gm_builtin_def {
 	private boolean synonym = false;
 	private gm_builtin_def org_def = null;
 
-	public gm_builtin_def(gm_builtin_desc_t def) {
+	public gm_builtin_def(gm_builtin_desc_t def, gm_builtin_manager manager) {
 		this.method_id = def.method_id;
 
 		// parse string
@@ -31,7 +31,7 @@ public class gm_builtin_def {
 		if (text[0] == '*') // synonym
 		{
 
-			gm_builtin_def org_def = GlobalMembersGm_main.BUILT_IN.get_last_def();
+			gm_builtin_def org_def = manager.get_last_def();
 			assert org_def != null;
 
 			this.synonym = true;

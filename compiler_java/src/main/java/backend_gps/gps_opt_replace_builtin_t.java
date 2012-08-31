@@ -15,7 +15,7 @@ import ast.ast_id;
 import ast.ast_sentblock;
 
 import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.gm_apply;
 import common.gm_method_id_t;
 
@@ -46,7 +46,7 @@ public class gps_opt_replace_builtin_t extends gm_apply {
 				Pair<ast_sentblock, gm_method_id_t> P = new Pair<ast_sentblock, gm_method_id_t>(sb, b.get_builtin_def().get_method_id());
 				gm_symtab_entry target = null;
 				if (!map.containsKey(P)) {
-					String temp_name = GlobalMembersGm_main.FE.voca_temp_name_and_add("tmp");
+					String temp_name = gm_main.FE.voca_temp_name_and_add("tmp");
 					GMTYPE_T type = b.get_builtin_def().get_result_type_summary();
 					if (type.is_prim_type()) {
 						target = GlobalMembersGm_add_symbol.gm_add_new_symbol_primtype(sb, type, new RefObject<String>(temp_name));

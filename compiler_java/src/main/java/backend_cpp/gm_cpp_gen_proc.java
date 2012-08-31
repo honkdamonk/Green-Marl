@@ -2,7 +2,7 @@ package backend_cpp;
 
 import ast.ast_procdef;
 import inc.gm_compile_step;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 
 public class gm_cpp_gen_proc extends gm_compile_step
 {
@@ -12,7 +12,7 @@ public class gm_cpp_gen_proc extends gm_compile_step
 	}
 	public void process(ast_procdef proc)
 	{
-		GlobalMembersGm_main.CPP_BE.generate_proc(proc);
+		gm_main.CPP_BE.generate_proc(proc);
 	}
 	@Override
 	public gm_compile_step get_instance()

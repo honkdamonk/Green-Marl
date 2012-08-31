@@ -12,7 +12,7 @@ import ast.ast_procdef;
 import ast.ast_sentblock;
 
 import common.GlobalMembersGm_add_symbol;
-import common.GlobalMembersGm_main;
+import common.gm_main;
 import common.GlobalMembersGm_replace_sym_access;
 
 public class gm_gps_opt_insert_temp_property extends gm_compile_step {
@@ -46,7 +46,7 @@ public class gm_gps_opt_insert_temp_property extends gm_compile_step {
 			ast_sentblock sb = GlobalMembersGm_add_symbol.gm_find_upscope(out_loop);
 			assert sb != null;
 
-			String temp_name = GlobalMembersGm_main.FE.voca_temp_name_and_add(sym.getId().get_orgname(), "prop", null, true);
+			String temp_name = gm_main.FE.voca_temp_name_and_add(sym.getId().get_orgname(), "prop", null, true);
 			tangible.RefObject<String> tempRef_temp_name = new tangible.RefObject<String>(temp_name);
 			gm_symtab_entry temp_prop = GlobalMembersGm_add_symbol.gm_add_new_symbol_property(sb, sym.getType().getTypeSummary(), true, out_loop.get_iterator()
 					.getTypeInfo().get_target_graph_sym(), tempRef_temp_name);

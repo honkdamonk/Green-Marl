@@ -88,11 +88,11 @@ public class gm_argopts {
 		}
 	}
 
-	public static void process_nullargs(RefObject<String> c, String bin_name) {
-		if (c.argvalue.equals("h")) {
+	public static void process_nullargs(String c, String bin_name) {
+		if (c.equals("h")) {
 			gm_argopts.print_help(bin_name);
 			System.exit(0);
-		} else if (c.argvalue.equals("v")) {
+		} else if (c.equals("v")) {
 			System.out.printf("version %s\n", gm_main.gm_version_string);
 			System.exit(0);
 		}
@@ -123,9 +123,7 @@ public class gm_argopts {
 					continue;
 
 				if (t.arg_type == GMARG_NULL) {
-					RefObject<String> tempRef_key_begin = new RefObject<String>(key_begin);
-					gm_argopts.process_nullargs(tempRef_key_begin, bin_name);
-					key_begin = tempRef_key_begin.argvalue;
+					gm_argopts.process_nullargs(key_begin, bin_name);
 				} else if (t.arg_type == GMARG_STRING) {
 					if (val_begin == null)
 						val_begin = (String) "";

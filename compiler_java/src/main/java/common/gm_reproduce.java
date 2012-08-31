@@ -39,8 +39,8 @@ public class gm_reproduce {
 		Out.setBaseIndent(i);
 	}
 
-	public static void gm_push_reproduce(tangible.RefObject<String> s) {
-		Out.push(s.argvalue);
+	public static void gm_push_reproduce(String s) {
+		Out.push(s);
 	}
 }
 // ----------------------------------------------------------------------------------------

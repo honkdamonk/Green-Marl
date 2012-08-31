@@ -25,11 +25,11 @@ public class ast_expr_foreign extends ast_expr {
 		// orig_text = null;
 	}
 
-	public static ast_expr_foreign new_expr_foreign(tangible.RefObject<String> text) {
+	public static ast_expr_foreign new_expr_foreign(String text) {
 		ast_expr_foreign aef = new ast_expr_foreign();
 		aef.expr_class = GMEXPR_CLASS.GMEXPR_FOREIGN;
-		assert text.argvalue != null;
-		aef.orig_text = text.argvalue;
+		assert text != null;
+		aef.orig_text = text;
 		aef.type_of_expression = GMTYPE_T.GMTYPE_FOREIGN_EXPR;
 		return aef;
 	}

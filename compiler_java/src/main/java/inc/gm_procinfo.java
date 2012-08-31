@@ -26,11 +26,6 @@ public class gm_procinfo {
 		return flat;
 	}
 
-	@Deprecated
-	public final void add_voca(tangible.RefObject<String> n) {
-		flat.add_word(n.argvalue);
-	}
-
 	public final void add_voca(String value) {
 		flat.add_word(value);
 	}

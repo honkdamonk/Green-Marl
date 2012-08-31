@@ -31,7 +31,7 @@ public class gm_add_symbol {
 	 * add a new symbol of primitive type into given sentence block<br>
 	 * assumption: newname does not have any name-conflicts
 	 */
-	public static gm_symtab_entry gm_add_new_symbol_primtype(ast_sentblock sb, GMTYPE_T primtype, tangible.RefObject<String> newname) {
+	public static gm_symtab_entry gm_add_new_symbol_primtype(ast_sentblock sb, GMTYPE_T primtype, String newname) {
 		assert sb != null;
 
 		gm_symtab target_syms;
@@ -44,7 +44,7 @@ public class gm_add_symbol {
 		assert success;
 
 		// create id object and declare
-		ast_id new_id = ast_id.new_id(newname.argvalue, 0, 0);
+		ast_id new_id = ast_id.new_id(newname, 0, 0);
 		success = gm_typechecker_stage_1.gm_declare_symbol(target_syms, new_id, type, true, true);
 		assert success;
 
@@ -63,7 +63,7 @@ public class gm_add_symbol {
 	}
 
 	public static gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, GMTYPE_T nodeedge_type, gm_symtab_entry graph_sym,
-			tangible.RefObject<String> newname) {
+			String newname) {
 		assert sb != null;
 
 		gm_symtab target_syms;
@@ -84,7 +84,7 @@ public class gm_add_symbol {
 		assert success;
 
 		// create id object and declare
-		ast_id new_id = ast_id.new_id(newname.argvalue, 0, 0);
+		ast_id new_id = ast_id.new_id(newname, 0, 0);
 		success = gm_typechecker_stage_1.gm_declare_symbol(target_syms, new_id, type, true, true);
 		assert success;
 
@@ -107,7 +107,7 @@ public class gm_add_symbol {
 	 * assumption: newname does not have any name-conflicts
 	 */
 	public static gm_symtab_entry gm_add_new_symbol_property(ast_sentblock sb, GMTYPE_T primtype, boolean is_nodeprop, gm_symtab_entry target_graph,
-			tangible.RefObject<String> newname) // assumtpion: no name-conflict.
+			String newname) // assumtpion: no name-conflict.
 	{
 		ast_id target_graph_id = target_graph.getId().copy();
 		ast_typedecl target_type = ast_typedecl.new_primtype(primtype);
@@ -123,7 +123,7 @@ public class gm_add_symbol {
 		assert success;
 
 		// create property id object and declare
-		ast_id new_id = ast_id.new_id(newname.argvalue, 0, 0);
+		ast_id new_id = ast_id.new_id(newname, 0, 0);
 		gm_symtab target_syms;
 		target_syms = sb.get_symtab_field();
 		assert target_syms != null;

@@ -219,12 +219,12 @@ public class gm_gps_basic_block {
 				java.util.LinkedList<gm_gps_comm_unit> L = get_receivers();
 				for (gm_gps_comm_unit U : L) {
 					if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_NESTED) {
-						gm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Nested Loop"));
+						gm_reproduce.gm_push_reproduce("//Receive Nested Loop");
 						gm_reproduce.gm_newline_reproduce();
 						ast_foreach fe = U.fe;
 						fe.reproduce(0);
 					} else if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_RANDOM_WRITE) {
-						gm_reproduce.gm_push_reproduce(new RefObject<String>("//Receive Random Write Sent"));
+						gm_reproduce.gm_push_reproduce("//Receive Random Write Sent");
 						gm_reproduce.gm_newline_reproduce();
 						java.util.LinkedList<ast_sent> LL = info.get_random_write_sents(U);
 						for (ast_sent s : LL) {

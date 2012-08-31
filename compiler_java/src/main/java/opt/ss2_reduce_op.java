@@ -195,7 +195,7 @@ public class ss2_reduce_op extends gm_apply {
 				cnt_symbol = insert_def_and_init_before(temp_cnt, GMTYPE_LONG, holder, ast_expr.new_ival_expr(0));
 
 				avg_val_symbol = gm_add_symbol.gm_add_new_symbol_primtype(sb, (expr_type == GMTYPE_FLOAT) ? GMTYPE_FLOAT : GMTYPE_DOUBLE,
-						new RefObject<String>(temp_avg));
+						temp_avg);
 			}
 		}
 

@@ -48,10 +48,8 @@ public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
 
 			// create a temporary node property
 			ast_sentblock sb = p.get_body();
-			tangible.RefObject<String> tempRef_tmp_name = new tangible.RefObject<String>(tmp_name);
 			gm_symtab_entry new_prop = gm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, T.get_target_graph(),
-					tempRef_tmp_name);
-			tmp_name = tempRef_tmp_name.argvalue;
+					tmp_name);
 
 			// create a routine that initializes reverse degree
 			String tmp_iter = gm_main.FE.voca_temp_name_and_add("t");

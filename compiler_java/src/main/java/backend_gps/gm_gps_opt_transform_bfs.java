@@ -321,16 +321,10 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		String lev_name = gm_main.FE.voca_temp_name_and_add("level", null, true);
 		String curr_name = gm_main.FE.voca_temp_name_and_add("curr_level", null, true);
 		String fin_name = gm_main.FE.voca_temp_name_and_add("bfs_finished", null, true);
-		RefObject<String> tempRef_lev_name = new RefObject<String>(lev_name);
 		gm_symtab_entry lev_sym = gm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, b.get_source().getSymInfo(),
-				tempRef_lev_name);
-		lev_name = tempRef_lev_name.argvalue;
-		RefObject<String> tempRef_curr_name = new RefObject<String>(curr_name);
-		gm_symtab_entry curr_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_INT, tempRef_curr_name);
-		curr_name = tempRef_curr_name.argvalue;
-		RefObject<String> tempRef_fin_name = new RefObject<String>(fin_name);
-		gm_symtab_entry fin_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_BOOL, tempRef_fin_name);
-		fin_name = tempRef_fin_name.argvalue;
+				lev_name);
+		gm_symtab_entry curr_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_INT, curr_name);
+		gm_symtab_entry fin_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_BOOL, fin_name);
 
 		create_initializer(sb, b, lev_sym, curr_sym, fin_sym);
 

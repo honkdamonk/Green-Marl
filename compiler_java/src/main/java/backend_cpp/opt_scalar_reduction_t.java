@@ -134,13 +134,13 @@ public class opt_scalar_reduction_t extends gm_apply {
 			// add local variable at scope
 			gm_symtab_entry _thread_local;
 			if (e_type.is_prim_type()) {
-				_thread_local = gm_add_symbol.gm_add_new_symbol_primtype(se, e_type, new RefObject<String>(new_name));
+				_thread_local = gm_add_symbol.gm_add_new_symbol_primtype(se, e_type, new_name);
 			} else if (e_type.is_node_compatible_type()) {
 				_thread_local = gm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_NODE, e.getType().get_target_graph_sym(),
-						new RefObject<String>(new_name));
+						new_name);
 			} else if (e_type.is_edge_compatible_type()) {
 				_thread_local = gm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_EDGE, e.getType().get_target_graph_sym(),
-						new RefObject<String>(new_name));
+						new_name);
 			} else {
 				_thread_local = null;
 				assert false;

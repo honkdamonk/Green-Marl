@@ -44,7 +44,7 @@ public class gm_syntax_sugar2 {
 		// -------------------------------------------------------------
 		// 2. Add new symbol to the current bound
 		// -------------------------------------------------------------
-		gm_symtab_entry e = gm_add_symbol.gm_add_new_symbol_primtype(sb, prim_type, new tangible.RefObject<String>(vname));
+		gm_symtab_entry e = gm_add_symbol.gm_add_new_symbol_primtype(sb, prim_type, vname);
 
 		// -------------------------------------------------------------
 		// 3. add initialization sentence

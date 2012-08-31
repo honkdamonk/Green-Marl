@@ -389,12 +389,6 @@ public class gm_error {
 		return curr_file;
 	}
 
-	@Deprecated
-	public static void gm_set_curr_procname(tangible.RefObject<String> pname) {
-		curr_proc = pname.argvalue;
-		need_print = true;
-	}
-
 	public static void gm_set_curr_procname(String pname) {
 		curr_proc = pname;
 		need_print = true;

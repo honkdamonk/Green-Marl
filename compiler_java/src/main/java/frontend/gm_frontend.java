@@ -489,7 +489,7 @@ public class gm_frontend {
 	}
 
 	public static ast_node GM_expr_foreign(String text, int l, int c) {
-		ast_expr_foreign expr = ast_expr_foreign.new_expr_foreign(new RefObject<String>(text));
+		ast_expr_foreign expr = ast_expr_foreign.new_expr_foreign(text);
 		expr.set_line(l);
 		expr.set_col(c);
 		expr.parse_foreign_syntax(); // parse again!
@@ -617,9 +617,9 @@ public class gm_frontend {
 	 * return i; }
 	 */
 
-	public static ast_node GM_id(tangible.RefObject<String> orgname, int line, int col) {
-		assert orgname.argvalue != null;
-		return ast_id.new_id(orgname.argvalue, line, col);
+	public static ast_node GM_id(String orgname, int line, int col) {
+		assert orgname != null;
+		return ast_id.new_id(orgname, line, col);
 	}
 
 	public static ast_node GM_field(ast_node id1, ast_node id2, boolean is_rarrow) {

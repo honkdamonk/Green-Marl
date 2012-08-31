@@ -101,9 +101,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 			gm_symtab_entry target_graph = type.get_target_graph_sym();
 
 			String fname = gm_main.FE.voca_temp_name_and_add(id.get_orgname(), "_nxt");
-			tangible.RefObject<String> tempRef_fname = new tangible.RefObject<String>(fname);
-			gm_symtab_entry new_dest = gm_add_symbol.gm_add_new_symbol_property(scope, target_type, is_nodeprop, target_graph, tempRef_fname);
-			fname = tempRef_fname.argvalue;
+			gm_symtab_entry new_dest = gm_add_symbol.gm_add_new_symbol_property(scope, target_type, is_nodeprop, target_graph, fname);
 			fname = null;
 
 			// --------------------------------------
@@ -230,7 +228,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// --------------------------------------------
 		upup.get_symtab_var(); // to assert it has scope
 		String flag_name = gm_main.FE.voca_temp_name_and_add("is_first");
-		gm_symtab_entry flag_sym = gm_add_symbol.gm_add_new_symbol_primtype(upup, GMTYPE_T.GMTYPE_BOOL, new RefObject<String>(flag_name)); // symbol
+		gm_symtab_entry flag_sym = gm_add_symbol.gm_add_new_symbol_primtype(upup, GMTYPE_T.GMTYPE_BOOL, flag_name); // symbol
 		ast_id lhs = flag_sym.getId().copy(true);
 		ast_expr rhs = ast_expr.new_bval_expr(true);
 		ast_assign a_init = ast_assign.new_assign_scala(lhs, rhs); // "is_first = true"

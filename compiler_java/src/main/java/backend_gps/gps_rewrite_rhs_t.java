@@ -178,14 +178,14 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		String temp_name = gm_main.FE.voca_temp_name_and_add("_m");
 		gm_symtab_entry target;
 		if (type.is_prim_type()) {
-			target = gm_add_symbol.gm_add_new_symbol_primtype(sb, type, new RefObject<String>(temp_name));
+			target = gm_add_symbol.gm_add_new_symbol_primtype(sb, type, temp_name);
 		} else if (type.is_node_edge_compatible_type()) {
 			if (type.is_node_compatible_type()) {
 				type = GMTYPE_T.GMTYPE_NODE;
 			} else if (type.is_edge_compatible_type()) {
 				type = GMTYPE_T.GMTYPE_EDGE;
 			}
-			target = gm_add_symbol.gm_add_new_symbol_nodeedge_type(sb, type, graph, new RefObject<String>(temp_name));
+			target = gm_add_symbol.gm_add_new_symbol_nodeedge_type(sb, type, graph, temp_name);
 		} else {
 			assert false;
 			throw new AssertionError();

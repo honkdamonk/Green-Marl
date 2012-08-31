@@ -71,9 +71,9 @@ public class ast_idlist extends ast_node {
 		System.out.print("]");
 	}
 
-	public final boolean contains(tangible.RefObject<String> id) {
+	public final boolean contains(String id) {
 		for (int i = 0; i < (int) lst.size(); i++)
-			if (id.argvalue.equals(lst.get(i).get_orgname()))
+			if (id.equals(lst.get(i).get_orgname()))
 				return true;
 		return false;
 	}

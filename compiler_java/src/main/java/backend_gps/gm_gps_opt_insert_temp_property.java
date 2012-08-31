@@ -47,10 +47,8 @@ public class gm_gps_opt_insert_temp_property extends gm_compile_step {
 			assert sb != null;
 
 			String temp_name = gm_main.FE.voca_temp_name_and_add(sym.getId().get_orgname(), "prop", null, true);
-			tangible.RefObject<String> tempRef_temp_name = new tangible.RefObject<String>(temp_name);
 			gm_symtab_entry temp_prop = gm_add_symbol.gm_add_new_symbol_property(sb, sym.getType().getTypeSummary(), true, out_loop.get_iterator()
-					.getTypeInfo().get_target_graph_sym(), tempRef_temp_name);
-			temp_name = tempRef_temp_name.argvalue;
+					.getTypeInfo().get_target_graph_sym(), temp_name);
 
 			// replace accesses:
 			// sym ==> out_iter.temp_prop

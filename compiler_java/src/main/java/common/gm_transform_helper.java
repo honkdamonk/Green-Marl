@@ -213,10 +213,9 @@ public class gm_transform_helper {
 	// Find an upscope where I can add some symbol defs
 	// ast_sentblock gm_find_upscope(ast_sent s);
 	// Add symbols into some scope
-	// gm_symtab_entry gm_add_new_symbol_primtype(ast_sentblock sb, int primtype, tangible.RefObject<String> new_vname); // assumtpion: no name-conflict.
-	// gm_symtab_entry gm_add_new_symbol_property(ast_sentblock sb, int primtype, boolean is_nodeprop, gm_symtab_entry target_graph, tangible.RefObject<String>
-	// new_vname); // assumtpion: no name-conflict.
-	// gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, int nodeedge_type, gm_symtab_entry target_graph, tangible.RefObject<String> new_vname);
+	// gm_symtab_entry gm_add_new_symbol_primtype(ast_sentblock sb, int primtype, String new_vname); // assumtpion: no name-conflict.
+	// gm_symtab_entry gm_add_new_symbol_property(ast_sentblock sb, int primtype, boolean is_nodeprop, gm_symtab_entry target_graph, String new_vname); // assumtpion: no name-conflict.
+	// gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, int nodeedge_type, gm_symtab_entry target_graph, String new_vname);
 	// // assumtpion: no name-conflict.
 
 	// returns sentblock that defines the given entry

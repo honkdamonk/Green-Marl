@@ -5,17 +5,6 @@ import frontend.gm_symtab_entry;
 
 public class gm_resolve_nc
 {
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define TO_STR(X) #X
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define DEF_STRING(X) static const char *X = "X"
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public gm_compile_step { private: CLASS() {set_description(DESC);}public: virtual void process(ast_procdef*p); virtual gm_compile_step* get_instance(){return new CLASS();} static gm_compile_step* get_factory(){return new CLASS();} };
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
-
-	//C++ TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
-	///#if false
 	////--------------------------------------------------------------------------------
 	//// If any subblock inside S defines a varaible v which
 	//// has a name conflict with e, rename v with v'
@@ -90,10 +79,7 @@ public class gm_resolve_nc
 	//    //if (ret) R.rename_all();
 	//    return ret;
 	//}
-	///#endif
 
-	//C++ TO JAVA CONVERTER TODO TASK: There is no preprocessor in Java:
-	///#if false
 	////------------------------------------------------------------------------------------
 	//// For the subtree top,
 	////   Reflect the name in the symbol-table e (which has been modifid), to all id nodes
@@ -128,7 +114,6 @@ public class gm_resolve_nc
 	//    T.do_reflect(e_modified, top);
 	//    return T.is_changed();
 	//}
-	///#endif
 
 	//---------------------------------------------------------------------------------------
 	// For the subtree(top), 

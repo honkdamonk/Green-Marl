@@ -157,12 +157,6 @@ public static void gm_traverse_exprs(ast_expr top, gm_apply a)
 		return gm_traverse.gm_traverse_up_sent(n.get_parent(), a);
 	}
 
-
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define TO_STR(X) #X
-	//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-	///#define DEF_STRING(X) static const char *X = "X"
-
 	public static final boolean POST_APPLY = true;
 	public static final boolean PRE_APPLY = false;
 	public static void apply_symtab_each(gm_apply a, gm_symtab s, SYMTAB_TYPES symtab_type, boolean is_post)

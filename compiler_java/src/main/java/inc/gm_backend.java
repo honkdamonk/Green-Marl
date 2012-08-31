@@ -2,11 +2,6 @@ package inc;
 
 import common.gm_vocabulary;
 
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define TO_STR(X) #X
-//C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced in-line:
-///#define DEF_STRING(X) static const char *X = "X"
-
 public interface gm_backend {
 
 	public void setTargetDir(String dname);

@@ -1,13 +1,15 @@
 grammar GMParser;
 
 options {
-    language   = Java;
-    output     = AST;
-    backtrack  = true;
+    language     = Java;
+    output       = AST;
+    ASTLabelType = ast_node;
+    backtrack    = true;
 }
 
 @parser::header {
     package parse;
+    import ast.ast_node;
 }
 
 @lexer::header {
@@ -43,6 +45,7 @@ prog
 proc_def
     :   proc_head
         proc_body
+        { FE.GM_procdef_finish(); }
     ;
 
 
@@ -57,13 +60,17 @@ proc_head
 
 
 proc_name
-    :   T_PROC  id
-    |   T_LOCAL id
+    :   T_PROC e=id
+    	{ FE.GM_procdef_begin(e, false); }
+    |   T_LOCAL e=id
+    	{ FE.GM_procdef_begin(e, true); }
     ;
 
 
 arg_declist
-    :   arg_decl ( ',' arg_decl )*
+    :   e=arg_decl
+    	{ FE.GM_procdef_add_argdecl(e); }
+    	( ',' e=arg_decl { FE.GM_procdef_add_argdecl(e); } )*
     ;
 
 

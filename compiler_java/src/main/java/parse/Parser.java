@@ -2,6 +2,8 @@ package parse;
 
 import org.antlr.runtime.*;
 
+import frontend.gm_frontend;
+
 /**
  * The super class of the generated parser. It is extended by the generated
  * code because of the superClass option in the .g file.
@@ -18,6 +20,8 @@ public abstract class Parser
         extends org.antlr.runtime.Parser
 
 {
+	final static gm_frontend FE = null;
+	
     /**
      * Create a new parser instance, pre-supplying the input token stream.
      * 

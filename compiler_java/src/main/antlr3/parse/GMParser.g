@@ -9,7 +9,8 @@ options {
 
 @parser::header {
     package parse;
-    import ast.ast_node;
+    import ast.*;
+    import inc.*;
 }
 
 @lexer::header {
@@ -60,17 +61,17 @@ proc_head
 
 
 proc_name
-    :   T_PROC e=id
-    	{ FE.GM_procdef_begin(e, false); }
-    |   T_LOCAL e=id
-    	{ FE.GM_procdef_begin(e, true); }
+    :   T_PROC x=id
+    	{ FE.GM_procdef_begin(x.tree, false); }
+    |   T_LOCAL x=id
+    	{ FE.GM_procdef_begin(x.tree, true); }
     ;
 
 
 arg_declist
-    :   e=arg_decl
-    	{ FE.GM_procdef_add_argdecl(e); }
-    	( ',' e=arg_decl { FE.GM_procdef_add_argdecl(e); } )*
+    :   x=arg_decl
+    	{ FE.GM_procdef_add_argdecl(x.tree); }
+    	( ',' x=arg_decl { FE.GM_procdef_add_argdecl(x.tree); } )*
     ;
 
 
@@ -83,26 +84,32 @@ proc_return
 
 
 arg_decl
-    :   arg_target ':' typedecl
+    :   x=arg_target ':' y=typedecl
+    	{ retval.tree = FE.GM_procdef_arg(x.tree, y.tree); }
     ;
 
 
 arg_target
     :   id_comma_list
+    	{ retval.tree = FE.GM_finish_id_comma_list(); }
     ;
 
 
 typedecl
-    :   prim_type
-    |   graph_type
-    |   property
-    |   nodeedge_type
-    |   set_type
+    :   x=graph_type
+    	{ retval.tree = x.tree; }
+/*    :   x=prim_type
+    |   x=graph_type
+    |   x=property
+    |   x=nodeedge_type
+    |   x=set_type*/
     ;
 
 
 graph_type
     :   T_GRAPH
+    	{ retval.tree = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH); 
+          FE.GM_set_lineinfo(retval.tree, 0, 0); }
     ;
 
 
@@ -163,7 +170,9 @@ property
 
 
 id_comma_list
-    :   id ( ',' id )*
+    :   x=id
+    	{ FE.GM_add_id_comma_list(x.tree);}
+    	( ',' x=id { FE.GM_add_id_comma_list(x.tree); } )*
     ;
 
 
@@ -616,7 +625,8 @@ expr_user
 /* USER_TEXT*/
 
 id
-    :   ID
+    :   x=ID
+    	{ retval.tree = FE.GM_id(x.getText(), 0, 0); }
     ;
 
 /*******************************************************************************

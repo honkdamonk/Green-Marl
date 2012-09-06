@@ -19,10 +19,16 @@ import inc.gm_compile_step;
 import inc.gm_procinfo;
 import inc.lhs_list;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+
+import org.antlr.runtime.ANTLRFileStream;
+import org.antlr.runtime.CharStream;
+import org.antlr.runtime.CommonTokenStream;
+import org.antlr.runtime.RecognitionException;
 
 import tangible.Extern;
 import ast.ast_argdecl;
@@ -54,6 +60,8 @@ import common.gm_error;
 import common.gm_main;
 import common.gm_traverse;
 import common.gm_vocabulary;
+import parse.GMLexer;
+import parse.GMParser;
 
 public class gm_frontend {
 
@@ -61,7 +69,7 @@ public class gm_frontend {
 
 	private LinkedList<gm_compile_step> local_steps = new LinkedList<gm_compile_step>();
 
-	/** tempoprary fields used during parsing */
+	/** temporary fields used during parsing */
 	private LinkedList<ast_sentblock> blocks = new LinkedList<ast_sentblock>();
 	private ast_procdef curr_proc = null;
 	private ast_idlist curr_idlist = null;
@@ -81,13 +89,33 @@ public class gm_frontend {
 	/** interface to parser */
 	public final int start_parse(String fname) {
 		// start lexer
-		if (Extern.GM_start_parse(fname) == 0) {
-			System.out.printf("Error in loading %s\n", fname);
-			return 0;
-		}
+		//if (Extern.GM_start_parse(fname) == 0) {
+			//System.out.printf("Error in loading %s\n", fname);
+			//return 0;
+		//}
 
 		// start parser
-		return Extern.yyparse();
+		//return Extern.yyparse();
+		CharStream cs;
+		try {
+			cs = new ANTLRFileStream(fname);
+		} catch (IOException e) {
+			return 1; // error?
+		}
+		
+		GMLexer lexer = new GMLexer(cs);
+		
+		CommonTokenStream tokens = new CommonTokenStream();
+		tokens.setTokenSource(lexer);
+		
+		GMParser parser = new GMParser(tokens);
+		try {
+			parser.prog();
+		} catch (RecognitionException e) {
+			return 1;
+		}
+		
+		return 0;
 	}
 
 	// void clean_up(); // clean-up intermediate structures (for iterative mode)

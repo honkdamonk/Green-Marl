@@ -197,6 +197,7 @@ public class gm_main {
 			assert GM_input_lists.size() == 1;
 			String fname1 = GM_input_lists.getFirst();
 			gm_error.gm_set_current_filename(fname1);
+			FE.start_parse(fname1);
 			if (gm_error.GM_is_parse_error()) {
 				System.exit(1);
 			}

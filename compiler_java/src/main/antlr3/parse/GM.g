@@ -1,9 +1,8 @@
-grammar GMParser;
+grammar GM;
 
 options {
     language     = Java;
     output       = AST;
-    ASTLabelType = ast_node;
     backtrack    = true;
 }
 
@@ -62,16 +61,16 @@ proc_head
 
 proc_name
     :   T_PROC x=id
-    	{ FE.GM_procdef_begin(x.tree, false); }
+    	{ FE.GM_procdef_begin(x.value, false); }
     |   T_LOCAL x=id
-    	{ FE.GM_procdef_begin(x.tree, true); }
+    	{ FE.GM_procdef_begin(x.value, true); }
     ;
 
 
 arg_declist
     :   x=arg_decl
-    	{ FE.GM_procdef_add_argdecl(x.tree); }
-    	( ',' x=arg_decl { FE.GM_procdef_add_argdecl(x.tree); } )*
+    	{ FE.GM_procdef_add_argdecl(x.value); }
+    	( ',' x=arg_decl { FE.GM_procdef_add_argdecl(x.value); } )*
     ;
 
 
@@ -83,21 +82,21 @@ proc_return
     ;
 
 
-arg_decl
+arg_decl returns [ast_node value]
     :   x=arg_target ':' y=typedecl
-    	{ retval.tree = FE.GM_procdef_arg(x.tree, y.tree); }
+    	{ retval.value = FE.GM_procdef_arg(x.value, y.value); }
     ;
 
 
-arg_target
+arg_target returns [ast_node value]
     :   id_comma_list
-    	{ retval.tree = FE.GM_finish_id_comma_list(); }
+    	{ retval.value = FE.GM_finish_id_comma_list(); }
     ;
 
 
-typedecl
+typedecl returns [ast_node value]
     :   x=graph_type
-    	{ retval.tree = x.tree; }
+    	{ retval.value = x.value; }
 /*    :   x=prim_type
     |   x=graph_type
     |   x=property
@@ -106,10 +105,10 @@ typedecl
     ;
 
 
-graph_type
+graph_type returns [ast_node value]
     :   T_GRAPH
-    	{ retval.tree = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH); 
-          FE.GM_set_lineinfo(retval.tree, 0, 0); }
+    	{ retval.value = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH); 
+          FE.GM_set_lineinfo(retval.value, 0, 0); }
     ;
 
 
@@ -171,8 +170,8 @@ property
 
 id_comma_list
     :   x=id
-    	{ FE.GM_add_id_comma_list(x.tree);}
-    	( ',' x=id { FE.GM_add_id_comma_list(x.tree); } )*
+    	{ FE.GM_add_id_comma_list(x.value);}
+    	( ',' x=id { FE.GM_add_id_comma_list(x.value); } )*
     ;
 
 
@@ -624,9 +623,9 @@ expr_user
     ;
 /* USER_TEXT*/
 
-id
+id returns [ast_node value]
     :   x=ID
-    	{ retval.tree = FE.GM_id(x.getText(), 0, 0); }
+    	{ retval.value = FE.GM_id(x.getText(), 0, 0); }
     ;
 
 /*******************************************************************************

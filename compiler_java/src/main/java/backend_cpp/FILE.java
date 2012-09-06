@@ -37,12 +37,11 @@ public class FILE extends OutputStream {
 
 	public static void fprintf(FILE _out, String string) {
 		// TODO Auto-generated method stub
-		
+		System.out.print(string);
 	}
 
 	public static void fwrite(String _temp_buf, int ptr, int i, FILE _out) {
 		// TODO Auto-generated method stub
-		
 	}
 
 }

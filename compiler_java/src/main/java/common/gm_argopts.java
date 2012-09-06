@@ -103,12 +103,12 @@ public class gm_argopts {
 		if (argv.charAt(0) == '-') {
 			// search '=' in the argument
 			int z = argv.length();
-			String key_begin = argv.charAt(1) + "";
+			String key_begin = null;
 			String val_begin = null;
 			for (int i = 1; i < z; i++) {
 				if (argv.charAt(i) == '=') {
-					argv = StringFunctions.changeCharacter(argv, i, '\0');
-					val_begin = argv.charAt(i + 1) + "";
+					key_begin = argv.substring(1, i);
+					val_begin = argv.substring(i + 1);
 					break;
 				}
 			}
@@ -125,7 +125,7 @@ public class gm_argopts {
 					gm_argopts.process_nullargs(key_begin, bin_name);
 				} else if (t.arg_type == GMARG_STRING) {
 					if (val_begin == null)
-						val_begin = (String) "";
+						val_begin = "";
 					gm_main.OPTIONS.set_arg_string(key_begin, val_begin);
 				} else if (t.arg_type == GMARG_INT) {
 					if (val_begin == null)

@@ -1,13 +1,14 @@
 package inc;
 
+import java.io.PrintStream;
+
 import tangible.RefObject;
-import backend_cpp.FILE;
 
 public class gm_code_writer {
 
 	public static final int MAX_COL = 1024;
 
-	private FILE _out = new FILE(System.out);
+	private PrintStream _out;
 	public int indent = 0;
 	public int tabSize = 4;
 	public int col = 0;
@@ -31,8 +32,8 @@ public class gm_code_writer {
 		indent--;
 	}
 
-	public final void setOutputFile(FILE f) {
-		_out = f;
+	public final void setOutputFile(PrintStream out) {
+		_out = out;
 	}
 
 	public final void flush() {
@@ -40,9 +41,9 @@ public class gm_code_writer {
 		String[] lines = file_buf.toString().split("\n");
 		for (String line : lines) {
 			if (line.matches("\\p{Space}*")) {// consists of whitespaces
-				FILE.fprintf(_out, "\n");
+				_out.printf("\n");
 			} else {
-				FILE.fprintf(_out, line + "\n");
+				_out.printf(line + "\n");
 			}
 		}
 		col = 0;

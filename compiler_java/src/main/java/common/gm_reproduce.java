@@ -1,7 +1,8 @@
 package common;
 
+import java.io.PrintStream;
+
 import inc.gm_code_writer;
-import backend_cpp.FILE;
 
 public class gm_reproduce {
 	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
@@ -31,8 +32,8 @@ public class gm_reproduce {
 		Out.NL();
 	}
 
-	public static void gm_redirect_reproduce(FILE f) {
-		Out.setOutputFile(f);
+	public static void gm_redirect_reproduce(PrintStream ps) {
+		Out.setOutputFile(ps);
 	}
 
 	public static void gm_baseindent_reproduce(int i) {

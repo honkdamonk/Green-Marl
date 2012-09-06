@@ -28,7 +28,6 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_while;
-import backend_cpp.FILE;
 import backend_gps.gm_gps_basic_block;
 import backend_gps.gm_gps_bbtype_t;
 import backend_gps.gm_gps_beinfo;
@@ -183,14 +182,13 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("}");
 		Body.NL();
 
-		gm_reproduce.gm_redirect_reproduce(f_body); // for
-																	// temporary
+		gm_reproduce.gm_redirect_reproduce(ps_body); // for temporary
 		gm_reproduce.gm_baseindent_reproduce(3);
 
 		for (gm_gps_basic_block b : bb_blocks) {
 			do_generate_master_state_body(b);
 		}
-		gm_reproduce.gm_redirect_reproduce(new FILE(System.out));
+		gm_reproduce.gm_redirect_reproduce(System.out);
 		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 
@@ -801,15 +799,14 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 		Body.pushln("}");
 
-		gm_reproduce.gm_redirect_reproduce(f_body); // for
-																	// temporary
+		gm_reproduce.gm_redirect_reproduce(ps_body); // for temporary
 		gm_reproduce.gm_baseindent_reproduce(3);
 		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			do_generate_vertex_state_body(b);
 		}
-		gm_reproduce.gm_redirect_reproduce(new FILE(System.out));
+		gm_reproduce.gm_redirect_reproduce(System.out);
 		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 

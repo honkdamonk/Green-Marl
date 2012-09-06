@@ -17,6 +17,11 @@ import inc.gm_ind_opt_nonconf_reduce;
 import inc.nop_enum_cpp;
 import inc.nop_reduce_scalar;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -114,8 +119,10 @@ public class gm_cpp_gen extends BackendGenerator {
 	protected gm_code_writer Header = new gm_code_writer();
 	// protected gm_code_writer _Body = new gm_code_writer();
 
-	protected FILE f_header = null;
-	protected FILE f_body = null;
+	protected File f_header = null;
+	protected PrintStream ps_header = null;
+	protected File f_body = null;
+	protected PrintStream ps_body = null;
 	
 	protected String i_temp; // temporary variable name
 	protected String temp;
@@ -320,20 +327,28 @@ public class gm_cpp_gen extends BackendGenerator {
 		assert fname != null;
 
 		temp = String.format("%s/%s.h", dname, fname);
-		f_header = FILE.fopen(temp, "w");
-		if (f_header == null) {
+		f_header = new File(temp);
+		try {
+			FileOutputStream fos = new FileOutputStream(f_header);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ps_header = new PrintStream(bos);
+		} catch (FileNotFoundException e1) {
 			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
-		Header.setOutputFile(f_header);
+		Header.setOutputFile(ps_header);
 
 		temp = String.format("%s/%s.cc", dname, fname);
-		f_body = FILE.fopen(temp, "w");
-		if (f_body == null) {
+		f_body = new File(temp);
+		try {
+			FileOutputStream fos = new FileOutputStream(f_body);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ps_body = new PrintStream(bos);
+		} catch (FileNotFoundException e) {
 			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
-		_Body.setOutputFile(f_body);
+		_Body.setOutputFile(ps_body);
 
 		get_lib().set_code_writer(_Body);
 		return true;
@@ -343,12 +358,12 @@ public class gm_cpp_gen extends BackendGenerator {
 	public void close_output_files() {
 		if (f_header != null) {
 			Header.flush();
-			FILE.fclose(f_header);
+			ps_header.close();
 			f_header = null;
 		}
 		if (f_body != null) {
 			_Body.flush();
-			FILE.fclose(f_body);
+			ps_body.close();
 			f_body = null;
 		}
 	}

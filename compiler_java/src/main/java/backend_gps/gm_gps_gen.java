@@ -30,6 +30,11 @@ import inc.gm_ind_opt_flip_edges;
 import inc.gm_ind_opt_loop_merge;
 import inc.gm_ind_opt_move_propdecl;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -53,7 +58,6 @@ import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_vardecl;
 import ast.ast_while;
-import backend_cpp.FILE;
 import backend_cpp.gm_cpp_opt_defer;
 
 import common.GM_ERRORS_AND_WARNINGS;
@@ -241,12 +245,16 @@ public class gm_gps_gen extends BackendGenerator {
 		assert fname != null;
 
 		String temp = String.format("%s/%s.java", dname, fname);
-		f_body = FILE.fopen(temp, "w");
-		if (f_body == null) {
+		f_body = new File(temp);
+		try {
+			FileOutputStream fos = new FileOutputStream(f_body);
+			BufferedOutputStream bos = new BufferedOutputStream(fos);
+			ps_body = new PrintStream(bos);
+		} catch (FileNotFoundException e) {
 			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
-		Body.setOutputFile(f_body);
+		Body.setOutputFile(ps_body);
 
 		get_lib().set_code_writer(Body);
 		return true;
@@ -255,7 +263,7 @@ public class gm_gps_gen extends BackendGenerator {
 	public void close_output_files() {
 		if (f_body != null) {
 			Body.flush();
-			FILE.fclose(f_body);
+			ps_body.close();
 			f_body = null;
 		}
 	}
@@ -319,14 +327,13 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushln("}");
 		Body.NL();
 
-		gm_reproduce.gm_redirect_reproduce(f_body); // for
-																	// temporary
+		gm_reproduce.gm_redirect_reproduce(ps_body); // for temporary
 		gm_reproduce.gm_baseindent_reproduce(3);
 
 		for (gm_gps_basic_block b : bb_blocks) {
 			do_generate_master_state_body(b);
 		}
-		gm_reproduce.gm_redirect_reproduce(new FILE(System.out));
+		gm_reproduce.gm_redirect_reproduce(System.out);
 		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 
@@ -900,15 +907,14 @@ public class gm_gps_gen extends BackendGenerator {
 
 		Body.pushln("}");
 
-		gm_reproduce.gm_redirect_reproduce(f_body); // for
-																	// temporary
+		gm_reproduce.gm_redirect_reproduce(ps_body); // for temporary
 		gm_reproduce.gm_baseindent_reproduce(3);
 		for (gm_gps_basic_block b : bb_blocks) {
 			if ((!b.is_prepare()) && (!b.is_vertex()))
 				continue;
 			do_generate_vertex_state_body(b);
 		}
-		gm_reproduce.gm_redirect_reproduce(new FILE(System.out));
+		gm_reproduce.gm_redirect_reproduce(System.out);
 		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 
@@ -1176,7 +1182,8 @@ public class gm_gps_gen extends BackendGenerator {
 	protected String dname;
 	protected String fname;
 	protected gm_code_writer Body = new gm_code_writer();
-	protected FILE f_body;
+	protected File f_body;
+	protected PrintStream ps_body;
 
 	private gm_gpslib glib; // graph library
 

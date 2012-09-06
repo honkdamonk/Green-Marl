@@ -25,11 +25,12 @@ test/giraph/bin
 src/parse/gm_grammer.output
 src/parse/gm_grammer.tab.c
 
-apps/output_cpp/generated
-apps/output_cpp/gm_graph/src/*.o
 apps/output_cpp/bin
+apps/output_cpp/generated
+apps/output_cpp/gm_graph/.project
 apps/output_cpp/gm_graph/lib
 apps/output_cpp/gm_graph/obj
+apps/output_cpp/gm_graph/src/*.o
 apps/output_gps/generated
 
 compiler_java/target

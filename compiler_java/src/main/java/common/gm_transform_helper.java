@@ -379,7 +379,7 @@ public class gm_transform_helper {
 		// [XXX]
 		// simply check last sentence only
 		// should be merged with dead-code elimination
-		if (sb.get_sents().getLast() == null) {
+		if (sb.get_sents().isEmpty()) {
 			return false;
 		} else if (sb.get_sents().getLast().get_nodetype() == AST_NODE_TYPE.AST_RETURN) {
 			return true;

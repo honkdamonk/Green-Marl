@@ -196,15 +196,15 @@ public class gm_frontend {
 	}
 
 	public final ast_procdef get_next_proc() {
-		ast_procdef p = I.next();
-		if (p == null) {
-			gm_error.gm_set_curr_procname("");
-			set_current_proc(null);
-			return null;
-		} else {
+		if (I.hasNext()) {
+			ast_procdef p = I.next();
 			gm_error.gm_set_curr_procname(p.get_procname().get_orgname());
 			set_current_proc(p);
 			return p;
+		} else {
+			gm_error.gm_set_curr_procname("");
+			set_current_proc(null);
+			return null;
 		}
 	}
 

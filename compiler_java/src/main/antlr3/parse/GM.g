@@ -13,7 +13,7 @@ options {
 }
 
 @lexer::header {
-	package parse;
+    package parse;
 }
 
 /*
@@ -61,16 +61,16 @@ proc_head
 
 proc_name
     :   T_PROC x=id
-    	{ FE.GM_procdef_begin(x.value, false); }
+        { FE.GM_procdef_begin(x.value, false); }
     |   T_LOCAL x=id
-    	{ FE.GM_procdef_begin(x.value, true); }
+        { FE.GM_procdef_begin(x.value, true); }
     ;
 
 
 arg_declist
     :   x=arg_decl
-    	{ FE.GM_procdef_add_argdecl(x.value); }
-    	( ',' x=arg_decl { FE.GM_procdef_add_argdecl(x.value); } )*
+        { FE.GM_procdef_add_argdecl(x.value); }
+        ( ',' x=arg_decl { FE.GM_procdef_add_argdecl(x.value); } )*
     ;
 
 
@@ -84,19 +84,19 @@ proc_return
 
 arg_decl returns [ast_node value]
     :   x=arg_target ':' y=typedecl
-    	{ retval.value = FE.GM_procdef_arg(x.value, y.value); }
+        { retval.value = FE.GM_procdef_arg(x.value, y.value); }
     ;
 
 
 arg_target returns [ast_node value]
     :   id_comma_list
-    	{ retval.value = FE.GM_finish_id_comma_list(); }
+        { retval.value = FE.GM_finish_id_comma_list(); }
     ;
 
 
 typedecl returns [ast_node value]
     :   x=graph_type
-    	{ retval.value = x.value; }
+        { retval.value = x.value; }
 /*    :   x=prim_type
     |   x=graph_type
     |   x=property
@@ -107,7 +107,7 @@ typedecl returns [ast_node value]
 
 graph_type returns [ast_node value]
     :   T_GRAPH
-    	{ retval.value = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH); 
+        { retval.value = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH); 
           FE.GM_set_lineinfo(retval.value, 0, 0); }
     ;
 
@@ -147,8 +147,8 @@ set_type
     |   T_NORDER
         ( '(' id ')' )?
     |   T_COLLECTION
-    	'<' set_type '>'
-    	( '(' id ')' )?
+        '<' set_type '>'
+        ( '(' id ')' )?
     ;
 
 
@@ -170,27 +170,29 @@ property
 
 id_comma_list
     :   x=id
-    	{ FE.GM_add_id_comma_list(x.value);}
-    	( ',' x=id { FE.GM_add_id_comma_list(x.value); } )*
+        { FE.GM_add_id_comma_list(x.value);}
+        ( ',' x=id { FE.GM_add_id_comma_list(x.value); } )*
     ;
 
 
-proc_body
-    :   sent_block
+proc_body returns [ast_node value]
+    :   x=sent_block
+        { FE.GM_procdef_setbody(x.value); }
     ;
 
 
-sent_block
+sent_block returns [ast_node value]
     :   sb_begin
         sent_list
         sb_end
+        { retval.value = FE.GM_finish_sentblock(); }
     ;
 
 
 sb_begin
     :   '{'
+        { FE.GM_start_sentblock(); }
     ;
-
 
 sb_end
     :   '}'
@@ -280,19 +282,19 @@ iterator1
 
 sent_dfs
     :   T_DFS
-    	bfs_header_format
-    	bfs_filters?
-    	sent_block
-    	dfs_post?
+        bfs_header_format
+        bfs_filters?
+        sent_block
+        dfs_post?
     ;
 
 
 sent_bfs
     :   T_BFS
-    	bfs_header_format
-    	bfs_filters?
-    	sent_block
-    	bfs_reverse?
+        bfs_header_format
+        bfs_filters?
+        sent_block
+        bfs_reverse?
     ;
 
 
@@ -357,9 +359,9 @@ sent_assignment
 
 sent_reduce_assignment
     :   lhs
-    	reduce_eq
-    	rhs
-    	optional_bind
+        reduce_eq
+        rhs
+        optional_bind
     |   lhs
         T_PLUSPLUS
         optional_bind
@@ -412,7 +414,7 @@ rhs
 
 sent_return
     :   T_RETURN
-    	expr
+        expr
     |   T_RETURN
         /* This causes a shift-reduce conflict: What would be If (x) If (y) Else z;
    * The default action is to interpret it as If (x) {If (y) Else z;}, which is what C does.
@@ -466,7 +468,7 @@ not_left_recursive_expr
 
 
 left_recursive_expr
-    :	conditional_expr
+    :    conditional_expr
     ;
 
 
@@ -604,7 +606,7 @@ arg_list
 
 expr_list
     :   expr
-    	( ',' expr_list )*
+        ( ',' expr_list )*
     ;
 
 
@@ -625,7 +627,7 @@ expr_user
 
 id returns [ast_node value]
     :   x=ID
-    	{ retval.value = FE.GM_id(x.getText(), 0, 0); }
+        { retval.value = FE.GM_id(x.getText(), 0, 0); }
     ;
 
 /*******************************************************************************

@@ -12,12 +12,6 @@ public abstract class BackendGenerator extends gm_code_generator implements gm_b
 		_voca_created = false;
 	}
 	
-	@Deprecated
-	public BackendGenerator(gm_code_writer writer) {
-		super(writer);
-		_voca_created = false;
-	}
-
 	public gm_vocabulary get_language_voca()
 	{
 		if (!_voca_created)

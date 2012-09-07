@@ -36,11 +36,6 @@ public abstract class gm_code_generator {
 		_Body = new gm_code_writer();
 	}
 
-	@Deprecated
-	public gm_code_generator(gm_code_writer W) {
-		_Body = new gm_code_writer();
-	}
-
 	public void dispose() {
 	}
 

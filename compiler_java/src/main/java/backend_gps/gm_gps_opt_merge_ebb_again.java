@@ -238,7 +238,10 @@ public class gm_gps_opt_merge_ebb_again extends gm_compile_step {
 		}
 
 		if (continue_current_list) {
-			find_linear_segments(current.get_nth_exit(0), current_list, all_lists, visited);
+			//TODO bug! exit 0 does not always exist
+			if (current.get_num_exits() > 0) {
+				find_linear_segments(current.get_nth_exit(0), current_list, all_lists, visited);
+			}
 		} // finish_current_list
 		else {
 			if (current_list.size() > 0) // end of segment

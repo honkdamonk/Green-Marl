@@ -18,10 +18,6 @@ public class gm_gps_basic_block {
 		this(_id, gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: gm_gps_basic_block(int _id, int _type = GM_GPS_BBTYPE_SEQ)
-	// : id(_id), type(_type), after_vertex(false)
 	public gm_gps_basic_block(int _id, gm_gps_bbtype_t _type) // ,_has_sender(false)
 	{
 		this.id = _id;
@@ -111,10 +107,6 @@ public class gm_gps_basic_block {
 		add_exit(b, true);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void add_exit(gm_gps_basic_block* b, boolean add_reverse =
-	// true)
 	public final void add_exit(gm_gps_basic_block b, boolean add_reverse) {
 		assert b != this;
 		exits.add(b);
@@ -369,10 +361,6 @@ public class gm_gps_basic_block {
 		add_info_ptr(id, ptr1, null);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void add_info_ptr(String id, Object* ptr1, Object* ptr2 =
-	// null)
 	public final void add_info_ptr(String id, Object ptr1, Object ptr2) {
 		for_info.add_info_ptr(id, ptr1, ptr2);
 	}

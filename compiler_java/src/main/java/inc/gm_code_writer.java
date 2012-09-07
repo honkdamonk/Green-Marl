@@ -13,7 +13,7 @@ public class gm_code_writer {
 	public int tabSize = 4;
 	public int col = 0;
 	public int max_col = MAX_COL;
-	public StringBuffer _buf = new StringBuffer();
+	public StringBuffer line_buf = new StringBuffer();
 	public int base_indent = 0;
 
 	// buffered file write.
@@ -37,10 +37,9 @@ public class gm_code_writer {
 	}
 
 	public final void flush() {
-
 		String[] lines = file_buf.toString().split("\n");
 		for (String line : lines) {
-			if (line.matches("\\p{Space}*")) {// consists of whitespaces
+			if (line.matches("[\\s]*")) {// consists of whitespace
 				_out.printf("\n");
 			} else {
 				_out.printf(line + "\n");
@@ -90,32 +89,29 @@ public class gm_code_writer {
 	}
 
 	public final void push(char s) {
-		_buf.append(s);
+		line_buf.append(s);
 		col++;
 
 		assert col < MAX_COL * 2;
 
 		if (s == '\n') {
-			// First count if this sentence starts or closes an indentention
-			if (_buf.charAt(0) == '}')
+			// First count if this sentence starts or closes an indentation
+			if (line_buf.charAt(0) == '}')
 				indent--;
 
 			// print this line with previous indent
-			_buf.append('\0');
-			col++;
-
-			if ((col != 1) || (_buf.charAt(0) != '\n')) {
+			if ((col != 1) || (line_buf.charAt(0) != '\n')) {
 				for (int i = 0; i < tabSize * (indent + base_indent); i++) {
 					file_buf.append(' ');
 				}
 			}
-
-			file_buf.append(_buf);
+			file_buf.append(line_buf);
+			
 			// compute next indent
-			if (_buf.charAt(0) == '}')
+			if (line_buf.charAt(0) == '}')
 				indent++;
 			for (int i = 0; i < col; i++) {
-				switch (_buf.charAt(i)) {
+				switch (line_buf.charAt(i)) {
 				case '{':
 				case '(':
 					indent++;
@@ -127,6 +123,7 @@ public class gm_code_writer {
 				}
 			}
 			col = 0;
+			line_buf = new StringBuffer();
 		}
 	}
 

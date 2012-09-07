@@ -1,7 +1,5 @@
 package common;
 
-import tangible.StringFunctions;
-
 public class gm_argopts {
 
 	public static final int GMARG_NULL = 0;

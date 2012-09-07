@@ -756,8 +756,7 @@ public class gm_gps_gen extends BackendGenerator {
 		}
 
 		if (gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
-			temp = String.format("%s [] %s; //reverse edges (node IDs) {should this to be marshalled?}", gm_main.PREGEL_BE.get_lib()
-					.is_node_type_int() ? "int" : "long", GPS_REV_NODE_ID);
+			temp = String.format("%s [] %s; //reverse edges (node IDs) {should this to be marshalled?}", get_lib().is_node_type_int() ? "int" : "long", GPS_REV_NODE_ID);
 			Body.pushln(temp);
 		}
 

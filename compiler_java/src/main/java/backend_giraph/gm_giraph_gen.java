@@ -708,7 +708,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 
 		if (gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
-			temp = String.format("%s[] %s; //reverse edges (node IDs)", gm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable"
+			temp = String.format("%s[] %s; //reverse edges (node IDs)", get_lib().is_node_type_int() ? "IntWritable"
 					: "LongWritable", GPS_REV_NODE_ID);
 			Body.pushln(temp);
 		}
@@ -730,11 +730,9 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln(temp);
 		Body.pushIndent();
 		if (gm_main.FE.get_current_proc().find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
-			temp = String.format("extends EdgeListVertex< %s, VertexData, EdgeData, MessageData > {", gm_main.PREGEL_BE.get_lib()
-					.is_node_type_int() ? "IntWritable" : "LongWritable");
+			temp = String.format("extends EdgeListVertex< %s, VertexData, EdgeData, MessageData > {", get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
 		} else {
-			temp = String.format("extends EdgeListVertex< %s, VertexData, NullWritable, MessageData > {", gm_main.PREGEL_BE.get_lib()
-					.is_node_type_int() ? "IntWritable" : "LongWritable");
+			temp = String.format("extends EdgeListVertex< %s, VertexData, NullWritable, MessageData > {", get_lib().is_node_type_int() ? "IntWritable" : "LongWritable");
 		}
 		Body.pushln(temp);
 		Body.popIndent();
@@ -999,7 +997,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		ast_procdef proc = gm_main.FE.get_current_proc();
 
 		String proc_name = proc.get_procname().get_genname();
-		String vertex_id = gm_main.PREGEL_BE.get_lib().is_node_type_int() ? "IntWritable" : "LongWritable";
+		String vertex_id = get_lib().is_node_type_int() ? "IntWritable" : "LongWritable";
 		String edge_data = proc.find_info_bool(GPS_FLAG_USE_EDGE_PROP) ? "EdgeData" : "NullWritable";
 
 		Body.pushln("//----------------------------------------------");
@@ -1039,7 +1037,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 		Body.pushln("Text line = getRecordReader().getCurrentValue();");
 		Body.pushln("String[] values = line.toString().split(\"\\t\");");
-		if (gm_main.PREGEL_BE.get_lib().is_node_type_int()) {
+		if (get_lib().is_node_type_int()) {
 			Body.pushln("IntWritable vertexId = new IntWritable(Integer.parseInt(values[0]));");
 		} else {
 			Body.pushln("LongWritable vertexId = new LongWritable(Long.parseLong(values[0]));");
@@ -1048,7 +1046,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		temp = String.format("Map<%s, %s> edges = Maps.newHashMap();", vertex_id, edge_data);
 		Body.pushln(temp);
 		Body.pushln("for (int i = 2; i < values.length; i += 2) {");
-		if (gm_main.PREGEL_BE.get_lib().is_node_type_int()) {
+		if (get_lib().is_node_type_int()) {
 			Body.pushln("IntWritable edgeId = new IntWritable(Integer.parseInt(values[i]));");
 		} else {
 			Body.pushln("LongWritable edgeId = new LongWritable(Long.parseLong(values[i]));");

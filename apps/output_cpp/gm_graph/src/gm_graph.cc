@@ -1,5 +1,19 @@
 #include "gm_graph.h"
 #include <arpa/inet.h>
+#include <iostream>
+#include <fstream>
+#include <string>
+#include <string.h>
+#include <sstream>
+#include <map>
+
+// If the following flag is on, we let the correct thread 'touches' the data strcutre
+// for the first time, so that the memory is allocated in the corresponding socket.
+#define GM_GRAPH_NUMA_OPT   1   
+
+// The following option uses parallel prefix sum during reverse edge computation.
+// However, the exeprimental result says that it is acturally slower to do so.
+#define USE_PARALLE_PREFIX_SUM_FOR_REVERSE_EDGE_COMPUTE     0
 
 gm_graph::gm_graph() {
     begin = NULL;
@@ -186,7 +200,7 @@ void gm_graph::make_reverse_edges() {
     }
 
     // finishing source array by computing prefix-sum
-#if 1
+#if! USE_PARALLE_PREFIX_SUM_FOR_REVERSE_EDGE_COMPUTE
     edge_t sum = 0;
     for (node_t i = 0; i < _numNodes; i++) {
         edge_t sum_old = sum;
@@ -200,15 +214,33 @@ void gm_graph::make_reverse_edges() {
     r_begin[_numNodes] = edge_sum;
 #endif
 
+
+#if GM_GRAPH_NUMA_OPT
+    node_t* temp_r_node_idx = new node_t[_numEdges];
+#endif
+
     // now update destination
 #pragma omp parallel for
     for (node_t i = 0; i < n_nodes; i++) {
         for (edge_t e = begin[i]; e < begin[i + 1]; e++) {
             node_t dest = node_idx[e];
             edge_t r_edge_idx = r_begin[dest] + loc[e];
+            #if GM_GRAPH_NUMA_OPT
+            temp_r_node_idx[r_edge_idx] = i;
+            #else
             r_node_idx[r_edge_idx] = i;
+            #endif
         }
     }
+#if GM_GRAPH_NUMA_OPT
+    #pragma omp parallel for
+    for (node_t i = 0; i < n_nodes; i++) {
+        for (edge_t e = begin[i]; e < begin[i + 1]; e++) {
+            r_node_idx[e] = temp_r_node_idx[e];
+        }
+    }
+    delete [] temp_r_node_idx;
+#endif
 
     _reverse_edge = true;
 
@@ -379,7 +411,7 @@ node_t gm_graph::add_node() {
 
     std::vector<edge_dest_t> T;  // empty vector
     flexible_graph[_numNodes] = T; // T is copied
-
+       
     return _numNodes++;
 }
 
@@ -441,7 +473,7 @@ bool gm_graph::store_binary(char* filename) {
     node_t num_nodes = htonnode(this->_numNodes);
     fwrite(&num_nodes, sizeof(node_t), 1, f);
 
-    node_t num_edges = htonedge(this->_numEdges);
+    edge_t num_edges = htonedge(this->_numEdges);
     fwrite(&(num_edges), sizeof(edge_t), 1, f);
 
     for (node_t i = 0; i < _numNodes + 1; i++) {
@@ -462,6 +494,10 @@ bool gm_graph::load_binary(char* filename) {
     clear_graph();
     int32_t key;
     int i;
+#if GM_GRAPH_NUMA_OPT
+    edge_t* temp_begin; 
+    node_t* temp_node_idx;
+#endif
 
     FILE *f = fopen(filename, "rb");
     if (f == NULL) {
@@ -511,6 +547,11 @@ bool gm_graph::load_binary(char* filename) {
 
     allocate_memory_for_frozen_graph(N, M);
 
+#if GM_GRAPH_NUMA_OPT 
+    // sequential load & parallel copy
+    temp_begin    = new edge_t[N + 1];
+#endif
+
     for (node_t i = 0; i < N + 1; i++) {
         edge_t key;
         int k = fread(&key, sizeof(edge_t), 1, f);
@@ -519,8 +560,22 @@ bool gm_graph::load_binary(char* filename) {
             fprintf(stderr, "Error reading node begin array\n");
             goto error_return;
         }
+    #if GM_GRAPH_NUMA_OPT
+        temp_begin[i] = key;
+    #else
         this->begin[i] = key;
+    #endif
     }
+
+#if GM_GRAPH_NUMA_OPT
+    #pragma omp parallel for
+    for(edge_t i = 0; i < N + 1; i ++)
+        this->begin[i] = temp_begin[i];
+
+    delete [] temp_begin;
+
+    temp_node_idx = new node_t[M];
+#endif
 
     for (edge_t i = 0; i < M; i++) {
         node_t key;
@@ -530,8 +585,22 @@ bool gm_graph::load_binary(char* filename) {
             fprintf(stderr, "Error reading edge-end array\n");
             goto error_return;
         }
+#if GM_GRAPH_NUMA_OPT
+        temp_node_idx[i] = key;
+#else
         this->node_idx[i] = key;
+#endif
     }
+
+#if GM_GRAPH_NUMA_OPT
+    #pragma omp parallel for
+    for(node_t i = 0; i < N ; i ++) {
+        for(edge_t j = begin[i]; j < begin[i+1]; j ++)
+            this->node_idx[j] = temp_node_idx[j];
+    }
+    delete [] temp_node_idx;
+
+#endif
 
     fclose(f);
     _frozen = true;
@@ -539,6 +608,79 @@ bool gm_graph::load_binary(char* filename) {
 
     error_return: fclose(f);
     error_return_noclose: clear_graph();
+    return false;
+}
+
+bool gm_graph::load_adjacency_list(char* filename, char separator) {
+    clear_graph();
+    std::string line, temp_str;
+    long temp_long, field_index;
+    node_t N = 0, processed_nodes = 0;
+    edge_t M = 0, processed_edges = 0;
+    std::map<node_t,node_t> index_convert;
+
+    // Open the file
+    std::ifstream file(filename);
+    if (file == NULL) {
+        goto error_return;
+    }
+
+    // Determine number of nodes and edges so we can allocate memory
+    while(std::getline(file, line)) {
+        if (line.at(0) < '0' || line.at(0) > '9') {
+            continue;
+        }
+        field_index = 0;
+        std::stringstream linestream(line);
+        while(std::getline(linestream, temp_str, separator)) {
+            if (field_index == 0) {
+                // Parsing node id
+                temp_long = atol(temp_str.c_str());
+                index_convert[temp_long] = N;
+                N++;
+            } else if (field_index % 2 == 0) {
+                // Parsing edge id
+                M++;
+            }
+            field_index++;
+        }
+    }
+
+    // Allocate the memory
+    prepare_external_creation(N, M);
+
+    // Reset the file
+    file.clear();
+    file.seekg(0, std::ios::beg);
+
+    // Fill the node and edges arrays
+    while(std::getline(file, line)) {
+        if (line.at(0) < '0' || line.at(0) > '9') {
+            continue;
+        }
+        field_index = 0;
+        std::stringstream linestream(line);
+        while(std::getline(linestream, temp_str, separator)) {
+            if (field_index == 0) {
+                // Parsing node id
+                this->begin[processed_nodes] = processed_edges;
+            } else if (field_index % 2 == 0) {
+                // Parsing edge id
+                temp_long = atol(temp_str.c_str());
+                this->node_idx[processed_edges] = index_convert[temp_long];
+                processed_edges++;
+            }
+            field_index++;
+        }
+        processed_nodes++;
+    }
+
+    // Close file and freeze graph
+    file.close();
+    _frozen = true;
+    return true;
+
+    error_return: clear_graph();
     return false;
 }
 

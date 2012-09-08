@@ -1,5 +1,6 @@
 #include "common_main.h"
 #include "sssp_path.h"
+#include "gm_rand.h"
 
 class my_main: public main_t
 {
@@ -22,6 +23,16 @@ public:
         dist = new int[G.num_nodes()];
         len = new int[G.num_edges()];
         prev = new node_t[G.num_nodes()];
+
+        // for NUMA, let each thread touch it first
+        #pragma omp parallel for
+        for (node_t i = 0; i < G.num_nodes(); i++)
+            for (edge_t j = G.begin[i]; j < G.begin[i+1]; j++)
+                len[j] = 0;
+
+	    gm_rand32 xorshift_rng;
+        for (edge_t i = 0; i < G.num_edges(); i++)
+            len[i] = (xorshift_rng.rand() % 100) + 1;  // length: 1 ~ 100
         return true;
     }
 

@@ -92,16 +92,22 @@ typedecl returns [ast_node value]
 
 graph_type returns [ast_node value]
     :   T_GRAPH
-        { retval.value = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH);  FE.GM_set_lineinfo(retval.value, 0, 0); }
+        { retval.value = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH);  
+          FE.GM_set_lineinfo(retval.value, 0, 0); }
     ;
 
 
 prim_type returns [ast_node value]
-    :   T_INT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_INT);    FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_LONG		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_LONG);   FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_FLOAT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_FLOAT);  FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_DOUBLE	{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_DOUBLE); FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_BOOL		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_BOOL);   FE.GM_set_lineinfo(retval.value, 0, 0); }
+    :   T_INT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_INT);
+                      FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_LONG		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_LONG);
+                      FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_FLOAT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_FLOAT);
+                      FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_DOUBLE	{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_DOUBLE); 
+                      FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_BOOL		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_BOOL);
+                      FE.GM_set_lineinfo(retval.value, 0, 0); }
     ;
 
 
@@ -447,7 +453,8 @@ not_left_recursive_expr
     |   field
     |   built_in
     |   expr_user
-        /* cannot be distinguished by the syntax, until type is available. due to vars */
+        /* cannot be distinguished by the syntax,
+        until type is available. due to vars */
     ;
 
 

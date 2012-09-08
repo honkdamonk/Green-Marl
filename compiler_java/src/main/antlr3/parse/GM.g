@@ -84,8 +84,9 @@ typedecl returns [ast_node value]
         { retval.value = u.value; } 
     |   v=prim_type
     	{ retval.value = v.value; }
-/*  |   w=property
     |   x=nodeedge_type
+    	{ retval.value = x.value; }
+/*  |   w=property
     |   y=set_type*/
     ;
 
@@ -111,21 +112,25 @@ prim_type returns [ast_node value]
     ;
 
 
-nodeedge_type
-    :   node_type
-    |   edge_type
+nodeedge_type returns [ast_node value]
+    :   n=node_type 
+    	{ retval.value = n.value; }
+    |   e=edge_type 
+    	{ retval.value = e.value; }
     ;
 
 
-node_type
+node_type returns [ast_node value]
     :   T_NODE
-        ( '(' id ')' )?
+        ( '(' x=id { retval.value = FE.GM_nodetype_ref(x.value); } ')' )? 
+        { retval.value = FE.GM_nodetype_ref(null); } 
     ;
 
 
-edge_type
+edge_type returns [ast_node value]
     :   T_EDGE
-        ( '(' id ')' )?
+        ( '(' x=id { retval.value = FE.GM_edgetype_ref(x.value); } ')' )?
+        { retval.value = FE.GM_edgetype_ref(null); }
     ;
 
 

@@ -64,6 +64,8 @@ import common.gm_traverse;
 import common.gm_vocabulary;
 import parse.GMLexer;
 import parse.GMParser;
+import parse.GMTreeParser;
+import parse.start_parse;
 
 public class gm_frontend {
 
@@ -90,30 +92,7 @@ public class gm_frontend {
 
 	/** interface to parser */
 	public final int start_parse(String fname) {
-		CharStream cs;
-		try {
-			cs = new ANTLRFileStream(fname);
-		} catch (IOException e) {
-			return 1; // error?
-		}
-		
-		GMLexer lexer = new GMLexer(cs);
-		
-		CommonTokenStream tokens = new CommonTokenStream();
-		tokens.setTokenSource(lexer);
-
-		GMParser parser = new GMParser(tokens);
-		try {
-			parser.prog();
-		} catch (RecognitionException e) {
-			return 1; // error?
-		}
-
-		GMParser.prog_return root = parser.prog();
-		CommonTreeNodeStream nodes = new CommonTreeNodeStream(root.tree);
-		GMTreeParser treeParser = new GMTreeParser();
-
-		return 0;
+		return start_parse.start_parse(fname);
 	}
 
 	// void clean_up(); // clean-up intermediate structures (for iterative mode)

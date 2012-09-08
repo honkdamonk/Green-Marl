@@ -6,7 +6,34 @@ options {
     backtrack    = true;
 }
 
-@parser::header {
+tokens {
+	T_PROC; T_GRAPH; T_NODE; T_NODEPROP; T_EDGE; T_EDGEPROP; T_LOCAL;
+	T_NSET; T_NORDER; T_NSEQ; T_ITEMS; T_COLLECTION;
+	T_MAP;
+	T_DFS; T_POST;
+	T_INT; T_FLOAT; T_BOOL; T_DOUBLE; T_LONG;
+	T_RETURN;
+	T_BFS; T_RBFS; T_FROM; T_TO; T_BACK;
+	T_FOREACH; T_FOR; 
+	T_NODES; T_EDGES; T_NBRS; T_IN_NBRS; T_UP_NBRS; T_DOWN_NBRS;
+	T_COMMON_NBRS;
+	T_SUM; T_PRODUCT; T_MIN; T_MAX; T_COUNT; T_ALL; T_EXIST; T_AVG;
+	T_EMPTYLINE;
+	T_AND; T_OR; T_EQ; T_NEQ; T_LE; T_GE;
+	T_IF; T_ELSE; T_DO; T_WHILE;
+	T_PLUSEQ; T_MULTEQ; T_MINEQ; T_MAXEQ; T_PLUSPLUS; T_ANDEQ; T_OREQ;
+	T_M_INF; T_P_INF;
+	T_DOUBLE_COLON; T_RARROW;
+	T_NIL; 
+	ID;
+	USER_TEXT;
+	INT_NUM;
+	FLOAT_NUM;
+	BOOL_VAL;
+}
+
+@parser::header
+{
     package parse;
     import ast.*;
     import inc.*;
@@ -30,7 +57,6 @@ prog
 proc_def
     :   proc_head
         proc_body
-        { FE.GM_procdef_finish(); }
     ;
 
 
@@ -45,17 +71,14 @@ proc_head
 
 
 proc_name
-    :   T_PROC x=id
-        { FE.GM_procdef_begin(x.value, false); }
-    |   T_LOCAL x=id
-        { FE.GM_procdef_begin(x.value, true); }
+    :   T_PROC id
+    |   T_LOCAL id
     ;
 
 
 arg_declist
-    :   x=arg_decl
-        { FE.GM_procdef_add_argdecl(x.value); }
-        ( ',' x=arg_decl { FE.GM_procdef_add_argdecl(x.value); } )*
+    :   arg_decl
+        ( ',' arg_decl )*
     ;
 
 
@@ -67,47 +90,36 @@ proc_return
     ;
 
 
-arg_decl returns [ast_node value]
-    :   x=arg_target ':' y=typedecl
-        { retval.value = FE.GM_procdef_arg(x.value, y.value); }
+arg_decl
+    :   arg_target ':' typedecl
     ;
 
 
-arg_target returns [ast_node value]
+arg_target
     :   id_comma_list
-        { retval.value = FE.GM_finish_id_comma_list(); }
     ;
 
 
-typedecl returns [ast_node value]
-    :   u=graph_type
-        { retval.value = u.value; } 
-    |   v=prim_type
-    	{ retval.value = v.value; }
-/*  |   w=property
-    |   x=nodeedge_type
-    |   y=set_type*/
+typedecl
+    :   graph_type
+    |   prim_type
+/*  |   property
+    |   nodeedge_type
+    |   set_type*/
     ;
 
 
-graph_type returns [ast_node value]
+graph_type
     :   T_GRAPH
-        { retval.value = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH);  
-          FE.GM_set_lineinfo(retval.value, 0, 0); }
     ;
 
 
-prim_type returns [ast_node value]
-    :   T_INT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_INT);
-                      FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_LONG		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_LONG);
-                      FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_FLOAT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_FLOAT);
-                      FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_DOUBLE	{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_DOUBLE); 
-                      FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_BOOL		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_BOOL);
-                      FE.GM_set_lineinfo(retval.value, 0, 0); }
+prim_type
+    :   T_INT
+    |   T_LONG
+    |   T_FLOAT
+    |   T_DOUBLE
+    |   T_BOOL
     ;
 
 
@@ -159,24 +171,20 @@ property
 
 
 id_comma_list
-    :   x=id
-        { FE.GM_add_id_comma_list(x.value);}
-        ( ',' x=id { FE.GM_add_id_comma_list(x.value); } )*
+    :   id
+        ( ',' id )*
     ;
 
 
-proc_body returns [ast_node value]
-    :   x=sent_block
-        { FE.GM_procdef_setbody(x.value); }
+proc_body
+    :   sent_block
     ;
 
 
-sent_block returns [ast_node value]
+sent_block
     :   sb_begin
-    	{ FE.GM_start_sentblock(); }
         sent_list
         sb_end
-        { retval.value = FE.GM_finish_sentblock(); }
     ;
 
 
@@ -616,9 +624,8 @@ expr_user
     ;
 /* USER_TEXT*/
 
-id returns [ast_node value]
-    :   x=ID
-        { retval.value = FE.GM_id(x.getText(), 0, 0); }
+id
+    :   ID
     ;
 
 /*******************************************************************************

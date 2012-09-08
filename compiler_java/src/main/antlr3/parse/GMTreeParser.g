@@ -1,7 +1,8 @@
 tree grammar GMTreeParser;
 
 options {
-    tokenVocab = GM;
+    tokenVocab   = GM;
+    ASTLabelType = Tree;
 }
 
 @header {
@@ -16,14 +17,17 @@ prog
 
 proc_def
     :   proc_head
+    	proc_body
         { FE.GM_procdef_finish(); }
     ;
 
 proc_head
     :   proc_name
         '(' arg_declist? ')'
+        /*proc_return?*/
     |   proc_name
         '(' arg_declist? ';' arg_declist ')'
+        /*proc_return?*/
     ;
 
 
@@ -84,6 +88,28 @@ id_comma_list
     :   x=id
         { FE.GM_add_id_comma_list(x);}
         ( ',' x=id { FE.GM_add_id_comma_list(x); } )*
+    ;
+
+proc_body returns [ast_node value]
+    :   x=sent_block
+        { FE.GM_procdef_setbody(x); }
+    ;
+
+
+sent_block returns [ast_node value]
+    :   sb_begin
+    	{ FE.GM_start_sentblock(); }
+        /*sent_list*/
+        sb_end
+        { value = FE.GM_finish_sentblock(); }
+    ;
+
+sb_begin
+    :   '{'
+    ;
+
+sb_end
+    :   '}'
     ;
 
 id returns [ast_node value]

@@ -29,6 +29,8 @@ import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.tree.CommonTreeNodeStream;
+import org.antlr.runtime.tree.Tree;
 
 import tangible.Extern;
 import ast.ast_argdecl;
@@ -88,14 +90,6 @@ public class gm_frontend {
 
 	/** interface to parser */
 	public final int start_parse(String fname) {
-		// start lexer
-		//if (Extern.GM_start_parse(fname) == 0) {
-			//System.out.printf("Error in loading %s\n", fname);
-			//return 0;
-		//}
-
-		// start parser
-		//return Extern.yyparse();
 		CharStream cs;
 		try {
 			cs = new ANTLRFileStream(fname);
@@ -107,14 +101,18 @@ public class gm_frontend {
 		
 		CommonTokenStream tokens = new CommonTokenStream();
 		tokens.setTokenSource(lexer);
-		
+
 		GMParser parser = new GMParser(tokens);
 		try {
 			parser.prog();
 		} catch (RecognitionException e) {
-			return 1;
+			return 1; // error?
 		}
-		
+
+		GMParser.prog_return root = parser.prog();
+		CommonTreeNodeStream nodes = new CommonTreeNodeStream(root.tree);
+		GMTreeParser treeParser = new GMTreeParser();
+
 		return 0;
 	}
 

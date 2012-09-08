@@ -96,9 +96,10 @@ arg_target returns [ast_node value]
 
 typedecl returns [ast_node value]
     :   x=graph_type
-        { retval.value = x.value; }
-/*    :   x=prim_type
-    |   x=graph_type
+        { retval.value = x.value; } 
+    |   x=prim_type
+    	{ retval.value = x.value; }
+/*    |   x=graph_type
     |   x=property
     |   x=nodeedge_type
     |   x=set_type*/
@@ -112,12 +113,12 @@ graph_type returns [ast_node value]
     ;
 
 
-prim_type
-    :   T_INT
-    |   T_LONG
-    |   T_FLOAT
-    |   T_DOUBLE
-    |   T_BOOL
+prim_type returns [ast_node value]
+    :   T_INT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_INT);		FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_LONG		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_LONG);		FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_FLOAT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_FLOAT); 	FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_DOUBLE	{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_DOUBLE); 	FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_BOOL		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_BOOL); 		FE.GM_set_lineinfo(retval.value, 0, 0); }
     ;
 
 

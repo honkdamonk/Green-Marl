@@ -16,22 +16,7 @@ options {
     package parse;
 }
 
-/*
-%{
-    #include <stdio.h>
-    #include <string.h>
-    #include <assert.h>
-    #include 'gm_frontend_api.h'
-    #define YYERROR_VERBOSE 1
-    extern void   GM_lex_begin_user_text();
-
-    extern void yyerror(const char* str);
-    extern int yylex();
-%}
-*/
-/* Reserved Words */
-/* operator precedence, Lower is higher */
-/* %glr-parser */
+/*extern void   GM_lex_begin_user_text();*/
 
 /*******************************************************************************
     Parser section
@@ -75,8 +60,8 @@ arg_declist
 
 
 proc_return
+    /* return of function should be always primitive type */
     :   ':' prim_type
-        /* return of function should be always primitive type */
     |   ':' node_type
     /*| ':' graph_type */
     ;
@@ -95,30 +80,28 @@ arg_target returns [ast_node value]
 
 
 typedecl returns [ast_node value]
-    :   x=graph_type
-        { retval.value = x.value; } 
-    |   x=prim_type
-    	{ retval.value = x.value; }
-/*    |   x=graph_type
-    |   x=property
+    :   u=graph_type
+        { retval.value = u.value; } 
+    |   v=prim_type
+    	{ retval.value = v.value; }
+/*  |   w=property
     |   x=nodeedge_type
-    |   x=set_type*/
+    |   y=set_type*/
     ;
 
 
 graph_type returns [ast_node value]
     :   T_GRAPH
-        { retval.value = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH); 
-          FE.GM_set_lineinfo(retval.value, 0, 0); }
+        { retval.value = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH);  FE.GM_set_lineinfo(retval.value, 0, 0); }
     ;
 
 
 prim_type returns [ast_node value]
-    :   T_INT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_INT);		FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_LONG		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_LONG);		FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_FLOAT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_FLOAT); 	FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_DOUBLE	{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_DOUBLE); 	FE.GM_set_lineinfo(retval.value, 0, 0); }
-    |   T_BOOL		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_BOOL); 		FE.GM_set_lineinfo(retval.value, 0, 0); }
+    :   T_INT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_INT);    FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_LONG		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_LONG);   FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_FLOAT		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_FLOAT);  FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_DOUBLE	{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_DOUBLE); FE.GM_set_lineinfo(retval.value, 0, 0); }
+    |   T_BOOL		{ retval.value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_BOOL);   FE.GM_set_lineinfo(retval.value, 0, 0); }
     ;
 
 
@@ -184,6 +167,7 @@ proc_body returns [ast_node value]
 
 sent_block returns [ast_node value]
     :   sb_begin
+    	{ FE.GM_start_sentblock(); }
         sent_list
         sb_end
         { retval.value = FE.GM_finish_sentblock(); }
@@ -192,7 +176,6 @@ sent_block returns [ast_node value]
 
 sb_begin
     :   '{'
-        { FE.GM_start_sentblock(); }
     ;
 
 sb_end

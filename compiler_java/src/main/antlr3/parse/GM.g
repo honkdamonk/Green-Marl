@@ -82,11 +82,10 @@ arg_declist
     ;
 
 
+/* return of function should be always primitive type */
 proc_return
-    /* return of function should be always primitive type */
     :   ':'! prim_type
     |   ':'! node_type
-    /*| ':'! graph_type */
     ;
 
 
@@ -103,9 +102,9 @@ arg_target
 typedecl
     :   graph_type
     |   prim_type
-/*  |   property
+    |   property
     |   nodeedge_type
-    |   set_type*/
+    |   set_type
     ;
 
 
@@ -414,7 +413,7 @@ sent_return
     :   T_RETURN
         expr
     |   T_RETURN
-        /* This causes a shift-reduce conflict: What would be If (x) If (y) Else z;
+   /* This causes a shift-reduce conflict: What would be If (x) If (y) Else z;
    * The default action is to interpret it as If (x) {If (y) Else z;}, which is what C does.
    * */
     ;
@@ -581,7 +580,6 @@ scala
 
 field
     :   id '.' id
-    /*| id T_RARROW id                  { $$ = GM_field($1, $3, true);  }*/
     |   T_EDGE
         '(' id ')'
         '.' id
@@ -672,7 +670,7 @@ T_EQ : '==' ;
 T_NEQ : '!=' ;
 T_LE : '<=' ;
 T_GE : '>=' ;
-BOOL_VAL : 'True' | 'False'; /*yylval.bval = true/false;*/
+BOOL_VAL : 'True' | 'False';
 T_IF : 'If' ;
 T_ELSE : 'Else' ;
 T_WHILE : 'While' ;
@@ -705,9 +703,9 @@ fragment LETTER : 'a'..'z' | 'A'..'Z' ;
 fragment ALPHANUM : LETTER (LETTER | DIGIT | '_')* ;
 
 /* Numbers and Identifies */
-ID : ALPHANUM ; /*yylval.text = yytext*/
-FLOAT_NUM : DIGIT+ '.' DIGIT* ; /*yylval.fval = atof(yytext)*/
-INT_NUM : DIGIT+ ; /*yylval.ival = atoi(yytext)*/
+ID : ALPHANUM ;
+FLOAT_NUM : DIGIT+ '.' DIGIT* ;
+INT_NUM : DIGIT+ ;
 
 /* Whitespace and comments */
 WS  

@@ -65,9 +65,10 @@ typedecl returns [ast_node value]
         { value = u; } 
     |   v=prim_type
     	{ value = v; }
-/*  |   w=property
+/*  |   w=property*/
     |   x=nodeedge_type
-    |   y=set_type*/
+    	{ value = x; }
+/*  |   y=set_type*/
     ;
 
 graph_type returns [ast_node value]
@@ -98,22 +99,16 @@ nodeedge_type returns [ast_node value]
     ;
 
 
-node_type returns [ast_node value] /*TODO: can these be merged?*/
-    :   T_NODE x=id
+node_type returns [ast_node value]
+    :   T_NODE x=id?
     	{ value = FE.GM_nodetype_ref(x);
     	  FE.GM_set_lineinfo(value, $T_NODE.getLine(), $T_NODE.getCharPositionInLine()); }
-    |   T_NODE
-    	{ value = FE.GM_nodetype_ref(null);
-    	  FE.GM_set_lineinfo(value, $T_NODE.getLine(), $T_NODE.getCharPositionInLine());} 
     ;
 
 
-edge_type returns [ast_node value] /*TODO: can these be merged?*/
-    :   T_EDGE x=id
+edge_type returns [ast_node value]
+    :   T_EDGE x=id?
     	{ value = FE.GM_edgetype_ref(x);
-    	  FE.GM_set_lineinfo(value, $T_EDGE.getLine(), $T_EDGE.getCharPositionInLine());}
-    |   T_EDGE
-    	{ value = FE.GM_edgetype_ref(null);
     	  FE.GM_set_lineinfo(value, $T_EDGE.getLine(), $T_EDGE.getCharPositionInLine());}
     ;
 

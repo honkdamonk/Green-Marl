@@ -74,21 +74,21 @@ typedecl returns [ast_node value]
 graph_type returns [ast_node value]
     :   T_GRAPH
         { value = FE.GM_graphtype_ref(GMTYPE_T.GMTYPE_GRAPH);  
-          FE.GM_set_lineinfo(value, 0, 0); }
+          FE.GM_set_lineinfo(value, $T_GRAPH.getLine(), $T_GRAPH.getCharPositionInLine()); }
     ;
 
 
 prim_type returns [ast_node value]
-    :   u=T_INT		{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_INT);
-                      FE.GM_set_lineinfo(value, 0, 0); }
-    |   v=T_LONG	{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_LONG);
-                      FE.GM_set_lineinfo(value, 0, 0); }
-    |   w=T_FLOAT	{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_FLOAT);
-                      FE.GM_set_lineinfo(value, 0, 0); }
-    |   x=T_DOUBLE	{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_DOUBLE); 
-                      FE.GM_set_lineinfo(value, 0, 0); }
-    |   y=T_BOOL	{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_BOOL);
-                      FE.GM_set_lineinfo(value, 0, 0); }
+    :   T_INT		{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_INT);
+                      FE.GM_set_lineinfo(value, $T_INT.getLine(), $T_INT.getCharPositionInLine()); }
+    |   T_LONG		{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_LONG);
+                      FE.GM_set_lineinfo(value, $T_LONG.getLine(), $T_LONG.getCharPositionInLine()); }
+    |   T_FLOAT		{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_FLOAT);
+                      FE.GM_set_lineinfo(value, $T_FLOAT.getLine(), $T_FLOAT.getCharPositionInLine()); }
+    |   T_DOUBLE	{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_DOUBLE); 
+                      FE.GM_set_lineinfo(value, $T_DOUBLE.getLine(), $T_DOUBLE.getCharPositionInLine()); }
+    |   T_BOOL		{ value = FE.GM_primtype_ref(GMTYPE_T.GMTYPE_BOOL);
+                      FE.GM_set_lineinfo(value, $T_BOOL.getLine(), $T_BOOL.getCharPositionInLine()); }
     ;
 
 nodeedge_type returns [ast_node value]
@@ -99,23 +99,23 @@ nodeedge_type returns [ast_node value]
     ;
 
 
-node_type returns [ast_node value]
+node_type returns [ast_node value] /*TODO: can these be merged?*/
     :   T_NODE x=id
     	{ value = FE.GM_nodetype_ref(x);
-    	  FE.GM_set_lineinfo(value, 0, 0); }
+    	  FE.GM_set_lineinfo(value, $T_NODE.getLine(), $T_NODE.getCharPositionInLine()); }
     |   T_NODE
     	{ value = FE.GM_nodetype_ref(null);
-    	  FE.GM_set_lineinfo(value, 0, 0);} 
+    	  FE.GM_set_lineinfo(value, $T_NODE.getLine(), $T_NODE.getCharPositionInLine());} 
     ;
 
 
-edge_type returns [ast_node value]
+edge_type returns [ast_node value] /*TODO: can these be merged?*/
     :   T_EDGE x=id
     	{ value = FE.GM_edgetype_ref(x);
-    	  FE.GM_set_lineinfo(value, 0, 0);}
+    	  FE.GM_set_lineinfo(value, $T_EDGE.getLine(), $T_EDGE.getCharPositionInLine());}
     |   T_EDGE
     	{ value = FE.GM_edgetype_ref(null);
-    	  FE.GM_set_lineinfo(value, 0, 0);}
+    	  FE.GM_set_lineinfo(value, $T_EDGE.getLine(), $T_EDGE.getCharPositionInLine());}
     ;
 
 id_comma_list

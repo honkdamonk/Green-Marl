@@ -62,10 +62,10 @@ proc_def
 
 proc_head
     :   proc_name
-        '(' arg_declist? ')'
+        '('! arg_declist? ')'!
         proc_return?
     |   proc_name
-        '(' arg_declist? ';' arg_declist ')'
+        '('! arg_declist? ';' arg_declist ')'!
         proc_return?
     ;
 
@@ -78,7 +78,7 @@ proc_name
 
 arg_declist
     :   arg_decl
-        ( ',' arg_decl )*
+        ( ','! arg_decl )*
     ;
 
 
@@ -142,30 +142,30 @@ edge_type
 
 set_type
     :   T_NSET
-        ( '(' id ')' )?
+        ( '('! id ')'! )?
     |   T_NSEQ
-        ( '(' id ')' )?
+        ( '('! id ')'! )?
     |   T_NORDER
-        ( '(' id ')' )?
+        ( '('! id ')'! )?
     |   T_COLLECTION
-        '<' set_type '>'
-        ( '(' id ')' )?
+        '<'! set_type '>'!
+        ( '('! id ')'! )?
     ;
 
 
 property
-    :   T_NODEPROP '<' prim_type '>'
-        ( '(' id ')' )?
-    |   T_NODEPROP '<' nodeedge_type '>'
-        ( '(' id ')' )?
-    |   T_NODEPROP '<' set_type '>'
-        ( '(' id ')' )?
-    |   T_EDGEPROP '<' prim_type '>'
-        ( '(' id ')' )?
-    |   T_EDGEPROP '<' nodeedge_type '>'
-        ( '(' id ')' )?
-    |   T_EDGEPROP '<' set_type '>'
-        ( '(' id ')' )?
+    :   T_NODEPROP '<'! prim_type '>'!
+        ( '('! id ')'! )?
+    |   T_NODEPROP '<'! nodeedge_type '>'!
+        ( '('! id ')'! )?
+    |   T_NODEPROP '<'! set_type '>'!
+        ( '('! id ')'! )?
+    |   T_EDGEPROP '<'! prim_type '>'!
+        ( '('! id ')'! )?
+    |   T_EDGEPROP '<'! nodeedge_type '>'!
+        ( '('! id ')'! )?
+    |   T_EDGEPROP '<'! set_type '>'!
+        ( '('! id ')'! )?
     ;
 
 
@@ -202,22 +202,22 @@ sent_list
 
 
 sent
-    :   sent_assignment ';'
-    |   sent_variable_decl ';'
+    :   sent_assignment ';'!
+    |   sent_variable_decl ';'!
     |   sent_block
     |   sent_foreach
     |   sent_if
-    |   sent_reduce_assignment ';'
-    |   sent_defer_assignment ';'
-    |   sent_do_while ';'
+    |   sent_reduce_assignment ';'!
+    |   sent_defer_assignment ';'!
+    |   sent_do_while ';'!
     |   sent_while
-    |   sent_return ';'
+    |   sent_return ';'!
     |   sent_bfs
     |   sent_dfs
-    |   sent_call ';'
-    |   sent_user ';'
-    |   sent_argminmax_assignment ';'
-    |   ';'
+    |   sent_call ';'!
+    |   sent_user ';'!
+    |   sent_argminmax_assignment ';'!
+    |   ';'!
     ;
 
 
@@ -228,7 +228,7 @@ sent_call
 
 sent_while
     :   T_WHILE
-        '(' bool_expr ')'
+        '('! bool_expr ')'!
         sent_block
     ;
 
@@ -237,7 +237,7 @@ sent_do_while
     :   T_DO
         sent_block
         T_WHILE
-        '(' bool_expr ')'
+        '('! bool_expr ')'!
     ;
 
 
@@ -254,14 +254,14 @@ sent_foreach
 
 
 foreach_header
-    :   '(' id ':' id     '.' iterator1 ')'
-    |   '(' id ':' id '+' '.' iterator1 ')'
-    |   '(' id ':' id '-' '.' iterator1 ')'
+    :   '('! id ':'! id     '.'! iterator1 ')'!
+    |   '('! id ':'! id '+' '.'! iterator1 ')'!
+    |   '('! id ':'! id '-' '.'! iterator1 ')'!
     ;
 
 
 foreach_filter
-    :   '(' bool_expr ')'
+    :   '('! bool_expr ')'!
     ;
 
 
@@ -273,7 +273,7 @@ iterator1
     |   T_UP_NBRS
     |   T_DOWN_NBRS
     |   T_ITEMS
-    |   T_COMMON_NBRS '(' id ')'
+    |   T_COMMON_NBRS '('! id ')'!
     ;
 
 
@@ -310,7 +310,7 @@ bfs_reverse
 
 
 bfs_header_format
-    :   '(' id ':' id '^'? '.' T_NODES from_or_semi id ')'
+    :   '('! id ':'! id '^'!? '.'! T_NODES from_or_semi id ')'!
     ;
 
 
@@ -597,7 +597,7 @@ built_in
 
 
 arg_list
-    :   '(' expr_list? ')'
+    :   '('! expr_list? ')'!
     ;
 
 
@@ -608,17 +608,17 @@ expr_list
 
 
 lhs_list2
-    :   '<' lhs ';' lhs_list '>'
+    :   '<'! lhs ';'! lhs_list '>'!
     ;
 
 
 rhs_list2
-    :   '<' expr ';' expr_list '>'
+    :   '<'! expr ';'! expr_list '>'!
     ;
 
 
 expr_user
-    :   '[' 'XXX' ']'
+    :   '['! 'XXX' ']'!
     ;
 /* USER_TEXT*/
 

@@ -44,11 +44,10 @@ arg_declist
         ( ',' x=arg_decl { FE.GM_procdef_add_argdecl(x); } )*
     ;
 
+/* return of function should be always primitive type */
 proc_return
-    /* return of function should be always primitive type */
     :   prim_type
     |   node_type
-    /*| graph_type */
     ;
 
 arg_decl returns [ast_node value]

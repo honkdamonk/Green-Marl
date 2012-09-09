@@ -1,4 +1,3 @@
-Proc HelloWorld(G : Graph, i : Int, l : Long, f : Float, d : Double, b : Bool, u : N_P<Int>)
+Proc HelloWorld(G : Graph, n1 : Node(G), n2 : Node, e1 : Edge, e2 : Edge(G), i : Int, l : Long, f : Float, d : Double, b : Bool)
 {
-	;
 }

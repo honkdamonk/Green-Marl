@@ -122,19 +122,21 @@ prim_type
     ;
 
 
-nodeedge_type
-    :   node_type
-    |   edge_type
+nodeedge_type returns [ast_node value]
+    :   n=node_type 
+    	{ retval.value = n.value; }
+    |   e=edge_type 
+    	{ retval.value = e.value; }
     ;
 
 
-node_type
+node_type returns [ast_node value]
     :   T_NODE
         ( '('! id ')'! )?
     ;
 
 
-edge_type
+edge_type returns [ast_node value]
     :   T_EDGE
         ( '('! id ')'! )?
     ;

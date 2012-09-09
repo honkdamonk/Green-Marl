@@ -123,8 +123,8 @@ prim_type
 
 
 nodeedge_type
-    :   n=node_type 
-    |   e=edge_type 
+    :   node_type 
+    |   edge_type 
     ;
 
 

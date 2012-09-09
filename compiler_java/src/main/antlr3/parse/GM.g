@@ -84,14 +84,14 @@ arg_declist
 
 proc_return
     /* return of function should be always primitive type */
-    :   ':' prim_type
-    |   ':' node_type
-    /*| ':' graph_type */
+    :   ':'! prim_type
+    |   ':'! node_type
+    /*| ':'! graph_type */
     ;
 
 
 arg_decl
-    :   arg_target ':' typedecl
+    :   arg_target ':'! typedecl
     ;
 
 
@@ -131,13 +131,13 @@ nodeedge_type
 
 node_type
     :   T_NODE
-        ( '(' id ')' )?
+        ( '('! id ')'! )?
     ;
 
 
 edge_type
     :   T_EDGE
-        ( '(' id ')' )?
+        ( '('! id ')'! )?
     ;
 
 
@@ -172,7 +172,7 @@ property
 
 id_comma_list
     :   id
-        ( ',' id )*
+        ( ','! id )*
     ;
 
 
@@ -182,9 +182,9 @@ proc_body
 
 
 sent_block
-    :   sb_begin
+    :   sb_begin!
         sent_list
-        sb_end
+        sb_end!
     ;
 
 

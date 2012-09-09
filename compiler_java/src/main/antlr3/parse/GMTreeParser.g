@@ -315,17 +315,17 @@ bfs_filters returns [ast_node value]
 
 
 bfs_navigator returns [ast_node value]
-    :   '[' expr ']'
+    :   expr
     ;
 
 
 bfs_filter returns [ast_node value]
-    :   '(' expr ')'
+    :   expr
     ;
 
 
 sent_variable_decl returns [ast_node value]
-    :   typedecl id '=' rhs
+    :   typedecl id rhs
     |   typedecl var_target
     ;
 

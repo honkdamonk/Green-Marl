@@ -329,17 +329,17 @@ bfs_filters
 
 
 bfs_navigator
-    :   '[' expr ']'
+    :   '['! expr ']'!
     ;
 
 
 bfs_filter
-    :   '(' expr ')'
+    :   '('! expr ')'!
     ;
 
 
 sent_variable_decl
-    :   typedecl id '=' rhs
+    :   typedecl id '='! rhs
     |   typedecl var_target
     ;
 

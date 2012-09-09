@@ -134,5 +134,5 @@ sent_block returns [ast_node value]
     ;
 
 id returns [ast_node value]
-    :   x=ID { value = FE.GM_id(x.getText(), 0, 0); }
+    :   ID { value = FE.GM_id($ID.getText(), $ID.getLine(), $ID.getCharPositionInLine()); }
     ;

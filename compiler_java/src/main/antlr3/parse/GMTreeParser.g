@@ -106,50 +106,50 @@ nodeedge_type returns [ast_node value]
 
 
 node_type returns [ast_node value]
-    :   T_NODE x=id?
+    :   T_NODE ( '(' x=id ')' )?
     	{ value = FE.GM_nodetype_ref(x);
     	  FE.GM_set_lineinfo(value, $T_NODE.getLine(), $T_NODE.getCharPositionInLine()); }
     ;
 
 
 edge_type returns [ast_node value]
-    :   T_EDGE x=id?
+    :   T_EDGE ( '(' x=id ')' )?
     	{ value = FE.GM_edgetype_ref(x);
     	  FE.GM_set_lineinfo(value, $T_EDGE.getLine(), $T_EDGE.getCharPositionInLine()); }
     ;
 
 set_type returns [ast_node value]
-    :   T_NSET y=id?
+    :   T_NSET ( '(' y=id ')' )?
     	{ value = FE.GM_settype_ref(GMTYPE_T.GMTYPE_NSET, y);
     	  FE.GM_set_lineinfo(value, $T_NSET.getLine(), $T_NSET.getCharPositionInLine()); }
-    |   T_NSEQ y=id?
+    |   T_NSEQ ( '(' y=id ')' )?
     	{ value = FE.GM_settype_ref(GMTYPE_T.GMTYPE_NSEQ, y);
     	  FE.GM_set_lineinfo(value, $T_NSEQ.getLine(), $T_NSEQ.getCharPositionInLine()); }
-    |   T_NORDER y=id?
+    |   T_NORDER ( '(' y=id ')' )?
     	{ value = FE.GM_settype_ref(GMTYPE_T.GMTYPE_NORDER, y);
     	  FE.GM_set_lineinfo(value, $T_NORDER.getLine(), $T_NORDER.getCharPositionInLine()); }
-    |   T_COLLECTION x=set_type y=id?
+    |   T_COLLECTION x=set_type ( '(' y=id ')' )?
     	{ value = FE.GM_queuetype_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_COLLECTION.getLine(), $T_COLLECTION.getCharPositionInLine()); }
     ;
 
 property returns [ast_node value]
-    :   T_NODEPROP x=prim_type y=id?
+    :   T_NODEPROP x=prim_type ( '(' y=id ')' )?
     	{ value = FE.GM_nodeprop_ref(x, y);
       	  FE.GM_set_lineinfo(value, $T_NODEPROP.getLine(), $T_NODEPROP.getCharPositionInLine()); }
-    |   T_NODEPROP x=nodeedge_type y=id?
+    |   T_NODEPROP x=nodeedge_type ( '(' y=id ')' )?
     	{ value = FE.GM_nodeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_NODEPROP.getLine(), $T_NODEPROP.getCharPositionInLine()); }
-    |   T_NODEPROP x=set_type y=id?
+    |   T_NODEPROP x=set_type ( '(' y=id ')' )?
     	{ value = FE.GM_nodeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_NODEPROP.getLine(), $T_NODEPROP.getCharPositionInLine()); }
-    |   T_EDGEPROP x=prim_type y=id?
+    |   T_EDGEPROP x=prim_type ( '(' y=id ')' )?
     	{ value = FE.GM_edgeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_EDGEPROP.getLine(), $T_EDGEPROP.getCharPositionInLine()); }
-    |   T_EDGEPROP x=nodeedge_type y=id?
+    |   T_EDGEPROP x=nodeedge_type ( '(' y=id ')' )?
     	{ value = FE.GM_edgeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_EDGEPROP.getLine(), $T_EDGEPROP.getCharPositionInLine()); }
-    |   T_EDGEPROP x=set_type y=id?
+    |   T_EDGEPROP x=set_type ( '(' y=id ')' )?
     	{ value = FE.GM_edgeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_EDGEPROP.getLine(), $T_EDGEPROP.getCharPositionInLine()); }
     ;

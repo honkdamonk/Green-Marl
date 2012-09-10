@@ -130,42 +130,42 @@ nodeedge_type
 
 node_type
     :   T_NODE
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     ;
 
 
 edge_type
     :   T_EDGE
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     ;
 
 
 set_type
     :   T_NSET
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_NSEQ
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_NORDER
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_COLLECTION
         '<'! set_type '>'!
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     ;
 
 
 property
     :   T_NODEPROP '<'! prim_type '>'!
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_NODEPROP '<'! nodeedge_type '>'!
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_NODEPROP '<'! set_type '>'!
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_EDGEPROP '<'! prim_type '>'!
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_EDGEPROP '<'! nodeedge_type '>'!
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_EDGEPROP '<'! set_type '>'!
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     ;
 
 

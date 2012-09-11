@@ -447,7 +447,7 @@ public class gm_transform_helper {
 			fe.get_this_scope(s);
 			return;
 		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
-			ast_foreach sb = (ast_foreach) n;
+			ast_sentblock sb = (ast_sentblock) n;
 			sb.get_this_scope(s);
 			return;
 		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_PROCDEF) {

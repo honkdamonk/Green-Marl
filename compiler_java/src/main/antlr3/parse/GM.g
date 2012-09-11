@@ -481,13 +481,13 @@ conditional_expr
 
 conditional_or_expr
     :   conditional_and_expr
-        (T_OR conditional_and_expr)*
+        (T_OR conditional_and_expr)? //TODO: should be *
     ;
 
 
 conditional_and_expr
     :   equality_expr
-        (T_AND equality_expr)*
+        (T_AND equality_expr)? //TODO: should be *
     ;
 
 
@@ -499,7 +499,7 @@ equality_expr
             ) | (
             	T_NEQ relational_expr
             )
-        )*
+        )? //TODO: should be *
     ;
 
 
@@ -515,7 +515,7 @@ relational_expr
         	) | (
         		'>' additive_expr
         	)
-        )*
+        )? //TODO: should be *
     ;
 
 
@@ -527,7 +527,7 @@ additive_expr
             ) | (
             	'-' multiplicative_expr
             )
-        )*
+        )? //TODO: should be *
     ;
 
 
@@ -541,7 +541,7 @@ multiplicative_expr
             ) | (
             	'%' not_left_recursive_expr
             )
-        )*
+        )? //TODO: should be *
     ;
 
 

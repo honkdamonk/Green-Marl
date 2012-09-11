@@ -576,7 +576,7 @@ conditional_or_expr returns [ast_node value]
         (
         	T_OR y=conditional_and_expr
         	{ value = FE.GM_expr_lbiop(x, y, GM_OPS_T.GMOP_OR, $T_OR.getLine(), $T_OR.getCharPositionInLine()); }
-        )*
+        )? //TODO: should be *
     ;
 
 
@@ -586,7 +586,7 @@ conditional_and_expr returns [ast_node value]
         (
         	T_AND y=equality_expr
         	{ value = FE.GM_expr_lbiop(x, y, GM_OPS_T.GMOP_AND, $T_AND.getLine(), $T_AND.getCharPositionInLine()); }
-        )*
+        )? //TODO: should be *
     ;
 
 
@@ -601,7 +601,7 @@ equality_expr returns [ast_node value]
             	T_NEQ y=relational_expr
             	{ value = FE.GM_expr_comp(x, y, GM_OPS_T.GMOP_NEQ, $T_NEQ.getLine(), $T_NEQ.getCharPositionInLine()); }
             )
-        )*
+        )? //TODO: should be *
     ;
 
 
@@ -622,7 +622,7 @@ relational_expr returns [ast_node value]
         		op='>' y=additive_expr
         		{ value = FE.GM_expr_comp(x, y, GM_OPS_T.GMOP_GT, op.getLine(), op.getCharPositionInLine()); }
         	)
-        )*
+        )? //TODO: should be *
     ;
 
   
@@ -637,7 +637,7 @@ additive_expr returns [ast_node value]
             	op='-' y=multiplicative_expr
             	{ value = FE.GM_expr_biop(x, y, GM_OPS_T.GMOP_SUB, op.getLine(), op.getCharPositionInLine()); }
             )
-        )*
+        )? //TODO: should be *
     ;
 
 
@@ -655,7 +655,7 @@ multiplicative_expr returns [ast_node value]
             	op='%' y=not_left_recursive_expr
             	{ value = FE.GM_expr_biop(x, y, GM_OPS_T.GMOP_MOD, op.getLine(), op.getCharPositionInLine()); }
             )
-        )*
+        )? //TODO: should be *
     ;
 
 /* bool/numeric expr cannot be distinguished by the syntax,

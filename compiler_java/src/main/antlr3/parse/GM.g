@@ -2,7 +2,6 @@ grammar GM;
 
 options {
     language     = Java;
-    output       = AST;
     backtrack    = true;
 }
 
@@ -61,8 +60,8 @@ proc_def
 
 
 proc_head
-    :   proc_name '('! arg_declist?                 ')'! proc_return?
-    |   proc_name '('! arg_declist? ';' arg_declist ')'! proc_return?
+    :   proc_name '(' arg_declist?                 ')' proc_return?
+    |   proc_name '(' arg_declist? ';' arg_declist ')' proc_return?
     ;
 
 
@@ -86,7 +85,7 @@ proc_return
 
 
 arg_decl
-    :   arg_target ':'! typedecl
+    :   arg_target ':' typedecl
     ;
 
 
@@ -144,23 +143,23 @@ set_type
     |   T_NORDER
         ( '(' id ')' )?
     |   T_COLLECTION
-        '<'! set_type '>'!
+        '<' set_type '>'
         ( '(' id ')' )?
     ;
 
 
 property
-    :   T_NODEPROP '<'! prim_type '>'!
+    :   T_NODEPROP '<' prim_type '>'
         ( '(' id ')' )?
-    |   T_NODEPROP '<'! nodeedge_type '>'!
+    |   T_NODEPROP '<' nodeedge_type '>'
         ( '(' id ')' )?
-    |   T_NODEPROP '<'! set_type '>'!
+    |   T_NODEPROP '<' set_type '>'
         ( '(' id ')' )?
-    |   T_EDGEPROP '<'! prim_type '>'!
+    |   T_EDGEPROP '<' prim_type '>'
         ( '(' id ')' )?
-    |   T_EDGEPROP '<'! nodeedge_type '>'!
+    |   T_EDGEPROP '<' nodeedge_type '>'
         ( '(' id ')' )?
-    |   T_EDGEPROP '<'! set_type '>'!
+    |   T_EDGEPROP '<' set_type '>'
         ( '(' id ')' )?
     ;
 
@@ -198,22 +197,22 @@ sent_list
 
 
 sent
-    :   sent_assignment ';'!
-    |   sent_variable_decl ';'!
+    :   sent_assignment ';'
+    |   sent_variable_decl ';'
     |   sent_block
     |   sent_foreach
     |   sent_if
-    |   sent_reduce_assignment ';'!
-    |   sent_defer_assignment ';'!
-    |   sent_do_while ';'!
+    |   sent_reduce_assignment ';'
+    |   sent_defer_assignment ';'
+    |   sent_do_while ';'
     |   sent_while
-    |   sent_return ';'!
+    |   sent_return ';'
     |   sent_bfs
     |   sent_dfs
-    |   sent_call ';'!
-    |   sent_user ';'!
-    |   sent_argminmax_assignment ';'!
-    |   ';'!
+    |   sent_call ';'
+    |   sent_user ';'
+    |   sent_argminmax_assignment ';'
+    |   ';'
     ;
 
 
@@ -224,7 +223,7 @@ sent_call
 
 sent_while
     :   T_WHILE
-        '('! bool_expr ')'!
+        '(' bool_expr ')'
         sent_block
     ;
 
@@ -233,7 +232,7 @@ sent_do_while
     :   T_DO
         sent_block
         T_WHILE
-        '('! bool_expr ')'!
+        '(' bool_expr ')'
     ;
 
 
@@ -250,14 +249,14 @@ sent_foreach
 
 
 foreach_header
-    :   '('! id ':'! id     '.'! iterator1 ')'!
-    |   '('! id ':'! id '+' '.'! iterator1 ')'!
-    |   '('! id ':'! id '-' '.'! iterator1 ')'!
+    :   '(' id ':' id     '.' iterator1 ')'
+    |   '(' id ':' id '+' '.' iterator1 ')'
+    |   '(' id ':' id '-' '.' iterator1 ')'
     ;
 
 
 foreach_filter
-    :   '('! bool_expr ')'!
+    :   '(' bool_expr ')'
     ;
 
 
@@ -308,7 +307,7 @@ bfs_reverse
 
 
 bfs_header_format
-    :   '('! id ':'! id opt_tp '.'! T_NODES from_or_semi id ')'!
+    :   '(' id ':' id opt_tp '.' T_NODES from_or_semi id ')'
     ;
 
 
@@ -334,17 +333,17 @@ bfs_filters
 
 
 bfs_navigator
-    :   '['! expr ']'!
+    :   '[' expr ']'
     ;
 
 
 bfs_filter
-    :   '('! expr ')'!
+    :   '(' expr ')'
     ;
 
 
 sent_variable_decl
-    :   typedecl id '='! rhs
+    :   typedecl id '=' rhs
     |   typedecl var_target
     ;
 

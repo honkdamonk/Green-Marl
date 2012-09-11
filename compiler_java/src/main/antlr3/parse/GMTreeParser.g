@@ -24,8 +24,8 @@ proc_def
     ;
 
 proc_head
-    :   proc_name arg_declist?                 proc_return?
-    |   proc_name arg_declist? ';' arg_declist proc_return?
+    :   proc_name '(' arg_declist?                 ')' proc_return?
+    |   proc_name '(' arg_declist? ';' arg_declist ')' proc_return?
     ;
 
 
@@ -49,7 +49,7 @@ proc_return
     ;
 
 arg_decl returns [ast_node value]
-    :   x=arg_target y=typedecl
+    :   x=arg_target ':' y=typedecl
         { value = FE.GM_procdef_arg(x, y); }
     ;
 
@@ -127,28 +127,28 @@ set_type returns [ast_node value]
     |   T_NORDER ( '(' y=id ')' )?
     	{ value = FE.GM_settype_ref(GMTYPE_T.GMTYPE_NORDER, y);
     	  FE.GM_set_lineinfo(value, $T_NORDER.getLine(), $T_NORDER.getCharPositionInLine()); }
-    |   T_COLLECTION x=set_type ( '(' y=id ')' )?
+    |   T_COLLECTION '<' x=set_type '>' ( '(' y=id ')' )?
     	{ value = FE.GM_queuetype_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_COLLECTION.getLine(), $T_COLLECTION.getCharPositionInLine()); }
     ;
 
 property returns [ast_node value]
-    :   T_NODEPROP x=prim_type ( '(' y=id ')' )?
+    :   T_NODEPROP '<' x=prim_type '>' ( '(' y=id ')' )?
     	{ value = FE.GM_nodeprop_ref(x, y);
       	  FE.GM_set_lineinfo(value, $T_NODEPROP.getLine(), $T_NODEPROP.getCharPositionInLine()); }
-    |   T_NODEPROP x=nodeedge_type ( '(' y=id ')' )?
+    |   T_NODEPROP '<' x=nodeedge_type '>' ( '(' y=id ')' )?
     	{ value = FE.GM_nodeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_NODEPROP.getLine(), $T_NODEPROP.getCharPositionInLine()); }
-    |   T_NODEPROP x=set_type ( '(' y=id ')' )?
+    |   T_NODEPROP '<' x=set_type '>' ( '(' y=id ')' )?
     	{ value = FE.GM_nodeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_NODEPROP.getLine(), $T_NODEPROP.getCharPositionInLine()); }
-    |   T_EDGEPROP x=prim_type ( '(' y=id ')' )?
+    |   T_EDGEPROP '<' x=prim_type '>' ( '(' y=id ')' )?
     	{ value = FE.GM_edgeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_EDGEPROP.getLine(), $T_EDGEPROP.getCharPositionInLine()); }
-    |   T_EDGEPROP x=nodeedge_type ( '(' y=id ')' )?
+    |   T_EDGEPROP '<' x=nodeedge_type '>' ( '(' y=id ')' )?
     	{ value = FE.GM_edgeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_EDGEPROP.getLine(), $T_EDGEPROP.getCharPositionInLine()); }
-    |   T_EDGEPROP x=set_type ( '(' y=id ')' )?
+    |   T_EDGEPROP '<' x=set_type '>' ( '(' y=id ')' )?
     	{ value = FE.GM_edgeprop_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_EDGEPROP.getLine(), $T_EDGEPROP.getCharPositionInLine()); }
     ;
@@ -183,9 +183,9 @@ sent_list returns [ast_node value]
     ;
     
 sent returns [ast_node value]
-    :   x=sent_assignment
+    :   x=sent_assignment ';'
     	{ value = x; }
-    |   x=sent_variable_decl
+    |   x=sent_variable_decl ';'
     	{ value = x; }
     |   x=sent_block
     	{ value = x; }
@@ -193,25 +193,25 @@ sent returns [ast_node value]
     	{ value = x; }
     |   x=sent_if
     	{ value = x; }
-    |   x=sent_reduce_assignment
+    |   x=sent_reduce_assignment ';'
     	{ value = x; }
-    |   x=sent_defer_assignment
+    |   x=sent_defer_assignment ';'
     	{ value = x; }
-    |   x=sent_do_while
+    |   x=sent_do_while ';'
     	{ value = x; }
     |   x=sent_while
     	{ value = x; }
-    |   x=sent_return
+    |   x=sent_return ';'
     	{ value = x; }
     |   x=sent_bfs
     	{ value = x; }
     |   x=sent_dfs
     	{ value = x; }
-    |   x=sent_call
+    |   x=sent_call ';'
     	{ value = x; }
-    |   x=sent_user
+    |   x=sent_user ';'
     	{ value = x; }
-    |   x=sent_argminmax_assignment
+    |   x=sent_argminmax_assignment ';'
     	{ value = x; }
     |   ';'
     	{ value = null; }
@@ -225,7 +225,7 @@ sent_call returns [ast_node value]
 
 sent_while returns [ast_node value]
     :   T_WHILE
-        x=bool_expr
+        '(' x=bool_expr ')'
         y=sent_block
         { value = FE.GM_while(x, y); }
     ;
@@ -235,7 +235,7 @@ sent_do_while returns [ast_node value]
     :   T_DO
         y=sent_block
         T_WHILE
-        x=bool_expr
+        '(' x=bool_expr ')'
         { value = FE.GM_dowhile(x, y); }
     ;
     
@@ -256,11 +256,11 @@ sent_foreach returns [ast_node value]
 
 
 foreach_header returns [ast_node p1, ast_node p2, boolean b1, GMTYPE_T i1, ast_node p3]
-    :   x=id y=id     z=iterator1
+    :   '(' x=id ':' y=id     '.' z=iterator1 ')'
     	{ retval.p1 = x; retval.p2 = y; retval.b1 = false; retval.i1 = z.i1; retval.p3 = z.p1; }
-    |   x=id y=id '+' z=iterator1
+    |   '(' x=id ':' y=id '+' '.' z=iterator1 ')'
     	{ retval.p1 = x; retval.p2 = y; retval.b1 = false; retval.i1 = z.i1; retval.p3 = z.p1; }
-    |   x=id y=id '-' z=iterator1
+    |   '(' x=id ':' y=id '-' '.' z=iterator1 ')'
     	{ retval.p1 = x; retval.p2 = y; retval.b1 = true;  retval.i1 = z.i1; retval.p3 = z.p1; }
     ;
 
@@ -334,7 +334,7 @@ bfs_reverse returns [ast_node p1, ast_node p2]
 
 
 bfs_header_format returns [ast_node p1, ast_node p2, boolean b1, ast_node p3]
-    :   w=id x=id y=opt_tp T_NODES from_or_semi z=id
+    :   '(' w=id ':' x=id y=opt_tp '.' T_NODES from_or_semi z=id ')'
     	{ retval.p1 = w; // it
           retval.p2 = x; // source
           retval.b1 = y; // optional tp
@@ -372,19 +372,19 @@ bfs_filters returns [ast_node p1, ast_node p2]
 
 
 bfs_navigator returns [ast_node value]
-    :   x=expr
+    :   '[' x=expr ']'
     	{ value = x; }
     ;
 
 
 bfs_filter returns [ast_node value]
-    :   x=expr
+    :   '(' x=expr ')'
     	{ value = x; }
     ;
 
 
 sent_variable_decl returns [ast_node value]
-    :   x=typedecl y=id z=rhs
+    :   x=typedecl y=id '=' z=rhs
     	{ value = FE.GM_vardecl_and_assign(x, y, z); }
     |   x=typedecl y=var_target
 		{ value = FE.GM_vardecl_prim(x, y); }

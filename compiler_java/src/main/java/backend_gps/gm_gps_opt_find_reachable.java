@@ -17,7 +17,7 @@ public class gm_gps_opt_find_reachable extends gm_compile_step
     
 		// set list of reachable BBs
 		gps_get_reachable_bb_list_t T = new gps_get_reachable_bb_list_t(info.get_basic_blocks());
-		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(info.get_entry_basic_block(), T);
+		gm_gps_misc.gps_bb_apply_only_once(info.get_entry_basic_block(), T);
 	}
 	@Override
 	public gm_compile_step get_instance()

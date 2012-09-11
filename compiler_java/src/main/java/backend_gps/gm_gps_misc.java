@@ -5,13 +5,13 @@ import inc.gps_apply_bb_ast;
 
 import java.util.HashSet;
 
-public class GlobalMembersGm_gps_misc {
+public class gm_gps_misc {
 
 	// return or of has_changed
 	public static void gps_bb_apply_only_once(gm_gps_basic_block entry, gps_apply_bb apply) {
 		HashSet<gm_gps_basic_block> set = new HashSet<gm_gps_basic_block>();
 		set.clear();
-		GlobalMembersGm_gps_misc.bb_apply_recurse(set, entry, apply);
+		gm_gps_misc.bb_apply_recurse(set, entry, apply);
 	}
 
 	public static void gps_bb_traverse_ast(gm_gps_basic_block entry, gps_apply_bb_ast apply, boolean is_post, boolean is_pre) {
@@ -19,7 +19,7 @@ public class GlobalMembersGm_gps_misc {
 		apply.set_is_pre(is_pre);
 
 		// apply it once
-		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(entry, apply);
+		gm_gps_misc.gps_bb_apply_only_once(entry, apply);
 
 	}
 	

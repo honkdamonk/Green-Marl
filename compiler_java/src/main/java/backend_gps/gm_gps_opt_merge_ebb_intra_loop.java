@@ -219,7 +219,7 @@ public class gm_gps_opt_merge_ebb_intra_loop extends gm_compile_step {
 		// apply this in DFS traversal of basic blocks
 		gps_find_intra_merge_candidate_t T = new gps_find_intra_merge_candidate_t(L);
 		// in DFS order
-		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(entry, T);
+		gm_gps_misc.gps_bb_apply_only_once(entry, T);
 	}
 
 }

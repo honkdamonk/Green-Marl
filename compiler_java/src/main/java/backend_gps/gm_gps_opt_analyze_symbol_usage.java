@@ -21,7 +21,7 @@ public class gm_gps_opt_analyze_symbol_usage extends gm_compile_step
     
 		// traverse BB
 		gps_merge_symbol_usage_t T = new gps_merge_symbol_usage_t(beinfo);
-		GlobalMembersGm_gps_misc.gps_bb_traverse_ast(entry_BB, T, true, true);
+		gm_gps_misc.gps_bb_traverse_ast(entry_BB, T, true, true);
     
 		set_okay(true);
 	}

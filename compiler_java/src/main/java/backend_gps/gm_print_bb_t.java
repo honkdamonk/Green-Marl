@@ -25,6 +25,6 @@ public class gm_print_bb_t extends gm_compile_step {
 	// return or of has_changed
 	private static void gps_bb_print_all(gm_gps_basic_block entry) {
 		gps_print_apply G = new gps_print_apply();
-		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(entry, G);
+		gm_gps_misc.gps_bb_apply_only_once(entry, G);
 	}
 }

@@ -2,7 +2,6 @@ grammar GM;
 
 options {
     language     = Java;
-    output       = AST;
     backtrack    = true;
 }
 
@@ -61,12 +60,8 @@ proc_def
 
 
 proc_head
-    :   proc_name
-        '('! arg_declist? ')'!
-        proc_return?
-    |   proc_name
-        '('! arg_declist? ';' arg_declist ')'!
-        proc_return?
+    :   proc_name '(' arg_declist?                 ')' proc_return?
+    |   proc_name '(' arg_declist? ';' arg_declist ')' proc_return?
     ;
 
 
@@ -84,13 +79,13 @@ arg_declist
 
 /* return of function should be always primitive type */
 proc_return
-    :   ':'! prim_type
-    |   ':'! node_type
+    :   ':' prim_type
+    |   ':' node_type
     ;
 
 
 arg_decl
-    :   arg_target ':'! typedecl
+    :   arg_target ':' typedecl
     ;
 
 
@@ -130,42 +125,42 @@ nodeedge_type
 
 node_type
     :   T_NODE
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     ;
 
 
 edge_type
     :   T_EDGE
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     ;
 
 
 set_type
     :   T_NSET
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_NSEQ
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_NORDER
-        ( '('! id ')'! )?
+        ( '(' id ')' )?
     |   T_COLLECTION
-        '<'! set_type '>'!
-        ( '('! id ')'! )?
+        '<' set_type '>'
+        ( '(' id ')' )?
     ;
 
 
 property
-    :   T_NODEPROP '<'! prim_type '>'!
-        ( '('! id ')'! )?
-    |   T_NODEPROP '<'! nodeedge_type '>'!
-        ( '('! id ')'! )?
-    |   T_NODEPROP '<'! set_type '>'!
-        ( '('! id ')'! )?
-    |   T_EDGEPROP '<'! prim_type '>'!
-        ( '('! id ')'! )?
-    |   T_EDGEPROP '<'! nodeedge_type '>'!
-        ( '('! id ')'! )?
-    |   T_EDGEPROP '<'! set_type '>'!
-        ( '('! id ')'! )?
+    :   T_NODEPROP '<' prim_type '>'
+        ( '(' id ')' )?
+    |   T_NODEPROP '<' nodeedge_type '>'
+        ( '(' id ')' )?
+    |   T_NODEPROP '<' set_type '>'
+        ( '(' id ')' )?
+    |   T_EDGEPROP '<' prim_type '>'
+        ( '(' id ')' )?
+    |   T_EDGEPROP '<' nodeedge_type '>'
+        ( '(' id ')' )?
+    |   T_EDGEPROP '<' set_type '>'
+        ( '(' id ')' )?
     ;
 
 
@@ -181,9 +176,9 @@ proc_body
 
 
 sent_block
-    :   sb_begin!
+    :   sb_begin
         sent_list
-        sb_end!
+        sb_end
     ;
 
 
@@ -202,22 +197,22 @@ sent_list
 
 
 sent
-    :   sent_assignment ';'!
-    |   sent_variable_decl ';'!
+    :   sent_assignment ';'
+    |   sent_variable_decl ';'
     |   sent_block
     |   sent_foreach
     |   sent_if
-    |   sent_reduce_assignment ';'!
-    |   sent_defer_assignment ';'!
-    |   sent_do_while ';'!
+    |   sent_reduce_assignment ';'
+    |   sent_defer_assignment ';'
+    |   sent_do_while ';'
     |   sent_while
-    |   sent_return ';'!
+    |   sent_return ';'
     |   sent_bfs
     |   sent_dfs
-    |   sent_call ';'!
-    |   sent_user ';'!
-    |   sent_argminmax_assignment ';'!
-    |   ';'!
+    |   sent_call ';'
+    |   sent_user ';'
+    |   sent_argminmax_assignment ';'
+    |   ';'
     ;
 
 
@@ -228,7 +223,7 @@ sent_call
 
 sent_while
     :   T_WHILE
-        '('! bool_expr ')'!
+        '(' bool_expr ')'
         sent_block
     ;
 
@@ -237,7 +232,7 @@ sent_do_while
     :   T_DO
         sent_block
         T_WHILE
-        '('! bool_expr ')'!
+        '(' bool_expr ')'
     ;
 
 
@@ -254,14 +249,14 @@ sent_foreach
 
 
 foreach_header
-    :   '('! id ':'! id     '.'! iterator1 ')'!
-    |   '('! id ':'! id '+' '.'! iterator1 ')'!
-    |   '('! id ':'! id '-' '.'! iterator1 ')'!
+    :   '(' id ':' id     '.' iterator1 ')'
+    |   '(' id ':' id '+' '.' iterator1 ')'
+    |   '(' id ':' id '-' '.' iterator1 ')'
     ;
 
 
 foreach_filter
-    :   '('! bool_expr ')'!
+    :   '(' bool_expr ')'
     ;
 
 
@@ -273,45 +268,53 @@ iterator1
     |   T_UP_NBRS
     |   T_DOWN_NBRS
     |   T_ITEMS
-    |   T_COMMON_NBRS '('! id ')'!
+    |   T_COMMON_NBRS '(' id ')'
     ;
 
 
 sent_dfs
     :   T_DFS
         bfs_header_format
-        bfs_filters?
+        bfs_filters
         sent_block
-        dfs_post?
+        dfs_post
     ;
 
 
 sent_bfs
     :   T_BFS
         bfs_header_format
-        bfs_filters?
+        bfs_filters
         sent_block
-        bfs_reverse?
+        bfs_reverse
     ;
 
 
 dfs_post
-    :   T_POST
+	:	// empty
+    |   T_POST
         bfs_filter?
         sent_block
     ;
 
 
 bfs_reverse
-    :   T_BACK
+	:	// empty
+    |   T_BACK
         bfs_filter?
         sent_block
     ;
 
 
 bfs_header_format
-    :   '('! id ':'! id '^'!? '.'! T_NODES from_or_semi id ')'!
+    :   '(' id ':' id opt_tp '.' T_NODES from_or_semi id ')'
     ;
+
+
+opt_tp
+	:	// empty
+	|	'^'
+	;
 
 
 from_or_semi
@@ -321,7 +324,8 @@ from_or_semi
 
 
 bfs_filters
-    :   bfs_navigator
+	:	// empty
+    |   bfs_navigator
     |   bfs_filter
     |   bfs_navigator bfs_filter
     |   bfs_filter    bfs_navigator
@@ -329,17 +333,17 @@ bfs_filters
 
 
 bfs_navigator
-    :   '['! expr ']'!
+    :   '[' expr ']'
     ;
 
 
 bfs_filter
-    :   '('! expr ')'!
+    :   '(' expr ')'
     ;
 
 
 sent_variable_decl
-    :   typedecl id '='! rhs
+    :   typedecl id '=' rhs
     |   typedecl var_target
     ;
 
@@ -411,8 +415,7 @@ rhs
 
 sent_return
     :   T_RETURN
-        expr
-    |   T_RETURN
+        expr?
    /* This causes a shift-reduce conflict: What would be If (x) If (y) Else z;
    * The default action is to interpret it as If (x) {If (y) Else z;}, which is what C does.
    * */
@@ -478,44 +481,52 @@ conditional_expr
 
 conditional_or_expr
     :   conditional_and_expr
-        ('||' conditional_and_expr)*
+        (T_OR conditional_and_expr)*
     ;
 
 
 conditional_and_expr
     :   equality_expr
-        ('&&' equality_expr)*
+        (T_AND equality_expr)*
     ;
 
 
 equality_expr
     :   relational_expr
         (
-            ( '==' | '!=' )
-            relational_expr
+            (
+            	T_EQ relational_expr
+            ) | (
+            	T_NEQ relational_expr
+            )
         )*
     ;
 
 
 relational_expr
     :   additive_expr
-        (relational_op additive_expr)*
+        (
+        	(
+        		T_LE additive_expr
+        	) | (
+        		T_GE additive_expr
+        	) | (
+        		'<' additive_expr
+        	) | (
+        		'>' additive_expr
+        	)
+        )*
     ;
 
-
-relational_op
-    :   '<='
-    |   '>='
-    |   '<'
-    |   '>'
-    ;
-
-
+  
 additive_expr
     :   multiplicative_expr
         (
-            ('+' | '-')
-            multiplicative_expr
+            (
+            	'+' multiplicative_expr
+            ) | (
+            	'-' multiplicative_expr
+            )
         )*
     ;
 
@@ -523,8 +534,13 @@ additive_expr
 multiplicative_expr
     :   not_left_recursive_expr
         (
-            ('*' | '/' | '%')
-            not_left_recursive_expr
+            (
+            	'*' not_left_recursive_expr
+            ) | (
+            	'/' not_left_recursive_expr
+            ) | (
+            	'%' not_left_recursive_expr
+            )
         )*
     ;
 
@@ -597,7 +613,8 @@ built_in
 
 
 arg_list
-    :   '('! expr_list? ')'!
+    :   '(' expr_list ')'
+    |	'(' ')'
     ;
 
 
@@ -608,17 +625,17 @@ expr_list
 
 
 lhs_list2
-    :   '<'! lhs ';'! lhs_list '>'!
+    :   '<' lhs ';' lhs_list '>'
     ;
 
 
 rhs_list2
-    :   '<'! expr ';'! expr_list '>'!
+    :   '<' expr ';' expr_list '>'
     ;
 
 
 expr_user
-    :   '['! 'XXX' ']'!
+    :   '[' 'XXX' ']'
     ;
 /* USER_TEXT*/
 

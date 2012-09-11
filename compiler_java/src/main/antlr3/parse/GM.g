@@ -13,7 +13,7 @@ tokens {
 	T_INT; T_FLOAT; T_BOOL; T_DOUBLE; T_LONG;
 	T_RETURN;
 	T_BFS; T_RBFS; T_FROM; T_TO; T_BACK;
-	T_FOREACH; T_FOR; 
+	T_FOREACH; T_FOR;
 	T_NODES; T_EDGES; T_NBRS; T_IN_NBRS; T_UP_NBRS; T_DOWN_NBRS;
 	T_COMMON_NBRS;
 	T_SUM; T_PRODUCT; T_MIN; T_MAX; T_COUNT; T_ALL; T_EXIST; T_AVG;
@@ -23,7 +23,7 @@ tokens {
 	T_PLUSEQ; T_MULTEQ; T_MINEQ; T_MAXEQ; T_PLUSPLUS; T_ANDEQ; T_OREQ;
 	T_M_INF; T_P_INF;
 	T_DOUBLE_COLON; T_RARROW;
-	T_NIL; 
+	T_NIL;
 	ID;
 	USER_TEXT;
 	INT_NUM;
@@ -118,8 +118,8 @@ prim_type
 
 
 nodeedge_type
-    :   node_type 
-    |   edge_type 
+    :   node_type
+    |   edge_type
     ;
 
 
@@ -518,7 +518,7 @@ relational_expr
         )*
     ;
 
-  
+
 additive_expr
     :   multiplicative_expr
         (
@@ -725,14 +725,14 @@ FLOAT_NUM : DIGIT+ '.' DIGIT* ;
 INT_NUM : DIGIT+ ;
 
 /* Whitespace and comments */
-WS  
+WS
     :   (' ' | '\r' | '\t' | '\u000C' | '\n' )
-        { skip(); }          
+        { skip(); }
     ;
-    
+
 COMMENT
     :   '/*'
-        (options {greedy=false;} : . )* 
+        (options {greedy=false;} : . )*
         '*/'
         { skip(); }
     ;
@@ -740,4 +740,4 @@ COMMENT
 LINE_COMMENT
     :   '//' ~('\n'|'\r')*  ('\r\n' | '\r' | '\n')?
         { skip(); }
-    ;   
+    ;

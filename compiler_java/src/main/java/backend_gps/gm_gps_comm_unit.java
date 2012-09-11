@@ -4,7 +4,7 @@ import ast.ast_foreach;
 import ast.ast_sentblock;
 import frontend.gm_symtab_entry;
 
-public class gm_gps_comm_unit implements Comparable<gm_gps_comm_unit> {
+public class gm_gps_comm_unit {
 
 	public gm_gps_comm_unit() {
 		this.type_of_comm = gm_gps_comm_t.GPS_COMM_INIT;
@@ -36,28 +36,46 @@ public class gm_gps_comm_unit implements Comparable<gm_gps_comm_unit> {
 	public ast_sentblock sb; // for RANDOM_WRITE communication
 	public gm_symtab_entry sym; // for RANDOM_WRITE communication
 
+	/* Eclipse generated hashCode() */
 	@Override
-	public boolean equals(Object rhs) {
-		return compareTo((gm_gps_comm_unit) rhs) == 0;
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((fe == null) ? 0 : fe.hashCode());
+		result = prime * result + ((sb == null) ? 0 : sb.hashCode());
+		result = prime * result + ((sym == null) ? 0 : sym.hashCode());
+		result = prime * result + ((type_of_comm == null) ? 0 : type_of_comm.hashCode());
+		return result;
 	}
 
+	/* Eclipse generated equals() */
 	@Override
-	public int compareTo(gm_gps_comm_unit rhs) {
-		gm_gps_comm_unit lhs = this;
-
-		if (lhs.type_of_comm != rhs.type_of_comm)
-			return lhs.type_of_comm.hashCode() < rhs.type_of_comm.hashCode() ? -1 : +1;
-
-		else if (lhs.fe != rhs.fe)
-			return lhs.fe.hashCode() < rhs.fe.hashCode() ? -1 : +1;
-
-		else if (lhs.sb != rhs.sb)
-			return lhs.sb.hashCode() < rhs.sb.hashCode() ? -1 : +1;
-
-		else if (lhs.sym != rhs.sym)
-			return lhs.sym.hashCode() < rhs.sym.hashCode() ? -1 : +1;
-
-		return 0;
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		gm_gps_comm_unit other = (gm_gps_comm_unit) obj;
+		if (fe == null) {
+			if (other.fe != null)
+				return false;
+		} else if (!fe.equals(other.fe))
+			return false;
+		if (sb == null) {
+			if (other.sb != null)
+				return false;
+		} else if (!sb.equals(other.sb))
+			return false;
+		if (sym == null) {
+			if (other.sym != null)
+				return false;
+		} else if (!sym.equals(other.sym))
+			return false;
+		if (type_of_comm != other.type_of_comm)
+			return false;
+		return true;
 	}
 
 }

@@ -4,10 +4,9 @@ import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.gm_backend_info;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import ast.ast_foreach;
 import ast.ast_procdef;
@@ -36,13 +35,13 @@ public class gm_gps_beinfo extends gm_backend_info {
 	 * map of inner loops (possible communications) and symbols used for the
 	 * communication in the loop.
 	 */
-	private TreeMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>> comm_symbol_info = new TreeMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>>();
-	private TreeMap<gm_gps_comm_unit, gm_gps_communication_size_info> comm_size_info = new TreeMap<gm_gps_comm_unit, gm_gps_communication_size_info>();
+	private HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>> comm_symbol_info = new HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>>();
+	private HashMap<gm_gps_comm_unit, gm_gps_communication_size_info> comm_size_info = new HashMap<gm_gps_comm_unit, gm_gps_communication_size_info>();
 	private gm_gps_communication_size_info max_comm_size = new gm_gps_communication_size_info();
 
 	/** set of communications */
-	private TreeSet<gm_gps_comm_unit> comm_loops = new TreeSet<gm_gps_comm_unit>();
-	private TreeMap<gm_gps_comm_unit, LinkedList<ast_sent>> random_write_sents = new TreeMap<gm_gps_comm_unit, LinkedList<ast_sent>>();
+	private HashSet<gm_gps_comm_unit> comm_loops = new HashSet<gm_gps_comm_unit>();
+	private HashMap<gm_gps_comm_unit, LinkedList<ast_sent>> random_write_sents = new HashMap<gm_gps_comm_unit, LinkedList<ast_sent>>();
 	/** congruent message class information */
 	private LinkedList<gm_gps_congruent_msg_class> congruent_msg = new LinkedList<gm_gps_congruent_msg_class>();
 
@@ -69,7 +68,7 @@ public class gm_gps_beinfo extends gm_backend_info {
 	// -------------------------------------------------------------------
 	// inner loops (a.k.a. communication loops) are seperately managed.
 	// -------------------------------------------------------------------
-	public final TreeSet<gm_gps_comm_unit> get_communication_loops() {
+	public final HashSet<gm_gps_comm_unit> get_communication_loops() {
 		return comm_loops;
 	}
 

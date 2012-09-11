@@ -1,4 +1,6 @@
 Proc HelloWorld(G : Graph, i : Int, l : Long, f : Float, d : Double, b : Bool, u : N_P<Int>, u1 : Node, u2 : Node(G))
 {
-	Int x;
+	Int x = 1;
+	Int y = 1;
+	
 }

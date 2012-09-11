@@ -34,8 +34,8 @@ public abstract class gm_hoist_normal_sent_t extends gm_apply {
 
 		// make a copy of sentence list (right?)
 		LinkedList<ast_sent> sents = sb.get_sents();
-		
-		for (ast_sent target : sents) {
+		for(int i = 0; i < sents.size(); i++) {
+			ast_sent target = sents.get(i);
 			// --------------------------------------
 			// find target assign sentence
 			// --------------------------------------

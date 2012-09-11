@@ -39,7 +39,7 @@ public abstract class gm_hoist_normal_sent_t extends gm_apply {
 			// --------------------------------------
 			// find target assign sentence
 			// --------------------------------------
-			if (!check_target((ast_assign) target))
+			if (target instanceof ast_assign && !check_target((ast_assign) target))
 				continue;
 
 			LinkedList<ast_sent> sents2 = sb.get_sents(); // most up-to-date

@@ -24,11 +24,10 @@ public class gm_builtin_def {
 		this.method_id = def.method_id;
 
 		// parse string
-		int temp = 0;
 		assert def.def_string != null;
-		char[] text = def.def_string.toCharArray();
+		String text = def.def_string;
 
-		if (text[0] == '*') // synonym
+		if (text.charAt(0) == '*') // synonym
 		{
 
 			gm_builtin_def org_def = manager.get_last_def();
@@ -38,7 +37,7 @@ public class gm_builtin_def {
 			this.need_strict = false;
 			this.org_def = org_def;
 			this.src_type = org_def.src_type; // need source type.
-			this.orgname = "" + text[1];
+			this.orgname = text.substring(1);
 
 			// no need.
 			// this->res_type = org_def->res_type;
@@ -46,35 +45,31 @@ public class gm_builtin_def {
 		} else {
 			this.synonym = false;
 
-			if (text[0] == '!') {
+			if (text.charAt(0) == '!') {
 				this.need_strict = true;
-				temp = temp + 1;
+				text = text.substring(1);
 			} else {
 				this.need_strict = false;
 			}
 
 			// parse and fill
-			String p = tangible.StringFunctions.strTok(new String(text, temp, text.length - temp), ":");
-			if (p.charAt(0) == '_')
+			String[] p = text.split(":");
+			if (p[0].charAt(0) == '_')
 				src_type = GMTYPE_T.GMTYPE_VOID; // top-level
 			else
-				src_type = GMTYPE_T.gm_get_type_from_string(p);
+				src_type = GMTYPE_T.gm_get_type_from_string(p[0]);
 
-			p = tangible.StringFunctions.strTok(null, ":");
 			assert p != null;
-			orgname = p;
-			p = tangible.StringFunctions.strTok(null, ":");
-			res_type = GMTYPE_T.gm_get_type_from_string(p);
-			p = tangible.StringFunctions.strTok(null, ":");
-			if (p == null)
+			orgname = p[1];
+			res_type = GMTYPE_T.gm_get_type_from_string(p[2]);
+			if (p.length < 4)
 				num_args = 0;
 			else
-				num_args = Integer.parseInt(p);
+				num_args = Integer.parseInt(p[3]);
 			if (num_args > 0) {
 				arg_types = new GMTYPE_T[num_args];
 				for (int i = 0; i < num_args; i++) {
-					p = tangible.StringFunctions.strTok(null, ":");
-					arg_types[i] = GMTYPE_T.gm_get_type_from_string(p);
+					arg_types[i] = GMTYPE_T.gm_get_type_from_string(p[i+4]);
 				}
 			}
 
@@ -83,20 +78,19 @@ public class gm_builtin_def {
 			// -----------------------------------------------------------
 			String extra_info = def.extra_info;
 
-			p = tangible.StringFunctions.strTok(extra_info, ":");
-			String p2 = tangible.StringFunctions.strTok(null, ":");
-			while ((p != null) && (p2 != null)) {
-				String key = p;
-				if (p2.equals("true")) {
-					add_info_bool(key, true);
-					assert find_info_bool(key) == true;
-				} else if (p2.equals("false")) {
-					add_info_bool(key, false);
-				} else {
-					add_info_int(key, Integer.parseInt(p2));
+			p = extra_info.split(":");
+			if (p.length > 1) {
+				for (int i = 0; i < p.length; i += 2) {
+					String key = p[i];
+					if (p[i+1].equals("true")) {
+						add_info_bool(key, true);
+						assert find_info_bool(key) == true;
+					} else if (p[i+1].equals("false")) {
+						add_info_bool(key, false);
+					} else {
+						add_info_int(key, Integer.parseInt(p[i+1]));
+					}
 				}
-				p = tangible.StringFunctions.strTok(null, ":");
-				p2 = tangible.StringFunctions.strTok(null, ":");
 			}
 		}
 	}

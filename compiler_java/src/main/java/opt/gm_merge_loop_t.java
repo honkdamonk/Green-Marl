@@ -28,7 +28,8 @@ public class gm_merge_loop_t extends gm_apply {
 		LinkedList<ast_sent> sents = sb.get_sents(); 
 		
 		ast_foreach prev = null;
-		for (ast_sent sent : sents) {
+		for(int i = 0; i < sents.size(); i++) {
+		ast_sent sent = sents.get(i);
 			if (prev == null) {
 				if (sent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
 					prev = (ast_foreach) sent;

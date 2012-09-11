@@ -1,6 +1,7 @@
 tree grammar GMTreeParser;
 
 options {
+    language     = Java;
     tokenVocab   = GM;
     ASTLabelType = Tree;
     backtrack    = true;
@@ -9,7 +10,7 @@ options {
 @header {
     package parse;
     import ast.*;
-    import inc.GMTYPE_T;
+    import inc.*;
 }
 
 prog
@@ -23,12 +24,8 @@ proc_def
     ;
 
 proc_head
-    :   proc_name
-        arg_declist?
-        proc_return?
-    |   proc_name
-        arg_declist? ';' arg_declist
-        proc_return?
+    :   proc_name arg_declist?                 proc_return?
+    |   proc_name arg_declist? ';' arg_declist proc_return?
     ;
 
 
@@ -45,8 +42,10 @@ arg_declist
 
 /* return of function should be always primitive type */
 proc_return
-    :   prim_type
-    |   node_type
+    :   ':' x=prim_type
+    	{ FE.GM_procdef_return_type(x); }
+    |   ':' x=node_type
+    	{ FE.GM_procdef_return_type(x); }
     ;
 
 arg_decl returns [ast_node value]
@@ -164,9 +163,19 @@ proc_body returns [ast_node value]
 
 
 sent_block returns [ast_node value]
-    :   { FE.GM_start_sentblock(); }
+    :   sb_begin
+    	{ FE.GM_start_sentblock(); }
         sent_list
+        sb_end
         { value = FE.GM_finish_sentblock(); }
+    ;
+
+sb_begin
+    :   '{'
+    ;
+
+sb_end
+    :   '}'
     ;
 
 sent_list returns [ast_node value]
@@ -178,8 +187,8 @@ sent returns [ast_node value]
     	{ value = x; }
     |   x=sent_variable_decl
     	{ value = x; }
-/*    |   x=sent_block
-    	{ value = x; }*/
+    |   x=sent_block
+    	{ value = x; }
     |   x=sent_foreach
     	{ value = x; }
     |   x=sent_if
@@ -209,402 +218,566 @@ sent returns [ast_node value]
     ;
     
 sent_call returns [ast_node value]
-    :   built_in
+    :   x=built_in
+    	{ value = FE.GM_new_call_sent(x, true); }
     ;
 
 
 sent_while returns [ast_node value]
     :   T_WHILE
-        bool_expr
-        sent_block
+        x=bool_expr
+        y=sent_block
+        { value = FE.GM_while(x, y); }
     ;
 
 
 sent_do_while returns [ast_node value]
     :   T_DO
-        sent_block
+        y=sent_block
         T_WHILE
-        bool_expr
+        x=bool_expr
+        { value = FE.GM_dowhile(x, y); }
     ;
     
 sent_foreach returns [ast_node value]
     :   T_FOREACH
-        foreach_header
-        foreach_filter?
-        sent
+        x=foreach_header
+        y=foreach_filter?
+        z=sent
+        { value = FE.GM_foreach(x.p1, x.p2, x.i1, z, y, false, x.b1, x.p3);
+          FE.GM_set_lineinfo(value, $T_FOREACH.getLine(), $T_FOREACH.getCharPositionInLine()); }
     |   T_FOR
-        foreach_header
-        foreach_filter?
-        sent
+        x=foreach_header
+        y=foreach_filter?
+        z=sent
+        { value = FE.GM_foreach(x.p1, x.p2, x.i1, z, y, true, x.b1, x.p3);
+          FE.GM_set_lineinfo(value, $T_FOR.getLine(), $T_FOR.getCharPositionInLine()); }
     ;
 
 
-foreach_header returns [ast_node value]
-    :   id id     iterator1
-    |   id id '+' iterator1
-    |   id id '-' iterator1
+foreach_header returns [ast_node p1, ast_node p2, boolean b1, GMTYPE_T i1, ast_node p3]
+    :   x=id y=id     z=iterator1
+    	{ retval.p1 = x; retval.p2 = y; retval.b1 = false; retval.i1 = z.i1; retval.p3 = z.p1; }
+    |   x=id y=id '+' z=iterator1
+    	{ retval.p1 = x; retval.p2 = y; retval.b1 = false; retval.i1 = z.i1; retval.p3 = z.p1; }
+    |   x=id y=id '-' z=iterator1
+    	{ retval.p1 = x; retval.p2 = y; retval.b1 = true;  retval.i1 = z.i1; retval.p3 = z.p1; }
     ;
 
 
 foreach_filter returns [ast_node value]
-    :   bool_expr
+    :   x=bool_expr
+    	{ value = x; }
     ;
 
 
-iterator1 returns [ast_node value]
+iterator1 returns [GMTYPE_T i1, ast_node p1]
     :   T_NODES
+    	{ retval.i1 = GMTYPE_T.GMTYPE_NODEITER_ALL; retval.p1 = null; }
     |   T_EDGES
+    	{ retval.i1 = GMTYPE_T.GMTYPE_EDGEITER_ALL; retval.p1 = null; }
     |   T_NBRS
+    	{ retval.i1 = GMTYPE_T.GMTYPE_NODEITER_NBRS; retval.p1 = null; }
     |   T_IN_NBRS
+    	{ retval.i1 = GMTYPE_T.GMTYPE_NODEITER_IN_NBRS; retval.p1 = null; }
     |   T_UP_NBRS
+    	{ retval.i1 = GMTYPE_T.GMTYPE_NODEITER_UP_NBRS; retval.p1 = null; }
     |   T_DOWN_NBRS
+    	{ retval.i1 = GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS; retval.p1 = null; }
     |   T_ITEMS
-    |   T_COMMON_NBRS id
+    	{ retval.i1 = GMTYPE_T.GMTYPE_ITER_ANY; retval.p1 = null; /* should be resolved after typechecking */}
+    |   T_COMMON_NBRS '(' x=id ')'
+    	{ retval.i1 = GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS; retval.p1 = x; }
     ;
 
 
 sent_dfs returns [ast_node value]
     :   T_DFS
-        bfs_header_format
-        bfs_filters?
-        sent_block
-        dfs_post?
+        w=bfs_header_format
+        x=bfs_filters
+        y=sent_block
+        z=dfs_post
+        { value = FE.GM_bfs(w.p1, w.p2, w.p3, x.p1, x.p2, z.p2, y, z.p1, w.b1, false);
+          FE.GM_set_lineinfo(value, $T_DFS.getLine(), $T_DFS.getCharPositionInLine()); }
     ;
 
 
 sent_bfs returns [ast_node value]
     :   T_BFS
-        bfs_header_format
-        bfs_filters?
-        sent_block
-        bfs_reverse?
+        w=bfs_header_format
+        x=bfs_filters
+        y=sent_block
+        z=bfs_reverse
+        { value = FE.GM_bfs(w.p1, w.p2, w.p3, x.p1, x.p2, z.p2, y, z.p1, w.b1, true);
+          FE.GM_set_lineinfo(value, $T_BFS.getLine(), $T_BFS.getCharPositionInLine()); }
     ;
 
 
-dfs_post returns [ast_node value]
-    :   T_POST
-        bfs_filter?
-        sent_block
+dfs_post returns [ast_node p1, ast_node p2]
+	:	// empty
+		{ retval.p1 = null; retval.p2 = null; }
+    |   T_POST
+        x=bfs_filter?
+        y=sent_block
+        { retval.p1 = y; retval.p2 = x; }
     ;
 
 
-bfs_reverse returns [ast_node value]
-    :   T_BACK
-        bfs_filter?
-        sent_block
+bfs_reverse returns [ast_node p1, ast_node p2]
+	:	// empty
+		{ retval.p1 = null; retval.p2 = null; }
+    |   T_BACK
+        x=bfs_filter?
+        y=sent_block
+        { retval.p1 = y; retval.p2 = x; }
     ;
 
 
-bfs_header_format returns [ast_node value]
-    :   id id T_NODES from_or_semi id
+bfs_header_format returns [ast_node p1, ast_node p2, boolean b1, ast_node p3]
+    :   w=id x=id y=opt_tp T_NODES from_or_semi z=id
+    	{ retval.p1 = w; // it
+          retval.p2 = x; // source
+          retval.b1 = y; // optional tp
+          retval.p3 = z; // source
+        }
     ;
 
 
-from_or_semi returns [ast_node value]
+opt_tp returns [boolean x]
+	:	// empty
+		{ x = false; }
+	|	'^'
+		{ x = true; }
+	;
+
+
+from_or_semi
     :   T_FROM
     |   ';'
     ;
 
 
-bfs_filters returns [ast_node value]
-    :   bfs_navigator
-    |   bfs_filter
-    |   bfs_navigator bfs_filter
-    |   bfs_filter    bfs_navigator
+bfs_filters returns [ast_node p1, ast_node p2]
+	:	// empty
+		{ retval.p1 = null; retval.p2 = null; }
+    |   x=bfs_navigator
+    	{ retval.p1 = x;    retval.p2 = null; }
+    |   y=bfs_filter
+    	{ retval.p1 = null; retval.p2 = y; }
+    |   x=bfs_navigator y=bfs_filter
+    	{ retval.p1 = x;    retval.p2 = y; }
+    |   y=bfs_filter    x=bfs_navigator
+    	{ retval.p1 = x;    retval.p2 = y; }
     ;
 
 
 bfs_navigator returns [ast_node value]
-    :   expr
+    :   x=expr
+    	{ value = x; }
     ;
 
 
 bfs_filter returns [ast_node value]
-    :   expr
+    :   x=expr
+    	{ value = x; }
     ;
 
 
 sent_variable_decl returns [ast_node value]
-    :   typedecl id rhs
-    |   typedecl var_target
+    :   x=typedecl y=id z=rhs
+    	{ value = FE.GM_vardecl_and_assign(x, y, z); }
+    |   x=typedecl y=var_target
+		{ value = FE.GM_vardecl_prim(x, y); }
     ;
 
 
 var_target returns [ast_node value]
     :   id_comma_list
+    	{ value = FE.GM_finish_id_comma_list(); }
     ;
 
 
 sent_assignment returns [ast_node value]
-    :   lhs '=' rhs
+    :   x=lhs y='=' z=rhs
+    	{ value = FE.GM_normal_assign(x, z);
+    	  FE.GM_set_lineinfo(value, y.getLine(), y.getCharPositionInLine()); }
     ;
 
 
 sent_reduce_assignment returns [ast_node value]
-    :   lhs
-        reduce_eq
-        rhs
-        optional_bind
-    |   lhs
+    :   w=lhs
+        x=reduce_eq
+        y=rhs
+        z=optional_bind
+        { value = FE.GM_reduce_assign(w, y, z, x);
+          FE.GM_set_lineinfo(value, 0, 0); } /* TODO: should be x.getLine(), x.getCharPositionInLine() */
+    |   w=lhs
         T_PLUSPLUS
-        optional_bind
+        z=optional_bind
+        { value = FE.GM_reduce_assign(w, FE.GM_expr_ival(1, $T_PLUSPLUS.getLine(), $T_PLUSPLUS.getCharPositionInLine()), z, GM_REDUCE_T.GMREDUCE_PLUS); }
     ;
 
 
 sent_defer_assignment returns [ast_node value]
     :
-    lhs
+    w=lhs
     T_LE
-    rhs
-    optional_bind
+    y=rhs
+    z=optional_bind
+    { value = FE.GM_defer_assign(w, y, z);
+      FE.GM_set_lineinfo(value, $T_LE.getLine(), $T_LE.getCharPositionInLine()); }
     ;
 
 
 sent_argminmax_assignment returns [ast_node value]
     :
-    lhs_list2
-    minmax_eq
-    rhs_list2
-    optional_bind
+    w=lhs_list2
+    x=minmax_eq
+    y=rhs_list2
+    z=optional_bind
+    { value = FE.GM_argminmax_assign(w.p1, y.p1, z, x, w.l_list, y.e_list);
+      FE.GM_set_lineinfo(value, 0, 0); } /* TODO: should be x.getLine(), x.getCharPositionInLine() */
     ;
 
 
 optional_bind returns [ast_node value]
-    :   ( '@' id )?
+    :	// empty
+    	{ value = null; }
+    |   '@' x=id
+    	{ value = x; }
     ;
 
 
-reduce_eq returns [ast_node value]
+reduce_eq returns [GM_REDUCE_T value]
     :   T_PLUSEQ
+    	{ value = GM_REDUCE_T.GMREDUCE_PLUS; }
     |   T_MULTEQ
+    	{ value = GM_REDUCE_T.GMREDUCE_MULT; }
     |   T_MINEQ
+    	{ value = GM_REDUCE_T.GMREDUCE_MIN; }
     |   T_MAXEQ
+    	{ value = GM_REDUCE_T.GMREDUCE_MAX; }
     |   T_ANDEQ
+    	{ value = GM_REDUCE_T.GMREDUCE_AND; }
     |   T_OREQ
+    	{ value = GM_REDUCE_T.GMREDUCE_OR; }
     ;
 
 
-minmax_eq returns [ast_node value]
+minmax_eq returns [GM_REDUCE_T value]
     :   T_MINEQ
+    	{ value = GM_REDUCE_T.GMREDUCE_MIN; }
     |   T_MAXEQ
+    	{ value = GM_REDUCE_T.GMREDUCE_MAX; }
     ;
 
 
 rhs returns [ast_node value]
-    :   expr
+    :   x=expr
+    	{ value = x; }
     ;
 
 
 sent_return returns [ast_node value]
     :   T_RETURN
-        expr
-    |   T_RETURN
-   /* This causes a shift-reduce conflict: What would be If (x) If (y) Else z;
-   * The default action is to interpret it as If (x) {If (y) Else z;}, which is what C does.
-   * */
+        x=expr?
+        { value = FE.GM_return(x, $T_RETURN.getLine(), $T_RETURN.getCharPositionInLine()); }
     ;
 
-
+/* This causes a shift-reduce conflict: What would be If (x) If (y) Else z;
+ * The default action is to interpret it as If (x) {If (y) Else z;}, which is what C does.
+ * */
 sent_if returns [ast_node value]
-    :   T_IF '(' bool_expr ')'
-        sent
-        ( T_ELSE sent )?
+    :   T_IF '(' x=bool_expr ')'
+        y=sent
+        ( T_ELSE z=sent )?
+        { value = FE.GM_if(x, y, z); }
     ;
 
 
 sent_user returns [ast_node value]
-    :   expr_user
-        ( T_DOUBLE_COLON '[' lhs_list ']' )?
+	:	x=expr_user
+		{ value = FE.GM_foreign_sent(x); }
+    |   x=expr_user T_DOUBLE_COLON '[' y=lhs_list ']'
+    	{ value = FE.GM_foreign_sent_mut(x, y); }
     ;
 
 
 expr returns [ast_node value]
-    :   left_recursive_expr
-    |   not_left_recursive_expr
+    :   x=left_recursive_expr
+    	{ value = x; }
+    |   x=not_left_recursive_expr
+    	{ value = x; }
     ;
 
 
 not_left_recursive_expr returns [ast_node value]
-    :   '(' expr ')'
-    |   '|' expr '|'
-    |   '-' expr
-    |   '!' expr
-    |   '(' prim_type ')' expr
-    |   reduce_op
-        '(' id ':' id '.' iterator1 ')'
-        ( '(' expr ')' )?
-        '{' expr '}'
-    |   reduce_op2
-        '(' id ':' id '.' iterator1 ')'
-        ( '(' expr ')' )?
-    |   BOOL_VAL
-    |   INT_NUM
-    |   FLOAT_NUM
-    |   inf
-    |   T_NIL
-    |   scala
-    |   field
-    |   built_in
-    |   expr_user
-        /* cannot be distinguished by the syntax,
-        until type is available. due to vars */
+    :   '(' e1=expr ')'
+    	{ value = e1; }
+    |   op='|' e1=expr '|'
+    	{ value = FE.GM_expr_uop(e1, GM_OPS_T.GMOP_ABS, op.getLine(), op.getCharPositionInLine()); }
+    |   op='-' e1=expr
+    	{ value = FE.GM_expr_uop(e1, GM_OPS_T.GMOP_NEG, op.getLine(), op.getCharPositionInLine()); }
+    |   op='!' e1=expr
+    	{ value = FE.GM_expr_luop(e1, GM_OPS_T.GMOP_NOT, op.getLine(), op.getCharPositionInLine()); }
+    |   op='(' pt=prim_type ')' e1=expr
+    	{ value = FE.GM_expr_conversion(e1, pt, op.getLine(), op.getCharPositionInLine()); }
+    |   rop=reduce_op
+        '(' i1=id ':' i2=id '.' it=iterator1 ')'
+        ( '(' e1=expr ')' )?
+        '{' e2=expr '}'
+        { value = FE.GM_expr_reduceop(rop, i1, i2, it.i1, e1, e2, it.p1, 0, 0); } /* TODO: should be rop.getLine(), rop.getCharPositionInLine() */
+    |   rop=reduce_op2
+        '(' i1=id ':' i2=id '.' it=iterator1 ')'
+        ( '(' e1=expr ')' )?
+        { value = FE.GM_expr_reduceop(rop, i1, i2, it.i1, 
+          FE.GM_expr_ival(1, 0, 0), /* TODO: should be rop.getLine(), rop.getCharPositionInLine() */
+          e1, it.p1, 0, 0); } /* TODO: should be rop.getLine(), rop.getCharPositionInLine() */
+    |   b=BOOL_VAL
+    	{ value = FE.GM_expr_bval(b.getText().equals("True") ? true : false, b.getLine(), b.getCharPositionInLine()); }
+    |   i=INT_NUM
+    	{ value = FE.GM_expr_ival(Integer.parseInt(i.getText()), i.getLine(), i.getCharPositionInLine()); }
+    |   f=FLOAT_NUM
+    	{ value = FE.GM_expr_fval(Double.parseDouble(f.getText()), f.getLine(), f.getCharPositionInLine()); }
+    |   nf=inf
+    	{ value = FE.GM_expr_inf(nf, 0, 0); } /* TODO: should be inf.getLine(), inf.getCharPositionInLine() */
+    |   nil=T_NIL
+    	{ value = FE.GM_expr_nil(nil.getLine(), nil.getCharPositionInLine()); }
+    |   s=scala
+    	{ value = FE.GM_expr_id_access(s); }
+    |   fld=field
+    	{ value = FE.GM_expr_field_access(fld); }
+    |   bi=built_in
+    	{ value = bi; }
+    |   eu=expr_user
+    	{ value = eu; }
     ;
 
 
 left_recursive_expr returns [ast_node value]
-    :    conditional_expr
+    :   x=conditional_expr
+    	{ value = x; }
     ;
 
 
 conditional_expr returns [ast_node value]
-    :   conditional_or_expr
-        ('?' expr ':' conditional_expr)?
+    :   x=conditional_or_expr
+    	{ value = x; }
+        (
+        	op='?' y=expr ':' z=conditional_expr
+        	{ value = FE.GM_expr_ternary(x, y, z, op.getLine(), op.getCharPositionInLine()); }
+        )?
     ;
 
 
 conditional_or_expr returns [ast_node value]
-    :   conditional_and_expr
-        ('||' conditional_and_expr)*
+    :   x=conditional_and_expr
+    	{ value = x; }
+        (
+        	T_OR y=conditional_and_expr
+        	{ value = FE.GM_expr_lbiop(x, y, GM_OPS_T.GMOP_OR, $T_OR.getLine(), $T_OR.getCharPositionInLine()); }
+        )*
     ;
 
 
 conditional_and_expr returns [ast_node value]
-    :   equality_expr
-        ('&&' equality_expr)*
+    :   x=equality_expr
+    	{ value = x; }
+        (
+        	T_AND y=equality_expr
+        	{ value = FE.GM_expr_lbiop(x, y, GM_OPS_T.GMOP_AND, $T_AND.getLine(), $T_AND.getCharPositionInLine()); }
+        )*
     ;
 
 
 equality_expr returns [ast_node value]
-    :   relational_expr
+    :   x=relational_expr
+    	{ value = x; }
         (
-            ( '==' | '!=' )
-            relational_expr
+            (
+            	T_EQ y=relational_expr
+            	{ value = FE.GM_expr_comp(x, y, GM_OPS_T.GMOP_EQ, $T_EQ.getLine(), $T_EQ.getCharPositionInLine()); }
+            ) | (
+            	T_NEQ y=relational_expr
+            	{ value = FE.GM_expr_comp(x, y, GM_OPS_T.GMOP_NEQ, $T_NEQ.getLine(), $T_NEQ.getCharPositionInLine()); }
+            )
         )*
     ;
 
 
 relational_expr returns [ast_node value]
-    :   additive_expr
-        (relational_op additive_expr)*
-    ;
-
-
-relational_op returns [ast_node value]
-    :   '<='
-    |   '>='
-    |   '<'
-    |   '>'
-    ;
-
-
-additive_expr returns [ast_node value]
-    :   multiplicative_expr
+    :   x=additive_expr
+    	{ value = x; }
         (
-            ('+' | '-')
-            multiplicative_expr
+        	(
+        		T_LE y=additive_expr
+        		{ value = FE.GM_expr_comp(x, y, GM_OPS_T.GMOP_LE, $T_LE.getLine(), $T_LE.getCharPositionInLine()); }
+        	) | (
+        		T_GE y=additive_expr
+        		{ value = FE.GM_expr_comp(x, y, GM_OPS_T.GMOP_GE, $T_GE.getLine(), $T_GE.getCharPositionInLine()); }
+        	) | (
+        		op='<' y=additive_expr
+        		{ value = FE.GM_expr_comp(x, y, GM_OPS_T.GMOP_LT, op.getLine(), op.getCharPositionInLine()); }
+        	) | (
+        		op='>' y=additive_expr
+        		{ value = FE.GM_expr_comp(x, y, GM_OPS_T.GMOP_GT, op.getLine(), op.getCharPositionInLine()); }
+        	)
+        )*
+    ;
+
+  
+additive_expr returns [ast_node value]
+    :   x=multiplicative_expr
+    	{ value = x; }
+        (
+            (
+            	op='+' y=multiplicative_expr
+            	{ value = FE.GM_expr_biop(x, y, GM_OPS_T.GMOP_ADD, op.getLine(), op.getCharPositionInLine()); }
+            ) | (
+            	op='-' y=multiplicative_expr
+            	{ value = FE.GM_expr_biop(x, y, GM_OPS_T.GMOP_SUB, op.getLine(), op.getCharPositionInLine()); }
+            )
         )*
     ;
 
 
 multiplicative_expr returns [ast_node value]
-    :   not_left_recursive_expr
+    :   x=not_left_recursive_expr
+    	{ value = x; }
         (
-            ('*' | '/' | '%')
-            not_left_recursive_expr
+            (
+            	op='*' y=not_left_recursive_expr
+            	{ value = FE.GM_expr_biop(x, y, GM_OPS_T.GMOP_MULT, op.getLine(), op.getCharPositionInLine()); }
+            ) | (
+            	op='/' y=not_left_recursive_expr
+            	{ value = FE.GM_expr_biop(x, y, GM_OPS_T.GMOP_DIV, op.getLine(), op.getCharPositionInLine()); }
+            ) | (
+            	op='%' y=not_left_recursive_expr
+            	{ value = FE.GM_expr_biop(x, y, GM_OPS_T.GMOP_MOD, op.getLine(), op.getCharPositionInLine()); }
+            )
         )*
     ;
 
+/* bool/numeric expr cannot be distinguished by the syntax,
+until type is available. due to vars */
 
 bool_expr returns [ast_node value]
-    :   expr
+    :   x=expr
+    	{ value = x; }
     ;
 
 
 numeric_expr returns [ast_node value]
-    :   expr
+    :   x=expr
+    	{ value = x; }
     ;
 
 
-reduce_op returns [ast_node value]
+reduce_op returns [GM_REDUCE_T value]
     :   T_SUM
+    	{ value = GM_REDUCE_T.GMREDUCE_PLUS; }
     |   T_PRODUCT
+    	{ value = GM_REDUCE_T.GMREDUCE_MULT; }
     |   T_MIN
+    	{ value = GM_REDUCE_T.GMREDUCE_MIN; }
     |   T_MAX
+    	{ value = GM_REDUCE_T.GMREDUCE_MAX; }
     |   T_EXIST
+    	{ value = GM_REDUCE_T.GMREDUCE_OR; }
     |   T_ALL
+    	{ value = GM_REDUCE_T.GMREDUCE_AND; }
     |   T_AVG
+    	{ value = GM_REDUCE_T.GMREDUCE_AVG; /* syntactic sugar*/ }
     ;
 
 
-reduce_op2 returns [ast_node value]
+reduce_op2 returns [GM_REDUCE_T value]
     :   T_COUNT
+    	{ value = GM_REDUCE_T.GMREDUCE_PLUS; }
     ;
 
 
-inf returns [ast_node value]
+inf returns [boolean value]
     :   T_P_INF
+    	{ value = true; }
     |   T_M_INF
+    	{ value = false; }
     ;
 
 
 lhs returns [ast_node value]
-    :   scala
-    |   field
+    :   x=scala
+    	{ value = x; }
+    |   x=field
+    	{ value = x; }
     ;
 
 
-lhs_list returns [ast_node value]
-    :   lhs
-        ( ',' lhs_list )*
+lhs_list returns [lhs_list value]
+    :   x=lhs
+    	{ value = FE.GM_single_lhs_list(x); }
+        ( ',' y=lhs_list { value = FE.GM_add_lhs_list_front(x, y); } )*
     ;
 
 
 scala returns [ast_node value]
-    :   id
+    :   x=id
+    	{ value = x; }
     ;
 
 
 field returns [ast_node value]
-    :   id '.' id
+    :   x=id '.' y=id
+    	{ value = FE.GM_field(x, y, false); }
     |   T_EDGE
-        '(' id ')'
-        '.' id
+        '(' x=id ')'
+        '.' y=id
+        { value = FE.GM_field(x, y, true); }
     ;
 
 
 built_in returns [ast_node value]
-    :   id
-        ( '.' id )?
-        arg_list
-    |   field
-        '.' id
-        arg_list
+    :   ( x=id '.' )?
+        y=id
+        z=arg_list
+        { value = FE.GM_expr_builtin_expr(x, y, z); }
+    |   x=field
+        '.' y=id
+        z=arg_list
+        { value = FE.GM_expr_builtin_field_expr(x, y, z); }
     ;
 
 
-arg_list returns [ast_node value]
-    :   expr_list?
+arg_list returns [expr_list value]
+    :   '(' x=expr_list ')'
+    	{ value = x; }
+    |	'(' ')'
+    	{ value = FE.GM_empty_expr_list(); }
     ;
 
 
-expr_list returns [ast_node value]
-    :   expr
-        ( ',' expr_list )*
+expr_list returns [expr_list value]
+    :   x=expr { value = FE.GM_single_expr_list(x); }
+        ( ',' y=expr_list { value = FE.GM_add_expr_front(x, y); } )*
     ;
 
 
-lhs_list2 returns [ast_node value]
-    :   lhs lhs_list
+lhs_list2 returns [ast_node p1, lhs_list l_list]
+    :   '<' x=lhs ';' y=lhs_list '>'
+    	{ retval.p1 = x; retval.l_list = y; }
     ;
 
 
-rhs_list2 returns [ast_node value]
-    :   expr expr_list
+rhs_list2 returns [ast_node p1, expr_list e_list]
+    :   '<' x=expr ';' y=expr_list '>'
+    	{ retval.p1 = x; retval.e_list = y; }
     ;
 
 
 expr_user returns [ast_node value]
-    :   'XXX'
+    :   { /* FE.GM_lex_begin_user_text(); */ } 
+    	'[' x='XXX' ']'
+    	{ value = FE.GM_expr_foreign(x.getText(), x.getLine(), x.getCharPositionInLine()); }
     ;
 /* USER_TEXT*/
 

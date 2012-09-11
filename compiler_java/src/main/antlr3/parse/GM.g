@@ -61,12 +61,8 @@ proc_def
 
 
 proc_head
-    :   proc_name
-        '('! arg_declist? ')'!
-        proc_return?
-    |   proc_name
-        '('! arg_declist? ';' arg_declist ')'!
-        proc_return?
+    :   proc_name '('! arg_declist?                 ')'! proc_return?
+    |   proc_name '('! arg_declist? ';' arg_declist ')'! proc_return?
     ;
 
 
@@ -84,8 +80,8 @@ arg_declist
 
 /* return of function should be always primitive type */
 proc_return
-    :   ':'! prim_type
-    |   ':'! node_type
+    :   ':' prim_type
+    |   ':' node_type
     ;
 
 
@@ -181,9 +177,9 @@ proc_body
 
 
 sent_block
-    :   sb_begin!
+    :   sb_begin
         sent_list
-        sb_end!
+        sb_end
     ;
 
 
@@ -273,45 +269,53 @@ iterator1
     |   T_UP_NBRS
     |   T_DOWN_NBRS
     |   T_ITEMS
-    |   T_COMMON_NBRS '('! id ')'!
+    |   T_COMMON_NBRS '(' id ')'
     ;
 
 
 sent_dfs
     :   T_DFS
         bfs_header_format
-        bfs_filters?
+        bfs_filters
         sent_block
-        dfs_post?
+        dfs_post
     ;
 
 
 sent_bfs
     :   T_BFS
         bfs_header_format
-        bfs_filters?
+        bfs_filters
         sent_block
-        bfs_reverse?
+        bfs_reverse
     ;
 
 
 dfs_post
-    :   T_POST
+	:	// empty
+    |   T_POST
         bfs_filter?
         sent_block
     ;
 
 
 bfs_reverse
-    :   T_BACK
+	:	// empty
+    |   T_BACK
         bfs_filter?
         sent_block
     ;
 
 
 bfs_header_format
-    :   '('! id ':'! id '^'!? '.'! T_NODES from_or_semi id ')'!
+    :   '('! id ':'! id opt_tp '.'! T_NODES from_or_semi id ')'!
     ;
+
+
+opt_tp
+	:	// empty
+	|	'^'
+	;
 
 
 from_or_semi
@@ -321,7 +325,8 @@ from_or_semi
 
 
 bfs_filters
-    :   bfs_navigator
+	:	// empty
+    |   bfs_navigator
     |   bfs_filter
     |   bfs_navigator bfs_filter
     |   bfs_filter    bfs_navigator
@@ -411,8 +416,7 @@ rhs
 
 sent_return
     :   T_RETURN
-        expr
-    |   T_RETURN
+        expr?
    /* This causes a shift-reduce conflict: What would be If (x) If (y) Else z;
    * The default action is to interpret it as If (x) {If (y) Else z;}, which is what C does.
    * */
@@ -478,44 +482,52 @@ conditional_expr
 
 conditional_or_expr
     :   conditional_and_expr
-        ('||' conditional_and_expr)*
+        (T_OR conditional_and_expr)*
     ;
 
 
 conditional_and_expr
     :   equality_expr
-        ('&&' equality_expr)*
+        (T_AND equality_expr)*
     ;
 
 
 equality_expr
     :   relational_expr
         (
-            ( '==' | '!=' )
-            relational_expr
+            (
+            	T_EQ relational_expr
+            ) | (
+            	T_NEQ relational_expr
+            )
         )*
     ;
 
 
 relational_expr
     :   additive_expr
-        (relational_op additive_expr)*
+        (
+        	(
+        		T_LE additive_expr
+        	) | (
+        		T_GE additive_expr
+        	) | (
+        		'<' additive_expr
+        	) | (
+        		'>' additive_expr
+        	)
+        )*
     ;
 
-
-relational_op
-    :   '<='
-    |   '>='
-    |   '<'
-    |   '>'
-    ;
-
-
+  
 additive_expr
     :   multiplicative_expr
         (
-            ('+' | '-')
-            multiplicative_expr
+            (
+            	'+' multiplicative_expr
+            ) | (
+            	'-' multiplicative_expr
+            )
         )*
     ;
 
@@ -523,8 +535,13 @@ additive_expr
 multiplicative_expr
     :   not_left_recursive_expr
         (
-            ('*' | '/' | '%')
-            not_left_recursive_expr
+            (
+            	'*' not_left_recursive_expr
+            ) | (
+            	'/' not_left_recursive_expr
+            ) | (
+            	'%' not_left_recursive_expr
+            )
         )*
     ;
 
@@ -597,7 +614,8 @@ built_in
 
 
 arg_list
-    :   '('! expr_list? ')'!
+    :   '(' expr_list ')'
+    |	'(' ')'
     ;
 
 
@@ -608,17 +626,17 @@ expr_list
 
 
 lhs_list2
-    :   '<'! lhs ';'! lhs_list '>'!
+    :   '<' lhs ';' lhs_list '>'
     ;
 
 
 rhs_list2
-    :   '<'! expr ';'! expr_list '>'!
+    :   '<' expr ';' expr_list '>'
     ;
 
 
 expr_user
-    :   '['! 'XXX' ']'!
+    :   '[' 'XXX' ']'
     ;
 /* USER_TEXT*/
 

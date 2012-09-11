@@ -1,6 +1,7 @@
 package opt;
 
 import java.util.LinkedList;
+import static ast.AST_NODE_TYPE.AST_ASSIGN;
 
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
@@ -20,10 +21,10 @@ import frontend.gm_rw_analysis_check2;
 public abstract class gm_hoist_normal_sent_t extends gm_apply {
 
 	/** if s is a sentence, you want to hoist up */
-	protected abstract boolean check_target(ast_sent s); 
+	protected abstract boolean check_target(ast_sent s);
 
 	/** if p is a trivial precedessor to your target */
-	protected abstract boolean check_trivial_pred(ast_sent p); 
+	protected abstract boolean check_trivial_pred(ast_sent p);
 
 	@Override
 	public boolean apply(ast_sent s) {
@@ -34,12 +35,12 @@ public abstract class gm_hoist_normal_sent_t extends gm_apply {
 
 		// make a copy of sentence list (right?)
 		LinkedList<ast_sent> sents = sb.get_sents();
-		for(int i = 0; i < sents.size(); i++) {
+		for (int i = 0; i < sents.size(); i++) {
 			ast_sent target = sents.get(i);
 			// --------------------------------------
 			// find target assign sentence
 			// --------------------------------------
-			if (!(target instanceof ast_assign) || !check_target((ast_assign) target))
+			if (target.get_nodetype() != AST_ASSIGN || !check_target((ast_assign) target))
 				continue;
 
 			LinkedList<ast_sent> sents2 = sb.get_sents(); // most up-to-date

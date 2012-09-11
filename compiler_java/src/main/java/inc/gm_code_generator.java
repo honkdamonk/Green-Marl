@@ -142,16 +142,16 @@ public abstract class gm_code_generator {
 		String temp;
 		switch (e.get_opclass()) {
 		case GMEXPR_IVAL:
-			temp = String.format("%ld", e.get_ival()); // to be changed
+			temp = String.format("%d", e.get_ival()); // to be changed
 			_Body.push(temp);
 			return;
 		case GMEXPR_FVAL:
 			if (e.get_type_summary() == GMTYPE_T.GMTYPE_FLOAT) {
-				temp = String.format("(float)(%lf)", e.get_fval()); // to be
+				temp = String.format("(float)(%f)", e.get_fval()); // to be
 																	// changed
 				_Body.push(temp);
 			} else {
-				temp = String.format("%lf", e.get_fval()); // to be changed
+				temp = String.format("%f", e.get_fval()); // to be changed
 				_Body.push(temp);
 			}
 			return;

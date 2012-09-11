@@ -32,7 +32,8 @@ public class gm_argopts {
 
 	// Add compiler options here
 	public static gm_comp_args[] GM_compiler_options = { //
-	new gm_comp_args(GMARGFLAG_HELP, GMARG_NULL, "Print help messages", null), new gm_comp_args(GMARGFLAG_VERSION, GMARG_NULL, "Print version", null),
+			new gm_comp_args(GMARGFLAG_HELP, GMARG_NULL, "Print help messages", null), 
+			new gm_comp_args(GMARGFLAG_VERSION, GMARG_NULL, "Print version", null),
 			new gm_comp_args(GMARGFLAG_TARGET, GMARG_STRING, "Target backend. Current valid targets are 'cpp_omp', 'cpp_seq', 'gps' and 'giraph'.", "cpp_omp"),
 			new gm_comp_args(GMARGFLAG_OUTDIR, GMARG_STRING, "Output directory.", "."),
 			new gm_comp_args(GMARGFLAG_OPT_LEV, GMARG_INT, "Optimization Level (tobe implemented)", "1"),
@@ -47,7 +48,6 @@ public class gm_argopts {
 			new gm_comp_args(GMARGFLAG_PRINTRW, GMARG_BOOL, "(For debug) When stopped, print rw analysis information", "0"),
 			new gm_comp_args(GMARGFLAG_PRINTBB, GMARG_BOOL, "(For gps-debug) When stopped, print basicblock information", "0") //
 	};
-
 
 	public static void print_help(String bin_name) {
 		System.out.printf("Usage: %s [options] input_file\n", bin_name);

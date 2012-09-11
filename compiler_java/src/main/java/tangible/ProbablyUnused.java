@@ -13,8 +13,8 @@ import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
 public class ProbablyUnused {
-	
-	//From gm_fixup_bound_symbol_old
+
+	// From gm_fixup_bound_symbol_old
 	public static void gm_make_normal_assign(ast_assign a) {
 		// -----------------------------------
 		// make it a normal assignment
@@ -60,10 +60,7 @@ public class ProbablyUnused {
 		if (old_iter != null)
 			old_iter.dispose(); // can be null but delete is no harmful
 	}
-	
-	
-	
-	
+
 	// ----------------------------------------------------------------------------------------------------------------
 	// From gm_typecheck
 	// ----------------------------------------------------------------------------------------------------------------
@@ -106,9 +103,9 @@ public class ProbablyUnused {
 			return GMTYPE_T.GMTYPE_INVALID;
 		}
 	}
-	
+
 	/** For debug */
-	private static void gm_print_rwinfo_set(gm_rwinfo_map m) {
+	public static void gm_print_rwinfo_set(gm_rwinfo_map m) {
 		boolean first = true;
 		for (gm_symtab_entry e : m.keySet()) {
 			gm_rwinfo_list l = m.get(e);

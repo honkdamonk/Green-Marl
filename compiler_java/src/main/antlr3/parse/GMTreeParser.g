@@ -526,7 +526,7 @@ not_left_recursive_expr returns [ast_node value]
         '(' i1=id ':' i2=id '.' it=iterator1 ')'
         ( '(' e1=expr ')' )?
         '{' e2=expr '}'
-        { value = FE.GM_expr_reduceop(rop, i1, i2, it.i1, e1, e2, it.p1, 0, 0); } /* TODO: should be rop.getLine(), rop.getCharPositionInLine() */
+        { value = FE.GM_expr_reduceop(rop, i1, i2, it.i1, e2, e1, it.p1, 0, 0); } /* TODO: should be rop.getLine(), rop.getCharPositionInLine() */
     |   rop=reduce_op2
         '(' i1=id ':' i2=id '.' it=iterator1 ')'
         ( '(' e1=expr ')' )?

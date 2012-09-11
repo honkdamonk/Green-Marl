@@ -62,10 +62,10 @@ import common.gm_vocabulary;
 // interface for graph library Layer
 //-----------------------------------------------------------------
 public class gm_cpp_gen extends BackendGenerator {
-	
-	//-----------------------------------
-	// define labels, which is nothing but a string 
-	//-----------------------------------
+
+	// -----------------------------------
+	// define labels, which is nothing but a string
+	// -----------------------------------
 	public static String LABEL_PAR_SCOPE = "LABEL_PAR_SCOPE";
 	public static String CPPBE_INFO_HAS_BFS = "CPPBE_INFO_HAS_BFS";
 	public static String CPPBE_INFO_IS_PROC_ENTRY = "CPPBE_INFO_IS_PROC_ENTRY";
@@ -82,9 +82,9 @@ public class gm_cpp_gen extends BackendGenerator {
 	public static String CPPBE_INFO_NEED_SEMI_SORT = "CPPBE_INFO_NEED_SEMI_SORT";
 	public static String CPPBE_INFO_NEED_FROM_INFO = "CPPBE_INFO_NEED_FROM_INFO";
 
-	//----------------------------------------
+	// ----------------------------------------
 	// For runtime
-	//----------------------------------------
+	// ----------------------------------------
 	public static String MAX_THREADS = "gm_rt_get_num_threads";
 	public static String THREAD_ID = "gm_rt_thread_id";
 	public static String ALLOCATE_BOOL = "gm_rt_allocate_bool";
@@ -122,19 +122,19 @@ public class gm_cpp_gen extends BackendGenerator {
 	protected PrintStream ps_header = null;
 	protected File f_body = null;
 	protected PrintStream ps_body = null;
-	
+
 	protected String i_temp; // temporary variable name
 	protected String temp;
-	
+
 	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
 	protected LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
-	
+
 	protected boolean _target_omp = false;
 	protected gm_cpplib glib; // graph library
-	
+
 	protected int _ptr;
 	protected int _indent;
-	
+
 	protected boolean _pblock = false;
 
 	public gm_cpp_gen() {
@@ -776,8 +776,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		// (1) create BFS object
 		// -------------------------------------------
 		String bfs_name = bfs.find_info_string(CPPBE_INFO_BFS_NAME);
-		String bfs_inst_name = bfs.is_bfs() ? gm_main.FE.voca_temp_name_and_add("_BFS", "") : gm_main.FE.voca_temp_name_and_add(
-				"_DFS", "");
+		String bfs_inst_name = bfs.is_bfs() ? gm_main.FE.voca_temp_name_and_add("_BFS", "") : gm_main.FE.voca_temp_name_and_add("_DFS", "");
 		temp = String.format("%s %s", bfs_name, bfs_inst_name);
 		_Body.push(temp);
 		_Body.push('(');
@@ -900,12 +899,14 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		if (a.is_target_scalar()) {
 			ast_id leftHandSide = a.get_lhs_scala();
-			if (leftHandSide.is_instantly_assigned()) // we have to add the
-														// variable declaration
-														// here
-			{
+			if (leftHandSide.is_instantly_assigned()) {
+				// we have to add the variable declaration here
 				_Body.push(get_lib().get_type_string(leftHandSide.getTypeSummary()));
-				_Body.push(" ");
+				if (a.is_reference()) {
+					_Body.push("& ");
+				} else {
+					_Body.push(" ");
+				}
 			}
 			generate_lhs_id(a.get_lhs_scala());
 		} else {
@@ -1426,8 +1427,8 @@ public class gm_cpp_gen extends BackendGenerator {
 		String bfs_name = bfs.find_info_string(CPPBE_INFO_BFS_NAME);
 		String level_t = "short";
 		String use_multithread = "" + is_target_omp();
-		String save_child = ""+ bfs.find_info_bool(CPPBE_INFO_USE_DOWN_NBR);
-		String use_reverse_edge = "" +bfs.is_transpose();
+		String save_child = "" + bfs.find_info_bool(CPPBE_INFO_USE_DOWN_NBR);
+		String use_reverse_edge = "" + bfs.is_transpose();
 		String has_navigator = Boolean.toString(bfs.get_navigator() != null);
 
 		String has_pre_visit = Boolean.toString((bfs.get_fbody() != null) && (bfs.get_fbody().get_sents().size() >= 1));

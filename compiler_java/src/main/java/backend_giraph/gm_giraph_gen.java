@@ -51,6 +51,10 @@ import backend_gps.gm_gps_opt_merge_ebb_intra_loop;
 import backend_gps.gm_gps_opt_split_comm_ebb;
 import backend_gps.gps_syminfo;
 
+import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_apply_compiler_stage;
+import common.gm_argopts;
+import common.gm_error;
 import common.gm_main;
 import common.gm_reproduce;
 
@@ -59,7 +63,7 @@ import common.gm_reproduce;
 //-----------------------------------------------------------------
 // state number,
 // begin sentence
-// is pararell
+// is parallel
 public class gm_giraph_gen extends gm_gps_gen {
 	public gm_giraph_gen() {
 		super();
@@ -98,6 +102,34 @@ public class gm_giraph_gen extends gm_gps_gen {
 	// stages in backend gen
 	// ----------------------------------
 
+	public boolean do_generate() {
+		
+	    gm_main.FE.prepare_proc_iteration();
+	    ast_procdef proc = gm_main.FE.get_next_proc();
+	
+	    // Check whether procedure name is the same as the filename
+	    String proc_name = proc.get_procname().get_genname();
+	    if (!proc_name.equals(fname)) {
+	        gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
+	        return false;
+	    }
+	
+	    // Append 'Vertex' to filename if we only generate vertex logic
+	    if (gm_main.OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_GIRAPH_VERTEX_ONLY)) {
+	        String filename = String.format("%sVertex", proc.get_procname().get_genname());
+	        gm_main.PREGEL_BE.setFileName(filename);
+	    }
+
+		if (!open_output_files())
+			return false;
+
+		boolean b = gm_apply_compiler_stage.gm_apply_compiler_stage(get_gen_steps());
+
+		close_output_files();
+
+		return b;
+	}
+	
 	public void write_headers() {
 		get_lib().generate_headers(Body);
 		Body.NL();

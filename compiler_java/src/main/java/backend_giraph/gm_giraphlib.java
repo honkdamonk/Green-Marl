@@ -1038,6 +1038,14 @@ public class gm_giraphlib extends gm_gpslib {
 			break;
 		}
 	}
+	
+	public boolean is_node_type_int() {
+		return true;
+	}
+
+	public boolean is_edge_type_int() {
+		return true;
+	}
 
 	public void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block bb) {
 

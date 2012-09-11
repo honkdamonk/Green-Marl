@@ -1,13 +1,12 @@
 package backend_cpp;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
-import ast.ast_extra_info_set;
+import ast.ast_extra_info_list;
 import ast.ast_id;
 import ast.ast_procdef;
 import ast.ast_sent;
@@ -48,22 +47,32 @@ public class check_bfs_main_t extends gm_apply {
 		set_separate_post_apply(true);
 	}
 
-	public final void process_rwinfo(gm_rwinfo_map MAP, HashSet<Object> SET) {
+	public final void process_rwinfo(gm_rwinfo_map MAP, LinkedList<Object> LIST) {
 		for (gm_symtab_entry e : MAP.keySet()) {
-			SET.add(e);
+			if (!LIST.contains(e)) {
+				LIST.add(e);
+			}
 
 			gm_rwinfo_list use = MAP.get(e);
 			assert (use != null);
 			for (gm_rwinfo rwinfo : use) {
 				gm_symtab_entry driver = rwinfo.driver;
 				if (driver != null) {
-					SET.add(driver);
+					if (!LIST.contains(driver)) {
+						LIST.add(driver);
+					}
 					ast_id g = driver.getType().get_target_graph_id();
 					ast_id c = driver.getType().get_target_collection_id();
-					if (g != null)
-						SET.add(g.getSymInfo());
-					if (c != null)
-						SET.add(c.getSymInfo());
+					if (g != null) {
+						if (!LIST.contains(g.getSymInfo())) {
+							LIST.add(g.getSymInfo());
+						}
+					}
+					if (c != null) {
+						if (!LIST.contains(c.getSymInfo())) {
+							LIST.add(c.getSymInfo());
+						}
+					}
 				}
 			}
 		}
@@ -71,13 +80,13 @@ public class check_bfs_main_t extends gm_apply {
 
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
-			ast_extra_info_set syms = new ast_extra_info_set();
-			java.util.HashSet<Object> S = syms.get_set();
+			ast_extra_info_list syms = new ast_extra_info_list();
+			LinkedList<Object> L = syms.get_list();
 
 			// insert graph symbol at the first
 			gm_symtab_entry graph = ((ast_bfs) s).get_root().getTypeInfo().get_target_graph_sym();
 
-			S.add(graph);
+			L.add(graph);
 
 			// are symbols that are read/writen inside bfs
 			gm_rwinfo_sets RWINFO = gm_rw_analysis.gm_get_rwinfo_sets(s);
@@ -87,9 +96,9 @@ public class check_bfs_main_t extends gm_apply {
 			gm_rwinfo_map WS = RWINFO.write_set;
 			gm_rwinfo_map DS = RWINFO.reduce_set;
 
-			process_rwinfo(RS, S);
-			process_rwinfo(WS, S);
-			process_rwinfo(DS, S);
+			process_rwinfo(RS, L);
+			process_rwinfo(WS, L);
+			process_rwinfo(DS, L);
 
 			s.add_info(gm_cpp_gen.CPPBE_INFO_BFS_SYMBOLS, syms);
 			has_bfs = true;
@@ -119,8 +128,8 @@ public class check_bfs_main_t extends gm_apply {
 			ast_expr_builtin bin = (ast_expr_builtin) e;
 			ast_id driver = bin.get_driver();
 			if (driver != null) {
-				HashSet<Object> SET = ((ast_extra_info_set) current_bfs.find_info(gm_cpp_gen.CPPBE_INFO_BFS_SYMBOLS)).get_set();
-				SET.add(driver.getSymInfo());
+				LinkedList<Object> LIST = ((ast_extra_info_list) current_bfs.find_info(gm_cpp_gen.CPPBE_INFO_BFS_SYMBOLS)).get_list();
+				LIST.add(driver.getSymInfo());
 			}
 		}
 		return true;

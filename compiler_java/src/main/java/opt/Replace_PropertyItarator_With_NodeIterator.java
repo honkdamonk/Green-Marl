@@ -96,13 +96,19 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 	private ast_sent getNewBody() {
 
 		ast_sentblock newBody;
-		if (fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK)
+		if (fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
 			newBody = (ast_sentblock) fe.get_body();
-		else
+		} else {
 			newBody = ast_sentblock.new_sentblock();
+		}
+
+		LinkedList<ast_sent> statements = newBody.get_sents();
+		if (fe.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
+			statements.add(fe.get_body());
+		}
 
 		ast_assign assign = createAssignStatement();
-		LinkedList<ast_sent> statements = newBody.get_sents();
+		assign.set_is_reference(true);
 		statements.addFirst(assign);
 
 		return newBody;

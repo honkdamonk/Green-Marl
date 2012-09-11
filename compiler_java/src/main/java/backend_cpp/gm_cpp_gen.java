@@ -36,7 +36,6 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_builtin_field;
 import ast.ast_extra_info_list;
-import ast.ast_extra_info_set;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
@@ -786,11 +785,11 @@ public class gm_cpp_gen extends BackendGenerator {
 		// -------------------------------------------
 		// give every entry that are used
 		// -------------------------------------------
-		ast_extra_info_set syms = (ast_extra_info_set) bfs.find_info(CPPBE_INFO_BFS_SYMBOLS);
+		ast_extra_info_list syms = (ast_extra_info_list) bfs.find_info(CPPBE_INFO_BFS_SYMBOLS);
 		assert syms != null;
-		HashSet<Object> S = syms.get_set();
+		LinkedList<Object> L = syms.get_list();
 		boolean is_first = true;
-		for (Object sym : S) {
+		for (Object sym : L) {
 			if (!is_first) {
 				_Body.push(", ");
 			}
@@ -1435,9 +1434,9 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		String has_post_visit = Boolean.toString((bfs.get_bbody() != null) && (bfs.get_bbody().get_sents().size() >= 1));
 
-		ast_extra_info_set info = (ast_extra_info_set) bfs.find_info(CPPBE_INFO_BFS_SYMBOLS);
-		HashSet<Object> SET = info.get_set();
-		gm_symtab_entry graph_sym = (gm_symtab_entry) (SET.iterator().next());
+		ast_extra_info_list info = (ast_extra_info_list) bfs.find_info(CPPBE_INFO_BFS_SYMBOLS);
+		LinkedList<Object> LIST = info.get_list();
+		gm_symtab_entry graph_sym = (gm_symtab_entry) (LIST.getFirst());
 		String template_name = (bfs.is_bfs() ? BFS_TEMPLATE : DFS_TEMPLATE);
 
 		temp = String.format("class %s : public %s", bfs_name, template_name);
@@ -1464,10 +1463,10 @@ public class gm_cpp_gen extends BackendGenerator {
 		// constructor
 		// ------------------------------------------
 		boolean is_first = true;
-		int total = SET.size();
+		int total = LIST.size();
 		int i = 0;
 		int NL = 3;
-		for (Object tmp : SET) {
+		for (Object tmp : LIST) {
 			gm_symtab_entry sym = (gm_symtab_entry) tmp;
 			if (!is_first)
 				_Body.push(", ");
@@ -1497,7 +1496,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		is_first = true;
 		NL = 6;
 		i = 0;
-		for (Object tmp : SET) {
+		for (Object tmp : LIST) {
 			gm_symtab_entry sym = (gm_symtab_entry) tmp;
 			if (!is_first)
 				_Body.push(", ");
@@ -1520,7 +1519,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		_Body.popIndent();
 		_Body.pushln("private:  // list of varaibles");
 		_Body.pushIndent();
-		for (Object tmp : SET) {
+		for (Object tmp : LIST) {
 			gm_symtab_entry sym = (gm_symtab_entry) tmp;
 			ast_typedecl t = sym.getType();
 			_Body.push(get_type_string(t));

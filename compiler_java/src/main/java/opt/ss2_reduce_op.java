@@ -139,42 +139,39 @@ public class ss2_reduce_op extends gm_apply {
 			switch (rtype) {
 			case GMREDUCE_AVG: // go through
 			case GMREDUCE_PLUS:
-				t_name_base = "_S";
+				t_name_base = "__S";
 				break; // Sum
 			case GMREDUCE_MULT:
-				t_name_base = "_P";
+				t_name_base = "__P";
 				break; // Product
 			case GMREDUCE_MIN:
-				t_name_base = "_Mn";
+				t_name_base = "__Mn";
 				break; // Min
 			case GMREDUCE_MAX:
-				t_name_base = "_Mx";
+				t_name_base = "__Mx";
 				break; // Max
 			case GMREDUCE_AND:
-				t_name_base = "_A";
+				t_name_base = "__A";
 				break;
 			case GMREDUCE_OR:
-				t_name_base = "_E";
+				t_name_base = "__E";
 				break;
 			default:
 				assert false;
 				break;
 			}
 
-			// FIXME: was need_count_for_avg - seems to be a bug in the cpp
-			// compiler
-			boolean need_count_for_avg1 = false;
 			if (is_avg) {
 				rtype = GM_REDUCE_T.GMREDUCE_PLUS; // Need sum
 
-				need_count_for_avg1 = true;
+				need_count_for_avg = true;
 				if (target.get_filter() == null) {
 					GMTYPE_T iter_type = target.get_iter_type();
 					GMTYPE_T src_type = target.get_source().getTypeInfo().getTypeSummary();
 					if (find_count_function(src_type, iter_type) == gm_method_id_t.GM_BLTIN_END)
-						need_count_for_avg1 = true;
+						need_count_for_avg = true;
 					else
-						need_count_for_avg1 = false;
+						need_count_for_avg = false;
 				}
 			}
 

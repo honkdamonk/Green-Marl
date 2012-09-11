@@ -1,42 +1,3 @@
-diff --git a/src/Makefile b/src/Makefile
-index 85158cb..adcb840 100644
---- a/src/Makefile
-+++ b/src/Makefile
-@@ -12,8 +12,7 @@ ifneq ($(UNAME),Darwin)
-     LDFLAGS += -lrt
- endif
- 
--
--# where to find sorce codes
-+# where to find source codes
- vpath %.h  inc
- vpath %.c parse
- vpath %.l parse
-@@ -73,6 +72,8 @@ SRCS2 =\
-        gm_merge_loops.cc gm_moveup_propdecl.cc\
-        gm_check_property_argument_usage.cc\
-        gm_opt_nonconf_reduce.cc\
-+       gm_opt_remove_unused_scalar.cc\
-+       gm_opt_propagate_trivial_writes.cc\
-        gm_flip_edges.cc\
-        gm_cpp_opt.cc\
-        gm_cpp_opt_select_par.cc\
-@@ -80,6 +81,7 @@ SRCS2 =\
-        gm_cpp_opt_reduce_scalar.cc \
-        gm_cpp_opt_check_feasible.cc \
-        gm_cpp_opt_save_bfs.cc\
-+	   gm_cpp_opt_common_nbr.cc\
-        gm_cpp_gen.cc \
-        gm_cpp_gen_bfs.cc \
-        gm_cpp_gen_foreach.cc\
-@@ -100,6 +102,7 @@ SRCS2 =\
-        gm_gps_opt_simplify_expr1.cc\
-        gm_gps_opt_split_loops_for_flipping.cc\
-        gm_gps_opt_transform_bfs.cc\
-+	   gm_gps_opt_edge_iteration.cc\
-        gm_gps_create_stages.cc \
-        gm_gps_check_synthesizable.cc\
-        gm_gps_bb_split.cc\
 diff --git a/src/backend_cpp/gm_cpp_gen.cc b/src/backend_cpp/gm_cpp_gen.cc
 index f7735c4..b6ce23c 100644
 --- a/src/backend_cpp/gm_cpp_gen.cc
@@ -55,29 +16,6 @@ index f7735c4..b6ce23c 100644
      } else
          return get_lib()->get_type_string(t);
  
-@@ -385,20 +392,16 @@ void gm_cpp_gen::generate_sent_foreach(ast_foreach* f) {
-         }
-         Body.pushln("}");
- 
-+    } else if (f->get_body()->get_nodetype() == AST_SENTBLOCK) {
-+        generate_sent(f->get_body());
-     } else {
--        if (f->get_body()->get_nodetype() != AST_SENTBLOCK) {
-             Body.push_indent();
--        }
-         generate_sent(f->get_body());
--        if (f->get_body()->get_nodetype() != AST_SENTBLOCK) {
-             Body.pop_indent();
-             Body.NL();
-         }
-     }
- 
--    return;
--}
--
- void gm_cpp_gen::generate_sent_call(ast_call* c) {
-     assert(c->is_builtin_call());
-     generate_expr_builtin(c->get_builtin());
 @@ -470,7 +473,7 @@ void gm_cpp_gen::declare_prop_def(ast_typedecl* t, ast_id * id) {
  void gm_cpp_gen::generate_sent_vardecl(ast_vardecl* v) {
      ast_typedecl* t = v->get_type();
@@ -164,148 +102,6 @@ index f7735c4..b6ce23c 100644
      } else {
          generate_lhs_field(a->get_lhs_field());
      }
-diff --git a/src/backend_cpp/gm_cpp_gen_bfs.cc b/src/backend_cpp/gm_cpp_gen_bfs.cc
-index 9531cd8..92c664e 100644
---- a/src/backend_cpp/gm_cpp_gen_bfs.cc
-+++ b/src/backend_cpp/gm_cpp_gen_bfs.cc
-@@ -97,9 +97,9 @@ void gm_cpp_gen::generate_bfs_def(ast_bfs* bfs) {
- 
-     const char* has_post_visit = bool_string((bfs->get_bbody() != NULL) && (bfs->get_bbody()->get_sents().size() >= 1));
- 
--    ast_extra_info_set* info = (ast_extra_info_set*) bfs->find_info(CPPBE_INFO_BFS_SYMBOLS);
--    std::set<void*>& SET = info->get_set();
--    std::set<void*>::iterator S;
-+    ast_extra_info_list* info = (ast_extra_info_list*) bfs->find_info(CPPBE_INFO_BFS_SYMBOLS);
-+    std::list<void*>& SET = info->get_list();
-+    std::list<void*>::iterator S;
-     gm_symtab_entry* graph_sym = (gm_symtab_entry*) (*(SET.begin()));
-     const char* template_name = (bfs->is_bfs() ? BFS_TEMPLATE : DFS_TEMPLATE);
- 
-@@ -221,10 +221,10 @@ void gm_cpp_gen::generate_sent_bfs(ast_bfs* bfs) {
-     //-------------------------------------------
-     // give every entry that are used
-     //-------------------------------------------
--    ast_extra_info_set* syms = (ast_extra_info_set*) bfs->find_info(CPPBE_INFO_BFS_SYMBOLS);
-+    ast_extra_info_list* syms = (ast_extra_info_list*) bfs->find_info(CPPBE_INFO_BFS_SYMBOLS);
-     assert(syms != NULL);
--    std::set<void*>& S = syms->get_set();
--    std::set<void*>::iterator I;
-+    std::list<void*>& S = syms->get_list();
-+    std::list<void*>::iterator I;
-     bool is_first = true;
-     for (I = S.begin(); I != S.end(); I++) {
-         if (!is_first) {
-diff --git a/src/backend_cpp/gm_cpp_gen_check_bfs.cc b/src/backend_cpp/gm_cpp_gen_check_bfs.cc
-index 6e442c9..f8fbdd4 100644
---- a/src/backend_cpp/gm_cpp_gen_check_bfs.cc
-+++ b/src/backend_cpp/gm_cpp_gen_check_bfs.cc
-@@ -30,11 +30,16 @@ public:
-         set_separate_post_apply(true);
-     }
- 
--    void process_rwinfo(gm_rwinfo_map& MAP, std::set<void*>& SET) {
-+    void process_rwinfo(gm_rwinfo_map& MAP, std::list<void*>& LIST) {
-         gm_rwinfo_map::iterator I;
-         for (I = MAP.begin(); I != MAP.end(); I++) {
-             gm_symtab_entry* e = I->first;
--            SET.insert(e);
-+            // eliminate duplicates
-+            std::list<void*>::iterator L_I;
-+            for (L_I = LIST.begin(); L_I != LIST.end(); L_I++) {            
-+              if (((gm_symtab_entry*)*L_I) == e) break;
-+            }
-+            if (L_I == LIST.end()) LIST.push_back(e);
- 
-             gm_rwinfo_list* use = I->second;
-             (assert(use!=NULL));
-@@ -42,11 +47,29 @@ public:
-             for (K = use->begin(); K != use->end(); K++) {
-                 gm_symtab_entry* driver = (*K)->driver;
-                 if (driver != NULL) {
--                    SET.insert(driver);
-+                    // eliminate duplicates
-+                    for (L_I = LIST.begin(); L_I != LIST.end(); L_I++) {            
-+                        if (((gm_symtab_entry*)*L_I) == driver) break;
-+                    }
-+                    if (L_I == LIST.end()) LIST.push_back(driver);
-+
-+                    LIST.push_back(driver);
-                     ast_id* g = driver->getType()->get_target_graph_id();
-                     ast_id* c = driver->getType()->get_target_collection_id();
--                    if (g != NULL) SET.insert(g->getSymInfo());
--                    if (c != NULL) SET.insert(c->getSymInfo());
-+                    if (g != NULL) {
-+                        // eliminate duplicates
-+                        for (L_I = LIST.begin(); L_I != LIST.end(); L_I++) {            
-+                            if (((gm_symtab_entry*)*L_I) == g->getSymInfo()) break;
-+                        }
-+                        if (L_I == LIST.end()) LIST.push_back(g->getSymInfo());
-+                    }
-+                    if (c != NULL) {
-+                        // eliminate duplicates
-+                        for (L_I = LIST.begin(); L_I != LIST.end(); L_I++) {            
-+                            if (((gm_symtab_entry*)*L_I) == c->getSymInfo()) break;
-+                        }
-+                        if (L_I == LIST.end()) LIST.push_back(c->getSymInfo());
-+                    }
-                 }
-             }
-         }
-@@ -54,13 +77,13 @@ public:
- 
-     bool apply(ast_sent* s) {
-         if (s->get_nodetype() == AST_BFS) {
--            ast_extra_info_set* syms = new ast_extra_info_set();
--            std::set<void*> &S = syms->get_set();
-+            ast_extra_info_list* syms = new ast_extra_info_list();
-+            std::list<void*> &L = syms->get_list();
- 
-             // insert graph symbol at the first
-             gm_symtab_entry* graph = ((ast_bfs*) s)->get_root()->getTypeInfo()->get_target_graph_sym();
- 
--            S.insert(graph);
-+            L.push_back(graph);
- 
-             // are symbols that are read/writen inside bfs
-             gm_rwinfo_sets* RWINFO = gm_get_rwinfo_sets(s);
-@@ -70,9 +93,9 @@ public:
-             gm_rwinfo_map& WS = RWINFO->write_set;
-             gm_rwinfo_map& DS = RWINFO->reduce_set;
- 
--            process_rwinfo(RS, S);
--            process_rwinfo(WS, S);
--            process_rwinfo(DS, S);
-+            process_rwinfo(RS, L);
-+            process_rwinfo(WS, L);
-+            process_rwinfo(DS, L);
- 
-             s->add_info(CPPBE_INFO_BFS_SYMBOLS, syms);
-             has_bfs = true;
-@@ -103,8 +126,8 @@ public:
-             ast_id * driver = bin->get_driver();
-             if (driver != NULL) {
- 
--                std::set<void*>& SET = ((ast_extra_info_set*) current_bfs->find_info(CPPBE_INFO_BFS_SYMBOLS))->get_set();
--                SET.insert(driver->getSymInfo());
-+                std::list<void*>& LIST = ((ast_extra_info_list*) current_bfs->find_info(CPPBE_INFO_BFS_SYMBOLS))->get_list();
-+                LIST.push_back(driver->getSymInfo());
-             }
-         }
-         return true;
-diff --git a/src/backend_cpp/gm_cpp_gen_foreach.cc b/src/backend_cpp/gm_cpp_gen_foreach.cc
-index b399ccf..9e2fdaf 100644
---- a/src/backend_cpp/gm_cpp_gen_foreach.cc
-+++ b/src/backend_cpp/gm_cpp_gen_foreach.cc
-@@ -26,7 +26,8 @@ bool gm_cpplib::need_up_initializer(ast_foreach* f) {
-     int iter_type = f->get_iter_type();
-     if (gm_is_iteration_on_collection(iter_type))
-         return true;
--    else if (gm_is_common_nbr_iter_type(iter_type)) return true;
-+    else if (gm_is_common_nbr_iter_type(iter_type))
-+        return true;
-     return false;
- }
- 
 @@ -57,6 +58,10 @@ void gm_cpplib::generate_up_initializer(ast_foreach* f, gm_code_writer& Body) {
          const char* prep_str = f->is_parallel() ? "prepare_par_iteration" : f->is_reverse_iteration() ? "prepare_rev_iteration" : "prepare_seq_iteration";
  
@@ -852,47 +648,6 @@ diff --git a/src/backend_giraph/gm_giraph_gen.cc b/src/backend_giraph/gm_giraph_
 index f1a732a..c7c00b0 100644
 --- a/src/backend_giraph/gm_giraph_gen.cc
 +++ b/src/backend_giraph/gm_giraph_gen.cc
-@@ -4,6 +4,7 @@
- #include "gm_code_writer.h"
- #include "gm_frontend.h"
- #include "gm_transform_helper.h"
-+#include "gm_argopts.h"
- 
- //--------------------------------------------------------------
- // A Back-End for GIRAPH generation
-@@ -35,6 +36,32 @@ void gm_giraph_gen::init_gen_steps() {
- //----------------------------------------------------
- // Main Generator
- //----------------------------------------------------
-+bool gm_giraph_gen::do_generate() {
-+    FE.prepare_proc_iteration();
-+    ast_procdef* proc = FE.get_next_proc();
-+
-+    // Check whether procedure name is the same as the filename
-+    char* proc_name = proc->get_procname()->get_genname();
-+    if (strcmp(proc_name, fname) != 0) {
-+        gm_backend_error(GM_ERROR_GPS_PROC_NAME, proc->get_procname()->get_genname(), fname);
-+        return false;
-+    }
-+
-+    // Append 'Vertex' to filename if we only generate vertex logic
-+    if (OPTIONS.get_arg_bool(GMARGFLAG_GIRAPH_VERTEX_ONLY)) {
-+        char filename[256];
-+        sprintf(filename, "%sVertex", proc->get_procname()->get_genname());
-+        PREGEL_BE->setFileName(filename);
-+    }
-+
-+    if (!open_output_files()) return false;
-+
-+    bool b = gm_apply_compiler_stage(get_gen_steps());
-+
-+    close_output_files();
-+
-+    return b;
-+}
- 
- void gm_giraph_gen::write_headers() {
-     get_lib()->generate_headers(Body);
 @@ -63,21 +90,26 @@ void gm_giraph_gen::do_generate_global_variables() {
  }
  
@@ -1657,20 +1412,6 @@ index 8fcaa19..3041ea8 100644
      Body.push(temp);
      get_main()->generate_rhs_id(sym->getId());
      sprintf(temp, "), %s);", get_random_write_message_name(sym));
-diff --git a/src/backend_gps/gm_gps_bb_merge_again.cc b/src/backend_gps/gm_gps_bb_merge_again.cc
-index 6813605..65d3de1 100644
---- a/src/backend_gps/gm_gps_bb_merge_again.cc
-+++ b/src/backend_gps/gm_gps_bb_merge_again.cc
-@@ -351,7 +351,9 @@ static void find_linear_segments(gps_bb* current, std::list<gps_bb*>& current_li
-     }
- 
-     if (continue_current_list) {
-+        if (current->get_num_exits() > 0) {
-         find_linear_segments(current->get_nth_exit(0), current_list, all_lists, visited);
-+        }
-     } else { //finish_current_list
-         if (current_list.size() > 0) all_lists.push_back(current_list); // end of segment
- 
 diff --git a/src/backend_gps/gm_gps_gen.cc b/src/backend_gps/gm_gps_gen.cc
 index acfcf4e..0007924 100644
 --- a/src/backend_gps/gm_gps_gen.cc
@@ -1933,14 +1674,6 @@ index d358231..2d12e3a 100644
              in_bfs = true;
              current_bfs = (ast_bfs*) s;
              BFS.push_back(current_bfs);
-@@ -146,6 +148,7 @@ static ast_sentblock* create_fw_body_prepare(ast_sentblock* while_sb, ast_bfs* b
-     
- }
- 
-+
- static void create_user_body_main(ast_sentblock* sb_to_add, ast_bfs* bfs, ast_foreach* out_loop, gm_symtab_entry* lev_sym, gm_symtab_entry* curr_sym, bool is_fw);
- 
- static void create_fw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry* lev_sym, gm_symtab_entry* curr_sym, gm_symtab_entry* fin_sym) {
 @@ -156,7 +159,7 @@ static void create_fw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
      //       Foreach(v:G.Nodes) {
      //          if (v.level == curr_level) {
@@ -1985,14 +1718,6 @@ index d358231..2d12e3a 100644
      inner_sb->add_sent(lev_check_in_if);
  
      // increase level
-@@ -329,6 +349,7 @@ static void create_bw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
-     foreach_sb->add_sent(lev_check_out_if);
- 
- 
-+
-     create_user_body_main(lev_check_out_sb, bfs, foreach_out, lev_sym, curr_sym, false);
- 
-     // decrease curr level
 @@ -341,10 +362,6 @@ static void create_bw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
  
  
@@ -2069,14 +1794,6 @@ diff --git a/src/common/gm_dumptree.cc b/src/common/gm_dumptree.cc
 index aa2e69b..71cc0d3 100644
 --- a/src/common/gm_dumptree.cc
 +++ b/src/common/gm_dumptree.cc
-@@ -30,6 +30,7 @@ void ast_idlist::dump_tree(int ind_lv) {
-     }
-     printf("]");
- }
-+
- void ast_field::dump_tree(int ind_level) {
-     assert(parent!=NULL);
-     IND(ind_level);
 @@ -40,6 +41,17 @@ void ast_field::dump_tree(int ind_level) {
      printf("]");
  }
@@ -2099,14 +1816,6 @@ diff --git a/src/common/gm_error.cc b/src/common/gm_error.cc
 index fc84967..17b1669 100644
 --- a/src/common/gm_error.cc
 +++ b/src/common/gm_error.cc
-@@ -107,7 +107,6 @@ void gm_type_error(int errno, int l, int c, const char* str1, const char* str2,
-         case GM_ERROR_INCONSISTENT_ARGMAX:
-             printf("LHS list of argmiax assignment is not consistent; They should be all scalar or have same driver\n");
-             break;
--
-         case GM_ERROR_NESTED_BFS:
-             printf("Currently, nested bfs/dfs is not supported\n");
-             break;
 @@ -147,6 +146,9 @@ void gm_type_error(int errno, int l, int c, const char* str1, const char* str2,
          case GM_ERROR_COMPARE_MISMATCH:
              printf("Typemismatch in Comparison. LHS:%s, RHS:%s \n", str1, str2);
@@ -2117,19 +1826,6 @@ index fc84967..17b1669 100644
          case GM_ERROR_NEED_BOOLEAN:
              printf("Need boolean expression.\n");
              break;
-diff --git a/src/common/gm_main.cc b/src/common/gm_main.cc
-index c0137bd..5552a73 100644
---- a/src/common/gm_main.cc
-+++ b/src/common/gm_main.cc
-@@ -25,8 +25,6 @@
- #include "gm_argopts.h"
- #include "gm_ind_opt.h"
- 
--//const char* GM_version_info = "0.1"; // moved to common/gm_verion_string
--
- gm_frontend FE;
- gm_cpp_gen CPP_BE;  // CPP Backend
- gm_gps_gen GPS_BE;  // GPS Backend
 diff --git a/src/common/gm_misc.cc b/src/common/gm_misc.cc
 index 446761e..1c9b05a 100644
 --- a/src/common/gm_misc.cc
@@ -3166,14 +2862,6 @@ diff --git a/src/frontend/gm_typecheck_oprules.cc b/src/frontend/gm_typecheck_op
 index 7f2d801..d7618d9 100644
 --- a/src/frontend/gm_typecheck_oprules.cc
 +++ b/src/frontend/gm_typecheck_oprules.cc
-@@ -77,6 +77,7 @@ static void init_op_rules() {
- 
- }
- ;
-+
- void gm_frontend::init_op_type_rules() {
-     init_op_rules();
- }
 @@ -226,6 +227,10 @@ bool gm_is_compatible_type(int op, int t1, int t2, int& op_result_type, int& t1_
          t2 = t1;
      }
@@ -3185,56 +2873,6 @@ index 7f2d801..d7618d9 100644
      for (int i = 0; i < (int) GM_TYPE_RULES.size(); i++) {
          gm_type_rule& R = GM_TYPE_RULES[i];
  
-diff --git a/src/inc/gm_argopts.h b/src/inc/gm_argopts.h
-index 44ff142..ceeb1f2 100644
---- a/src/inc/gm_argopts.h
-+++ b/src/inc/gm_argopts.h
-@@ -42,26 +42,33 @@ static const char* GMARGFLAG_FLIP_BFSUP = "FlipUp";
- 
- static const char* GMARGFLAG_MERGE_BB = "GPSMerge";
- static const char* GMARGFLAG_MERGE_BB_INTRA = "GPSMergeIntra";
-+static const char* GMARGFLAG_GIRAPH_VERTEX_ONLY = "GiraphVertexOnly";
- //static const char* GMARGFLAG_DUMPIR = "Dd";
- //static const char* GMARGFLAG_NOMERGE = "NoMerge";
- //static const char* GMARGFLAG_NOSCREDUCE = "NoScalarReduce";
- 
- // Add compiler options here
--static struct GM_comp_args GM_compiler_options[] = { { GMARGFLAG_HELP, GMARG_NULL, "Print help messages", NULL }, { GMARGFLAG_VERSION, GMARG_NULL,
--        "Print version", NULL }, { GMARGFLAG_TARGET, GMARG_STRING, "Target backend. Current valid targets are 'cpp_omp', 'cpp_seq', 'gps' and 'giraph'.", "cpp_omp" }, {
--        GMARGFLAG_OUTDIR, GMARG_STRING, "Output directory.", "." }, { GMARGFLAG_OPT_LEV, GMARG_INT, "Optimization Level (tobe implemented)", "1" }, {
--        GMARGFLAG_VERB_LEV, GMARG_INT, "Verbosity Level 0:silent, 1:show compile stage", "0" },
--
--{ GMARGFLAG_FLIP_BFSUP, GMARG_BOOL, "Enable 'flipping edges for BFS Up-nbrs'", "1" }, { GMARGFLAG_FLIP_REVERSE, GMARG_BOOL,
--        "Enable 'flipping edges' to avoid the use of reverse edges", "0" }, { GMARGFLAG_FLIP_PULL, GMARG_BOOL,
--        "Enable 'flipping edges' to avoid the use of pull-based computation", "0" }, { GMARGFLAG_MERGE_BB, GMARG_BOOL, "(For gps) Enable bb merge optimization",
--        "1" }, { GMARGFLAG_MERGE_BB_INTRA, GMARG_BOOL, "(For gps) Enable intra-loop bb merge optimization", "1" },
-+static struct GM_comp_args GM_compiler_options[] = {
-+        { GMARGFLAG_HELP, GMARG_NULL, "Print help messages", NULL },
-+        { GMARGFLAG_VERSION, GMARG_NULL, "Print version", NULL },
-+        { GMARGFLAG_TARGET, GMARG_STRING, "Target backend. Current valid targets are 'cpp_omp', 'cpp_seq', 'gps' and 'giraph'.", "cpp_omp" },
-+        { GMARGFLAG_OUTDIR, GMARG_STRING, "Output directory.", "." },
-+        { GMARGFLAG_OPT_LEV, GMARG_INT, "Optimization Level (tobe implemented)", "1" },
-+        { GMARGFLAG_VERB_LEV, GMARG_INT, "Verbosity Level 0:silent, 1:show compile stage", "0" },
-+
-+        { GMARGFLAG_FLIP_BFSUP, GMARG_BOOL, "Enable 'flipping edges for BFS Up-nbrs'", "1" },
-+        { GMARGFLAG_FLIP_REVERSE, GMARG_BOOL, "Enable 'flipping edges' to avoid the use of reverse edges", "0" },
-+        { GMARGFLAG_FLIP_PULL, GMARG_BOOL, "Enable 'flipping edges' to avoid the use of pull-based computation", "0" },
-+        { GMARGFLAG_MERGE_BB, GMARG_BOOL, "(For gps) Enable bb merge optimization", "1" },
-+        { GMARGFLAG_MERGE_BB_INTRA, GMARG_BOOL, "(For gps) Enable intra-loop bb merge optimization", "1" },
- 
- { GMARGFLAG_STOP_STRING, GMARG_STRING, "(For debug) Stop the compiler after certain stage. <string>=(step)[.(step)]", "0" },
- 
--{ GMARGFLAG_REPRODUCE, GMARG_BOOL, "(For debug) When stopped, reproduce green-marl program", "1" }, { GMARGFLAG_PRINTRW, GMARG_BOOL,
--        "(For debug) When stopped, print rw analysis information", "0" }, { GMARGFLAG_PRINTBB, GMARG_BOOL,
--        "(For gps-debug) When stopped, print basicblock information", "0" },
-+        { GMARGFLAG_REPRODUCE, GMARG_BOOL, "(For debug) When stopped, reproduce green-marl program", "1" },
-+        { GMARGFLAG_PRINTRW, GMARG_BOOL, "(For debug) When stopped, print rw analysis information", "0" },
-+        { GMARGFLAG_PRINTBB, GMARG_BOOL, "(For gps-debug) When stopped, print basicblock information", "0" },
-+
-+        { GMARGFLAG_GIRAPH_VERTEX_ONLY, GMARG_BOOL, "(For giraph) Only generate vertex logic", "0" },
- 
- //{GMARGFLAG_DUMPIR, GMARG_BOOL, "(For internal debug) When stopped, dump IR tree", "0"},
- //{GMARGFLAG_NOMERGE, GMARG_BOOL, "(For Paper writing) Disable Loop Merging", "0"},
 diff --git a/src/inc/gm_ast.h b/src/inc/gm_ast.h
 index 319459b..a54f1c0 100644
 --- a/src/inc/gm_ast.h
@@ -3255,30 +2893,6 @@ index 319459b..a54f1c0 100644
      AST_SENT,     // 
      AST_SENTBLOCK, // { ... }
      AST_ASSIGN,   // C =D
-@@ -478,6 +480,7 @@ public:
-         delete first;
-         delete second;
-     }
-+
-     virtual void reproduce(int id_level);
-     virtual void dump_tree(int id_level);
- 
-@@ -485,6 +488,7 @@ private:
-     ast_field() :
-             ast_node(AST_FIELD), first(NULL), second(NULL), rarrow(false) {
-     }
-+
-     ast_field(ast_id* l, ast_id* f) :
-             ast_node(AST_FIELD), first(l), second(f), rarrow(false) {
-         first->set_parent(this);
-@@ -492,6 +496,7 @@ private:
-         this->line = first->get_line();
-         this->col = first->get_col();
-     }
-+
- public:
-     static ast_field* new_field(ast_id* l, ast_id* f, bool is_r_arrow = false) {
-         ast_field* af = new ast_field(l, f);
 @@ -568,7 +573,7 @@ private:
  
  class ast_typedecl: public ast_node
@@ -3483,62 +3097,6 @@ index 319459b..a54f1c0 100644
      ast_expr* left;
      ast_expr* right;
 @@ -1402,62 +1496,85 @@ public:
-     bool is_biop() {
-         return (expr_class == GMEXPR_BIOP) || (expr_class == GMEXPR_LBIOP);
-     }
-+
-     bool is_uop() {
-         return (expr_class == GMEXPR_UOP) || (expr_class == GMEXPR_LUOP);
-     }
-+
-     bool is_comp() {
-         return (expr_class == GMEXPR_COMP);
-     }
-+
-     bool is_id() {
-         return expr_class == GMEXPR_ID;
-     }
-+
-     bool is_nil() {
-         return expr_class == GMEXPR_NIL;
-     }
-+
-     bool is_field() {
-         return expr_class == GMEXPR_FIELD;
-     }
-+
-     bool is_int_literal() {
-         return expr_class == GMEXPR_IVAL;
-     }
-+
-     bool is_float_literal() {
-         return expr_class == GMEXPR_FVAL;
-     }
-+
-     bool is_boolean_literal() {
-         return expr_class == GMEXPR_BVAL;
-     }
-+
-     bool is_inf() {
-         return expr_class == GMEXPR_INF;
-     }
-+
-     bool is_literal() {
-         return is_int_literal() || is_float_literal() || is_boolean_literal() || is_inf();
-     }
-+
-     bool is_reduction() {
-         return expr_class == GMEXPR_REDUCE;
-     }
-+
-     bool is_builtin() {
-         return expr_class == GMEXPR_BUILTIN || expr_class == GMEXPR_BUILTIN_FIELD;
-     }
-+
-     bool is_terop() {
-         return expr_class == GMEXPR_TER;
-     }
-+
      bool is_foreign() {
          return expr_class == GMEXPR_FOREIGN;
      }
@@ -3722,14 +3280,6 @@ index 319459b..a54f1c0 100644
  class ast_expr_foreign: public ast_expr
  {
  public:
-@@ -1783,6 +2024,7 @@ public:
-         delete src2;
-         delete_symtabs();
-     }
-+
-     static ast_expr_reduce*
-     new_reduce_expr(int optype, ast_id* iter, ast_id* src, int iter_op, ast_expr* body, ast_expr* filter = NULL) {
-         ast_expr_reduce *e = new ast_expr_reduce();
 @@ -1813,43 +2055,55 @@ public:
          return true;
      }
@@ -3742,58 +3292,6 @@ index 319459b..a54f1c0 100644
      void set_iter_type(int i) {
          iter_type = i;
      }
-+
-     int get_reduce_type() {
-         return reduce_type;
-     }
-+
-     ast_id* get_source() {
-         return src;
-     }
-+
-     ast_id* get_iterator() {
-         return iter;
-     }
-+
-     ast_expr* get_filter() {
-         return filter;
-     }
-+
-     ast_expr* get_body() {
-         return body;
-     }
-+
-     ast_id* get_source2() {
-         return src2;
-     }
- 
-+
-     void set_source2(ast_id* i) {
-         src2 = i;
-         if (i != NULL) i->set_parent(this);
-     }
-+
-     void set_filter(ast_expr* e) {
-         filter = e;
-         if (e != NULL) e->set_parent(this);
-     }
-+
-     void set_body(ast_expr* e) {
-         body = e;
-         if (e != NULL) e->set_parent(this);
-     }
-+
-     virtual ast_expr* copy(bool cp_syminfo = false);
- 
- private:
-@@ -1858,6 +2112,7 @@ private:
-         set_nodetype(AST_EXPR_RDC);
-         create_symtabs();
-     }
-+
-     ast_id* iter;
-     ast_id* src;
-     ast_id* src2;
 @@ -1874,11 +2129,14 @@ enum gm_assignment_t
  {
      GMASSIGN_NORMAL, GMASSIGN_REDUCE, GMASSIGN_DEFER, GMASSIGN_INVALID
@@ -3810,14 +3308,6 @@ index 319459b..a54f1c0 100644
  class ast_assign: public ast_sent
  {
  public:
-@@ -1906,6 +2164,7 @@ public:
-         A->reduce_type = reduce_type; // reduce or defer type
-         return A;
-     }
-+
-     static ast_assign* new_assign_field(ast_field* id, ast_expr* r, int assign_type = GMASSIGN_NORMAL, ast_id* itor = NULL, int reduce_type = GMREDUCE_NULL) {
-         // assign to property
-         ast_assign* A = new ast_assign();
 @@ -1930,15 +2189,19 @@ public:
      int get_assign_type() {
          return assign_type;
@@ -3827,40 +3317,7 @@ index 319459b..a54f1c0 100644
 +    virtual int get_lhs_type() {
          return lhs_type;
      }
-+
-     int get_reduce_type() {
-         return reduce_type;
-     }
-+
-     void set_assign_type(int a) {
-         assign_type = a;
-     }
-+
-     void set_reduce_type(int a) {
-         reduce_type = a;
-     }
 @@ -1946,28 +2209,40 @@ public:
-     ast_id* get_lhs_scala() {
-         return lhs_scala;
-     }
-+
-     ast_field* get_lhs_field() {
-         return lhs_field;
-     }
-+
-     ast_expr* get_rhs() {
-         return rhs;
-     }
-+
-     ast_id* get_bound() {
-         return bound;
-     }
-+
-     void set_bound(ast_id* i) {
-         bound = i;
-         if (bound != NULL) i->set_parent(this);
-     }
-+
      bool is_reduce_assign() {
          return assign_type == GMASSIGN_REDUCE;
      }
@@ -4145,20 +3602,6 @@ index f7c85e2..270c3d3 100644
      virtual void generate_broadcast_send_master(ast_id* id, gm_code_writer& Body);
      virtual void generate_broadcast_receive_master(ast_id* id, gm_code_writer& Body, int reduce_op = GMREDUCE_NULL);
      virtual void generate_headers(gm_code_writer& Body);
-@@ -87,6 +88,13 @@ public:
-     virtual void generate_message_send_for_random_write(ast_sentblock* sb, gm_symtab_entry* sym, gm_code_writer& Body);
- 
-     virtual void generate_expr_builtin(ast_expr_builtin* e, gm_code_writer& Body, bool is_master);
-+
-+    virtual bool is_node_type_int() {
-+        return true;
-+    }
-+    virtual bool is_edge_type_int() {
-+        return true;
-+    }
- };
- 
- //-----------------------------------------------------------------
 @@ -129,10 +137,11 @@ protected:
      void do_generate_scalar_broadcast_receive(gm_gps_basic_block *b);
      void do_generate_shared_variables_keys();
@@ -4173,14 +3616,6 @@ index f7c85e2..270c3d3 100644
      void do_generate_message_class();
      void do_generate_vertex_states();
      void do_generate_vertex_state_body(gm_gps_basic_block *b);
-@@ -146,6 +155,7 @@ private:
- 
- public:
-     // from code generator interface
-+    virtual bool do_generate();
-     virtual void generate_proc(ast_procdef* p);
- 
- };
 diff --git a/src/inc/gm_backend_gps.h b/src/inc/gm_backend_gps.h
 index 1a2ad72..52a0e28 100644
 --- a/src/inc/gm_backend_gps.h
@@ -4227,59 +3662,6 @@ index cb11df8..5bf5f84 100644
      GM_BLTIN_END
  };
  
-@@ -92,29 +102,35 @@ const gm_builtin_desc_t GM_builtins[] = {
-         { "Edge:FromNode:Node:0", GM_BLTIN_EDGE_FROM, AUX_INFO(GM_BLTIN_INFO_NEED_FROM,GM_BLTIN_FLAG_TRUE) }, { "Edge:ToNode:Node:0", GM_BLTIN_EDGE_TO, "" },
- 
-         // Set:
--        { "N_S:Add:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_S:Remove:Void:1:Node", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_S:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" }, { "N_S:Union:Void:1:N_S",
--                GM_BLTIN_SET_UNION, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_S:Intersect:Void:1:N_S", GM_BLTIN_SET_INTERSECT,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_S:Complement:Void:1:N_S", GM_BLTIN_SET_COMPLEMENT,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_S:IsSubsetOf:Bool:1:N_S", GM_BLTIN_SET_SUBSET, "" },
-+        { "N_S:Add:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_S:Remove:Void:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_S:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" },
-+        { "N_S:Union:Void:1:N_S", GM_BLTIN_SET_UNION, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_S:Intersect:Void:1:N_S", GM_BLTIN_SET_INTERSECT, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_S:Complement:Void:1:N_S", GM_BLTIN_SET_COMPLEMENT, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_S:IsSubsetOf:Bool:1:N_S", GM_BLTIN_SET_SUBSET, "" },
-+        { "N_S:Size:Int", GM_BLTIN_SET_SIZE, "" },
- 
-         // Order:
--        { "N_O:PushBack:Void:1:Node", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "*Push", GM_BLTIN_SET_ADD_BACK,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_O:PushFront:Void:1:Node", GM_BLTIN_SET_ADD,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_O:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_O:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "*Pop", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_O:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" },
-+        { "N_O:PushBack:Void:1:Node", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "*Push", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_O:PushFront:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_O:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_O:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "*Pop", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_O:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" },
-+        { "N_O:Size:Int", GM_BLTIN_SET_SIZE, "" },
-         //{"NodeO:Front:Node:0",         GM_BLTIN_SET_PEEK,         ""},
-         //{"NodeO:Back:Node:0",          GM_BLTIN_SET_PEEK_BACK,    ""},
- 
-         // Seq:
--        { "N_Q:PushBack:Void:1:Node", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "*Push", GM_BLTIN_SET_ADD_BACK,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_Q:PushFront:Void:1:Node", GM_BLTIN_SET_ADD,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_Q:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_Q:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "*Pop", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_Q:PushBack:Void:1:Node", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "*Push", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_Q:PushFront:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_Q:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_Q:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "*Pop", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_Q:Size:Int", GM_BLTIN_SET_SIZE, "" },
-         //{"NodeQ:Front:Node:0",         GM_BLTIN_SET_PEEK,        ""},
-         //{"NodeQ:Back:Node:0",          GM_BLTIN_SET_PEEK_BACK,   ""},
- 
 @@ -123,6 +139,18 @@ const gm_builtin_desc_t GM_builtins[] = {
          { "_:Log:Double:1:Double", GM_BLTIN_TOP_LOG, "" },  // returns log(d)  // base-e
          { "_:Exp:Double:1:Double", GM_BLTIN_TOP_EXP, "" },  // returns e^d
@@ -4300,14 +3682,6 @@ index cb11df8..5bf5f84 100644
  
  class gm_builtin_def
 @@ -140,16 +168,33 @@ public:
-     int get_source_type_summary() {
-         return src_type;
-     }
-+
-     int get_result_type_summary() {
-         return res_type;
-     }
-+
      int get_arg_type(int i) {
          assert(i<num_args);
          return arg_types[i];
@@ -4508,30 +3882,6 @@ index f4a6aa4..e58f727 100644
  }
  
  enum GM_OPS_T
-@@ -369,18 +416,23 @@ inline static bool gm_is_numeric_op(int i) {
-     return (i == GMOP_MULT) || (i == GMOP_DIV) || (i == GMOP_MOD) || (i == GMOP_ADD) || (i == GMOP_SUB) || (i == GMOP_NEG) || (i == GMOP_ABS) || (i == GMOP_MAX)
-             || (i == GMOP_MIN);
- }
-+
- inline static bool gm_is_boolean_op(int i) {
-     return (i == GMOP_NOT) || (i == GMOP_AND) || (i == GMOP_OR);
- }
-+
- inline static bool gm_is_eq_op(int i) {
-     return (i == GMOP_EQ) || (i == GMOP_NEQ);
- }
-+
- inline static bool gm_is_less_op(int i) {
-     return (i == GMOP_GT) || (i == GMOP_LT) || (i == GMOP_GE) || (i == GMOP_LE);
- }
-+
- inline static bool gm_is_eq_or_less_op(int i) {
-     return gm_is_eq_op(i) || gm_is_less_op(i);
- }
-+
- inline static bool gm_is_ternary_op(int i) {
-     return (i == GMOP_TER);
- }
 @@ -398,7 +450,12 @@ inline bool gm_is_compatible_type_for_assign(int t_lhs, int t_rhs, int& t_new_rh
  
  enum GM_REDUCE_T
@@ -4546,71 +3896,7 @@ index f4a6aa4..e58f727 100644
      GMREDUCE_OR,      // logical OR
      GMREDUCE_AVG,     // average (syntactic sugar)
      GMREDUCE_DEFER,  // deferred assignment is not a reduce op. but shares a lot of properies
-@@ -410,9 +467,11 @@ inline static bool gm_is_strict_reduce_op(int t) {
-     return (t == GMREDUCE_PLUS) || (t == GMREDUCE_MULT) || (t == GMREDUCE_MIN) || (t == GMREDUCE_MAX) || (t == GMREDUCE_AND) || (t == GMREDUCE_OR)
-             || (t == GMREDUCE_AVG);
- }
-+
- inline static bool gm_is_numeric_reduce_op(int t) {
-     return (t == GMREDUCE_PLUS) || (t == GMREDUCE_MULT) || (t == GMREDUCE_MIN) || (t == GMREDUCE_MAX) || (t == GMREDUCE_AVG);
- }
-+
- inline static bool gm_is_boolean_reduce_op(int t) {
-     return (t == GMREDUCE_AND) || (t == GMREDUCE_OR);
- }
 @@ -429,46 +488,67 @@ inline static bool gm_is_iteration_on_property(int iterType) {
- inline static bool gm_is_iteration_on_set(int itype) {
-     return (itype == GMTYPE_NODEITER_SET) || (itype == GMTYPE_EDGEITER_SET);
- }
-+
- inline static bool gm_is_iteration_on_order(int itype) {
-     return (itype == GMTYPE_NODEITER_ORDER) || (itype == GMTYPE_EDGEITER_ORDER);
- }
-+
- inline static bool gm_is_iteration_on_sequence(int itype) {
-     return (itype == GMTYPE_NODEITER_SEQ) || (itype == GMTYPE_EDGEITER_SEQ);
- }
-+
- inline static bool gm_is_iteration_on_all_graph(int itype) {
-     return gm_is_all_graph_iter_type(itype);
- }
-+
- inline static bool gm_is_iteration_on_out_neighbors(int itype) {
-     return (itype == GMTYPE_EDGEITER_NBRS) || (itype == GMTYPE_NODEITER_NBRS);
- }
-+
- inline static bool gm_is_iteration_on_in_neighbors(int itype) {
-     return (itype == GMTYPE_EDGEITER_IN_NBRS) || (itype == GMTYPE_NODEITER_IN_NBRS);
- }
-+
- inline static bool gm_is_iteration_on_up_neighbors(int itype) {
-     return (itype == GMTYPE_EDGEITER_UP_NBRS) || (itype == GMTYPE_NODEITER_UP_NBRS);
- }
-+
- inline static bool gm_is_iteration_on_down_neighbors(int itype) {
-     return (itype == GMTYPE_EDGEITER_DOWN_NBRS) || (itype == GMTYPE_NODEITER_DOWN_NBRS);
- }
-+
- inline static bool gm_is_iteration_use_reverse(int itype) {
-     return gm_is_iteration_on_in_neighbors(itype) || gm_is_iteration_on_up_neighbors(itype);
- }
-+
- inline static bool gm_is_iteration_bfs(int itype) {
-     return (itype == GMTYPE_EDGEITER_BFS) || (itype == GMTYPE_NODEITER_BFS);
- }
-+
- inline static bool gm_is_iteration_on_nodes(int itype) {
-     return gm_is_node_iter_type(itype);
- }
-+
- inline static bool gm_is_iteration_on_edges(int itype) {
-     return gm_is_edge_iter_type(itype);
- }
-+
- inline static bool gm_is_iteration_on_updown_levels(int itype) {
-     return gm_is_iteration_on_up_neighbors(itype) || gm_is_iteration_on_down_neighbors(itype);
- }
-+
  inline static bool gm_is_iteration_on_neighbors_compatible(int itype) {
      return gm_is_any_nbr_node_iter_type(itype);
  }
@@ -4690,14 +3976,6 @@ index 5e05279..810392a 100644
          default:
              printf("type = %d\n", itype);
              assert(false);
-@@ -174,6 +178,7 @@ public:
-         g->org_lhs = org;
-         return g;
-     }
-+
-     static gm_rwinfo* new_range_inst(int range, bool always, ast_id* loc) {
-         gm_rwinfo *g = new gm_rwinfo();
-         g->always = always;
 diff --git a/src/inc/gm_transform_helper.h b/src/inc/gm_transform_helper.h
 index e359afd..357974b 100644
 --- a/src/inc/gm_transform_helper.h
@@ -5057,91 +4335,6 @@ index 0000000..87f2679
 +    gm_opt_remove_unused_t T2(T.get_used_set());
 +    proc->traverse_pre(&T2);
 +}
-diff --git a/src/opt/gm_syntax_sugar2.cc b/src/opt/gm_syntax_sugar2.cc
-index 98ae9b5..7ff9a52 100644
---- a/src/opt/gm_syntax_sugar2.cc
-+++ b/src/opt/gm_syntax_sugar2.cc
-@@ -239,34 +239,34 @@ void ss2_reduce_op::post_process_body(ast_expr_reduce* target) {
-         switch (rtype) {
-             case GMREDUCE_AVG:  // go through
-             case GMREDUCE_PLUS:
--                t_name_base = "_S";
-+                t_name_base = "__S";
-                 break; // Sum
-             case GMREDUCE_MULT:
--                t_name_base = "_P";
-+                t_name_base = "__P";
-                 break; // Product
-             case GMREDUCE_MIN:
--                t_name_base = "_Mn";
-+                t_name_base = "__Mn";
-                 break; // Min
-             case GMREDUCE_MAX:
--                t_name_base = "_Mx";
-+                t_name_base = "__Mx";
-                 break; // Max
-             case GMREDUCE_AND:
--                t_name_base = "_A";
-+                t_name_base = "__A";
-                 break;
-             case GMREDUCE_OR:
--                t_name_base = "_E";
-+                t_name_base = "__E";
-                 break;
-             default:
-                 assert(false);
-                 break;
-         }
- 
--        bool need_count_for_avg = false;
-         if (is_avg) {
-             rtype = GMREDUCE_PLUS; // Need sum
- 
-             need_count_for_avg = true;
-             if (target->get_filter() == NULL) {
-+
-                 int iter_type = target->get_iter_type();
-                 int src_type = target->get_source()->getTypeInfo()->getTypeSummary();
-                 if (find_count_function(src_type, iter_type) == GM_BLTIN_END)
-@@ -274,6 +274,7 @@ void ss2_reduce_op::post_process_body(ast_expr_reduce* target) {
-                 else
-                     need_count_for_avg = false;
-             }
-+
-         }
- 
-         // 1.2 initial value
-@@ -330,6 +331,7 @@ void ss2_reduce_op::post_process_body(ast_expr_reduce* target) {
-         foreach_body = r_assign;
- 
-         if (need_count_for_avg) {
-+
-             ast_sentblock* sb = ast_sentblock::new_sentblock();
-             ast_id* lhs_id = cnt_symbol->getId()->copy(true);  // symInfo is correct for LHS
-             bound_id2 = old_iter->copy(false);              // symInfo not available yet
-@@ -543,13 +545,19 @@ private:
-     ast_sent* getNewBody() {
- 
-         ast_sentblock* newBody;
--        if (fe->get_body()->get_nodetype() == AST_SENTBLOCK)
-+        if (fe->get_body()->get_nodetype() == AST_SENTBLOCK) {
-             newBody = (ast_sentblock*) fe->get_body();
--        else
-+        } else {
-             newBody = ast_sentblock::new_sentblock();
-+        }
- 
--        ast_assign* assign = createAssignStatement();
-         std::list<ast_sent*>& statements = newBody->get_sents();
-+        if (fe->get_body()->get_nodetype() != AST_SENTBLOCK) {
-+            statements.push_back(fe->get_body());
-+        }
-+
-+        ast_assign* assign = createAssignStatement();
-+        assign->set_is_reference(true);
-         statements.push_front(assign);
- 
-         return newBody;
 diff --git a/src/parse/gm_grammer.y b/src/parse/gm_grammer.y
 index 52c38e2..4aace43 100644
 --- a/src/parse/gm_grammer.y

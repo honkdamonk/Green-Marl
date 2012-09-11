@@ -20,7 +20,7 @@ public class gm_gps_opt_find_congruent_message extends gm_compile_step
 		gm_gps_basic_block entry_BB = beinfo.get_entry_basic_block();
     
 		// iterate over basic blocks and find congurent message classes
-		GlobalMembersGm_gps_misc.gps_bb_apply_only_once(entry_BB, T);
+		gm_gps_misc.gps_bb_apply_only_once(entry_BB, T);
     
 	}
 	@Override

@@ -102,7 +102,7 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		do {
 			apply.set_changed(false);
 			set.clear();
-			GlobalMembersGm_gps_misc.bb_apply_recurse(set, entry, apply);
+			gm_gps_misc.bb_apply_recurse(set, entry, apply);
 			if (apply.has_changed())
 				b = true;
 		} while (apply.has_changed());

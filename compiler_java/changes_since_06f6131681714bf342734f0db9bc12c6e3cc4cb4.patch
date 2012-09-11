@@ -1,5 +1,5 @@
 diff --git a/src/backend_cpp/gm_cpp_gen.cc b/src/backend_cpp/gm_cpp_gen.cc
-index f7735c4..b1f273a 100644
+index f7735c4..b6ce23c 100644
 --- a/src/backend_cpp/gm_cpp_gen.cc
 +++ b/src/backend_cpp/gm_cpp_gen.cc
 @@ -350,6 +350,13 @@ const char* gm_cpp_gen::get_type_string(ast_typedecl* t) {
@@ -16,29 +16,6 @@ index f7735c4..b1f273a 100644
      } else
          return get_lib()->get_type_string(t);
  
-@@ -385,20 +392,16 @@ void gm_cpp_gen::generate_sent_foreach(ast_foreach* f) {
-         }
-         Body.pushln("}");
- 
-+    } else if (f->get_body()->get_nodetype() == AST_SENTBLOCK) {
-+        generate_sent(f->get_body());
-     } else {
--        if (f->get_body()->get_nodetype() != AST_SENTBLOCK) {
-             Body.push_indent();
--        }
-         generate_sent(f->get_body());
--        if (f->get_body()->get_nodetype() != AST_SENTBLOCK) {
-             Body.pop_indent();
-             Body.NL();
-         }
-     }
- 
--    return;
--}
--
- void gm_cpp_gen::generate_sent_call(ast_call* c) {
-     assert(c->is_builtin_call());
-     generate_expr_builtin(c->get_builtin());
 @@ -470,7 +473,7 @@ void gm_cpp_gen::declare_prop_def(ast_typedecl* t, ast_id * id) {
  void gm_cpp_gen::generate_sent_vardecl(ast_vardecl* v) {
      ast_typedecl* t = v->get_type();
@@ -63,7 +40,7 @@ index f7735c4..b1f273a 100644
      Body.push_spc(get_type_string(t));
  
      if (t->is_property()) {
-@@ -504,6 +515,45 @@ void gm_cpp_gen::generate_sent_vardecl(ast_vardecl* v) {
+@@ -504,15 +515,61 @@ void gm_cpp_gen::generate_sent_vardecl(ast_vardecl* v) {
      }
  }
  
@@ -109,9 +86,15 @@ index f7735c4..b1f273a 100644
  void gm_cpp_gen::generate_sent_assign(ast_assign* a) {
  
      if (a->is_target_scalar()) {
-@@ -513,6 +563,9 @@ void gm_cpp_gen::generate_sent_assign(ast_assign* a) {
+         ast_id* leftHandSide = a->get_lhs_scala();
+         if (leftHandSide->is_instantly_assigned()) { //we have to add the variable declaration here
+             Body.push(get_lib()->get_type_string(leftHandSide->getTypeSummary()));
++            if(a->is_reference()) {
++                Body.push("& ");
++            } else {
              Body.push(" ");
          }
++        }
          generate_lhs_id(a->get_lhs_scala());
 +    } else if (a->is_target_map_entry()) {
 +        generate_sent_map_assign(a->to_assign_mapentry());
@@ -119,20 +102,6 @@ index f7735c4..b1f273a 100644
      } else {
          generate_lhs_field(a->get_lhs_field());
      }
-diff --git a/src/backend_cpp/gm_cpp_gen_foreach.cc b/src/backend_cpp/gm_cpp_gen_foreach.cc
-index b399ccf..0e1e781 100644
---- a/src/backend_cpp/gm_cpp_gen_foreach.cc
-+++ b/src/backend_cpp/gm_cpp_gen_foreach.cc
-@@ -26,7 +26,8 @@ bool gm_cpplib::need_up_initializer(ast_foreach* f) {
-     int iter_type = f->get_iter_type();
-     if (gm_is_iteration_on_collection(iter_type))
-         return true;
--    else if (gm_is_common_nbr_iter_type(iter_type)) return true;
-+    else if (gm_is_common_nbr_iter_type(iter_type))
-+        return true;
-     return false;
- }
- 
 @@ -57,6 +58,10 @@ void gm_cpplib::generate_up_initializer(ast_foreach* f, gm_code_writer& Body) {
          const char* prep_str = f->is_parallel() ? "prepare_par_iteration" : f->is_reverse_iteration() ? "prepare_rev_iteration" : "prepare_seq_iteration";
  
@@ -144,20 +113,25 @@ index b399ccf..0e1e781 100644
          sprintf(str_buf, "%s::%s", get_type_string(source->getTypeInfo()), iter_type_str);
          Body.push(str_buf);
  
-@@ -88,7 +93,11 @@ void gm_cpplib::generate_down_initializer(ast_foreach* f, gm_code_writer& Body)
+@@ -88,9 +93,14 @@ void gm_cpplib::generate_down_initializer(ast_foreach* f, gm_code_writer& Body)
      if (gm_is_iteration_on_collection(iter_type)) {
          assert(f->find_info(CPPBE_INFO_COLLECTION_ITERATOR) != NULL);
          const char* lst_iter_name = f->find_info_string(CPPBE_INFO_COLLECTION_ITERATOR);
 -        const char* type_name = source->getTypeInfo()->is_node_collection() ? NODE_T : EDGE_T;
+-
+-        sprintf(str_buf, "%s %s = %s.get_next();", type_name, f->get_iterator()->get_genname(), lst_iter_name);
 +        const char* type_name;
 +        if(gm_is_collection_of_collection_type(source->getTypeSummary()))
 +            type_name = get_type_string(source->getTargetTypeInfo());
 +        else
 +            type_name = source->getTypeInfo()->is_node_collection() ? NODE_T : EDGE_T;
- 
-         sprintf(str_buf, "%s %s = %s.get_next();", type_name, f->get_iterator()->get_genname(), lst_iter_name);
++
++        sprintf(str_buf, "const %s& %s = %s.get_next();", type_name, f->get_iterator()->get_genname(), lst_iter_name);
++        //sprintf(str_buf, "%s %s = %s.get_next();", type_name, f->get_iterator()->get_genname(), lst_iter_name);
          Body.pushln(str_buf);
-@@ -131,7 +140,12 @@ void gm_cpplib::generate_foreach_header(ast_foreach* fe, gm_code_writer& Body) {
+     } else if (gm_is_iteration_on_neighbors_compatible(iter_type)) {
+         const char* alias_name = f->find_info_string(CPPBE_INFO_NEIGHBOR_ITERATOR);
+@@ -131,7 +141,12 @@ void gm_cpplib::generate_foreach_header(ast_foreach* fe, gm_code_writer& Body) {
      int type = fe->get_iter_type();
  
      if (gm_is_iteration_on_all_graph(type)) {
@@ -171,7 +145,7 @@ index b399ccf..0e1e781 100644
          char* it_name = iter->get_genname();
          sprintf(str_buf, "for (%s %s = 0; %s < %s.%s(); %s ++) ", get_type_string(type), it_name, it_name, graph_name,
                  gm_is_iteration_on_nodes(type) ? NUM_NODES : NUM_EDGES,
-@@ -177,7 +191,7 @@ void gm_cpplib::generate_foreach_header(ast_foreach* fe, gm_code_writer& Body) {
+@@ -177,7 +192,7 @@ void gm_cpplib::generate_foreach_header(ast_foreach* fe, gm_code_writer& Body) {
      } else if (gm_is_iteration_on_collection(type)) {
  
          assert(!fe->is_parallel());
@@ -671,27 +645,110 @@ index a67020d..7e1685c 100644
  static const char* IS_IN = "is_in";
  static const char* MAX_SET_CNT = "max_size";
 diff --git a/src/backend_giraph/gm_giraph_gen.cc b/src/backend_giraph/gm_giraph_gen.cc
-index f1a732a..75dbae9 100644
+index f1a732a..c7c00b0 100644
 --- a/src/backend_giraph/gm_giraph_gen.cc
 +++ b/src/backend_giraph/gm_giraph_gen.cc
-@@ -95,9 +95,9 @@ void gm_giraph_gen::do_generate_input_output_formats() {
+@@ -63,21 +90,26 @@ void gm_giraph_gen::do_generate_global_variables() {
+ }
+ 
+ void gm_giraph_gen::do_generate_input_output_formats() {
+-    char temp[1024];
++    char temp[1024], vertex_data[256], edge_data[256], message_data[256];
+     ast_procdef* proc = FE.get_current_proc();
+ 
+     const char* proc_name = proc->get_procname()->get_genname();
+     const char* vertex_id = PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable";
+-    const char* edge_data = proc->find_info_bool(GPS_FLAG_USE_EDGE_PROP) ? "EdgeData" : "NullWritable";
++    sprintf(vertex_data, "%sVertex.VertexData", proc_name);
++    if (proc->find_info_bool(GPS_FLAG_USE_EDGE_PROP))
++        sprintf(edge_data, "%sVertex.EdgeData", proc_name);
++    else
++        sprintf(edge_data, "NullWritable");
++    sprintf(message_data, "%sVertex.MessageData", proc_name);
+ 
+     Body.pushln("//----------------------------------------------");
+     Body.pushln("// Vertex Input format");
+     Body.pushln("//----------------------------------------------");
+ 
+-    sprintf(temp, "static class %sVertexInputFormat extends TextVertexInputFormat<%s, VertexData, %s, MessageData> {", proc_name, vertex_id, edge_data);
++    sprintf(temp, "static class %sVertexInputFormat extends TextVertexInputFormat<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data, edge_data, message_data);
+     Body.pushln(temp);
+     Body.pushln("@Override");
+-    sprintf(temp, "public VertexReader<%s, VertexData, %s, MessageData>", vertex_id, edge_data);
++    sprintf(temp, "public VertexReader<%s, %s, %s, %s>", vertex_id, vertex_data, edge_data, message_data);
+     Body.pushln(temp);
+     Body.pushln("createVertexReader(InputSplit split, TaskAttemptContext context) throws IOException {");
+     sprintf(temp, "return new %sVertexReader(textInputFormat.createRecordReader(split, context));", proc_name);
+@@ -85,8 +117,7 @@ void gm_giraph_gen::do_generate_input_output_formats() {
+     Body.pushln("}");
+     Body.NL();
+ 
+-    sprintf(temp, "static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, VertexData, %s, MessageData> {", proc_name, vertex_id,
+-            edge_data);
++    sprintf(temp, "static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data, edge_data, message_data);
+     Body.pushln(temp);
+     sprintf(temp, "public %sVertexReader(RecordReader<LongWritable, Text> lineRecordReader) {", proc_name);
+     Body.pushln(temp);
+@@ -95,11 +126,11 @@ void gm_giraph_gen::do_generate_input_output_formats() {
      Body.NL();
  
      Body.pushln("@Override");
 -    sprintf(temp, "public BasicVertex<%s, VertexData, %s, MessageData> getCurrentVertex() throws IOException, InterruptedException {", vertex_id, edge_data);
-+    sprintf(temp, "public Vertex<%s, VertexData, %s, MessageData> getCurrentVertex() throws IOException, InterruptedException {", vertex_id, edge_data);
++    sprintf(temp, "public Vertex<%s, %s, %s, %s> getCurrentVertex() throws IOException, InterruptedException {", vertex_id, vertex_data, edge_data, message_data);
      Body.pushln(temp);
 -    sprintf(temp, "BasicVertex<%s, VertexData, %s, MessageData> vertex =", vertex_id, edge_data);
-+    sprintf(temp, "Vertex<%s, VertexData, %s, MessageData> vertex =", vertex_id, edge_data);
++    sprintf(temp, "Vertex<%s, %s, %s, %s> vertex =", vertex_id, vertex_data, edge_data, message_data);
      Body.pushln(temp);
-     sprintf(temp, "    BspUtils.<%s, VertexData, %s, MessageData> createVertex(getContext().getConfiguration());", vertex_id, edge_data);
+-    sprintf(temp, "    BspUtils.<%s, VertexData, %s, MessageData> createVertex(getContext().getConfiguration());", vertex_id, edge_data);
++    sprintf(temp, "    BspUtils.<%s, %s, %s, %s> createVertex(getContext().getConfiguration());", vertex_id, vertex_data, edge_data, message_data);
      Body.pushln(temp);
-@@ -167,23 +167,20 @@ void gm_giraph_gen::do_generate_input_output_formats() {
+     Body.NL();
+ 
+@@ -121,12 +152,14 @@ void gm_giraph_gen::do_generate_input_output_formats() {
+     }
+     if (proc->find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
+         Body.pushln("double edgeValue = Double.parseDouble(values[i+1]);");
+-        Body.pushln("edges.put(edgeId, new EdgeData(edgeValue));");
++        sprintf(temp, "edges.put(edgeId, new %s(edgeValue));", edge_data);
++        Body.pushln(temp);
+     } else {
+         Body.pushln("edges.put(edgeId, NullWritable.get());");
+     }
+     Body.pushln("}");
+-    Body.pushln("vertex.initialize(vertexId, new VertexData(vertexValue), edges, null);");
++    sprintf(temp, "vertex.initialize(vertexId, new %sVertex.VertexData(vertexValue), edges, null);", proc_name);
++    Body.pushln(temp);
+     Body.pushln("return vertex;");
+     Body.pushln("}");
+     Body.NL();
+@@ -144,10 +177,10 @@ void gm_giraph_gen::do_generate_input_output_formats() {
+     Body.pushln("// ----------------------------------------------");
+     sprintf(temp, "static class %sVertexOutputFormat extends", proc_name);
+     Body.pushln(temp);
+-    sprintf(temp, "TextVertexOutputFormat<%s, VertexData, %s> {", vertex_id, edge_data);
++    sprintf(temp, "TextVertexOutputFormat<%s, %s, %s> {", vertex_id, vertex_data, edge_data);
+     Body.pushln(temp);
+     Body.pushln("@Override");
+-    sprintf(temp, "public VertexWriter<%s, VertexData, %s> createVertexWriter(", vertex_id, edge_data);
++    sprintf(temp, "public VertexWriter<%s, %s, %s> createVertexWriter(", vertex_id, vertex_data, edge_data);
+     Body.pushln(temp);
+     Body.pushln("TaskAttemptContext context) throws IOException, InterruptedException {");
+     sprintf(temp, "return new %sVertexWriter(textOutputFormat.getRecordWriter(context));", proc_name);
+@@ -157,7 +190,7 @@ void gm_giraph_gen::do_generate_input_output_formats() {
+ 
+     sprintf(temp, "static class %sVertexWriter", proc_name);
+     Body.pushln(temp);
+-    sprintf(temp, "extends TextVertexOutputFormat.TextVertexWriter<%s, VertexData, %s> {", vertex_id, edge_data);
++    sprintf(temp, "extends TextVertexOutputFormat.TextVertexWriter<%s, %s, %s> {", vertex_id, vertex_data, edge_data);
+     Body.pushln(temp);
+     sprintf(temp, "public %sVertexWriter(RecordWriter<Text, Text> lineRecordReader) {", proc_name);
+     Body.pushln(temp);
+@@ -167,23 +200,20 @@ void gm_giraph_gen::do_generate_input_output_formats() {
  
      Body.pushln("@Override");
      Body.pushln("public void writeVertex(");
 -    sprintf(temp, "BasicVertex<%s, VertexData, %s, ?> vertex)", vertex_id, edge_data);
-+    sprintf(temp, "Vertex<%s, VertexData, %s, ?> vertex)", vertex_id, edge_data);
++    sprintf(temp, "Vertex<%s, %s, %s, ?> vertex)", vertex_id, vertex_data, edge_data);
      Body.pushln(temp);
      Body.pushln("throws IOException, InterruptedException {");
 -    Body.pushln("StringBuffer sb = new StringBuffer(vertex.getVertexId().toString());");
@@ -717,11 +774,96 @@ index f1a732a..75dbae9 100644
          Body.pushln("sb.append(\"\\t1.0\");");
      }
      Body.pushln("}");
+@@ -198,6 +228,7 @@ void gm_giraph_gen::do_generate_input_output_formats() {
+ void gm_giraph_gen::do_generate_job_configuration() {
+     char temp[1024];
+     ast_procdef* proc = FE.get_current_proc();
++    char* proc_name = proc->get_procname()->get_genname();
+ 
+     // Iterate symbol table
+     gm_symtab* args = proc->get_symtab_var();
+@@ -259,17 +290,17 @@ void gm_giraph_gen::do_generate_job_configuration() {
+     Body.NL();
+     Body.pushln("GiraphJob job = new GiraphJob(getConf(), getClass().getName());");
+     Body.pushln("job.getConfiguration().setInt(GiraphJob.CHECKPOINT_FREQUENCY, 0);");
+-    sprintf(temp, "job.setMasterComputeClass(%sMaster.class);", proc->get_procname()->get_genname());
++    sprintf(temp, "job.setMasterComputeClass(%sVertex.%sMasterCompute.class);", proc_name, proc_name);
+     Body.pushln(temp);
+-    sprintf(temp, "job.setVertexClass(%sVertex.class);", proc->get_procname()->get_genname());
++    sprintf(temp, "job.setVertexClass(%sVertex.class);", proc_name);
+     Body.pushln(temp);
+-    sprintf(temp, "job.setWorkerContextClass(%sWorkerContext.class);", proc->get_procname()->get_genname());
++    sprintf(temp, "job.setWorkerContextClass(%sVertex.%sWorkerContext.class);", proc_name, proc_name);
+     Body.pushln(temp);
+-    sprintf(temp, "job.setVertexInputFormatClass(%sVertexInputFormat.class);", proc->get_procname()->get_genname());
++    sprintf(temp, "job.setVertexInputFormatClass(%sVertexInputFormat.class);", proc_name);
+     Body.pushln(temp);
+     Body.pushln("FileInputFormat.addInputPath(job.getInternalJob(), new Path(cmd.getOptionValue('i')));");
+     Body.pushln("if (cmd.hasOption('o')) {");
+-    sprintf(temp, "job.setVertexOutputFormatClass(%sVertexOutputFormat.class);", proc->get_procname()->get_genname());
++    sprintf(temp, "job.setVertexOutputFormatClass(%sVertexOutputFormat.class);", proc_name);
+     Body.pushln(temp);
+     Body.pushln("FileOutputFormat.setOutputPath(job.getInternalJob(), new Path(cmd.getOptionValue('o')));");
+     Body.pushln("}");
+@@ -335,7 +366,7 @@ void gm_giraph_gen::do_generate_job_configuration() {
+ 
+     Body.NL();
+     Body.pushln("public static void main(final String[] args) throws Exception {");
+-    sprintf(temp, "System.exit(ToolRunner.run(new %s(), args));", proc->get_procname()->get_genname());
++    sprintf(temp, "System.exit(ToolRunner.run(new %s(), args));", proc_name);
+     Body.pushln(temp);
+     Body.pushln("}");
+ }
+@@ -346,18 +377,23 @@ void gm_giraph_gen::end_class() {
+ 
+ void gm_giraph_gen::generate_proc(ast_procdef* proc) {
+     write_headers();
++
++    if (!OPTIONS.get_arg_bool(GMARGFLAG_GIRAPH_VERTEX_ONLY)) {
+     begin_class();
+     do_generate_global_variables();
+-    do_generate_master();
++    }
+ 
+-    do_generate_vertex();
++    do_generate_vertex_begin();
++    do_generate_master();
++    do_generate_vertex_body();
++    do_generate_vertex_end();
+ 
++    if (!OPTIONS.get_arg_bool(GMARGFLAG_GIRAPH_VERTEX_ONLY)) {
+     do_generate_input_output_formats();
+-
+     do_generate_job_configuration();
+-
+     end_class();
+ }
++}
+ 
+ void gm_giraph_gen_class::process(ast_procdef* proc) {
+     PREGEL_BE->generate_proc(proc);
 diff --git a/src/backend_giraph/gm_giraph_gen_master.cc b/src/backend_giraph/gm_giraph_gen_master.cc
-index c2767c1..b4cb190 100644
+index c2767c1..a2e5eae 100644
 --- a/src/backend_giraph/gm_giraph_gen_master.cc
 +++ b/src/backend_giraph/gm_giraph_gen_master.cc
-@@ -51,7 +51,7 @@ void gm_giraph_gen::do_generate_master_class() {
+@@ -14,7 +14,6 @@ void gm_giraph_gen::do_generate_master() {
+     do_generate_master_serialization();
+     Body.pushln("}"); // finish master class
+     Body.NL();
+-
+ }
+ 
+ void gm_giraph_gen::do_generate_master_class() {
+@@ -25,7 +24,7 @@ void gm_giraph_gen::do_generate_master_class() {
+     // create master class
+     //--------------------------------------------------------------------
+     char temp[1024];
+-    sprintf(temp, "public static class %sMaster extends MasterCompute {", proc->get_procname()->get_genname());
++    sprintf(temp, "public static class %sMasterCompute extends MasterCompute {", proc->get_procname()->get_genname());
+     Body.pushln(temp);
+     Body.pushln("// Control fields");
+     bool prep = FE.get_current_proc_info()->find_info_bool(GPS_FLAG_USE_REVERSE_EDGE);
+@@ -51,7 +50,7 @@ void gm_giraph_gen::do_generate_master_class() {
      std::set<gm_symtab_entry*>& scalar = info->get_scalar_symbols();
      std::set<gm_symtab_entry*>::iterator I_sym;
  
@@ -730,7 +872,7 @@ index c2767c1..b4cb190 100644
      Body.pushln(temp);
      for (I_bb = bb_blocks.begin(); I_bb != bb_blocks.end(); I_bb++) {
          gm_gps_basic_block* b = *I_bb;
-@@ -59,7 +59,7 @@ void gm_giraph_gen::do_generate_master_class() {
+@@ -59,7 +58,7 @@ void gm_giraph_gen::do_generate_master_class() {
  
          if (b->find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
              int cond_bb_no = b->find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
@@ -739,7 +881,7 @@ index c2767c1..b4cb190 100644
              Body.pushln(temp);
          }
      }
-@@ -70,9 +70,9 @@ void gm_giraph_gen::do_generate_master_class() {
+@@ -70,9 +69,9 @@ void gm_giraph_gen::do_generate_master_class() {
          assert(syminfo!=NULL);
  
          if ((syminfo->is_used_in_vertex() || syminfo->is_used_in_receiver()) && syminfo->is_used_in_master()) {
@@ -752,10 +894,70 @@ index c2767c1..b4cb190 100644
          }
      }
 diff --git a/src/backend_giraph/gm_giraph_gen_vertex.cc b/src/backend_giraph/gm_giraph_gen_vertex.cc
-index 6189bc0..6eaac93 100644
+index 6189bc0..01abd36 100644
 --- a/src/backend_giraph/gm_giraph_gen_vertex.cc
 +++ b/src/backend_giraph/gm_giraph_gen_vertex.cc
-@@ -40,33 +40,6 @@ void gm_giraph_gen::do_generate_worker_context_class() {
+@@ -4,13 +4,14 @@
+ #include "gm_code_writer.h"
+ #include "gm_frontend.h"
+ #include "gm_transform_helper.h"
++#include "gm_argopts.h"
+ extern void gm_redirect_reproduce(FILE *f);
+ extern void gm_baseindent_reproduce(int i);
+ extern void gm_flush_reproduce();
+ 
+-void gm_giraph_gen::do_generate_vertex() {
++void gm_giraph_gen::do_generate_vertex_body() {
+     set_master_generate(false);
+-    do_generate_vertex_class();
++    do_generate_vertex_states();
+     do_generate_worker_context_class();
+     do_generate_vertex_property_class(false);
+ 
+@@ -19,6 +20,42 @@ void gm_giraph_gen::do_generate_vertex() {
+     do_generate_message_class();
+ }
+ 
++void gm_giraph_gen::do_generate_vertex_begin() {
++    char temp[1024];
++    const char* proc_name = FE.get_current_proc()->get_procname()->get_genname();
++    Body.pushln("//----------------------------------------------");
++    Body.pushln("// Main Vertex Class");
++    Body.pushln("//----------------------------------------------");
++    if (OPTIONS.get_arg_bool(GMARGFLAG_GIRAPH_VERTEX_ONLY)) {
++        sprintf(temp, "public class %sVertex", proc_name);
++    } else {
++        sprintf(temp, "public static class %sVertex", proc_name);
++    }
++    Body.pushln(temp);
++    Body.push_indent();
++    if (FE.get_current_proc()->find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
++        sprintf(temp, "extends EdgeListVertex< %s, %sVertex.VertexData, %sVertex.EdgeData, %sVertex.MessageData > {",
++                PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable",
++                proc_name, proc_name, proc_name);
++    } else {
++        sprintf(temp, "extends EdgeListVertex< %s, %sVertex.VertexData, NullWritable, %sVertex.MessageData > {",
++                PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable",
++                proc_name, proc_name);
++    }
++    Body.pushln(temp);
++    Body.pop_indent();
++    Body.NL();
++    Body.pushln("// Vertex logger");
++    sprintf(temp, "private static final Logger LOG = Logger.getLogger(%sVertex.class);", proc_name);
++    Body.pushln(temp);
++    Body.NL();
++}
++
++void gm_giraph_gen::do_generate_vertex_end() {
++    Body.pushln("} // end of vertex class");
++    Body.NL();
++}
++
+ void gm_giraph_gen::do_generate_worker_context_class() {
+     char temp[1024];
+     const char* proc_name = FE.get_current_proc()->get_procname()->get_genname();
+@@ -40,33 +77,6 @@ void gm_giraph_gen::do_generate_worker_context_class() {
      Body.NL();
      Body.pushln("@Override");
      Body.pushln("public void preApplication() throws InstantiationException, IllegalAccessException {");
@@ -789,7 +991,7 @@ index 6189bc0..6eaac93 100644
      Body.pushln("}");
      Body.NL();
      Body.pushln("@Override");
-@@ -75,31 +48,6 @@ void gm_giraph_gen::do_generate_worker_context_class() {
+@@ -75,31 +85,6 @@ void gm_giraph_gen::do_generate_worker_context_class() {
      Body.NL();
      Body.pushln("@Override");
      Body.pushln("public void preSuperstep() {");
@@ -821,7 +1023,37 @@ index 6189bc0..6eaac93 100644
      Body.pushln("}");
      Body.NL();
      Body.pushln("@Override");
-@@ -208,7 +156,7 @@ void gm_giraph_gen::do_generate_vertex_states() {
+@@ -178,37 +163,11 @@ void gm_giraph_gen::do_generate_message_class() {
+     Body.NL();
+ }
+ 
+-void gm_giraph_gen::do_generate_vertex_class() {
+-    char temp[1024];
+-    const char* proc_name = FE.get_current_proc()->get_procname()->get_genname();
+-    Body.pushln("//----------------------------------------------");
+-    Body.pushln("// Main Vertex Class");
+-    Body.pushln("//----------------------------------------------");
+-    sprintf(temp, "public static class %sVertex", proc_name);
+-    Body.pushln(temp);
+-    Body.push_indent();
+-    if (FE.get_current_proc()->find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
+-        sprintf(temp, "extends EdgeListVertex< %s, VertexData, EdgeData, MessageData > {",
+-                PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable");
+-    } else {
+-        sprintf(temp, "extends EdgeListVertex< %s, VertexData, NullWritable, MessageData > {",
+-                PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable");
+-    }
+-    Body.pushln(temp);
+-    Body.pop_indent();
+-
+-    do_generate_vertex_states();
+-
+-    Body.pushln("} // end of vertex class");
+-    Body.NL();
+-
+-}
+-
+ void gm_giraph_gen::do_generate_vertex_states() {
      char temp[1024];
      Body.NL();
      Body.pushln("@Override");
@@ -830,7 +1062,7 @@ index 6189bc0..6eaac93 100644
      get_lib()->generate_receive_state_vertex("_state_vertex", Body);
  
      Body.pushln("switch(_state_vertex) { ");
-@@ -288,7 +236,7 @@ void gm_giraph_gen::do_generate_vertex_state_body(gm_gps_basic_block *b) {
+@@ -288,7 +247,7 @@ void gm_giraph_gen::do_generate_vertex_state_body(gm_gps_basic_block *b) {
      int type = b->get_type();
  
      char temp[1024];
@@ -839,7 +1071,7 @@ index 6189bc0..6eaac93 100644
      Body.pushln(temp);
  
      get_lib()->generate_vertex_prop_access_prepare(Body);
-@@ -319,8 +267,7 @@ void gm_giraph_gen::do_generate_vertex_state_body(gm_gps_basic_block *b) {
+@@ -319,8 +278,7 @@ void gm_giraph_gen::do_generate_vertex_state_body(gm_gps_basic_block *b) {
          }
  
          Body.pushln("// Begin msg receive");
@@ -850,10 +1082,49 @@ index 6189bc0..6eaac93 100644
          std::list<gm_gps_comm_unit>& R = b->get_receivers();
          std::list<gm_gps_comm_unit>::iterator I;
 diff --git a/src/backend_giraph/gm_giraph_lib.cc b/src/backend_giraph/gm_giraph_lib.cc
-index 3b1b813..74e5aa3 100644
+index 3b1b813..60d42a1 100644
 --- a/src/backend_giraph/gm_giraph_lib.cc
 +++ b/src/backend_giraph/gm_giraph_lib.cc
-@@ -35,7 +35,7 @@ void gm_giraphlib::generate_headers(gm_code_writer& Body) {
+@@ -5,22 +5,25 @@
+ #include "gm_frontend.h"
+ #include "gm_transform_helper.h"
+ #include "gm_builtin.h"
++#include "gm_argopts.h"
+ 
+ void gm_giraphlib::generate_headers(gm_code_writer& Body) {
+     Body.pushln("import java.io.DataInput;");
+     Body.pushln("import java.io.DataOutput;");
+     Body.pushln("import java.io.IOException;");
+     Body.pushln("import java.lang.Math;");
+-    Body.pushln("import java.util.Iterator;");
+-    Body.pushln("import java.util.Map;");
+     Body.pushln("import java.util.Random;");
+-    Body.pushln("import org.apache.commons.cli.*;");
+     Body.pushln("import org.apache.giraph.aggregators.*;");
+     Body.pushln("import org.apache.giraph.graph.*;");
++    Body.pushln("import org.apache.hadoop.io.*;");
++    Body.pushln("import org.apache.log4j.Logger;");
++
++    if (!OPTIONS.get_arg_bool(GMARGFLAG_GIRAPH_VERTEX_ONLY)) {
++        Body.pushln("import java.util.Map;");
++        Body.pushln("import org.apache.commons.cli.*;");
+     Body.pushln("import org.apache.giraph.lib.*;");
+     Body.pushln("import org.apache.hadoop.conf.Configuration;");
+     Body.pushln("import org.apache.hadoop.fs.Path;");
+-    Body.pushln("import org.apache.hadoop.io.*;");
+     Body.pushln("import org.apache.hadoop.mapreduce.InputSplit;");
+     Body.pushln("import org.apache.hadoop.mapreduce.RecordReader;");
+     Body.pushln("import org.apache.hadoop.mapreduce.RecordWriter;");
+@@ -29,13 +32,15 @@ void gm_giraphlib::generate_headers(gm_code_writer& Body) {
+     Body.pushln("import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;");
+     Body.pushln("import org.apache.hadoop.util.Tool;");
+     Body.pushln("import org.apache.hadoop.util.ToolRunner;");
+-    Body.pushln("import org.apache.log4j.Logger;");
+     Body.pushln("import com.google.common.collect.Maps;");
+ }
++    Body.NL();
++    Body.pushln("@SuppressWarnings(\"unused\")");
++}
  
  void gm_giraphlib::generate_node_iterator_rhs(ast_id* id, gm_code_writer& Body) {
      //TODO
@@ -862,7 +1133,7 @@ index 3b1b813..74e5aa3 100644
  }
  
  // scalar variable broadcast
-@@ -43,32 +43,33 @@ void gm_giraphlib::generate_node_iterator_rhs(ast_id* id, gm_code_writer& Body)
+@@ -43,32 +48,33 @@ void gm_giraphlib::generate_node_iterator_rhs(ast_id* id, gm_code_writer& Body)
  
  void gm_giraphlib::generate_broadcast_state_master(const char* state_var, gm_code_writer& Body) {
      char temp[1024];
@@ -904,7 +1175,7 @@ index 3b1b813..74e5aa3 100644
      Body.pushln(temp);
  }
  
-@@ -77,23 +78,23 @@ void gm_giraphlib::generate_broadcast_send_master(ast_id* id, gm_code_writer& Bo
+@@ -77,23 +83,23 @@ void gm_giraphlib::generate_broadcast_send_master(ast_id* id, gm_code_writer& Bo
      // create new BV
      //---------------------------------------------------
      char temp[1024];
@@ -935,7 +1206,7 @@ index 3b1b813..74e5aa3 100644
      Body.push(temp);
  }
  
-@@ -128,8 +129,7 @@ void gm_giraphlib::generate_parameter_read_vertex(ast_id* id, gm_code_writer& Bo
+@@ -128,8 +134,7 @@ void gm_giraphlib::generate_parameter_read_vertex(ast_id* id, gm_code_writer& Bo
      Body.push(temp);
  }
  
@@ -945,7 +1216,7 @@ index 3b1b813..74e5aa3 100644
  {
      //--------------------------------------
      // Generate following string
-@@ -202,14 +202,42 @@ void gm_giraphlib::generate_broadcast_variable_type(int type_id, gm_code_writer&
+@@ -202,14 +207,42 @@ void gm_giraphlib::generate_broadcast_variable_type(int type_id, gm_code_writer&
      Body.push("Aggregator");
  }
  
@@ -994,7 +1265,7 @@ index 3b1b813..74e5aa3 100644
  
      // Read from BV to local value
      get_main()->generate_lhs_id(id);
-@@ -249,7 +277,9 @@ void gm_giraphlib::generate_broadcast_receive_master(ast_id* id, gm_code_writer&
+@@ -249,7 +282,9 @@ void gm_giraphlib::generate_broadcast_receive_master(ast_id* id, gm_code_writer&
          }
      }
  
@@ -1005,7 +1276,7 @@ index 3b1b813..74e5aa3 100644
      Body.push(temp);
      if (need_paren) Body.push(")");
      Body.pushln(";");
-@@ -260,10 +290,10 @@ void gm_giraphlib::generate_reduce_assign_vertex(ast_assign* a, gm_code_writer&
+@@ -260,10 +295,10 @@ void gm_giraphlib::generate_reduce_assign_vertex(ast_assign* a, gm_code_writer&
      ast_id* id = a->get_lhs_scala();
  
      char temp[1024];
@@ -1019,7 +1290,7 @@ index 3b1b813..74e5aa3 100644
  
      //---------------------------------------------------
      // Initial Value: Reading of Id
-@@ -506,7 +536,7 @@ void gm_giraphlib::generate_vertex_prop_class_details(std::set<gm_symtab_entry*>
+@@ -506,7 +541,7 @@ void gm_giraphlib::generate_vertex_prop_class_details(std::set<gm_symtab_entry*>
  
  void gm_giraphlib::generate_vertex_prop_access_prepare(gm_code_writer& Body) {
      char temp[1024];
@@ -1028,7 +1299,7 @@ index 3b1b813..74e5aa3 100644
      Body.pushln(temp);
  }
  void gm_giraphlib::generate_vertex_prop_access_lhs(ast_id* id, gm_code_writer& Body) {
-@@ -662,6 +692,9 @@ void gm_giraphlib::generate_message_class_details(gm_gps_beinfo* info, gm_code_w
+@@ -662,6 +697,9 @@ void gm_giraphlib::generate_message_class_details(gm_gps_beinfo* info, gm_code_w
  void gm_giraphlib::generate_message_send(ast_foreach* fe, gm_code_writer& Body) {
      char temp[1024];
  
@@ -1038,7 +1309,7 @@ index 3b1b813..74e5aa3 100644
      gm_gps_beinfo * info = (gm_gps_beinfo *) FE.get_current_backend_info();
  
      int m_type = (fe == NULL) ? GPS_COMM_INIT : GPS_COMM_NESTED;
-@@ -681,17 +714,16 @@ void gm_giraphlib::generate_message_send(ast_foreach* fe, gm_code_writer& Body)
+@@ -681,17 +719,16 @@ void gm_giraphlib::generate_message_send(ast_foreach* fe, gm_code_writer& Body)
              sprintf(temp, "if (%s.%s.length > 0) {", STATE_SHORT_CUT, GPS_REV_NODE_ID); //TODO
              Body.pushln(temp);
          } else {
@@ -1060,7 +1331,7 @@ index 3b1b813..74e5aa3 100644
      }
  
      // check if any edge updates that should be done before message sending
-@@ -764,14 +796,14 @@ void gm_giraphlib::generate_message_send(ast_foreach* fe, gm_code_writer& Body)
+@@ -764,14 +801,14 @@ void gm_giraphlib::generate_message_send(ast_foreach* fe, gm_code_writer& Body)
              sprintf(temp, "for (%s node : %s.%s) {", PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable", STATE_SHORT_CUT,
                      GPS_REV_NODE_ID);
              Body.pushln(temp);
@@ -1078,7 +1349,7 @@ index 3b1b813..74e5aa3 100644
          if (sents_after_message.size() > 0) {
              Body.NL();
              std::list<ast_sent*>::iterator I;
-@@ -867,11 +899,17 @@ void gm_giraphlib::generate_expr_builtin(ast_expr_builtin* be, gm_code_writer& B
+@@ -867,11 +904,17 @@ void gm_giraphlib::generate_expr_builtin(ast_expr_builtin* be, gm_code_writer& B
              Body.push(")");
              break;
  
@@ -1098,7 +1369,7 @@ index 3b1b813..74e5aa3 100644
              break;
          case GM_BLTIN_NODE_IN_DEGREE:
              Body.push(STATE_SHORT_CUT);
-@@ -891,7 +929,7 @@ void gm_giraphlib::generate_prepare_bb(gm_code_writer& Body, gm_gps_basic_block*
+@@ -891,7 +934,7 @@ void gm_giraphlib::generate_prepare_bb(gm_code_writer& Body, gm_gps_basic_block*
  
      if (bb->get_type() == GM_GPS_BBTYPE_PREPARE1) {
          Body.pushln("// Preperation: creating reverse edges");
@@ -1107,7 +1378,7 @@ index 3b1b813..74e5aa3 100644
          Body.pushln(temp);
  
          generate_message_send(NULL, Body);
-@@ -899,8 +937,7 @@ void gm_giraphlib::generate_prepare_bb(gm_code_writer& Body, gm_gps_basic_block*
+@@ -899,8 +942,7 @@ void gm_giraphlib::generate_prepare_bb(gm_code_writer& Body, gm_gps_basic_block*
      } else if (bb->get_type() == GM_GPS_BBTYPE_PREPARE2) {
          Body.pushln("//Preperation creating reverse edges");
          Body.pushln("int i = 0; // iterable does not have length(), so we have to count it");
@@ -1117,7 +1388,7 @@ index 3b1b813..74e5aa3 100644
          Body.pushln("i++;");
          Body.pushln("}");
  
-@@ -909,9 +946,7 @@ void gm_giraphlib::generate_prepare_bb(gm_code_writer& Body, gm_gps_basic_block*
+@@ -909,9 +951,7 @@ void gm_giraphlib::generate_prepare_bb(gm_code_writer& Body, gm_gps_basic_block*
          Body.NL();
  
          Body.pushln("i=0;");
@@ -1141,6 +1412,45 @@ index 8fcaa19..3041ea8 100644
      Body.push(temp);
      get_main()->generate_rhs_id(sym->getId());
      sprintf(temp, "), %s);", get_random_write_message_name(sym));
+diff --git a/src/backend_gps/gm_gps_gen.cc b/src/backend_gps/gm_gps_gen.cc
+index acfcf4e..0007924 100644
+--- a/src/backend_gps/gm_gps_gen.cc
++++ b/src/backend_gps/gm_gps_gen.cc
+@@ -77,6 +77,14 @@ void gm_gps_gen::init_gen_steps() {
+ // Main Generator
+ //----------------------------------------------------
+ bool gm_gps_gen::do_generate() {
++	FE.prepare_proc_iteration();
++	ast_procdef* proc = FE.get_next_proc();
++
++    // Check whether procedure name is the same as the filename
++	if (strcmp(proc->get_procname()->get_genname(), fname) != 0) {
++		gm_backend_error(GM_ERROR_GPS_PROC_NAME, proc->get_procname()->get_genname(), fname);
++		return false;
++	}
+ 
+     if (!open_output_files()) return false;
+ 
+diff --git a/src/backend_gps/gm_gps_new_check_depth_two.cc b/src/backend_gps/gm_gps_new_check_depth_two.cc
+index d345211..3274c6f 100644
+--- a/src/backend_gps/gm_gps_new_check_depth_two.cc
++++ b/src/backend_gps/gm_gps_new_check_depth_two.cc
+@@ -88,15 +88,6 @@ private:
+ };
+ 
+ void gm_gps_new_check_depth_two::process(ast_procdef* proc) {
+-    // Check number of procedure name is same to the filename
+-    const char *fname = PREGEL_BE->getFileName();
+-    assert(fname!=NULL);
+-    if (strcmp(proc->get_procname()->get_genname(), fname) != 0) {
+-        gm_backend_error(GM_ERROR_GPS_PROC_NAME, proc->get_procname()->get_genname(), fname);
+-        set_okay(false);
+-        return;
+-    }
+-
+     // analyze_symbol_scope should be done before.
+     gps_new_check_depth_two_t T;
+     proc->traverse_both(&T);
 diff --git a/src/backend_gps/gm_gps_opt.cc b/src/backend_gps/gm_gps_opt.cc
 index fdc96ea..0996590 100644
 --- a/src/backend_gps/gm_gps_opt.cc
@@ -1364,14 +1674,6 @@ index d358231..2d12e3a 100644
              in_bfs = true;
              current_bfs = (ast_bfs*) s;
              BFS.push_back(current_bfs);
-@@ -146,6 +148,7 @@ static ast_sentblock* create_fw_body_prepare(ast_sentblock* while_sb, ast_bfs* b
-     
- }
- 
-+
- static void create_user_body_main(ast_sentblock* sb_to_add, ast_bfs* bfs, ast_foreach* out_loop, gm_symtab_entry* lev_sym, gm_symtab_entry* curr_sym, bool is_fw);
- 
- static void create_fw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry* lev_sym, gm_symtab_entry* curr_sym, gm_symtab_entry* fin_sym) {
 @@ -156,7 +159,7 @@ static void create_fw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
      //       Foreach(v:G.Nodes) {
      //          if (v.level == curr_level) {
@@ -1416,14 +1718,6 @@ index d358231..2d12e3a 100644
      inner_sb->add_sent(lev_check_in_if);
  
      // increase level
-@@ -329,6 +349,7 @@ static void create_bw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
-     foreach_sb->add_sent(lev_check_out_if);
- 
- 
-+
-     create_user_body_main(lev_check_out_sb, bfs, foreach_out, lev_sym, curr_sym, false);
- 
-     // decrease curr level
 @@ -341,10 +362,6 @@ static void create_bw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
  
  
@@ -1500,14 +1794,6 @@ diff --git a/src/common/gm_dumptree.cc b/src/common/gm_dumptree.cc
 index aa2e69b..71cc0d3 100644
 --- a/src/common/gm_dumptree.cc
 +++ b/src/common/gm_dumptree.cc
-@@ -30,6 +30,7 @@ void ast_idlist::dump_tree(int ind_lv) {
-     }
-     printf("]");
- }
-+
- void ast_field::dump_tree(int ind_level) {
-     assert(parent!=NULL);
-     IND(ind_level);
 @@ -40,6 +41,17 @@ void ast_field::dump_tree(int ind_level) {
      printf("]");
  }
@@ -1530,14 +1816,6 @@ diff --git a/src/common/gm_error.cc b/src/common/gm_error.cc
 index fc84967..17b1669 100644
 --- a/src/common/gm_error.cc
 +++ b/src/common/gm_error.cc
-@@ -107,7 +107,6 @@ void gm_type_error(int errno, int l, int c, const char* str1, const char* str2,
-         case GM_ERROR_INCONSISTENT_ARGMAX:
-             printf("LHS list of argmiax assignment is not consistent; They should be all scalar or have same driver\n");
-             break;
--
-         case GM_ERROR_NESTED_BFS:
-             printf("Currently, nested bfs/dfs is not supported\n");
-             break;
 @@ -147,6 +146,9 @@ void gm_type_error(int errno, int l, int c, const char* str1, const char* str2,
          case GM_ERROR_COMPARE_MISMATCH:
              printf("Typemismatch in Comparison. LHS:%s, RHS:%s \n", str1, str2);
@@ -2584,14 +2862,6 @@ diff --git a/src/frontend/gm_typecheck_oprules.cc b/src/frontend/gm_typecheck_op
 index 7f2d801..d7618d9 100644
 --- a/src/frontend/gm_typecheck_oprules.cc
 +++ b/src/frontend/gm_typecheck_oprules.cc
-@@ -77,6 +77,7 @@ static void init_op_rules() {
- 
- }
- ;
-+
- void gm_frontend::init_op_type_rules() {
-     init_op_rules();
- }
 @@ -226,6 +227,10 @@ bool gm_is_compatible_type(int op, int t1, int t2, int& op_result_type, int& t1_
          t2 = t1;
      }
@@ -2604,7 +2874,7 @@ index 7f2d801..d7618d9 100644
          gm_type_rule& R = GM_TYPE_RULES[i];
  
 diff --git a/src/inc/gm_ast.h b/src/inc/gm_ast.h
-index 319459b..f475782 100644
+index 319459b..a54f1c0 100644
 --- a/src/inc/gm_ast.h
 +++ b/src/inc/gm_ast.h
 @@ -17,6 +17,7 @@ enum AST_NODE_TYPE
@@ -2623,30 +2893,6 @@ index 319459b..f475782 100644
      AST_SENT,     // 
      AST_SENTBLOCK, // { ... }
      AST_ASSIGN,   // C =D
-@@ -478,6 +480,7 @@ public:
-         delete first;
-         delete second;
-     }
-+
-     virtual void reproduce(int id_level);
-     virtual void dump_tree(int id_level);
- 
-@@ -485,6 +488,7 @@ private:
-     ast_field() :
-             ast_node(AST_FIELD), first(NULL), second(NULL), rarrow(false) {
-     }
-+
-     ast_field(ast_id* l, ast_id* f) :
-             ast_node(AST_FIELD), first(l), second(f), rarrow(false) {
-         first->set_parent(this);
-@@ -492,6 +496,7 @@ private:
-         this->line = first->get_line();
-         this->col = first->get_col();
-     }
-+
- public:
-     static ast_field* new_field(ast_id* l, ast_id* f, bool is_r_arrow = false) {
-         ast_field* af = new ast_field(l, f);
 @@ -568,7 +573,7 @@ private:
  
  class ast_typedecl: public ast_node
@@ -2851,62 +3097,6 @@ index 319459b..f475782 100644
      ast_expr* left;
      ast_expr* right;
 @@ -1402,62 +1496,85 @@ public:
-     bool is_biop() {
-         return (expr_class == GMEXPR_BIOP) || (expr_class == GMEXPR_LBIOP);
-     }
-+
-     bool is_uop() {
-         return (expr_class == GMEXPR_UOP) || (expr_class == GMEXPR_LUOP);
-     }
-+
-     bool is_comp() {
-         return (expr_class == GMEXPR_COMP);
-     }
-+
-     bool is_id() {
-         return expr_class == GMEXPR_ID;
-     }
-+
-     bool is_nil() {
-         return expr_class == GMEXPR_NIL;
-     }
-+
-     bool is_field() {
-         return expr_class == GMEXPR_FIELD;
-     }
-+
-     bool is_int_literal() {
-         return expr_class == GMEXPR_IVAL;
-     }
-+
-     bool is_float_literal() {
-         return expr_class == GMEXPR_FVAL;
-     }
-+
-     bool is_boolean_literal() {
-         return expr_class == GMEXPR_BVAL;
-     }
-+
-     bool is_inf() {
-         return expr_class == GMEXPR_INF;
-     }
-+
-     bool is_literal() {
-         return is_int_literal() || is_float_literal() || is_boolean_literal() || is_inf();
-     }
-+
-     bool is_reduction() {
-         return expr_class == GMEXPR_REDUCE;
-     }
-+
-     bool is_builtin() {
-         return expr_class == GMEXPR_BUILTIN || expr_class == GMEXPR_BUILTIN_FIELD;
-     }
-+
-     bool is_terop() {
-         return expr_class == GMEXPR_TER;
-     }
-+
      bool is_foreign() {
          return expr_class == GMEXPR_FOREIGN;
      }
@@ -3090,14 +3280,6 @@ index 319459b..f475782 100644
  class ast_expr_foreign: public ast_expr
  {
  public:
-@@ -1783,6 +2024,7 @@ public:
-         delete src2;
-         delete_symtabs();
-     }
-+
-     static ast_expr_reduce*
-     new_reduce_expr(int optype, ast_id* iter, ast_id* src, int iter_op, ast_expr* body, ast_expr* filter = NULL) {
-         ast_expr_reduce *e = new ast_expr_reduce();
 @@ -1813,43 +2055,55 @@ public:
          return true;
      }
@@ -3110,58 +3292,6 @@ index 319459b..f475782 100644
      void set_iter_type(int i) {
          iter_type = i;
      }
-+
-     int get_reduce_type() {
-         return reduce_type;
-     }
-+
-     ast_id* get_source() {
-         return src;
-     }
-+
-     ast_id* get_iterator() {
-         return iter;
-     }
-+
-     ast_expr* get_filter() {
-         return filter;
-     }
-+
-     ast_expr* get_body() {
-         return body;
-     }
-+
-     ast_id* get_source2() {
-         return src2;
-     }
- 
-+
-     void set_source2(ast_id* i) {
-         src2 = i;
-         if (i != NULL) i->set_parent(this);
-     }
-+
-     void set_filter(ast_expr* e) {
-         filter = e;
-         if (e != NULL) e->set_parent(this);
-     }
-+
-     void set_body(ast_expr* e) {
-         body = e;
-         if (e != NULL) e->set_parent(this);
-     }
-+
-     virtual ast_expr* copy(bool cp_syminfo = false);
- 
- private:
-@@ -1858,6 +2112,7 @@ private:
-         set_nodetype(AST_EXPR_RDC);
-         create_symtabs();
-     }
-+
-     ast_id* iter;
-     ast_id* src;
-     ast_id* src2;
 @@ -1874,11 +2129,14 @@ enum gm_assignment_t
  {
      GMASSIGN_NORMAL, GMASSIGN_REDUCE, GMASSIGN_DEFER, GMASSIGN_INVALID
@@ -3178,14 +3308,6 @@ index 319459b..f475782 100644
  class ast_assign: public ast_sent
  {
  public:
-@@ -1906,6 +2164,7 @@ public:
-         A->reduce_type = reduce_type; // reduce or defer type
-         return A;
-     }
-+
-     static ast_assign* new_assign_field(ast_field* id, ast_expr* r, int assign_type = GMASSIGN_NORMAL, ast_id* itor = NULL, int reduce_type = GMREDUCE_NULL) {
-         // assign to property
-         ast_assign* A = new ast_assign();
 @@ -1930,15 +2189,19 @@ public:
      int get_assign_type() {
          return assign_type;
@@ -3195,40 +3317,7 @@ index 319459b..f475782 100644
 +    virtual int get_lhs_type() {
          return lhs_type;
      }
-+
-     int get_reduce_type() {
-         return reduce_type;
-     }
-+
-     void set_assign_type(int a) {
-         assign_type = a;
-     }
-+
-     void set_reduce_type(int a) {
-         reduce_type = a;
-     }
 @@ -1946,28 +2209,40 @@ public:
-     ast_id* get_lhs_scala() {
-         return lhs_scala;
-     }
-+
-     ast_field* get_lhs_field() {
-         return lhs_field;
-     }
-+
-     ast_expr* get_rhs() {
-         return rhs;
-     }
-+
-     ast_id* get_bound() {
-         return bound;
-     }
-+
-     void set_bound(ast_id* i) {
-         bound = i;
-         if (bound != NULL) i->set_parent(this);
-     }
-+
      bool is_reduce_assign() {
          return assign_type == GMASSIGN_REDUCE;
      }
@@ -3249,7 +3338,7 @@ index 319459b..f475782 100644
      void set_rhs(ast_expr* r) {
          rhs = r;
          rhs->set_parent(this);
-@@ -2005,17 +2280,27 @@ public:
+@@ -2005,24 +2280,105 @@ public:
          if (new_id != NULL) lhs_type = GMASSIGN_LHS_FIELD;
      }
  
@@ -3263,9 +3352,18 @@ index 319459b..f475782 100644
 +        return NULL;
 +    }
 +
++    void set_is_reference(bool is_ref) {
++        isReference = is_ref;
++    }
++
++    bool is_reference() {
++        return isReference;
++    }
++
 +protected:
      ast_assign() :
-             ast_sent(AST_ASSIGN), lhs_scala(NULL), lhs_field(NULL), rhs(NULL), bound(NULL), arg_minmax(false), lhs_type(0), assign_type(0), reduce_type(0) {
+-            ast_sent(AST_ASSIGN), lhs_scala(NULL), lhs_field(NULL), rhs(NULL), bound(NULL), arg_minmax(false), lhs_type(0), assign_type(0), reduce_type(0) {
++            ast_sent(AST_ASSIGN), lhs_scala(NULL), lhs_field(NULL), rhs(NULL), bound(NULL), arg_minmax(false), lhs_type(0), assign_type(0), reduce_type(0), isReference(false) {
      }
  
 +private:
@@ -3279,7 +3377,8 @@ index 319459b..f475782 100644
      ast_id* bound;  // bounding iterator
  
      bool arg_minmax;
-@@ -2023,6 +2308,68 @@ private:
++    bool isReference;
+ 
      std::list<ast_node*> l_list;
      std::list<ast_expr*> r_list;
  
@@ -3348,7 +3447,7 @@ index 319459b..f475782 100644
  };
  
  class ast_vardecl: public ast_sent
-@@ -2376,9 +2723,11 @@ public:
+@@ -2376,9 +2732,11 @@ public:
          b_filter = e;
      }
      void set_fbody(ast_sentblock* b) {
@@ -3360,7 +3459,7 @@ index 319459b..f475782 100644
          b_body = b;
      }
      virtual void reproduce(int id_level);
-@@ -2506,9 +2855,11 @@ public:
+@@ -2506,9 +2864,11 @@ public:
          return cond;
      }
      void set_then(ast_sent* s) {
@@ -3490,7 +3589,7 @@ index 1f2b856..1e2d515 100644
  GM_COMPILE_STEP(gm_cpp_opt_save_bfs, "Finding BFS Children")
  //GM_COMPILE_STEP(gm_cpp_opt_reduce_bound, "Optimize reductions with sequential bound ")
 diff --git a/src/inc/gm_backend_giraph.h b/src/inc/gm_backend_giraph.h
-index f7c85e2..8f8770d 100644
+index f7c85e2..270c3d3 100644
 --- a/src/inc/gm_backend_giraph.h
 +++ b/src/inc/gm_backend_giraph.h
 @@ -41,7 +41,8 @@ public:
@@ -3503,20 +3602,33 @@ index f7c85e2..8f8770d 100644
      virtual void generate_broadcast_send_master(ast_id* id, gm_code_writer& Body);
      virtual void generate_broadcast_receive_master(ast_id* id, gm_code_writer& Body, int reduce_op = GMREDUCE_NULL);
      virtual void generate_headers(gm_code_writer& Body);
-@@ -87,6 +88,13 @@ public:
-     virtual void generate_message_send_for_random_write(ast_sentblock* sb, gm_symtab_entry* sym, gm_code_writer& Body);
+@@ -129,10 +137,11 @@ protected:
+     void do_generate_scalar_broadcast_receive(gm_gps_basic_block *b);
+     void do_generate_shared_variables_keys();
  
-     virtual void generate_expr_builtin(ast_expr_builtin* e, gm_code_writer& Body, bool is_master);
+-    void do_generate_vertex();
++    void do_generate_vertex_begin();
++    void do_generate_vertex_body();
++    void do_generate_vertex_end();
+     void do_generate_worker_context_class();
+     void do_generate_vertex_property_class(bool is_edge_prop);
+-    void do_generate_vertex_class();
+     void do_generate_message_class();
+     void do_generate_vertex_states();
+     void do_generate_vertex_state_body(gm_gps_basic_block *b);
+diff --git a/src/inc/gm_backend_gps.h b/src/inc/gm_backend_gps.h
+index 1a2ad72..52a0e28 100644
+--- a/src/inc/gm_backend_gps.h
++++ b/src/inc/gm_backend_gps.h
+@@ -131,6 +131,8 @@ DEF_STRING(GPS_TAG_COMM_ID);
+ // is pararell
+ class gm_gps_gen : public gm_backend, public gm_code_generator
+ {
++	friend class gm_giraph_gen;
 +
-+    virtual bool is_node_type_int() {
-+        return true;
-+    }
-+    virtual bool is_edge_type_int() {
-+        return true;
-+    }
- };
- 
- //-----------------------------------------------------------------
+ public:
+     gm_gps_gen() :
+             gm_code_generator(Body), dname(NULL), fname(NULL), f_body(NULL) {
 diff --git a/src/inc/gm_backend_gps_opt_steps.h b/src/inc/gm_backend_gps_opt_steps.h
 index 8370e31..e7866cf 100644
 --- a/src/inc/gm_backend_gps_opt_steps.h
@@ -3550,59 +3662,6 @@ index cb11df8..5bf5f84 100644
      GM_BLTIN_END
  };
  
-@@ -92,29 +102,35 @@ const gm_builtin_desc_t GM_builtins[] = {
-         { "Edge:FromNode:Node:0", GM_BLTIN_EDGE_FROM, AUX_INFO(GM_BLTIN_INFO_NEED_FROM,GM_BLTIN_FLAG_TRUE) }, { "Edge:ToNode:Node:0", GM_BLTIN_EDGE_TO, "" },
- 
-         // Set:
--        { "N_S:Add:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_S:Remove:Void:1:Node", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_S:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" }, { "N_S:Union:Void:1:N_S",
--                GM_BLTIN_SET_UNION, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_S:Intersect:Void:1:N_S", GM_BLTIN_SET_INTERSECT,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_S:Complement:Void:1:N_S", GM_BLTIN_SET_COMPLEMENT,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_S:IsSubsetOf:Bool:1:N_S", GM_BLTIN_SET_SUBSET, "" },
-+        { "N_S:Add:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_S:Remove:Void:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_S:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" },
-+        { "N_S:Union:Void:1:N_S", GM_BLTIN_SET_UNION, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_S:Intersect:Void:1:N_S", GM_BLTIN_SET_INTERSECT, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_S:Complement:Void:1:N_S", GM_BLTIN_SET_COMPLEMENT, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_S:IsSubsetOf:Bool:1:N_S", GM_BLTIN_SET_SUBSET, "" },
-+        { "N_S:Size:Int", GM_BLTIN_SET_SIZE, "" },
- 
-         // Order:
--        { "N_O:PushBack:Void:1:Node", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "*Push", GM_BLTIN_SET_ADD_BACK,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_O:PushFront:Void:1:Node", GM_BLTIN_SET_ADD,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_O:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_O:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "*Pop", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_O:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" },
-+        { "N_O:PushBack:Void:1:Node", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "*Push", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_O:PushFront:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_O:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_O:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "*Pop", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_O:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" },
-+        { "N_O:Size:Int", GM_BLTIN_SET_SIZE, "" },
-         //{"NodeO:Front:Node:0",         GM_BLTIN_SET_PEEK,         ""},
-         //{"NodeO:Back:Node:0",          GM_BLTIN_SET_PEEK_BACK,    ""},
- 
-         // Seq:
--        { "N_Q:PushBack:Void:1:Node", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "*Push", GM_BLTIN_SET_ADD_BACK,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_Q:PushFront:Void:1:Node", GM_BLTIN_SET_ADD,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) }, { "N_Q:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "N_Q:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) }, { "*Pop", GM_BLTIN_SET_REMOVE,
--                AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_Q:PushBack:Void:1:Node", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "*Push", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_Q:PushFront:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
-+        { "N_Q:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_Q:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "*Pop", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-+        { "N_Q:Size:Int", GM_BLTIN_SET_SIZE, "" },
-         //{"NodeQ:Front:Node:0",         GM_BLTIN_SET_PEEK,        ""},
-         //{"NodeQ:Back:Node:0",          GM_BLTIN_SET_PEEK_BACK,   ""},
- 
 @@ -123,6 +139,18 @@ const gm_builtin_desc_t GM_builtins[] = {
          { "_:Log:Double:1:Double", GM_BLTIN_TOP_LOG, "" },  // returns log(d)  // base-e
          { "_:Exp:Double:1:Double", GM_BLTIN_TOP_EXP, "" },  // returns e^d
@@ -3623,14 +3682,6 @@ index cb11df8..5bf5f84 100644
  
  class gm_builtin_def
 @@ -140,16 +168,33 @@ public:
-     int get_source_type_summary() {
-         return src_type;
-     }
-+
-     int get_result_type_summary() {
-         return res_type;
-     }
-+
      int get_arg_type(int i) {
          assert(i<num_args);
          return arg_types[i];
@@ -3831,30 +3882,6 @@ index f4a6aa4..e58f727 100644
  }
  
  enum GM_OPS_T
-@@ -369,18 +416,23 @@ inline static bool gm_is_numeric_op(int i) {
-     return (i == GMOP_MULT) || (i == GMOP_DIV) || (i == GMOP_MOD) || (i == GMOP_ADD) || (i == GMOP_SUB) || (i == GMOP_NEG) || (i == GMOP_ABS) || (i == GMOP_MAX)
-             || (i == GMOP_MIN);
- }
-+
- inline static bool gm_is_boolean_op(int i) {
-     return (i == GMOP_NOT) || (i == GMOP_AND) || (i == GMOP_OR);
- }
-+
- inline static bool gm_is_eq_op(int i) {
-     return (i == GMOP_EQ) || (i == GMOP_NEQ);
- }
-+
- inline static bool gm_is_less_op(int i) {
-     return (i == GMOP_GT) || (i == GMOP_LT) || (i == GMOP_GE) || (i == GMOP_LE);
- }
-+
- inline static bool gm_is_eq_or_less_op(int i) {
-     return gm_is_eq_op(i) || gm_is_less_op(i);
- }
-+
- inline static bool gm_is_ternary_op(int i) {
-     return (i == GMOP_TER);
- }
 @@ -398,7 +450,12 @@ inline bool gm_is_compatible_type_for_assign(int t_lhs, int t_rhs, int& t_new_rh
  
  enum GM_REDUCE_T
@@ -3869,71 +3896,7 @@ index f4a6aa4..e58f727 100644
      GMREDUCE_OR,      // logical OR
      GMREDUCE_AVG,     // average (syntactic sugar)
      GMREDUCE_DEFER,  // deferred assignment is not a reduce op. but shares a lot of properies
-@@ -410,9 +467,11 @@ inline static bool gm_is_strict_reduce_op(int t) {
-     return (t == GMREDUCE_PLUS) || (t == GMREDUCE_MULT) || (t == GMREDUCE_MIN) || (t == GMREDUCE_MAX) || (t == GMREDUCE_AND) || (t == GMREDUCE_OR)
-             || (t == GMREDUCE_AVG);
- }
-+
- inline static bool gm_is_numeric_reduce_op(int t) {
-     return (t == GMREDUCE_PLUS) || (t == GMREDUCE_MULT) || (t == GMREDUCE_MIN) || (t == GMREDUCE_MAX) || (t == GMREDUCE_AVG);
- }
-+
- inline static bool gm_is_boolean_reduce_op(int t) {
-     return (t == GMREDUCE_AND) || (t == GMREDUCE_OR);
- }
 @@ -429,46 +488,67 @@ inline static bool gm_is_iteration_on_property(int iterType) {
- inline static bool gm_is_iteration_on_set(int itype) {
-     return (itype == GMTYPE_NODEITER_SET) || (itype == GMTYPE_EDGEITER_SET);
- }
-+
- inline static bool gm_is_iteration_on_order(int itype) {
-     return (itype == GMTYPE_NODEITER_ORDER) || (itype == GMTYPE_EDGEITER_ORDER);
- }
-+
- inline static bool gm_is_iteration_on_sequence(int itype) {
-     return (itype == GMTYPE_NODEITER_SEQ) || (itype == GMTYPE_EDGEITER_SEQ);
- }
-+
- inline static bool gm_is_iteration_on_all_graph(int itype) {
-     return gm_is_all_graph_iter_type(itype);
- }
-+
- inline static bool gm_is_iteration_on_out_neighbors(int itype) {
-     return (itype == GMTYPE_EDGEITER_NBRS) || (itype == GMTYPE_NODEITER_NBRS);
- }
-+
- inline static bool gm_is_iteration_on_in_neighbors(int itype) {
-     return (itype == GMTYPE_EDGEITER_IN_NBRS) || (itype == GMTYPE_NODEITER_IN_NBRS);
- }
-+
- inline static bool gm_is_iteration_on_up_neighbors(int itype) {
-     return (itype == GMTYPE_EDGEITER_UP_NBRS) || (itype == GMTYPE_NODEITER_UP_NBRS);
- }
-+
- inline static bool gm_is_iteration_on_down_neighbors(int itype) {
-     return (itype == GMTYPE_EDGEITER_DOWN_NBRS) || (itype == GMTYPE_NODEITER_DOWN_NBRS);
- }
-+
- inline static bool gm_is_iteration_use_reverse(int itype) {
-     return gm_is_iteration_on_in_neighbors(itype) || gm_is_iteration_on_up_neighbors(itype);
- }
-+
- inline static bool gm_is_iteration_bfs(int itype) {
-     return (itype == GMTYPE_EDGEITER_BFS) || (itype == GMTYPE_NODEITER_BFS);
- }
-+
- inline static bool gm_is_iteration_on_nodes(int itype) {
-     return gm_is_node_iter_type(itype);
- }
-+
- inline static bool gm_is_iteration_on_edges(int itype) {
-     return gm_is_edge_iter_type(itype);
- }
-+
- inline static bool gm_is_iteration_on_updown_levels(int itype) {
-     return gm_is_iteration_on_up_neighbors(itype) || gm_is_iteration_on_down_neighbors(itype);
- }
-+
  inline static bool gm_is_iteration_on_neighbors_compatible(int itype) {
      return gm_is_any_nbr_node_iter_type(itype);
  }
@@ -4013,14 +3976,6 @@ index 5e05279..810392a 100644
          default:
              printf("type = %d\n", itype);
              assert(false);
-@@ -174,6 +178,7 @@ public:
-         g->org_lhs = org;
-         return g;
-     }
-+
-     static gm_rwinfo* new_range_inst(int range, bool always, ast_id* loc) {
-         gm_rwinfo *g = new gm_rwinfo();
-         g->always = always;
 diff --git a/src/inc/gm_transform_helper.h b/src/inc/gm_transform_helper.h
 index e359afd..357974b 100644
 --- a/src/inc/gm_transform_helper.h
@@ -4380,90 +4335,97 @@ index 0000000..87f2679
 +    gm_opt_remove_unused_t T2(T.get_used_set());
 +    proc->traverse_pre(&T2);
 +}
-diff --git a/src/opt/gm_syntax_sugar2.cc b/src/opt/gm_syntax_sugar2.cc
-index 98ae9b5..804fd3a 100644
---- a/src/opt/gm_syntax_sugar2.cc
-+++ b/src/opt/gm_syntax_sugar2.cc
-@@ -239,34 +239,34 @@ void ss2_reduce_op::post_process_body(ast_expr_reduce* target) {
-         switch (rtype) {
-             case GMREDUCE_AVG:  // go through
-             case GMREDUCE_PLUS:
--                t_name_base = "_S";
-+                t_name_base = "__S";
-                 break; // Sum
-             case GMREDUCE_MULT:
--                t_name_base = "_P";
-+                t_name_base = "__P";
-                 break; // Product
-             case GMREDUCE_MIN:
--                t_name_base = "_Mn";
-+                t_name_base = "__Mn";
-                 break; // Min
-             case GMREDUCE_MAX:
--                t_name_base = "_Mx";
-+                t_name_base = "__Mx";
-                 break; // Max
-             case GMREDUCE_AND:
--                t_name_base = "_A";
-+                t_name_base = "__A";
-                 break;
-             case GMREDUCE_OR:
--                t_name_base = "_E";
-+                t_name_base = "__E";
-                 break;
-             default:
-                 assert(false);
-                 break;
-         }
+diff --git a/src/parse/gm_grammer.y b/src/parse/gm_grammer.y
+index 52c38e2..4aace43 100644
+--- a/src/parse/gm_grammer.y
++++ b/src/parse/gm_grammer.y
+@@ -30,7 +30,8 @@
  
--        bool need_count_for_avg = false;
-         if (is_avg) {
-             rtype = GMREDUCE_PLUS; // Need sum
+  /*  Reserved Words */
+ %token T_PROC T_GRAPH T_NODE T_NODEPROP T_EDGE T_EDGEPROP T_LOCAL
+-%token T_NSET T_NORDER T_NSEQ T_ITEMS T_QUEUE
++%token T_NSET T_NORDER T_NSEQ T_ITEMS T_COLLECTION
++%token T_MAP
+ %token T_DFS T_POST 
+ %token T_INT T_FLOAT T_BOOL T_DOUBLE  T_LONG
+ %token T_RETURN
+@@ -66,8 +67,8 @@
+ %type <pair> bfs_reverse bfs_filters dfs_post
+ %type <ival> from_or_semi
+ %type <ptr> arg_decl typedecl property prim_type graph_type arg_target var_target
+-%type <ptr> edge_type node_type nodeedge_type set_type optional_bind
+-%type <ptr> scala field
++%type <ptr> edge_type node_type nodeedge_type set_type optional_bind key_type value_type map_type
++%type <ptr> scala field map_access
+ %type <ptr> sent_argminmax_assignment
+ %type <pair>  iterator1
+ %type <ival> reduce_eq
+@@ -134,6 +135,7 @@
+             | property                 { $$ = $1;}
+             | nodeedge_type            { $$ = $1;}
+             | set_type                 { $$ = $1;}
++            | map_type				   { $$ = $1;}
  
-             need_count_for_avg = true;
-             if (target->get_filter() == NULL) {
+ 
+   graph_type : T_GRAPH               { $$ = GM_graphtype_ref(GMTYPE_GRAPH); 
+@@ -167,8 +169,16 @@
+            |  T_NORDER '(' id ')'     { $$ = GM_settype_ref(GMTYPE_NORDER, $3);   GM_set_lineinfo($$,@1.first_line, @1.first_column);}
+            |  T_NORDER                { $$ = GM_settype_ref(GMTYPE_NORDER, NULL); GM_set_lineinfo($$,@1.first_line, @1.first_column);}
+            
+-           |  T_QUEUE '<' set_type '>' '(' id ')'	  { $$ = GM_queuetype_ref($3, $6); 	  GM_set_lineinfo($$,@1.first_line, @1.first_column);}
+-           |  T_QUEUE '<' set_type '>' 				  { $$ = GM_queuetype_ref($3, NULL);  GM_set_lineinfo($$,@1.first_line, @1.first_column);}
++           |  T_COLLECTION '<' set_type '>' '(' id ')'	  { $$ = GM_queuetype_ref($3, $6); 	  GM_set_lineinfo($$,@1.first_line, @1.first_column);}
++           |  T_COLLECTION '<' set_type '>'				  { $$ = GM_queuetype_ref($3, NULL);  GM_set_lineinfo($$,@1.first_line, @1.first_column);}
++           
++  key_type : nodeedge_type	{ $$ = $1; }
++  		   | prim_type		{ $$ = $1; }
++  		   
++  value_type : nodeedge_type { $$ = $1; }
++  			 | prim_type	 { $$ = $1; }
++           
++  map_type :  T_MAP '<' key_type ',' value_type '>' { $$ = GM_maptype_ref($3, $5); GM_set_lineinfo($$,@1.first_line, @1.first_column); }
+            
+ 
+   property : T_NODEPROP '<' prim_type '>'     '(' id ')'  { $$ = GM_nodeprop_ref($3, $6 ); GM_set_lineinfo($$,@1.first_line, @1.first_column);}
+@@ -250,11 +260,11 @@
+                   GM_set_lineinfo($$,@1.first_line, @1.first_column);} 
+ 
+   dfs_post     :                               {$$.p1 = NULL; $$.p2 = NULL;}
+-               | T_POST bfs_filter sent_block  {$$.p1 = $2;   $$.p2 = $3;  } 
++               | T_POST bfs_filter sent_block  {$$.p1 = $3;   $$.p2 = $2;  } 
+                | T_POST sent_block             {$$.p1 = $2;   $$.p2 = NULL;  }
+ 
+   bfs_reverse  :                               {$$.p1 = NULL; $$.p2 = NULL;}
+-               | T_BACK bfs_filter sent_block  {$$.p1 = $2;   $$.p2 = $3;  } 
++               | T_BACK bfs_filter sent_block  {$$.p1 = $3;   $$.p2 = $2;  } 
+                | T_BACK sent_block             {$$.p1 = $2;   $$.p2 = NULL;  }
+ 
+   bfs_header_format :  '(' id ':' id opt_tp '.' T_NODES from_or_semi id ')' {
+@@ -370,6 +380,7 @@ bfs_navigator :  '[' expr ']'              {$$ = $2;}
+             | field                        {$$ = GM_expr_field_access($1);}
+             | built_in                     {$$ = $1;}
+             | expr_user                    {$$ = $1;}
++            | map_access				   { $$ = GM_expr_map_access($1, @1.first_line, @1.first_column); }
+ 
+    /* cannot be distinguished by the syntax, until type is available. due to vars */
+    bool_expr : expr                    {$$ = $1; }
+@@ -391,6 +402,7 @@ bfs_navigator :  '[' expr ']'              {$$ = $2;}
+ 
+   lhs : scala                             { $$ = $1; }
+       | field                             { $$ = $1; }
++      | map_access						  { $$ = $1; }
+ 
+   lhs_list : lhs                         { $$ = GM_single_lhs_list($1);}
+            | lhs ',' lhs_list            { $$ = GM_add_lhs_list_front($1, $3);}
+@@ -400,6 +412,8 @@ bfs_navigator :  '[' expr ']'              {$$ = $2;}
+        /*| id T_RARROW id                  { $$ = GM_field($1, $3, true);  }*/
+        | T_EDGE '('id ')' '.' id            { $$ = GM_field($3, $6, true);  }
+ 
++  map_access: id '[' expr ']'			{ $$ = GM_map_access($1, $3); }
 +
-                 int iter_type = target->get_iter_type();
-                 int src_type = target->get_source()->getTypeInfo()->getTypeSummary();
-                 if (find_count_function(src_type, iter_type) == GM_BLTIN_END)
-@@ -274,6 +274,7 @@ void ss2_reduce_op::post_process_body(ast_expr_reduce* target) {
-                 else
-                     need_count_for_avg = false;
-             }
-+
-         }
- 
-         // 1.2 initial value
-@@ -330,6 +331,7 @@ void ss2_reduce_op::post_process_body(ast_expr_reduce* target) {
-         foreach_body = r_assign;
- 
-         if (need_count_for_avg) {
-+
-             ast_sentblock* sb = ast_sentblock::new_sentblock();
-             ast_id* lhs_id = cnt_symbol->getId()->copy(true);  // symInfo is correct for LHS
-             bound_id2 = old_iter->copy(false);              // symInfo not available yet
-@@ -543,13 +545,18 @@ private:
-     ast_sent* getNewBody() {
- 
-         ast_sentblock* newBody;
--        if (fe->get_body()->get_nodetype() == AST_SENTBLOCK)
-+        if (fe->get_body()->get_nodetype() == AST_SENTBLOCK) {
-             newBody = (ast_sentblock*) fe->get_body();
--        else
-+        } else {
-             newBody = ast_sentblock::new_sentblock();
-+        }
- 
--        ast_assign* assign = createAssignStatement();
-         std::list<ast_sent*>& statements = newBody->get_sents();
-+        if (fe->get_body()->get_nodetype() != AST_SENTBLOCK) {
-+            statements.push_back(fe->get_body());
-+        }
-+
-+        ast_assign* assign = createAssignStatement();
-         statements.push_front(assign);
- 
-         return newBody;
+   built_in : id '.' id arg_list            { $$ = GM_expr_builtin_expr($1, $3, $4);}
+            | id arg_list                   { $$ = GM_expr_builtin_expr(NULL, $1, $2);}
+            | field '.' id arg_list		   { $$ = GM_expr_builtin_field_expr($1, $3, $4);}
 diff --git a/src/parse/gm_lex.l b/src/parse/gm_lex.l
 index 9bbc7bc..b4ae80c 100644
 --- a/src/parse/gm_lex.l

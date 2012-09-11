@@ -98,14 +98,13 @@ public class gm_main {
 			return;
 
 		String d = new String(c);
-		String p = tangible.StringFunctions.strTok(d, ".");
-		if (p == null) {
+		String[] p = d.split("\\.");
+		if (p[0].equals("")) {
 			return;
 		}
-		gm_stop_major = Integer.parseInt(p);
-		p = tangible.StringFunctions.strTok(null, ".");
-		if (p != null)
-			gm_stop_minor = Integer.parseInt(p);
+		gm_stop_major = Integer.parseInt(p[0]);
+		if (p.length > 1)
+			gm_stop_minor = Integer.parseInt(p[1]);
 
 		if (gm_stop_major == 0) {
 			return;

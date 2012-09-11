@@ -26,6 +26,7 @@ public class gm_argopts {
 
 	public static String GMARGFLAG_MERGE_BB = "GPSMerge";
 	public static String GMARGFLAG_MERGE_BB_INTRA = "GPSMergeIntra";
+	public static String GMARGFLAG_GIRAPH_VERTEX_ONLY = "GiraphVertexOnly";
 	// public static String GMARGFLAG_DUMPIR = "Dd";
 	// public static String GMARGFLAG_NOMERGE = "NoMerge";
 	// public static String GMARGFLAG_NOSCREDUCE = "NoScalarReduce";
@@ -36,8 +37,9 @@ public class gm_argopts {
 			new gm_comp_args(GMARGFLAG_VERSION, GMARG_NULL, "Print version", null),
 			new gm_comp_args(GMARGFLAG_TARGET, GMARG_STRING, "Target backend. Current valid targets are 'cpp_omp', 'cpp_seq', 'gps' and 'giraph'.", "cpp_omp"),
 			new gm_comp_args(GMARGFLAG_OUTDIR, GMARG_STRING, "Output directory.", "."),
-			new gm_comp_args(GMARGFLAG_OPT_LEV, GMARG_INT, "Optimization Level (tobe implemented)", "1"),
+			new gm_comp_args(GMARGFLAG_OPT_LEV, GMARG_INT, "Optimization Level (to be implemented)", "1"),
 			new gm_comp_args(GMARGFLAG_VERB_LEV, GMARG_INT, "Verbosity Level 0:silent, 1:show compile stage", "0"),
+
 			new gm_comp_args(GMARGFLAG_FLIP_BFSUP, GMARG_BOOL, "Enable 'flipping edges for BFS Up-nbrs'", "1"),
 			new gm_comp_args(GMARGFLAG_FLIP_REVERSE, GMARG_BOOL, "Enable 'flipping edges' to avoid the use of reverse edges", "0"),
 			new gm_comp_args(GMARGFLAG_FLIP_PULL, GMARG_BOOL, "Enable 'flipping edges' to avoid the use of pull-based computation", "0"),
@@ -46,7 +48,8 @@ public class gm_argopts {
 			new gm_comp_args(GMARGFLAG_STOP_STRING, GMARG_STRING, "(For debug) Stop the compiler after certain stage. <string>=(step)[.(step)]", "0"),
 			new gm_comp_args(GMARGFLAG_REPRODUCE, GMARG_BOOL, "(For debug) When stopped, reproduce green-marl program", "1"),
 			new gm_comp_args(GMARGFLAG_PRINTRW, GMARG_BOOL, "(For debug) When stopped, print rw analysis information", "0"),
-			new gm_comp_args(GMARGFLAG_PRINTBB, GMARG_BOOL, "(For gps-debug) When stopped, print basicblock information", "0") //
+			new gm_comp_args(GMARGFLAG_PRINTBB, GMARG_BOOL, "(For gps-debug) When stopped, print basicblock information", "0"),
+			new gm_comp_args(GMARGFLAG_GIRAPH_VERTEX_ONLY, GMARG_BOOL, "(For giraph) Only generate vertex logic", "0"),
 	};
 
 	public static void print_help(String bin_name) {

@@ -22,6 +22,5 @@ public class gm_vocabulary {
 	}
 
 	private HashSet<String> words = new HashSet<String>();
-	// private HashSet<String, gm_comp_string> words = new HashSet<String, gm_comp_string>();
 
 }

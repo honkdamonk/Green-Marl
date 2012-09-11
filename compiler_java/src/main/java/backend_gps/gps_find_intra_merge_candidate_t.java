@@ -231,7 +231,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 		T.set_check_receiver(check_receivers);
 
 		// post && pre
-		GlobalMembersGm_gps_misc.gps_bb_traverse_ast(BB, T, true, true); 
+		gm_gps_misc.gps_bb_traverse_ast(BB, T, true, true); 
 
 		return S;
 	}

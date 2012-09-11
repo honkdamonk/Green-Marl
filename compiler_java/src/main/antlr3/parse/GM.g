@@ -118,8 +118,8 @@ prim_type
 
 
 nodeedge_type
-    :   node_type
-    |   edge_type
+    :   node_type 
+    |   edge_type 
     ;
 
 

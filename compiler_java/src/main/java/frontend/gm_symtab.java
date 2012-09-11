@@ -95,9 +95,7 @@ public class gm_symtab {
 	}
 
 	public final gm_symtab_entry find_symbol(ast_id id) {
-		// for(int i=0;i<entries.size(); i++) {
 		for (gm_symtab_entry e : entries) {
-			// gm_symtab_entry* e = entries[i];
 			String c = e.getId().get_orgname();
 			String c2 = id.get_orgname();
 			if (c.equals(c2))

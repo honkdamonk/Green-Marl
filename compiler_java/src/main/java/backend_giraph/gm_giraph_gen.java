@@ -260,8 +260,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 				continue;
 
 			if (s.isReadable()) {
-				// C++ TO JAVA CONVERTER TODO TASK: Java does not have an
-				// equivalent for pointers to value types:
+				// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
 				// ORIGINAL LINE: sbyte* argname = s->getId()->get_genname();
 				String argname = s.getId().get_genname();
 				temp = String.format("%s = getContext().getConfiguration().", argname);

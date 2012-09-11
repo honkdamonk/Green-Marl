@@ -864,8 +864,7 @@ public class gm_giraphlib extends gm_gpslib {
 				ast_assign a = (ast_assign) s;
 				assert !a.is_target_scalar();
 				gm_symtab_entry e = a.get_lhs_field().get_second().getSymInfo();
-				// C++ TO JAVA CONVERTER TODO TASK: Java does not have an
-				// equivalent for pointers to value types:
+				// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
 				// ORIGINAL LINE: int* i = (int*)
 				// fe->find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
 				Integer i = (Integer) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);

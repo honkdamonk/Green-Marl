@@ -174,14 +174,7 @@ public class check_usage_t extends gps_apply_bb_ast {
 
 	public final boolean apply_seq1(ast_expr e) {
 		if (e.is_id()) {
-			read_usage.put(e.get_id().getSymInfo(), GM_REDUCE_T.GMREDUCE_PLUS); // TODO
-																				// changed
-																				// 1
-																				// to
-																				// GMREDUCE_PLUS,
-																				// is
-																				// this
-																				// ok?
+			read_usage.put(e.get_id().getSymInfo(), GM_REDUCE_T.GMREDUCE_PLUS); // TODO changed 1 to GMREDUCE_PLUS, is this ok?
 		}
 		return true;
 	}

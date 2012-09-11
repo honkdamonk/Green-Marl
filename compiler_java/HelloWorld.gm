@@ -1,8 +1,10 @@
 Proc HelloWorld(G : Graph, i : Int, l : Long, f : Float, d : Double, b : Bool, u : N_P<Int>, u1 : Node, u2 : Node(G))
 {
-	Int x = 1;
-	Int y = 1;
-	If(True) {
-		
+	N_S set;
+	For(n : G.Nodes) {
+		set.Add(n);
+	}
+	Foreach(n : G.Nodes) {
+		set.Remove(n);
 	}
 }

@@ -53,10 +53,10 @@ public class ast_expr extends ast_node {
 			Out.push("INF");
 			return;
 		case GMEXPR_IVAL:
-			Out.push(String.format("%ld", ival));
+			Out.push(String.format("%d", ival));
 			return;
 		case GMEXPR_FVAL:
-			Out.push(String.format("%lf", fval));
+			Out.push(String.format("%f", fval));
 			return;
 		case GMEXPR_BVAL:
 			if (bval)

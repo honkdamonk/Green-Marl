@@ -468,4 +468,12 @@ public class ast_assign extends ast_sent {
 		return false;
 	}
 
+	public boolean is_map_entry_assign() {
+		return false;
+	}
+
+	public ast_assign_mapentry to_assign_mapentry() {
+		throw new ClassCastException();
+	}
+
 }

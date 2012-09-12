@@ -26,7 +26,7 @@ import common.gm_builtin_def;
 //     (3) Check if BFS is nested (temporary)
 //----------------------------------------------------------------
 public class gm_typechecker_stage_2 extends gm_apply {
-	
+
 	public gm_typechecker_stage_2() {
 		_is_okay = true;
 		set_for_expr(true);
@@ -51,7 +51,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
-			if (!a.is_target_scalar()) {
+			if (!a.is_target_scalar() && !a.is_target_map_entry()) {
 				ast_field f = a.get_lhs_field();
 				if (f.get_first().getTypeInfo().is_graph() || f.get_first().getTypeInfo().is_collection()) {
 
@@ -185,8 +185,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 
 		boolean isOkay = true;
 		if (builtinDef == null) {
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN, builtinExpr.get_line(), builtinExpr.get_col(),
-					builtinExpr.get_callname());
+			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN, builtinExpr.get_line(), builtinExpr.get_col(), builtinExpr.get_callname());
 			isOkay = false;
 		}
 		builtinExpr.set_builtin_def(builtinDef);

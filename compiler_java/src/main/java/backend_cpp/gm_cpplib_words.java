@@ -21,6 +21,7 @@ public class gm_cpplib_words
 	public static String ORDER_T = "gm_node_order";
 	public static String SEQ_T = "gm_node_seq";
 	public static String QUEUE_T = "gm_collection";
+	public static String MAP_T = "gm_map";
 	public static String PROP_OF_COL = "gm_property_of_collection";
 	public static String IS_IN = "is_in";
 	public static String MAX_SET_CNT = "max_size";

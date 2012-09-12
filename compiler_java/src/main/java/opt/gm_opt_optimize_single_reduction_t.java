@@ -38,6 +38,9 @@ public class gm_opt_optimize_single_reduction_t extends gm_apply {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			if (a.is_reduce_assign()) {
+				
+				if(a.is_target_map_entry()) return true;
+				
 				assert a.get_bound() != null;
 				gm_symtab_entry bound = a.get_bound().getSymInfo();
 

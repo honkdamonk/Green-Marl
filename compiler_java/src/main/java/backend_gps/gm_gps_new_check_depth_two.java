@@ -3,10 +3,6 @@ package backend_gps;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GM_ERRORS_AND_WARNINGS;
-import common.gm_error;
-import common.gm_main;
-
 public class gm_gps_new_check_depth_two extends gm_compile_step
 {
 	private gm_gps_new_check_depth_two()
@@ -15,16 +11,6 @@ public class gm_gps_new_check_depth_two extends gm_compile_step
 	}
 	public void process(ast_procdef proc)
 	{
-		// Check number of procedure name is same to the filename
-		String fname = gm_main.PREGEL_BE.getFileName();
-		assert fname != null;
-		if (!proc.get_procname().get_genname().equals(fname))
-		{
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
-			set_okay(false);
-			return;
-		}
-    
 		// analyze_symbol_scope should be done before.
 		gps_new_check_depth_two_t T = new gps_new_check_depth_two_t();
 		proc.traverse_both(T);

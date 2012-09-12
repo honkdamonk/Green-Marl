@@ -136,10 +136,12 @@ public class ast_bfs extends ast_sent {
 	}
 
 	public final void set_fbody(ast_sentblock b) {
+		if (b != null) b.set_parent(this);
 		f_body = b;
 	}
 
 	public final void set_bbody(ast_sentblock b) {
+		if (b != null) b.set_parent(this);
 		b_body = b;
 	}
 

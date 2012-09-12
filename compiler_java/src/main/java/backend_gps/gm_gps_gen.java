@@ -137,6 +137,15 @@ public class gm_gps_gen extends BackendGenerator {
 	}
 
 	public boolean do_generate() {
+		
+		gm_main.FE.prepare_proc_iteration();
+		ast_procdef proc = gm_main.FE.get_next_proc();
+		
+		// Check whether procedure name is the same as the filename
+		if (!proc.get_procname().get_genname().equals(fname)) {
+			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
+			return false;
+		}
 
 		if (!open_output_files())
 			return false;
@@ -163,6 +172,7 @@ public class gm_gps_gen extends BackendGenerator {
 		L.addLast(gm_gps_opt_transform_bfs.get_factory());
 		L.addLast(gm_ind_opt_move_propdecl.get_factory());
 		L.addLast(gm_gps_opt_simplify_expr1.get_factory());
+		L.addLast(gm_gps_opt_edge_iteration.get_factory());
 		// L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_find_nested_loops_test));
 
 		L.addLast(gm_gps_opt_insert_temp_property.get_factory());

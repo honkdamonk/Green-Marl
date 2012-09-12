@@ -94,10 +94,12 @@ public class ast_if extends ast_sent {
 	}
 
 	public final void set_then(ast_sent s) {
+		if (s != null) s.set_parent(this);
 		then_part = s;
 	}
 
 	public final void set_else(ast_sent s) {
+		if (s != null) s.set_parent(this);
 		else_part = s;
 	}
 

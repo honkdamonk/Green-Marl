@@ -8,6 +8,8 @@ import inc.gm_ind_opt_hoist_foreach;
 import inc.gm_ind_opt_loop_merge;
 import inc.gm_ind_opt_move_propdecl;
 import inc.gm_ind_opt_nonconf_reduce;
+import inc.gm_ind_opt_propagate_trivial_writes;
+import inc.gm_ind_opt_remove_unused_scalar;
 import inc.gm_ind_opt_syntax_sugar2;
 
 import java.util.LinkedList;
@@ -42,6 +44,8 @@ public class gm_independent_optimize {
 		LIST.addLast(gm_ind_opt_flip_edges.get_factory());
 		LIST.addLast(gm_ind_opt_loop_merge.get_factory());
 		LIST.addLast(gm_ind_opt_nonconf_reduce.get_factory());
+		LIST.addLast(gm_ind_opt_propagate_trivial_writes.get_factory());
+		LIST.addLast(gm_ind_opt_remove_unused_scalar.get_factory());
 	}
 
 	// ----------------------------------------------------

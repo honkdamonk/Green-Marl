@@ -50,7 +50,7 @@ public class check_bfs_main_t extends gm_apply {
 	public final void process_rwinfo(gm_rwinfo_map MAP, LinkedList<Object> LIST) {
 		for (gm_symtab_entry e : MAP.keySet()) {
 			if (!LIST.contains(e)) {
-				LIST.add(e);
+				LIST.addLast(e);
 			}
 
 			gm_rwinfo_list use = MAP.get(e);
@@ -59,18 +59,18 @@ public class check_bfs_main_t extends gm_apply {
 				gm_symtab_entry driver = rwinfo.driver;
 				if (driver != null) {
 					if (!LIST.contains(driver)) {
-						LIST.add(driver);
+						LIST.addLast(driver);
 					}
 					ast_id g = driver.getType().get_target_graph_id();
 					ast_id c = driver.getType().get_target_collection_id();
 					if (g != null) {
 						if (!LIST.contains(g.getSymInfo())) {
-							LIST.add(g.getSymInfo());
+							LIST.addLast(g.getSymInfo());
 						}
 					}
 					if (c != null) {
 						if (!LIST.contains(c.getSymInfo())) {
-							LIST.add(c.getSymInfo());
+							LIST.addLast(c.getSymInfo());
 						}
 					}
 				}
@@ -86,7 +86,7 @@ public class check_bfs_main_t extends gm_apply {
 			// insert graph symbol at the first
 			gm_symtab_entry graph = ((ast_bfs) s).get_root().getTypeInfo().get_target_graph_sym();
 
-			L.add(graph);
+			L.addLast(graph);
 
 			// are symbols that are read/writen inside bfs
 			gm_rwinfo_sets RWINFO = gm_rw_analysis.gm_get_rwinfo_sets(s);
@@ -129,7 +129,7 @@ public class check_bfs_main_t extends gm_apply {
 			ast_id driver = bin.get_driver();
 			if (driver != null) {
 				LinkedList<Object> LIST = ((ast_extra_info_list) current_bfs.find_info(gm_cpp_gen.CPPBE_INFO_BFS_SYMBOLS)).get_list();
-				LIST.add(driver.getSymInfo());
+				LIST.addLast(driver.getSymInfo());
 			}
 		}
 		return true;

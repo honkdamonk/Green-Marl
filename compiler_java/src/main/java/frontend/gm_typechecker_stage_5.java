@@ -1,8 +1,13 @@
 package frontend;
 
+import static ast.AST_NODE_TYPE.AST_MAPACCESS;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_KEY_MISSMATCH;
+import static inc.GMTYPE_T.GMTYPE_NORDER;
+import static inc.GMTYPE_T.GMTYPE_NSEQ;
+import static inc.GMTYPE_T.GMTYPE_NSET;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
-
+import static common.GM_ERRORS_AND_WARNINGS.*;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -11,10 +16,13 @@ import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
+import ast.ast_expr_mapaccess;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_if;
+import ast.ast_mapaccess;
+import ast.ast_maptypedecl;
 import ast.ast_node;
 import ast.ast_return;
 import ast.ast_sent;
@@ -22,8 +30,8 @@ import ast.ast_typedecl;
 import ast.ast_while;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 
 //----------------------------------------------------------------
 // Type-check Step 5: 
@@ -127,6 +135,20 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		return okay;
 	}
 
+	private GMTYPE_T tryResolveIfUnknown(GMTYPE_T type) {
+		switch (type) {
+		case GMTYPE_PROPERTYITER_SET:
+			return GMTYPE_NSET;
+		case GMTYPE_PROPERTYITER_SEQ:
+			return GMTYPE_NSEQ;
+		case GMTYPE_PROPERTYITER_ORDER:
+			return GMTYPE_NORDER;
+		default:
+			break;
+		}
+		return type;
+	}
+
 	public final boolean check_assign_lhs_rhs(ast_node lhs, ast_expr rhs, int l, int c) {
 		GMTYPE_T summary_lhs;
 		GMTYPE_T summary_rhs;
@@ -144,6 +166,22 @@ public class gm_typechecker_stage_5 extends gm_apply {
 				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_READONLY, l2);
 				return false;
 			}
+		} else if (lhs.get_nodetype() == AST_MAPACCESS) {
+			ast_mapaccess mapAccess = (ast_mapaccess) lhs;
+			ast_maptypedecl mapDecl = (ast_maptypedecl) mapAccess.get_map_id().getTypeInfo();
+			l_sym = mapAccess.get_bound_graph_for_value();
+			summary_lhs = mapDecl.getValueTypeSummary();
+
+			GMTYPE_T keyType = mapDecl.getKeyTypeSummary();
+			GMTYPE_T keyExprType = mapAccess.get_key_expr().get_type_summary();
+			RefObject<Boolean> warningRef = new RefObject<Boolean>(false);
+			boolean isOkay = GMTYPE_T.gm_is_compatible_type_for_assign(keyType, keyExprType, new RefObject<GMTYPE_T>(null), warningRef);
+			if (!isOkay) {
+				gm_error.gm_type_error(GM_ERROR_KEY_MISSMATCH, l, c, keyType.get_type_string(), keyExprType.get_type_string());
+				return false;
+			} else if (warningRef.argvalue) {
+				System.out.printf("warning: implicit type conversion %s->%s\n", keyType.get_type_string(), keyExprType.get_type_string());
+			}
 		} else {
 			// target type (e.g. N_P<Int> -> Int)
 			ast_field f = (ast_field) lhs;
@@ -156,14 +194,14 @@ public class gm_typechecker_stage_5 extends gm_apply {
 
 		// check assignable
 		summary_rhs = rhs.get_type_summary();
+		summary_rhs = tryResolveIfUnknown(summary_rhs);
 
 		RefObject<GMTYPE_T> coed_ref = new RefObject<GMTYPE_T>(null);
 		RefObject<Boolean> warn_ref = new RefObject<Boolean>(null);
 		boolean test = gm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 		boolean warn = warn_ref.argvalue;
 		if (!test) {
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(),
-					summary_rhs.get_type_string());
+			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(), summary_rhs.get_type_string());
 			return false;
 		}
 		if (warn && summary_lhs.is_prim_type()) {
@@ -172,18 +210,29 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		}
 
 		if (summary_lhs.has_target_graph_type()) {
-			gm_symtab_entry r_sym = rhs.get_bound_graph();
-			assert l_sym != null;
-			if (r_sym == null) {
-				assert summary_rhs.is_nil_type() || summary_rhs.is_foreign_expr_type();
+			gm_symtab_entry r_sym;
+			if (rhs.is_mapaccess()) {
+				ast_mapaccess mapAccess = ((ast_expr_mapaccess) rhs).get_mapaccess();
+				r_sym = mapAccess.get_bound_graph_for_value();
 			} else {
-				if (l_sym != r_sym) {
-					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH, l, c);
-					return false;
-				}
+				r_sym = rhs.get_bound_graph();
 			}
+			return checkGraphs(l_sym, r_sym, summary_rhs, l, c);
 		}
 
+		return true;
+	}
+
+	private boolean checkGraphs(gm_symtab_entry l_sym, gm_symtab_entry r_sym, GMTYPE_T summary_rhs, int line, int column) {
+		assert (l_sym != null);
+		if (r_sym == null) {
+			assert (summary_rhs.is_nil_type() || summary_rhs.is_foreign_expr_type());
+		} else {
+			if (l_sym != r_sym) {
+				gm_error.gm_type_error(GM_ERROR_TARGET_MISMATCH, line, column);
+				return false;
+			}
+		}
 		return true;
 	}
 
@@ -195,6 +244,11 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		if (a.is_target_scalar()) {
 			okay = check_assign_lhs_rhs(a.get_lhs_scala(), a.get_rhs(), l, c);
 			summary_lhs = a.get_lhs_scala().getTypeSummary();
+		} else if (a.is_target_map_entry()) {
+			ast_mapaccess mapAccess = a.to_assign_mapentry().get_lhs_mapaccess();
+			okay = check_assign_lhs_rhs(mapAccess, a.get_rhs(), l, c);
+			ast_maptypedecl mapDecl = (ast_maptypedecl) mapAccess.get_map_id().getTypeInfo();
+			summary_lhs = mapDecl.getValueTypeSummary();
 		} else {
 			okay = check_assign_lhs_rhs(a.get_lhs_field(), a.get_rhs(), l, c);
 			summary_lhs = a.get_lhs_field().get_second().getTargetTypeSummary();

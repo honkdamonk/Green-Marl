@@ -17,6 +17,8 @@ import ast.ast_expr_builtin;
 import ast.ast_expr_reduce;
 import ast.ast_foreach;
 import ast.ast_if;
+import ast.ast_mapaccess;
+import ast.ast_maptypedecl;
 import ast.ast_return;
 import ast.ast_sent;
 import ast.ast_typedecl;
@@ -40,6 +42,10 @@ public class gm_typechecker_stage_4 extends gm_apply {
 			GMTYPE_T lhs_type;
 			if (a.is_target_scalar()) {
 				lhs_type = a.get_lhs_scala().getTypeSummary();
+			} else if (a.is_target_map_entry()) {
+				ast_mapaccess mapAccess = a.to_assign_mapentry().get_lhs_mapaccess();
+				ast_maptypedecl mapDecl = (ast_maptypedecl) mapAccess.get_map_id().getTypeInfo();
+				lhs_type = mapDecl.getValueTypeSummary();
 			} else {
 				lhs_type = a.get_lhs_field().getTargetTypeSummary();
 			}

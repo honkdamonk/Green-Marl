@@ -502,6 +502,8 @@ public class gm_typechecker_stage_3 extends gm_apply {
 				continue;
 			}
 			
+			currentType = tryResolveUnknownType(currentType);
+			
 			boolean isCompatible;
 			RefObject<Boolean> warning_ref = new RefObject<Boolean>(null);
 			RefObject<GMTYPE_T> coerced_type_ref = new RefObject<GMTYPE_T>(null);

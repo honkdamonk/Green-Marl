@@ -5,33 +5,30 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import frontend.gm_symtab;
 
-public class gm_merge_sentblock
-{
-	//---------------------------------------------------------
+public class gm_merge_sentblock {
+	// ---------------------------------------------------------
 	// Merge two sentence blocks (P, Q) into one. (P)
 	// [Assumption: the two sentblocks are siblings]
-	//   - All the sentences in Q is moved to P.
-	//   - Name conflicts are resolved ==> should not happen (see handle_vardecl)
-	//   - Symbol table is kept valid.
-	//   - (RW analysis is re-done here?)
-	//---------------------------------------------------------
-	
-	public static void gm_merge_sentblock(ast_sentblock P, ast_sentblock Q)
-	{
+	// - All the sentences in Q is moved to P.
+	// - Name conflicts are resolved ==> should not happen (see handle_vardecl)
+	// - Symbol table is kept valid.
+	// - (RW analysis is re-done here?)
+	// ---------------------------------------------------------
+
+	public static void gm_merge_sentblock(ast_sentblock P, ast_sentblock Q) {
 		gm_merge_sentblock(P, Q, false);
 	}
-	
-	public static void gm_merge_sentblock(ast_sentblock P, ast_sentblock Q, boolean delete_Q_after)
-	{
-		//(assumption) type-checking is already done
-		//(assumption) var-decl has been hoisted up.
+
+	public static void gm_merge_sentblock(ast_sentblock P, ast_sentblock Q, boolean delete_Q_after) {
+		// (assumption) type-checking is already done
+		// (assumption) var-decl has been hoisted up.
 
 		assert P != null;
 		assert Q != null;
 
 		// 1. resolve name conflict in each direction
-		//resolve_name_conflict(P,Q);
-		//resolve_name_conflict(Q,P);
+		// resolve_name_conflict(P,Q);
+		// resolve_name_conflict(Q,P);
 
 		// 2. merge symbol tables
 		gm_symtab V = P.get_symtab_var();
@@ -46,34 +43,32 @@ public class gm_merge_sentblock
 		// (3.2) other sentneces at the bottem
 		ast_sent anchor = null;
 		java.util.LinkedList<ast_sent> Ps = P.get_sents();
-		for (ast_sent s : Ps)
-		{
-			if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL) // stop at the first non-decl sentence
+		for (ast_sent s : Ps) {
+			if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL) // stop at the
+																// first
+																// non-decl
+																// sentence
 				break;
 			anchor = s;
 		}
 
 		java.util.LinkedList<ast_sent> Qs = Q.get_sents(); // work on a copy
-		for (ast_sent s : Qs)
-		{
+		for (ast_sent s : Qs) {
 			gm_transform_helper.gm_ripoff_sent(s);
-			if (s.get_nodetype() == AST_NODE_TYPE.AST_VARDECL)
-			{
+			if (s.get_nodetype() == AST_NODE_TYPE.AST_VARDECL) {
 				if (anchor == null)
 					gm_transform_helper.gm_insert_sent_begin_of_sb(P, s);
 				else
 					gm_transform_helper.gm_add_sent_after(anchor, s);
 
 				anchor = s;
-			}
-			else
-			{
+			} else {
 				gm_transform_helper.gm_insert_sent_end_of_sb(P, s);
 			}
 		}
 
 		if (delete_Q_after)
 			if (Q != null)
-			Q.dispose();
+				Q.dispose();
 	}
 }

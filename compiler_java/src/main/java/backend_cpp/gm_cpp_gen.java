@@ -914,9 +914,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		}
 
 		_Body.push(" = ");
-
 		generate_expr(a.get_rhs());
-
 		_Body.pushln(" ;");
 	}
 

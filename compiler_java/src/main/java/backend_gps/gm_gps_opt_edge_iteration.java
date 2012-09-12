@@ -9,7 +9,10 @@ public class gm_gps_opt_edge_iteration extends gm_compile_step {
 	}
 
 	public void process(ast_procdef p) {
-		assert false; /* to be implemented */
+		gps_opt_edge_iteration_t T = new gps_opt_edge_iteration_t();
+		p.traverse_post(T);
+		if (T.has_targets())
+			T.post_process();
 	}
 
 	@Override

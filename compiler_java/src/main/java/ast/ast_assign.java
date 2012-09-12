@@ -7,8 +7,8 @@ import inc.gm_assignment_t;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import common.gm_dumptree;
 import common.gm_apply;
+import common.gm_dumptree;
 
 public class ast_assign extends ast_sent {
 	
@@ -21,6 +21,7 @@ public class ast_assign extends ast_sent {
 	private ast_id bound; // bounding iterator
 
 	private boolean arg_minmax;
+	private boolean isReference = false;
 
 	private LinkedList<ast_node> l_list = new LinkedList<ast_node>();
 	private LinkedList<ast_expr> r_list = new LinkedList<ast_expr>();
@@ -48,11 +49,6 @@ public class ast_assign extends ast_sent {
 		return new_assign_scala(id, r, gm_assignment_t.GMASSIGN_NORMAL, null, GM_REDUCE_T.GMREDUCE_NULL);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: static ast_assign* new_assign_scala(ast_id* id, ast_expr*
-	// r, int assign_type = GMASSIGN_NORMAL, ast_id* itor = null, int
-	// reduce_type = GMREDUCE_NULL)
 	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type, ast_id itor, GM_REDUCE_T reduce_type) {
 		// assign to scala
 		ast_assign A = new ast_assign();
@@ -462,6 +458,14 @@ public class ast_assign extends ast_sent {
 		lhs_field = new_id;
 		if (new_id != null)
 			lhs_type = gm_assignment_location_t.GMASSIGN_LHS_FIELD;
+	}
+	
+	public final boolean is_reference() {
+		return isReference;
+	}
+	
+	public final void set_is_reference(boolean isRef) {
+		isReference = isRef;
 	}
 
 	private ast_assign() {

@@ -19,19 +19,12 @@ import inc.gm_compile_step;
 import inc.gm_procinfo;
 import inc.lhs_list;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.antlr.runtime.ANTLRFileStream;
-import org.antlr.runtime.CharStream;
-import org.antlr.runtime.CommonTokenStream;
-import org.antlr.runtime.RecognitionException;
-import org.antlr.runtime.tree.CommonTreeNodeStream;
-import org.antlr.runtime.tree.Tree;
-
+import parse.start_parse;
 import tangible.Extern;
 import ast.ast_argdecl;
 import ast.ast_assign;
@@ -62,10 +55,6 @@ import common.gm_error;
 import common.gm_main;
 import common.gm_traverse;
 import common.gm_vocabulary;
-import parse.GMLexer;
-import parse.GMParser;
-import parse.GMTreeParser;
-import parse.start_parse;
 
 public class gm_frontend {
 

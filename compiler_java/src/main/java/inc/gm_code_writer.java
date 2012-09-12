@@ -8,7 +8,7 @@ public class gm_code_writer {
 
 	public static final int MAX_COL = 1024;
 
-	private PrintStream _out;
+	private PrintStream _out = System.out;
 	public int indent = 0;
 	public int tabSize = 4;
 	public int col = 0;

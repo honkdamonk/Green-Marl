@@ -8,14 +8,18 @@ import common.gm_dumptree;
 //==========================================================================
 
 public class ast_typedecl extends ast_node { // property or type
+
+	protected GMTYPE_T type_id;
+	protected boolean _well_defined;
+
+	private ast_typedecl target_type; // for property
+	private ast_id target_graph; // for property, node, edge, set
+	private ast_id target_collection; // for set-iterator set
+	private ast_id target_nbr; // for nbr-iterator
+	private ast_id target_nbr2; // for common neighbor iterator
+
 	protected ast_typedecl() {
 		super(AST_NODE_TYPE.AST_TYPEDECL);
-		this.target_type = null;
-		this.target_graph = null;
-		this.target_collection = null;
-		this.target_nbr = null;
-		this.target_nbr2 = null;
-		this._well_defined = false;
 		this.type_id = GMTYPE_T.GMTYPE_INVALID;
 	}
 
@@ -33,17 +37,6 @@ public class ast_typedecl extends ast_node { // property or type
 		p._well_defined = this._well_defined;
 
 		return p;
-	}
-
-	public void dispose() {
-		if (target_type != null)
-			target_type.dispose();
-		if (target_graph != null)
-			target_graph.dispose(); // gets deleted twice (sometimes) why??? o.O
-		if (target_collection != null)
-			target_collection.dispose();
-		if (target_nbr != null)
-			target_nbr.dispose();
 	}
 
 	public static ast_typedecl new_primtype(GMTYPE_T ptype_id) {
@@ -502,12 +495,7 @@ public class ast_typedecl extends ast_node { // property or type
 		set_well_defined(true);
 	}
 
-	// defined in gm_frontend_api.h
-	protected GMTYPE_T type_id;
-	private ast_typedecl target_type; // for property
-	private ast_id target_graph; // for property, node, edge, set
-	private ast_id target_collection; // for set-iterator set
-	private ast_id target_nbr; // for nbr-iterator
-	private ast_id target_nbr2; // for common neighbor iterator
-	protected boolean _well_defined;
+	public boolean is_map() {
+		return false;
+	}
 }

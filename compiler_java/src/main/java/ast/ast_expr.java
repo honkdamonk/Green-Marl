@@ -127,6 +127,8 @@ public class ast_expr extends ast_node {
 		case GMEXPR_FOREIGN:
 			// TODO add some print statements for these?
 			return;
+		default:
+			break;
 		}
 
 		// binop
@@ -232,6 +234,8 @@ public class ast_expr extends ast_node {
 		case GMEXPR_FOREIGN:
 			// TODO add some print statements for these?
 			return;
+		default:
+			break;
 		}
 		String opstr = op_type.get_op_string();
 
@@ -757,6 +761,10 @@ public class ast_expr extends ast_node {
 
 	public final void set_expr_class(GMEXPR_CLASS ec) {
 		expr_class = ec;
+	}
+
+	public boolean is_mapaccess() {
+		return false;
 	}
 
 }

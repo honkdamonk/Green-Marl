@@ -9,6 +9,7 @@ public enum gm_assignment_t
 	GMASSIGN_NORMAL,
 	GMASSIGN_REDUCE,
 	GMASSIGN_DEFER,
+	GMASSIGN_LHS_MAP,
 	GMASSIGN_INVALID;
 
 	public int getValue()

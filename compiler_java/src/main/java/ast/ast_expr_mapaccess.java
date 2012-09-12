@@ -33,6 +33,7 @@ public class ast_expr_mapaccess extends ast_expr {
 		return clone;
 	}
 
+	@Override
 	public boolean is_mapaccess() {
 		return true;
 	}

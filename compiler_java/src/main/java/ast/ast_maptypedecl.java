@@ -51,6 +51,7 @@ public class ast_maptypedecl extends ast_typedecl {
 		valueType = newValueType;
 	}
 
+	@Override
 	public boolean is_map() {
 		return true;
 	}
@@ -74,14 +75,14 @@ public class ast_maptypedecl extends ast_typedecl {
 		assert (valueType != null);
 		return valueType.getTypeSummary();
 	}
-	
+
 	@Override
 	public void reproduce(int indLevel) {
-	    Out.push("Map <");
-	    keyType.reproduce(0);
-	    Out.push(", ");
-	    valueType.reproduce(0);
-	    Out.push(">");
+		Out.push("Map <");
+		keyType.reproduce(0);
+		Out.push(", ");
+		valueType.reproduce(0);
+		Out.push(">");
 	}
 
 };

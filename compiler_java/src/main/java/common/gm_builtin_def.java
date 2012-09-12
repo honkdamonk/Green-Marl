@@ -112,7 +112,7 @@ public class gm_builtin_def {
 		return arg_types[i];
 	}
 
-	boolean genericArgumentTypeIsKeyType(int position) {
+	public boolean genericArgumentTypeIsKeyType(int position) {
 		assert (position == 0); // we only support maps yet
 		switch (method_id) {
 		case GM_BLTIN_MAP_HAS_MAX_VALUE:
@@ -141,7 +141,7 @@ public class gm_builtin_def {
 		return org_def;
 	}
 
-	boolean genericTypeIsKeyType() {
+	public boolean genericTypeIsKeyType() {
 		switch (method_id) {
 		case GM_BLTIN_MAP_GET_MAX_KEY:
 		case GM_BLTIN_MAP_GET_MIN_KEY:

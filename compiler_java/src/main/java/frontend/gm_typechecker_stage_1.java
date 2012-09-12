@@ -18,21 +18,24 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-
 import ast.AST_NODE_TYPE;
 import ast.ast_argdecl;
 import ast.ast_assign;
+import ast.ast_assign_mapentry;
 import ast.ast_bfs;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_builtin_field;
 import ast.ast_expr_foreign;
+import ast.ast_expr_mapaccess;
 import ast.ast_expr_reduce;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_foreign;
 import ast.ast_id;
 import ast.ast_idlist;
+import ast.ast_mapaccess;
+import ast.ast_maptypedecl;
 import ast.ast_node;
 import ast.ast_procdef;
 import ast.ast_sent;
@@ -40,9 +43,9 @@ import ast.ast_typedecl;
 import ast.ast_vardecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_apply;
 import common.gm_error;
 import common.gm_main;
-import common.gm_apply;
 
 /**
  * <b>Type-check Step 1:</b><br>
@@ -171,6 +174,12 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			is_okay = find_symbol_field(p.get_field());
 			break;
 		}
+		case GMEXPR_MAPACCESS: {
+			is_okay = find_symbol_id(p.get_id());
+			ast_mapaccess mapAccess = ((ast_expr_mapaccess) p).get_mapaccess();
+			checkAndSetBoundGraphsForMap(mapAccess);
+			break;
+		}
 		case GMEXPR_REDUCE: {
 			ast_expr_reduce r = (ast_expr_reduce) p;
 			GMTYPE_T iter_type = r.get_iter_type();
@@ -255,6 +264,11 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			if (a.is_target_scalar()) {
 				ast_id id = a.get_lhs_scala();
 				is_okay = find_symbol_id(id);
+			} else if (a.is_target_map_entry()) {
+				ast_assign_mapentry mapAssign = (ast_assign_mapentry) a;
+				ast_mapaccess mapAccess = mapAssign.get_lhs_mapaccess();
+				is_okay = find_symbol_id(mapAccess.get_map_id());
+				checkAndSetBoundGraphsForMap(mapAccess);
 			} else {
 				ast_field f = a.get_lhs_field();
 				is_okay = find_symbol_field(f);
@@ -266,6 +280,11 @@ public class gm_typechecker_stage_1 extends gm_apply {
 					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
 						ast_id id = (ast_id) n;
 						is_okay = find_symbol_id(id) && is_okay;
+					} else if (a.is_target_map_entry()) {
+						ast_assign_mapentry mapAssign = (ast_assign_mapentry) a;
+						ast_mapaccess mapAccess = mapAssign.get_lhs_mapaccess();
+						is_okay = find_symbol_id(mapAccess.get_map_id());
+						checkAndSetBoundGraphsForMap(mapAccess);
 					} else {
 						ast_field f = (ast_field) n;
 						is_okay = find_symbol_field(f) && is_okay;
@@ -643,6 +662,20 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		}
 	}
 
+	private void checkAndSetBoundGraphsForMap(ast_mapaccess mapAccess) {
+		ast_maptypedecl mapDecl = (ast_maptypedecl) mapAccess.get_map_id().getTypeInfo();
+		ast_typedecl keyType = mapDecl.get_key_type();
+		ast_typedecl valueType = mapDecl.get_value_type();
+		if (keyType.getTypeSummary().has_target_graph_type()) {
+			gm_symtab_entry keyGraph = keyType.get_target_graph_sym();
+			mapAccess.set_bound_graph_for_key(keyGraph);
+		}
+		if (valueType.getTypeSummary().has_target_graph_type()) {
+			gm_symtab_entry valueGraph = valueType.get_target_graph_sym();
+			mapAccess.set_bound_graph_for_value(valueGraph);
+		}
+	}
+
 	/**
 	 * check id1 and id2 have same target graph symbol graph -> itself
 	 * property/set/node/edge -> bound graph returns is_okay;
@@ -811,7 +844,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		} else if (type.is_collection() || type.is_nodeedge() || type.is_all_graph_iterator() || type.is_collection_of_collection()) {
 			boolean is_okay = gm_check_graph_is_defined(type, SYM_V);
 			if (!is_okay)
-				return is_okay;
+				return false;
 		} else if (type.is_property()) {
 			boolean is_okay = gm_check_graph_is_defined(type, SYM_V);
 			if (!is_okay)
@@ -862,6 +895,16 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			if (!is_okay)
 				return is_okay;
 			type.set_target_graph_id(node.getTypeInfo().get_target_graph_id().copy(true));
+		} else if (type.is_map()) {
+			ast_maptypedecl mapType = (ast_maptypedecl) type;
+			if (mapType.getKeyTypeSummary().has_target_graph_type()) {
+				if (!gm_check_graph_is_defined(mapType.get_key_type(), SYM_V))
+					return false;
+			}
+			if (mapType.getValueTypeSummary().has_target_graph_type()) {
+				if (!gm_check_graph_is_defined(mapType.get_value_type(), SYM_V))
+					return false;
+			}
 		} else {
 			System.out.println(type.getTypeSummary().get_type_string());
 			assert false;

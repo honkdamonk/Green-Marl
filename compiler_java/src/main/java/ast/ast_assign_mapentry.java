@@ -51,6 +51,7 @@ public class ast_assign_mapentry extends ast_assign {
 		}
 	}
 
+	@Override
 	public boolean is_map_entry_assign() {
 		return true;
 	}
@@ -70,6 +71,7 @@ public class ast_assign_mapentry extends ast_assign {
 		return GMASSIGN_LHS_MAP;
 	}
 
+	@Override
 	public ast_assign_mapentry to_assign_mapentry() {
 		return this;
 	}

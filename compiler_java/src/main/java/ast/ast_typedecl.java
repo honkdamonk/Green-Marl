@@ -402,7 +402,7 @@ public class ast_typedecl extends ast_node { // property or type
 			assert target_collection.getTypeInfo() != null;
 			assert target_collection.getTypeInfo().get_target_graph_sym() != null;
 			return target_collection.getTypeInfo().get_target_graph_sym();
-		} else if (is_collection() || is_property() || is_nodeedge() || is_node_iterator() || is_edge_iterator() || is_collection_of_collection()) {
+		} else if (is_collection() || is_property() || is_nodeedge() || is_node_iterator() || is_edge_iterator() || is_collection_of_collection() || type_id.is_property_iter_type()) {
 			assert target_graph != null;
 			assert target_graph.getSymInfo() != null;
 			return target_graph.getSymInfo();

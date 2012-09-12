@@ -291,8 +291,6 @@ public class gm_giraph_gen extends gm_gps_gen {
 				continue;
 
 			if (s.isReadable()) {
-				// C++ TO JAVA CONVERTER TODO TASK: Java does not have an equivalent for pointers to value types:
-				// ORIGINAL LINE: sbyte* argname = s->getId()->get_genname();
 				String argname = s.getId().get_genname();
 				temp = String.format("%s = getContext().getConfiguration().", argname);
 				Body.push(temp);
@@ -309,11 +307,10 @@ public class gm_giraph_gen extends gm_gps_gen {
 				case GMTYPE_FLOAT:
 					temp = String.format("getFloat(\"%s\", -1.0f);", argname);
 					break;
-				// TODO Waiting for
-				// https://issues.apache.org/jira/browse/HADOOP-8415 to be
-				// accepted
-				// case GMTYPE_DOUBLE: sprintf(temp, "getDouble(\"%s\", -1.0);",
-				// argname); break;
+				// TODO Waiting for https://issues.apache.org/jira/browse/HADOOP-8415 to be accepted
+				// case GMTYPE_DOUBLE:
+				// sprintf(temp, "getDouble(\"%s\", -1.0);", argname);
+				// break;
 				case GMTYPE_DOUBLE:
 					temp = String.format("getFloat(\"%s\", -1.0f);", argname);
 					break;

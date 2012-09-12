@@ -189,6 +189,7 @@ public class ast_expr_reduce extends ast_expr {
 		return true;
 	}
 
+	// [xxx] should it be getIterator()->getTypeSummary()?
 	public final GMTYPE_T get_iter_type() {
 		return iter_type;
 	}

@@ -11,7 +11,6 @@ public class gm_typecheck {
 	public static final boolean GM_WRITE_AVAILABLE = true;
 	public static final boolean GM_WRITE_NOT_AVAILABLE = false;
 
-
 	// ----------------------------------------------------------------------------------------------------------------
 	// Utility functions (Type summary)
 	// ----------------------------------------------------------------------------------------------------------------

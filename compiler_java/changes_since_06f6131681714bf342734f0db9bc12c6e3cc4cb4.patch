@@ -107,27 +107,6 @@ index f7735c4..b6ce23c 100644
          char* it_name = iter->get_genname();
          sprintf(str_buf, "for (%s %s = 0; %s < %s.%s(); %s ++) ", get_type_string(type), it_name, it_name, graph_name,
                  gm_is_iteration_on_nodes(type) ? NUM_NODES : NUM_EDGES,
-@@ -177,7 +192,7 @@ void gm_cpplib::generate_foreach_header(ast_foreach* fe, gm_code_writer& Body) {
-     } else if (gm_is_iteration_on_collection(type)) {
- 
-         assert(!fe->is_parallel());
--        assert(gm_is_node_collection_iter_type(type));
-+        assert(gm_is_node_collection_iter_type(type) || gm_is_collection_of_collection_iter_type(type));
- 
-         const char* iter_name = fe->find_info_string(CPPBE_INFO_COLLECTION_ITERATOR);
-         sprintf(str_buf, "while (%s.has_next())", iter_name);
-diff --git a/src/backend_cpp/gm_cpp_opt.cc b/src/backend_cpp/gm_cpp_opt.cc
-index 8d7c215..ecfcb57 100644
---- a/src/backend_cpp/gm_cpp_opt.cc
-+++ b/src/backend_cpp/gm_cpp_opt.cc
-@@ -15,6 +15,7 @@ void gm_cpp_gen::init_opt_steps() {
- 
-     LIST.push_back(GM_COMPILE_STEP_FACTORY(gm_cpp_opt_check_feasible));
-     LIST.push_back(GM_COMPILE_STEP_FACTORY(gm_cpp_opt_defer));
-+    LIST.push_back(GM_COMPILE_STEP_FACTORY(gm_cpp_opt_common_nbr));
-     LIST.push_back(GM_COMPILE_STEP_FACTORY(gm_cpp_opt_select_par));
-     LIST.push_back(GM_COMPILE_STEP_FACTORY(gm_cpp_opt_save_bfs));
-     LIST.push_back(GM_COMPILE_STEP_FACTORY(gm_ind_opt_move_propdecl)); // from ind-opt
 diff --git a/src/backend_cpp/gm_cpplib_gen.cc b/src/backend_cpp/gm_cpplib_gen.cc
 index db06499..008f6b4 100644
 --- a/src/backend_cpp/gm_cpplib_gen.cc
@@ -294,112 +273,6 @@ index db06499..008f6b4 100644
          default:
              assert(false);
              break;
-diff --git a/src/backend_gps/gm_gps_opt.cc b/src/backend_gps/gm_gps_opt.cc
-index fdc96ea..0996590 100644
---- a/src/backend_gps/gm_gps_opt.cc
-+++ b/src/backend_gps/gm_gps_opt.cc
-@@ -11,6 +11,9 @@ void gm_gps_gen::init_opt_steps() {
-     std::list<gm_compile_step*>& L = get_opt_steps();
-     L.push_back(GM_COMPILE_STEP_FACTORY(gm_cpp_opt_defer));                    // deferred assignment --> insert _next
-     L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_transform_bfs));            // transform bfs
-+    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_edge_iteration));           // expand edge iteration
-+    L.push_back(GM_COMPILE_STEP_FACTORY(gm_ind_opt_propagate_trivial_writes));
-+    L.push_back(GM_COMPILE_STEP_FACTORY(gm_ind_opt_remove_unused_scalar));
-     L.push_back(GM_COMPILE_STEP_FACTORY(gm_ind_opt_move_propdecl));            // copied from from ind-opt
-     L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_simplify_expr1));           // separate built-in calls through out-loop drivers 
-     //L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_find_nested_loops_test)); 
-diff --git a/src/backend_gps/gm_gps_opt_transform_bfs.cc b/src/backend_gps/gm_gps_opt_transform_bfs.cc
-index d358231..2d12e3a 100644
---- a/src/backend_gps/gm_gps_opt_transform_bfs.cc
-+++ b/src/backend_gps/gm_gps_opt_transform_bfs.cc
-@@ -8,10 +8,12 @@
- #include "gm_backend_gps_opt_steps.h"
- 
- //--------------------------------------------------------
-+// Transform BFS ==> Pregel-Canonical Statments. (i.e. while + foreach)
- //
--//
--//
--//
-+//  By doing this transformation, we may lose an opportunity to use 
-+//  a special fast implmentation of BFS.
-+//  However, we can re-use GPS tranlsation mechanism for while/foreach statments.
-+//  without creating new translation rules.
- //----------------------------------------------------
- 
- class gps_opt_find_bfs_t : public gm_apply
-@@ -29,7 +31,7 @@ public:
-     virtual bool apply(ast_sent* s) {
-         if (s->get_nodetype()== AST_BFS)
-         {
--            assert (!in_bfs);  // no nested BFS for now
-+            assert (!in_bfs);  // [XXX] Nested BFS are not allowed (temporary)
-             in_bfs = true;
-             current_bfs = (ast_bfs*) s;
-             BFS.push_back(current_bfs);
-@@ -156,7 +159,7 @@ static void create_fw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
-     //       Foreach(v:G.Nodes) {
-     //          if (v.level == curr_level) {
-     //             Foreach(k:v.Nbrs) {
--    //                If (k.level == +INF) {
-+    //                If (k.level == +INF && [navigator]) {
-     //                   k.level = curr_level + 1;    
-     //                   bfs_finished &= False;
-     //                }
-@@ -205,7 +208,7 @@ static void create_fw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
-         GMTYPE_NODEITER_ALL);
-     while_sb->add_sent(foreach_out);
- 
--    // outer if
-+
-     ast_expr* lev_check_out_c = ast_expr::new_comp_expr(
-         GMOP_EQ,
-         ast_expr::new_field_expr(
-@@ -240,7 +243,24 @@ static void create_fw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
-             inf
-         );
-     ast_sentblock* lev_check_in_sb = ast_sentblock::new_sentblock();
--    ast_if* lev_check_in_if = ast_if::new_if(lev_check_in_c, lev_check_in_sb,NULL);
-+    ast_if* lev_check_in_if;
-+    if (bfs->get_navigator() != NULL) 
-+    {
-+        ast_expr* navi = bfs->get_navigator();
-+        bfs->set_navigator(NULL);
-+
-+        // replace bfs symbol ==> an inner foreach symbol
-+        gm_replace_symbol_entry(bfs->get_iterator()->getSymInfo(), foreach_in->get_iterator()->getSymInfo(), navi);
-+
-+        // check with navigator
-+        ast_expr* new_top = ast_expr::new_lbiop_expr(GMOP_AND, lev_check_in_c, navi);
-+        lev_check_in_if = ast_if::new_if(new_top, lev_check_in_sb,NULL);
-+    } 
-+    else 
-+    {
-+        lev_check_in_if = ast_if::new_if(lev_check_in_c, lev_check_in_sb,NULL);
-+    }
-+
-     inner_sb->add_sent(lev_check_in_if);
- 
-     // increase level
-@@ -341,10 +362,6 @@ static void create_bw_iteration(ast_sentblock* sb, ast_bfs* bfs, gm_symtab_entry
- 
- 
- void gm_gps_rewrite_bfs(ast_bfs* b) {
--    // for temporary
--    assert(b->get_b_filter() == NULL);
--    assert(b->get_f_filter() == NULL);
--    assert(b->get_navigator() == NULL);
- 
-     gm_make_it_belong_to_sentblock(b);
-     ast_sentblock* parent = (ast_sentblock*) b->get_parent();
-@@ -484,7 +501,6 @@ static void create_user_body_main(ast_sentblock* sb_to_add, ast_bfs* bfs, ast_fo
-     gm_ripoff_sent(body);
- 
-     // replace iterator
--    //printf("repalce :%s -> %s\n", bfs->get_iterator()->get_genname(), out_loop->get_iterator()->get_genname());
-     gm_replace_symbol_entry(bfs->get_iterator()->getSymInfo(), out_loop->get_iterator()->getSymInfo(), body);
-     // what was iterator 2 again?
-     if (bfs->get_iterator2() != NULL)
 diff --git a/src/common/gm_builtin.cc b/src/common/gm_builtin.cc
 index cc3cf6e..f11d14e 100644
 --- a/src/common/gm_builtin.cc
@@ -503,36 +376,6 @@ index 446761e..1c9b05a 100644
          default: /*printf("%d\n",t); assert(false);*/
              return "Unknown";
      }
-@@ -149,16 +150,14 @@ const char* gm_get_iter_type_string(int t) {
-             return "InNbrs";
-         case GMTYPE_NODEITER_COMMON_NBRS:
-             return "CommonNbrs";
--
-         case GMTYPE_NODEITER_SET:
--            return "Items";
-         case GMTYPE_NODEITER_SEQ:
--            return "Items";
-         case GMTYPE_NODEITER_ORDER:
--            return "Items";
-         case GMTYPE_ITER_ANY:
-+        case GMTYPE_PROPERTYITER_SET:
-+        case GMTYPE_PROPERTYITER_SEQ:
-+        case GMTYPE_PROPERTYITER_ORDER:
-             return "Items";
--
-         default:
-             assert(false);
-             return "Unknown";
-@@ -181,7 +180,8 @@ const char* gm_get_reduce_string(int rop_type) {
- }
- const char* gm_get_reduce_expr_string(int rop_type) {
-     const char* opstr = (rop_type == GMREDUCE_PLUS) ? "Sum" : (rop_type == GMREDUCE_MULT) ? "Product" : (rop_type == GMREDUCE_MIN) ? "Min" :
--                        (rop_type == GMREDUCE_MAX) ? "Max" : (rop_type == GMREDUCE_AND) ? "All" : (rop_type == GMREDUCE_OR) ? "Exist" : "??";
-+                        (rop_type == GMREDUCE_MAX) ? "Max" : (rop_type == GMREDUCE_AND) ? "All" : (rop_type == GMREDUCE_OR) ? "Exist" :
-+                        (rop_type == GMREDUCE_AVG) ? "Avg" : "??";
-     return opstr;
- }
- 
 diff --git a/src/common/gm_reproduce.cc b/src/common/gm_reproduce.cc
 index 97c9582..e3d6ae3 100644
 --- a/src/common/gm_reproduce.cc
@@ -566,14 +409,6 @@ index 97c9582..e3d6ae3 100644
  void ast_argdecl::reproduce(int ind_level) {
      idlist->reproduce(0);
      Out.push(" : ");
-@@ -250,6 +265,7 @@ void ast_expr::reproduce(int ind_level) {
-         case GMEXPR_BIOP:
-         case GMEXPR_LBIOP:
-         case GMEXPR_COMP:
-+            break;
-         case GMEXPR_BUILTIN_FIELD:
-         case GMEXPR_FOREIGN:
-             //TODO add some print statements for these?
 @@ -409,6 +425,18 @@ void ast_assign::reproduce(int ind_level) {
      Out.pushln(";");
  }
@@ -702,58 +537,8 @@ index 5cd1548..a0c1924 100644
  };
  
  // check id1 and id2 have same target graph symbol
-@@ -244,6 +260,7 @@ ast_id* gm_get_default_graph(gm_symtab* symTab) {
-             if (entryType->is_graph()) {
-                 foundCount++;
-                 if (foundCount > 1) {
-+                    printf("FUU\n");
-                     gm_type_error(GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS, targetGraph, (*II)->getId());
-                     return NULL;
-                 }
-@@ -288,7 +305,9 @@ bool gm_check_graph_is_defined(ast_typedecl* type, gm_symtab* symTab) {
- //     - connect nbr_id with the symbol
- //     - copy graph_id from collection_id
- //------------------------------------------------
--bool gm_check_type_is_well_defined(ast_typedecl* type, gm_symtab* SYM_V) {
-+bool gm_check_type_is_well_defined(ast_typedecl* type, gm_symtab* SYM_V);
-+
-+bool gm_check_type_is_well_defined(ast_typedecl* type, gm_symtab* SYM_V, int targetType) {
-     if (type->is_primitive() || type->is_void()) {
-         //nothing to do
-     } else if (type->is_graph()) {
-@@ -297,7 +316,7 @@ bool gm_check_type_is_well_defined(ast_typedecl* type, gm_symtab* SYM_V) {
-             gm_type_error(GM_ERROR_DEFAULT_GRAPH_AMBIGUOUS, (ast_id*) type, "", "");
-             return false;
-         }
--    } else if (type->is_collection() || type->is_nodeedge() || type->is_all_graph_iterator() || type->is_queue()) {
-+    } else if (type->is_collection() || type->is_nodeedge() || type->is_all_graph_iterator() || type->is_collection_of_collection()) {
-         bool is_okay = gm_check_graph_is_defined(type, SYM_V);
-         if (!is_okay) return is_okay;
-     } else if (type->is_property()) {
-@@ -319,7 +338,15 @@ bool gm_check_type_is_well_defined(ast_typedecl* type, gm_symtab* SYM_V) {
-         if (!is_okay) return false;
- 
-         // update collection iter type
--        if (type->is_unknown_collection_iterator()) type->setTypeSummary(gm_get_natural_collection_iterator(col->getTypeSummary()));
-+        if (type->is_unknown_collection_iterator()) {
-+            int iterType = (GMTYPE_T) gm_get_natural_collection_iterator(col->getTypeSummary());
-+
-+            if (iterType == GMTYPE_ITER_UNDERSPECIFIED && targetType != GMTYPE_INVALID) {
-+                iterType = gm_get_specified_collection_iterator(targetType);
-+            }
-+
-+            type->setTypeSummary(iterType);
-+        }
- 
-         // copy graph_id
-         type->set_target_graph_id(col->getTypeInfo()->get_target_graph_id()->copy(true));
 @@ -335,11 +362,19 @@ bool gm_check_type_is_well_defined(ast_typedecl* type, gm_symtab* SYM_V) {
-         ast_id* node = type->get_target_nbr_id();
-         assert(node != NULL);
-         bool is_okay = gm_check_target_is_defined(node, SYM_V, SHOULD_BE_A_NODE_COMPATIBLE);
--        if (!is_okay) return is_okay;
-+        if (!is_okay) return false;
- 
+
          // copy graph_id
          //printf("copying graph id = %s\n", node->getTypeInfo()->get_target_graph_id()->get_orgname());
          type->set_target_graph_id(node->getTypeInfo()->get_target_graph_id()->copy(true));
@@ -768,49 +553,6 @@ index 5cd1548..a0c1924 100644
      } else {
          printf("%s", gm_get_type_string(type->getTypeSummary()));
          assert(false);
-@@ -349,6 +384,10 @@ bool gm_check_type_is_well_defined(ast_typedecl* type, gm_symtab* SYM_V) {
-     return true;
- }
- 
-+bool gm_check_type_is_well_defined(ast_typedecl* type, gm_symtab* SYM_V) {
-+    return gm_check_type_is_well_defined(type, SYM_V, GMTYPE_INVALID);
-+}
-+
- //---------------------
- // (This function can be used after type-checking)
- // add a (copy of) symbol and (copy of) type into a symtab, error if symbol is duplicated
-@@ -357,14 +396,14 @@ bool gm_check_type_is_well_defined(ast_typedecl* type, gm_symtab* SYM_V) {
- //
- // The name is added to the current procedure vocaburary 
- //---------------------
--bool gm_declare_symbol(gm_symtab* SYM, ast_id* id, ast_typedecl* type, bool is_readable, bool is_writeable, gm_symtab* SYM_ALT) {
-+bool gm_declare_symbol(gm_symtab* SYM, ast_id* id, ast_typedecl* type, bool is_readable, bool is_writeable, gm_symtab* SYM_ALT, int targetType) {
- 
-     if (!type->is_well_defined()) {
-         assert(!type->is_property());
-         // if so SYM is FIELD actually.
-         if (SYM_ALT != NULL) {
--            if (!gm_check_type_is_well_defined(type, SYM_ALT)) return false;
--        } else if (!gm_check_type_is_well_defined(type, SYM)) {
-+            if (!gm_check_type_is_well_defined(type, SYM_ALT, targetType)) return false;
-+        } else if (!gm_check_type_is_well_defined(type, SYM, targetType)) {
-             return false;
-         }
-     }
-@@ -379,8 +418,12 @@ bool gm_declare_symbol(gm_symtab* SYM, ast_id* id, ast_typedecl* type, bool is_r
-     return is_okay;
- }
- 
-+bool gm_declare_symbol(gm_symtab* SYM, ast_id* id, ast_typedecl* type, bool is_readable, bool is_writeable, gm_symtab* SYM_ALT) {
-+    return gm_declare_symbol(SYM, id, type, is_readable, is_writeable, SYM_ALT, GMTYPE_INVALID);
-+}
-+
- bool gm_declare_symbol(gm_symtab* SYM, ast_id* id, ast_typedecl* type, bool is_readable, bool is_writeable) {
--    return gm_declare_symbol(SYM, id, type, is_readable, is_writeable, NULL);
-+    return gm_declare_symbol(SYM, id, type, is_readable, is_writeable, NULL, GMTYPE_INVALID);
- }
- 
- // symbol checking for foreach and in-place reduction
 @@ -456,8 +499,11 @@ bool gm_typechecker_stage_1::gm_symbol_check_iter_header(ast_id* it, ast_id* src
      } else {
          type = ast_typedecl::new_nodeedge_iterator(src->copy(true), iter_type);

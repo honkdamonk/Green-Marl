@@ -1167,7 +1167,7 @@ public class gm_rw_analysis extends gm_apply {
 					{
 						cp.driver = null;
 						cp.access_range = range;
-					} else if (cp.driver == null) {
+					} else {
 						if (cp.access_range == GM_RANGE_SINGLE) {
 							// scalar, do nothing
 						} else if (is_parallel) {

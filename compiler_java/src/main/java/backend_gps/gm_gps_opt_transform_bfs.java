@@ -1,6 +1,7 @@
 package backend_gps;
 
 import static backend_gps.GPSConstants.GPS_FLAG_HAS_DOWN_NBRS;
+import tangible.RefObject;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
@@ -108,7 +109,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		inner_sb.add_sent(init_a);
 	}
 
-	private static ast_sentblock create_fw_body_prepare(ast_sentblock while_sb, ast_bfs bfs, gm_symtab_entry lev_sym, gm_symtab_entry curr_sym, ast_foreach out) {
+	private static ast_sentblock create_fw_body_prepare(ast_sentblock while_sb, ast_bfs bfs, gm_symtab_entry lev_sym, gm_symtab_entry curr_sym, RefObject<ast_foreach> out) {
 		// outer loop
 		ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
 		ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
@@ -123,7 +124,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		ast_if lev_check_out_if = ast_if.new_if(lev_check_out_c, lev_check_out_sb, null);
 		foreach_sb.add_sent(lev_check_out_if);
 
-		out = foreach_out;
+		out.argvalue = foreach_out;
 		return lev_check_out_sb;
 
 	}
@@ -253,7 +254,9 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		if (((ast_sentblock) bfs.get_fbody()).get_sents().size() > 0) {
 			ast_sentblock fw_body_to_add;
 			if (bfs.find_info_bool(GPS_FLAG_HAS_DOWN_NBRS)) {
-				fw_body_to_add = create_fw_body_prepare(while_sb, bfs, lev_sym, curr_sym, foreach_out);
+				RefObject<ast_foreach> foreach_out_wrapper = new RefObject<ast_foreach>(foreach_out);
+				fw_body_to_add = create_fw_body_prepare(while_sb, bfs, lev_sym, curr_sym, foreach_out_wrapper);
+				foreach_out = foreach_out_wrapper.argvalue;
 			} else {
 				fw_body_to_add = lev_check_out_sb;
 			}

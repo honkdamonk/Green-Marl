@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import tangible.RefObject;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_foreach;
 import ast.ast_if;
@@ -266,17 +268,17 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		}
 	}
 	
-	private static void reconstruct_old_new_main(ast_node n, HashMap<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old, ast_node last) {
+	private static void reconstruct_old_new_main(ast_node n, HashMap<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old, RefObject<ast_node> last) {
 
 		if (n.get_nodetype() == AST_NODE_TYPE.AST_IF) {
-			if (last == null) // can ignore this if loop
+			if (last.argvalue == null) // can ignore this if loop
 				return;
 
 			ast_if iff = (ast_if) (n);
-			ast_if new_if = ast_if.new_if(iff.get_cond().copy(true), (ast_sent) last, null);
+			ast_if new_if = ast_if.new_if(iff.get_cond().copy(true), (ast_sent) last.argvalue, null);
 			new_if.set_line(iff.get_line());
 			new_if.set_col(iff.get_col());
-			last = new_if;
+			last.argvalue = new_if;
 
 		} else if ((n).get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
 			ast_sentblock sb_org = (ast_sentblock) (n);
@@ -289,18 +291,18 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 				for (ast_sent sent : SIB) {
 					sb.add_sent(sent);
 				}
-				if (last != null)
-					sb.add_sent((ast_sent) last);
+				if (last.argvalue != null)
+					sb.add_sent((ast_sent) last.argvalue);
 			} else {
-				if (last != null)
-					sb.add_sent((ast_sent) last);
+				if (last.argvalue != null)
+					sb.add_sent((ast_sent) last.argvalue);
 
 				for (ast_sent sent : SIB) {
 					sb.add_sent(sent);
 				}
 			}
 
-			last = sb;
+			last.argvalue = sb;
 
 			// move scalar symbols
 			gm_symtab old_tab = sb_org.get_symtab_var();
@@ -379,7 +381,9 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		// reconstruct hierarchy
 		// inmost --> outmost
 		for (ast_node node : frame) {
-			reconstruct_old_new_main(node, siblings, is_old, last);
+			RefObject<ast_node> last_wrapper = new RefObject<ast_node>(last);
+			reconstruct_old_new_main(node, siblings, is_old, last_wrapper);
+			last = last_wrapper.argvalue;
 		}
 
 		return last;

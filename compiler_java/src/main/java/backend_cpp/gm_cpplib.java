@@ -412,7 +412,11 @@ public class gm_cpplib extends gm_graph_library {
 			else
 				type_name = source.getTypeInfo().is_node_collection() ? NODE_T : EDGE_T;
 
-			str_buf = String.format("%s %s = %s.get_next();", type_name, f.get_iterator().get_genname(), lst_iter_name);
+			if(iter_type.is_collection_of_collection_iter_type()) {
+				str_buf = String.format("%s& %s = %s.get_next();", type_name, f.get_iterator().get_genname(), lst_iter_name);
+			} else {
+				str_buf = String.format("%s %s = %s.get_next();", type_name, f.get_iterator().get_genname(), lst_iter_name);
+			}
 			Body.pushln(str_buf);
 		} else if (iter_type.is_iteration_on_neighbors_compatible()) {
 			String alias_name = f.find_info_string(gm_cpp_gen.CPPBE_INFO_NEIGHBOR_ITERATOR);

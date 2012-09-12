@@ -1,5 +1,7 @@
 package inc;
 
+import java.util.HashMap;
+
 import tangible.RefObject;
 import frontend.Oprules;
 
@@ -80,20 +82,21 @@ public enum GMTYPE_T {
 	GMTYPE_UNKNOWN_NUMERIC(10000),
 
 	/** iterator to some collection. resolved after type checking */
-	GMTYPE_ITER_ANY(10001), GMTYPE_ITER_UNDERSPECIFIED(10002), //
+	GMTYPE_ITER_ANY(10001), //
+	GMTYPE_ITER_UNDERSPECIFIED(10002), //
 
 	GMTYPE_VOID(10003), //
 	GMTYPE_GENERIC(10004), //
-	GMTYPE_INVALID(99999);
+	GMTYPE_INVALID(99999); //
 
 	private int intValue;
-	private static java.util.HashMap<Integer, GMTYPE_T> mappings;
+	private static HashMap<Integer, GMTYPE_T> mappings;
 
-	private static java.util.HashMap<Integer, GMTYPE_T> getMappings() {
+	private static HashMap<Integer, GMTYPE_T> getMappings() {
 		if (mappings == null) {
 			synchronized (GMTYPE_T.class) {
 				if (mappings == null) {
-					mappings = new java.util.HashMap<Integer, GMTYPE_T>();
+					mappings = new HashMap<Integer, GMTYPE_T>();
 				}
 			}
 		}
@@ -510,7 +513,7 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_collection_of_collection_iter_type() {
-		return is_collection_of_set_iter_type() || is_collection_of_order_iter_type() || is_collection_of_seq_iter_type();
+		return is_collection_of_set_iter_type() || is_collection_of_order_iter_type() || is_collection_of_seq_iter_type() || is_collection_of_collection_iter_type();
 	}
 
 	public boolean can_be_key_type() {

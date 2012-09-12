@@ -21,6 +21,6 @@ public enum GMEXPR_CLASS {
 	GMEXPR_BUILTIN_FIELD, // builtin ops on property entries
 	GMEXPR_TER, // ternary operation
 	GMEXPR_FOREIGN, // foreign expression
-	GMEXPR_MAPACCESS;//
+	GMEXPR_MAPACCESS;
 
 }

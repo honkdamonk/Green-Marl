@@ -2,6 +2,7 @@ grammar GM;
 
 options {
     language     = Java;
+    output       = AST;
     backtrack    = true;
 }
 

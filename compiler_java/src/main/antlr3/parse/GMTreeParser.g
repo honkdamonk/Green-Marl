@@ -69,6 +69,8 @@ typedecl returns [ast_node value]
     	{ value = x; }
     |   x=set_type
     	{ value = x; }
+    |	x=map_type
+    	{ value = x; }
     ;
 
 graph_type returns [ast_node value]
@@ -131,6 +133,30 @@ set_type returns [ast_node value]
     	{ value = FE.GM_queuetype_ref(x, y);
     	  FE.GM_set_lineinfo(value, $T_COLLECTION.getLine(), $T_COLLECTION.getCharPositionInLine()); }
     ;
+
+
+key_type returns [ast_node value]
+	:	x=nodeedge_type
+		{ value = x; }
+ 	|	x=prim_type
+ 		{ value = x; }
+ 	;
+
+
+value_type returns [ast_node value]
+	:	x=nodeedge_type
+		{ value = x; }
+	|	x=prim_type
+		{ value = x; }
+	;
+
+
+map_type returns [ast_node value]
+	:	T_MAP '<' x=key_type ',' y=value_type '>'
+		{ value = FE.GM_maptype_ref(x, y);
+		  FE.GM_set_lineinfo(value, $T_MAP.getLine(), $T_MAP.getCharPositionInLine()); }
+	;
+
 
 property returns [ast_node value]
     :   T_NODEPROP '<' x=prim_type '>' ( '(' y=id ')' )?
@@ -551,6 +577,8 @@ not_left_recursive_expr returns [ast_node value]
     	{ value = bi; }
     |   eu=expr_user
     	{ value = eu; }
+    |	ma=map_access
+    	{ value = FE.GM_expr_map_access(ma, 0, 0); } /* TODO: should be ma.getLine(), ma.getCharPositionInLine() */
     ;
 
 
@@ -710,6 +738,8 @@ lhs returns [ast_node value]
     	{ value = x; }
     |   x=field
     	{ value = x; }
+    |	x=map_access
+    	{ value = x; }
     ;
 
 
@@ -734,6 +764,12 @@ field returns [ast_node value]
         '.' y=id
         { value = FE.GM_field(x, y, true); }
     ;
+
+
+map_access returns [ast_node value]
+	:	x=id '[' y=expr ']'
+		{ value = FE.GM_map_access(x, y); }
+	;
 
 
 built_in returns [ast_node value]

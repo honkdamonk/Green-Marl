@@ -112,6 +112,19 @@ public class gm_builtin_def {
 		return arg_types[i];
 	}
 
+	boolean genericArgumentTypeIsKeyType(int position) {
+		assert (position == 0); // we only support maps yet
+		switch (method_id) {
+		case GM_BLTIN_MAP_HAS_MAX_VALUE:
+		case GM_BLTIN_MAP_HAS_MIN_VALUE:
+		case GM_BLTIN_MAP_HAS_KEY:
+			return true;
+		default:
+			assert (false); // if you called it with the wrong method_id, then your code must be wrong...
+			return false;
+		}
+	}
+	
 	public final gm_method_id_t get_method_id() {
 		return method_id;
 	}
@@ -128,6 +141,20 @@ public class gm_builtin_def {
 		return org_def;
 	}
 
+	boolean genericTypeIsKeyType() {
+		switch (method_id) {
+		case GM_BLTIN_MAP_GET_MAX_KEY:
+		case GM_BLTIN_MAP_GET_MIN_KEY:
+			return true;
+		case GM_BLTIN_MAP_GET_MAX_VALUE:
+		case GM_BLTIN_MAP_GET_MIN_VALUE:
+			return false;
+		default:
+			assert (false); // if you called it with the wrong method_id, then your code must be wrong...
+			return false;
+		}
+	}
+	
 	public final void add_info_int(String key, int v) {
 		String s = key;
 		if (!extra_info.containsKey(key)) {

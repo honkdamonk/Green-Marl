@@ -100,6 +100,7 @@ typedecl
     |   property
     |   nodeedge_type
     |   set_type
+    |	x=map_type
     ;
 
 
@@ -146,6 +147,23 @@ set_type
         '<' set_type '>'
         ( '(' id ')' )?
     ;
+
+
+key_type returns [ast_node value]
+	:	nodeedge_type
+ 	|	prim_type
+ 	;
+
+
+value_type returns [ast_node value]
+	:	nodeedge_type
+	|	prim_type
+	;
+
+  
+map_type returns [ast_node value]
+	:	T_MAP '<' key_type ',' value_type '>'
+	;
 
 
 property
@@ -463,8 +481,7 @@ not_left_recursive_expr
     |   field
     |   built_in
     |   expr_user
-        /* cannot be distinguished by the syntax,
-        until type is available. due to vars */
+    |	map_access
     ;
 
 
@@ -544,6 +561,8 @@ multiplicative_expr
         )? //TODO: should be *
     ;
 
+/* bool/numeric expr cannot be distinguished by the syntax,
+until type is available. due to vars */
 
 bool_expr
     :   expr
@@ -580,6 +599,7 @@ inf
 lhs
     :   scala
     |   field
+    |	map_access
     ;
 
 
@@ -601,6 +621,10 @@ field
         '.' id
     ;
 
+
+map_access
+	:	id '[' expr ']'
+	;
 
 built_in
     :   id
@@ -666,6 +690,7 @@ T_NSET : 'Node_Set' | 'N_S' ;
 T_NORDER : 'Node_Order' | 'N_O' ;
 T_NSEQ : 'Node_Seq' | 'Node_Sequence' | 'N_Q' ;
 T_COLLECTION : 'Collection' ;
+T_MAP : 'Map' ;
 T_INT : 'Int' ;
 T_LONG : 'Long' ;
 T_FLOAT : 'Float' ;

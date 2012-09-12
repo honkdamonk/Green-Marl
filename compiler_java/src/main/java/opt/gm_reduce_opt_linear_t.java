@@ -47,7 +47,7 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 		ast_assign a = (ast_assign) s;
 		if (!a.is_reduce_assign())
 			return true;
-		if (a.is_target_scalar())
+		if (a.is_target_scalar() || a.is_target_map_entry())
 			return true;
 
 		assert a.get_bound() != null;

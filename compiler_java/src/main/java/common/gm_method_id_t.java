@@ -22,18 +22,28 @@ public enum gm_method_id_t {
 	GM_BLTIN_TOP_EXP, // exp function
 	GM_BLTIN_TOP_POW, // pow function
 
-	GM_BLTIN_SET_ADD, //
-	GM_BLTIN_SET_REMOVE, //
-	GM_BLTIN_SET_HAS, //
-	GM_BLTIN_SET_ADD_BACK, //
-	GM_BLTIN_SET_REMOVE_BACK, //
-	GM_BLTIN_SET_PEEK, //
-	GM_BLTIN_SET_PEEK_BACK, //
-	GM_BLTIN_SET_UNION, //
-	GM_BLTIN_SET_INTERSECT, //
-	GM_BLTIN_SET_COMPLEMENT, //
-	GM_BLTIN_SET_SUBSET, //
-	GM_BLTIN_SET_SIZE, //
+	GM_BLTIN_SET_ADD,
+	GM_BLTIN_SET_REMOVE,
+	GM_BLTIN_SET_HAS,
+	GM_BLTIN_SET_ADD_BACK,
+	GM_BLTIN_SET_REMOVE_BACK,
+	GM_BLTIN_SET_PEEK,
+	GM_BLTIN_SET_PEEK_BACK,
+	GM_BLTIN_SET_UNION,
+	GM_BLTIN_SET_INTERSECT,
+	GM_BLTIN_SET_COMPLEMENT,
+	GM_BLTIN_SET_SUBSET,
+	GM_BLTIN_SET_SIZE,
+	
+	GM_BLTIN_MAP_SIZE, // returns the number of mappings in the map
+	GM_BLTIN_MAP_HAS_MAX_VALUE, // checks if the key is mapped to the biggest value
+	GM_BLTIN_MAP_HAS_MIN_VALUE, // checks if the key is mapped to the smallest value
+	GM_BLTIN_MAP_HAS_KEY, // checks if there is a mapping for the key in the map
+	GM_BLTIN_MAP_GET_MAX_KEY, // returns the key that is mapped to the biggest value
+	GM_BLTIN_MAP_GET_MIN_KEY, // returns the key that is mapped to the smallest value
+	GM_BLTIN_MAP_GET_MAX_VALUE, // returns the biggest value in the map
+	GM_BLTIN_MAP_GET_MIN_VALUE, // returns the smallest value in the map
+	GM_BLTIN_MAP_CLEAR, // clears the whole map
 
 	GM_BLTIN_END;
 

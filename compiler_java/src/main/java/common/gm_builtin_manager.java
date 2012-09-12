@@ -76,7 +76,18 @@ public class gm_builtin_manager {
 			new gm_builtin_desc_t("_:Rand:Long:1:Long", gm_method_id_t.GM_BLTIN_TOP_IRAND, ""),
 			new gm_builtin_desc_t("_:Log:Double:1:Double", gm_method_id_t.GM_BLTIN_TOP_LOG, ""),
 			new gm_builtin_desc_t("_:Exp:Double:1:Double", gm_method_id_t.GM_BLTIN_TOP_EXP, ""),
-			new gm_builtin_desc_t("_:Pow:Double:2:Double:Double", gm_method_id_t.GM_BLTIN_TOP_POW, "") //
+			new gm_builtin_desc_t("_:Pow:Double:2:Double:Double", gm_method_id_t.GM_BLTIN_TOP_POW, ""),
+			
+			// Map
+			new gm_builtin_desc_t("Map:Size:Int:0", gm_method_id_t.GM_BLTIN_MAP_SIZE, ""),
+			new gm_builtin_desc_t("Map:Clear:Void:0", gm_method_id_t.GM_BLTIN_MAP_CLEAR, ""),
+			new gm_builtin_desc_t("Map:HasKey:Bool:1:Generic", gm_method_id_t.GM_BLTIN_MAP_HAS_KEY, ""),
+			new gm_builtin_desc_t("Map:HasMaxValue:Bool:1:Generic", gm_method_id_t.GM_BLTIN_MAP_HAS_MAX_VALUE, ""),
+			new gm_builtin_desc_t("Map:HasMinValue:Bool:1:Generic", gm_method_id_t.GM_BLTIN_MAP_HAS_MIN_VALUE, ""),
+			new gm_builtin_desc_t("Map:GetMaxKey:Generic:0:", gm_method_id_t.GM_BLTIN_MAP_GET_MAX_KEY, ""),
+			new gm_builtin_desc_t("Map:GetMinKey:Generic:0:", gm_method_id_t.GM_BLTIN_MAP_GET_MIN_KEY, ""),
+			new gm_builtin_desc_t("Map:GetMaxValue:Generic:0:", gm_method_id_t.GM_BLTIN_MAP_GET_MAX_VALUE, ""),
+			new gm_builtin_desc_t("Map:GetMinValue:Generic:0:", gm_method_id_t.GM_BLTIN_MAP_GET_MIN_VALUE, "")
 	};
 
 	private LinkedList<gm_builtin_def> defs = new LinkedList<gm_builtin_def>();

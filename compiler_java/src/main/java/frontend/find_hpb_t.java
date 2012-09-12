@@ -165,6 +165,7 @@ public class find_hpb_t extends gm_apply {
 				a.set_bound(bound.getId().copy(true));
 			}
 		} else if (a.is_reduce_assign()) {
+			if(a.is_map_entry_assign()) return true;
 			// null bound
 			// find higest parallel region
 			if (a.get_bound() == null) {

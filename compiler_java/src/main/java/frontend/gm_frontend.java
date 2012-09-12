@@ -29,6 +29,7 @@ import parse.start_parse;
 import tangible.Extern;
 import ast.ast_argdecl;
 import ast.ast_assign;
+import ast.ast_assign_mapentry;
 import ast.ast_bfs;
 import ast.ast_call;
 import ast.ast_expr;
@@ -643,6 +644,14 @@ public class gm_frontend {
 		return ast_field.new_field((ast_id) id1, (ast_id) id2, is_rarrow);
 	}
 
+	public static ast_node GM_map_access(ast_node mapId, ast_node keyExpr) {
+		assert (mapId != null);
+		assert (keyExpr != null);
+		assert (mapId.get_nodetype() == AST_ID);
+		assert (keyExpr.get_nodetype() == AST_EXPR);
+		return ast_mapaccess.new_mapaccess((ast_id) mapId, (ast_expr) keyExpr);
+	}
+	
 	public static void GM_add_id_comma_list(ast_node id) {
 		assert id.get_nodetype() == AST_ID;
 		ast_idlist idlist = gm_main.FE.get_current_idlist();
@@ -664,6 +673,8 @@ public class gm_frontend {
 
 		} else if (lhs.get_nodetype() == AST_FIELD) {
 			return ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_NORMAL, null, GM_REDUCE_T.GMREDUCE_NULL);
+		} else if(lhs.get_nodetype() == AST_MAPACCESS) {
+			return ast_assign_mapentry.new_mapentry_assign((ast_mapaccess)lhs, (ast_expr)rhs);
 		}
 		assert false;
 		return null;
@@ -696,6 +707,8 @@ public class gm_frontend {
 
 		} else if (lhs.get_nodetype() == AST_FIELD) {
 			a = ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_REDUCE, (ast_id) id, reduce_type);
+		} else if (lhs.get_nodetype() == AST_MAPACCESS) {
+			return ast_assign_mapentry.new_mapentry_reduce_assign((ast_mapaccess)lhs, (ast_expr)rhs, reduce_type);
 		} else {
 			assert false;
 			throw new AssertionError();

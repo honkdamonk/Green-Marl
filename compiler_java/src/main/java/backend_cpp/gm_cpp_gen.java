@@ -277,10 +277,10 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		LIST.addLast(gm_cpp_opt_check_feasible.get_factory());
 		LIST.addLast(gm_cpp_opt_defer.get_factory());
-		LIST.addLast(gm_cpp_opt_select_par.get_factory());
 		LIST.addLast(gm_cpp_opt_common_nbr.get_factory());
+		LIST.addLast(gm_cpp_opt_select_par.get_factory());
 		LIST.addLast(gm_cpp_opt_save_bfs.get_factory());
-		LIST.addLast(gm_ind_opt_move_propdecl.get_factory());
+		LIST.addLast(gm_ind_opt_move_propdecl.get_factory()); // from ind-opt
 		LIST.addLast(gm_fe_fixup_bound_symbol.get_factory());
 		LIST.addLast(gm_ind_opt_nonconf_reduce.get_factory());
 		LIST.addLast(gm_cpp_opt_reduce_scalar.get_factory());

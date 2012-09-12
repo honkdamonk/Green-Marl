@@ -29,6 +29,8 @@ import inc.gm_compile_step;
 import inc.gm_ind_opt_flip_edges;
 import inc.gm_ind_opt_loop_merge;
 import inc.gm_ind_opt_move_propdecl;
+import inc.gm_ind_opt_propagate_trivial_writes;
+import inc.gm_ind_opt_remove_unused_scalar;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -170,6 +172,9 @@ public class gm_gps_gen extends BackendGenerator {
 		LinkedList<gm_compile_step> L = get_opt_steps();
 		L.addLast(gm_cpp_opt_defer.get_factory());
 		L.addLast(gm_gps_opt_transform_bfs.get_factory());
+		L.addLast(gm_gps_opt_edge_iteration.get_factory()); // expand edge iteration
+		L.addLast(gm_ind_opt_propagate_trivial_writes.get_factory());
+		L.addLast(gm_ind_opt_remove_unused_scalar.get_factory());
 		L.addLast(gm_ind_opt_move_propdecl.get_factory());
 		L.addLast(gm_gps_opt_simplify_expr1.get_factory());
 		L.addLast(gm_gps_opt_edge_iteration.get_factory());

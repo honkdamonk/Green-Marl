@@ -28,7 +28,7 @@ public class gps_opt_find_bfs_t extends gm_apply {
 	@Override
 	public boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
-			assert !in_bfs; // no nested BFS for now
+			assert !in_bfs; // [XXX] Nested BFS are not allowed (temporary)
 			in_bfs = true;
 			current_bfs = (ast_bfs) s;
 			BFS.addLast(current_bfs);

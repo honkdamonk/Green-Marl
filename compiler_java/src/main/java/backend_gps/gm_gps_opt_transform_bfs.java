@@ -33,8 +33,17 @@ import frontend.gm_symtab_entry;
 // Add delaration here
 // declaration of optimization steps
 //-------------------------------------------
+
+//--------------------------------------------------------
+// Transform BFS ==> Pregel-Canonical Statments. (i.e. while + foreach)
+//
+//  By doing this transformation, we may lose an opportunity to use 
+//  a special fast implmentation of BFS.
+//  However, we can re-use GPS tranlsation mechanism for while/foreach statments.
+//  without creating new translation rules.
+//----------------------------------------------------
+
 public class gm_gps_opt_transform_bfs extends gm_compile_step {
-// GM_COMPILE_STEP(gm_gps_opt_find_nested_loops_test, "test find nested loops")
 
 	private gm_gps_opt_transform_bfs() {
 		set_description("Transform BFS into while and foreach");
@@ -127,8 +136,6 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		gm_transform_helper.gm_ripoff_sent(body);
 
 		// replace iterator
-		// printf("repalce :%s -> %s\n", bfs->get_iterator()->get_genname(),
-		// out_loop->get_iterator()->get_genname());
 		gm_resolve_nc.gm_replace_symbol_entry(bfs.get_iterator().getSymInfo(), out_loop.get_iterator().getSymInfo(), body);
 		// what was iterator 2 again?
 		if (bfs.get_iterator2() != null)
@@ -150,7 +157,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		// Foreach(v:G.Nodes) {
 		// if (v.level == curr_level) {
 		// Foreach(k:v.Nbrs) {
-		// If (k.level == +INF) {
+		// If (k.level == +INF && [navigator]) {
 		// k.level = curr_level + 1;
 		// bfs_finished &= False;
 		// }
@@ -194,7 +201,6 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 				foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
 		while_sb.add_sent(foreach_out);
 
-		// outer if
 		ast_expr lev_check_out_c = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ,
 				ast_expr.new_field_expr(ast_field.new_field(foreach_out.get_iterator().copy(true), lev_sym.getId().copy(true))),
 				ast_expr.new_id_expr(curr_sym.getId().copy(true)));
@@ -216,7 +222,20 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		ast_expr lev_check_in_c = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ,
 				ast_expr.new_field_expr(ast_field.new_field(foreach_in.get_iterator().copy(true), lev_sym.getId().copy(true))), inf);
 		ast_sentblock lev_check_in_sb = ast_sentblock.new_sentblock();
-		ast_if lev_check_in_if = ast_if.new_if(lev_check_in_c, lev_check_in_sb, null);
+		ast_if lev_check_in_if;
+		if (bfs.get_navigator() != null) {
+			ast_expr navi = bfs.get_navigator();
+			bfs.set_navigator(null);
+
+			// replace bfs symbol ==> an inner foreach symbol
+			gm_resolve_nc.gm_replace_symbol_entry(bfs.get_iterator().getSymInfo(), foreach_in.get_iterator().getSymInfo(), navi);
+
+			// check with navigator
+			ast_expr new_top = ast_expr.new_lbiop_expr(GM_OPS_T.GMOP_AND, lev_check_in_c, navi);
+			lev_check_in_if = ast_if.new_if(new_top, lev_check_in_sb, null);
+		} else {
+			lev_check_in_if = ast_if.new_if(lev_check_in_c, lev_check_in_sb, null);
+		}
 		inner_sb.add_sent(lev_check_in_if);
 
 		// increase level
@@ -288,11 +307,6 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 	}
 
 	private static void gm_gps_rewrite_bfs(ast_bfs b) {
-		// for temporary
-		assert b.get_b_filter() == null;
-		assert b.get_f_filter() == null;
-		assert b.get_navigator() == null;
-
 		gm_transform_helper.gm_make_it_belong_to_sentblock(b);
 
 		ast_sentblock sb = ast_sentblock.new_sentblock();

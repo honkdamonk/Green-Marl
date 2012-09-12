@@ -123,6 +123,7 @@ public class ast_expr extends ast_node {
 		case GMEXPR_BIOP:
 		case GMEXPR_LBIOP:
 		case GMEXPR_COMP:
+			break;
 		case GMEXPR_BUILTIN_FIELD:
 		case GMEXPR_FOREIGN:
 			// TODO add some print statements for these?

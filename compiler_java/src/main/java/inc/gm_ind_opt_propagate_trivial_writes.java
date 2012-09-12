@@ -1,5 +1,7 @@
 package inc;
 
+import opt.gm_opt_propagate_trivial_write_t;
+import frontend.gm_rw_analysis;
 import ast.ast_procdef;
 
 public class gm_ind_opt_propagate_trivial_writes extends gm_compile_step
@@ -11,7 +13,19 @@ public class gm_ind_opt_propagate_trivial_writes extends gm_compile_step
 
 	public void process(ast_procdef proc)
 	{
-		assert false; // to be implemented
+		boolean changed;
+		do
+		{
+			gm_opt_propagate_trivial_write_t T = new gm_opt_propagate_trivial_write_t();
+			proc.traverse_pre(T);
+			T.post_process();
+    
+			changed = T.has_effect();
+    
+		} while (changed);
+    
+		// re-do rw_analysis
+		gm_rw_analysis.gm_redo_rw_analysis(proc.get_body());
 	}
 
 	@Override

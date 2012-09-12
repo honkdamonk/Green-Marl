@@ -29,7 +29,7 @@ public enum GM_REDUCE_T {
 
 	public String get_reduce_expr_string() {
 		return (this == GMREDUCE_PLUS) ? "Sum" : (this == GMREDUCE_MULT) ? "Product" : (this == GMREDUCE_MIN) ? "Min" : (this == GMREDUCE_MAX) ? "Max"
-				: (this == GMREDUCE_AND) ? "All" : (this == GMREDUCE_OR) ? "Exist" : "??";
+				: (this == GMREDUCE_AND) ? "All" : (this == GMREDUCE_OR) ? "Exist" : (this == GMREDUCE_AVG) ? "Avg" : "??";
 	}
 
 	public String get_reduce_string() {

@@ -667,11 +667,8 @@ public enum GMTYPE_T {
 		case GMTYPE_NODEITER_COMMON_NBRS:
 			return "CommonNbrs";
 		case GMTYPE_NODEITER_SET:
-			return "Items";
 		case GMTYPE_NODEITER_SEQ:
-			return "Items";
 		case GMTYPE_NODEITER_ORDER:
-			return "Items";
 		case GMTYPE_ITER_ANY:
 			return "Items";
 		default:

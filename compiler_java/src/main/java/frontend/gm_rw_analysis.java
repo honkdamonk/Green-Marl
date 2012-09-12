@@ -8,6 +8,7 @@ import static frontend.gm_range_type_t.GM_RANGE_LEVEL_UP;
 import static frontend.gm_range_type_t.GM_RANGE_LINEAR;
 import static frontend.gm_range_type_t.GM_RANGE_RANDOM;
 import static frontend.gm_range_type_t.GM_RANGE_SINGLE;
+import static inc.gm_assignment_location_t.GMASSIGN_LHS_MAP;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 import inc.gm_assignment_location_t;
@@ -23,12 +24,14 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_builtin_field;
 import ast.ast_expr_foreign;
+import ast.ast_expr_mapaccess;
 import ast.ast_expr_reduce;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_foreign;
 import ast.ast_id;
 import ast.ast_if;
+import ast.ast_mapaccess;
 import ast.ast_node;
 import ast.ast_nop;
 import ast.ast_return;
@@ -57,57 +60,46 @@ public class gm_rw_analysis extends gm_apply {
 		switch (s.get_nodetype()) {
 		case AST_VARDECL: // no read/write done at declaration
 			return true;
-
 		case AST_NOP:
 			b = apply_nop((ast_nop) s);
 			_succ = _succ && b;
 			return b;
-
 		case AST_ASSIGN:
 			b = apply_assign((ast_assign) s);
 			_succ = _succ && b;
 			return b;
-
 		case AST_CALL:
 			b = apply_call((ast_call) s);
 			_succ = _succ && b;
 			return b;
-
 		case AST_SENTBLOCK:
 			b = apply_sentblock((ast_sentblock) s);
 			_succ = _succ && b;
 			return b;
-
 		case AST_IF:
 			b = apply_if((ast_if) s);
 			_succ = _succ && b;
 			return b;
-
 		case AST_WHILE:
 			b = apply_while((ast_while) s);
 			_succ = _succ && b;
 			return b;
-
 		case AST_FOREACH:
 			b = apply_foreach((ast_foreach) s);
 			_succ = _succ && b;
 			return b;
-
 		case AST_BFS:
 			b = apply_bfs((ast_bfs) s);
 			_succ = _succ && b;
 			return b;
-
 		case AST_RETURN:
 			b = apply_return((ast_return) s);
 			_succ = _succ && b;
 			return b;
-
 		case AST_FOREIGN:
 			b = apply_foreign((ast_foreign) s);
 			_succ = _succ && b;
 			return b;
-
 		default:
 			assert false;
 			return b;
@@ -167,7 +159,7 @@ public class gm_rw_analysis extends gm_apply {
 		gm_rwinfo_map D = sets.reduce_set;
 
 		// (1) LHS
-		boolean is_reduce = (a.is_reduce_assign() || a.is_defer_assign());
+		boolean is_reduce = (a.is_reduce_assign() || a.is_defer_assign()) && !a.is_map_entry_assign();
 		gm_symtab_entry bound_sym = null;
 		GM_REDUCE_T bound_op = GM_REDUCE_T.GMREDUCE_NULL;
 		if (is_reduce) {
@@ -184,7 +176,11 @@ public class gm_rw_analysis extends gm_apply {
 		if (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) {
 			target_sym = a.get_lhs_scala().getSymInfo();
 			new_entry = gm_rwinfo.new_scala_inst(a.get_lhs_scala(), bound_op, bound_sym);
-		} else {
+	    } else if (a.get_lhs_type() == GMASSIGN_LHS_MAP) {
+	        ast_mapaccess mapAccess = a.to_assign_mapentry().get_lhs_mapaccess();
+	        target_sym = mapAccess.get_map_id().getSymInfo();
+	        new_entry = gm_rwinfo.new_scala_inst(mapAccess.get_map_id(), bound_op, bound_sym);//TODO
+	    } else {
 			target_sym = a.get_lhs_field().get_second().getSymInfo();
 			gm_symtab_entry iter_sym = a.get_lhs_field().get_first().getSymInfo();
 
@@ -883,6 +879,9 @@ public class gm_rw_analysis extends gm_apply {
 		case GMEXPR_FIELD:
 			traverse_expr_for_readset_adding_field(e, rset, DrvMap);
 			break;
+		case GMEXPR_MAPACCESS:
+			ast_mapaccess mapAccess = ((ast_expr_mapaccess) e).get_mapaccess();
+			traverse_expr_for_readset_adding(mapAccess.get_key_expr(), rset, DrvMap);
 		case GMEXPR_UOP:
 		case GMEXPR_LUOP:
 			traverse_expr_for_readset_adding(e.get_left_op(), rset, DrvMap);

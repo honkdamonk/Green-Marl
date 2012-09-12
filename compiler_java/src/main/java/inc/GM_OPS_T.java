@@ -1,6 +1,5 @@
 package inc;
 
-
 public enum GM_OPS_T { // list of operators
 	GMOP_ABS, //
 	GMOP_NEG, //
@@ -20,19 +19,14 @@ public enum GM_OPS_T { // list of operators
 	GMOP_GE, //
 	GMOP_LT, //
 	GMOP_GT, //
-	GMOP_TYPECONVERSION, // 
-	GMOP_TERNARY, // 
+	GMOP_TYPECONVERSION, //
+	GMOP_TERNARY, //
 	GMOP_ASSIGN, // used in typechecking only.
 	GMOP_MAPACCESS, //
-	GMOP_END;
-	// a marker indicating end of enum
+	GMOP_END; // a marker indicating end of enum
 
 	public int getValue() {
 		return this.ordinal();
-	}
-
-	public static GM_OPS_T forValue(int value) {
-		return values()[value];
 	}
 
 	public boolean is_numeric_op() {
@@ -53,7 +47,7 @@ public enum GM_OPS_T { // list of operators
 	}
 
 	public boolean is_eq_or_less_op() {
-		return this.is_eq_op() || this.is_less_op();
+		return is_eq_op() || is_less_op();
 	}
 
 	public boolean is_ternary_op() {
@@ -65,7 +59,7 @@ public enum GM_OPS_T { // list of operators
 	private static int[] GM_OPPRED_LEVEL = { 2, 3, 5, 5, 5, 2, 2, 6, 6, 13, 13, 3, 9, 9, 8, 8, 8, 8, 2, 15, 99 };
 
 	public int get_op_pred() {
-		return GM_OPPRED_LEVEL[this.getValue()];
+		return GM_OPPRED_LEVEL[getValue()];
 	}
 
 	public boolean gm_need_paranthesis(GM_OPS_T up_op, boolean is_right) {
@@ -77,10 +71,10 @@ public enum GM_OPS_T { // list of operators
 			else
 				return true;
 		} else {
-			if (this.get_op_pred() > up_op.get_op_pred())
+			if (get_op_pred() > up_op.get_op_pred())
 				return true;
 
-			else if (this.get_op_pred() == up_op.get_op_pred() && is_right)
+			else if (get_op_pred() == up_op.get_op_pred() && is_right)
 				return true;
 
 			else

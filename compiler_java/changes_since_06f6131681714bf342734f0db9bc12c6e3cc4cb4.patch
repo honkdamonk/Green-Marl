@@ -1780,37 +1780,6 @@ diff --git a/src/inc/gm_defs.h b/src/inc/gm_defs.h
 index f4a6aa4..e58f727 100644
 --- a/src/inc/gm_defs.h
 +++ b/src/inc/gm_defs.h
-@@ -18,7 +18,8 @@ enum GMTYPE_T
-     GMTYPE_ESET,
-     GMTYPE_ESEQ,
-     GMTYPE_EORDER,
--    GMTYPE_QUEUE,
-+    GMTYPE_COLLECTION,
-+    GMTYPE_MAP,
- 
-     // iterators
-     GMTYPE_NODEITER_ALL = 100,
-@@ -33,6 +34,10 @@ enum GMTYPE_T
- 
-     GMTYPE_NODEITER_COMMON_NBRS,    // common neighbors
- 
-+    GMTYPE_COLLECTIONITER_SET,          // iterator over collection of collection
-+    GMTYPE_COLLECTIONITER_ORDER,
-+    GMTYPE_COLLECTIONITER_SEQ,
-+
-     GMTYPE_EDGEITER_ALL = 200,
-     GMTYPE_EDGEITER_NBRS,
-     GMTYPE_EDGEITER_IN_NBRS,
-@@ -68,7 +73,9 @@ enum GMTYPE_T
-     GMTYPE_UNKNOWN = 9999,  // expression whose type is not identified yet (variable before typechecking)
-     GMTYPE_UNKNOWN_NUMERIC, // expression whose type should be numeric, size not determined yet
-     GMTYPE_ITER_ANY,        // iterator to some collection. resolved after type checking
-+    GMTYPE_ITER_UNDERSPECIFIED,
-     GMTYPE_VOID,
-+    GMTYPE_GENERIC,
-     GMTYPE_INVALID = 99999,
- };
- 
 @@ -159,8 +166,25 @@ inline static bool gm_is_unknown_collection_iter_type(int i) {
      return (i == GMTYPE_ITER_ANY);
  }

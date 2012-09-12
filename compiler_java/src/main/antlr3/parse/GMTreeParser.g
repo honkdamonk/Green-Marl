@@ -153,8 +153,8 @@ value_type returns [ast_node value]
 
 map_type returns [ast_node value]
 	:	T_MAP '<' x=key_type ',' y=value_type '>'
-		{ value = FE.GM_maptype_ref(x, y);
-		  FE.GM_set_lineinfo(value, $T_MAP.getLine(), $T_MAP.getCharPositionInLine()); }
+		{ /*value = FE.GM_maptype_ref(x, y);
+		  FE.GM_set_lineinfo(value, $T_MAP.getLine(), $T_MAP.getCharPositionInLine());*/ }
 	;
 
 
@@ -578,7 +578,7 @@ not_left_recursive_expr returns [ast_node value]
     |   eu=expr_user
     	{ value = eu; }
     |	ma=map_access
-    	{ value = FE.GM_expr_map_access(ma, 0, 0); } /* TODO: should be ma.getLine(), ma.getCharPositionInLine() */
+    	{ /*value = FE.GM_expr_map_access(ma, 0, 0);*/ } /* TODO: should be ma.getLine(), ma.getCharPositionInLine() */
     ;
 
 
@@ -768,7 +768,7 @@ field returns [ast_node value]
 
 map_access returns [ast_node value]
 	:	x=id '[' y=expr ']'
-		{ value = FE.GM_map_access(x, y); }
+		{ /*value = FE.GM_map_access(x, y);*/ }
 	;
 
 

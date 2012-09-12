@@ -12,6 +12,7 @@ public enum AST_NODE_TYPE {
 	AST_EXPR_RDC, // c + 3
 	AST_EXPR_BUILTIN, // c + 3
 	AST_EXPR_FOREIGN, // Foreign Expression
+	AST_EXPR_MAPACCESS, //
 	AST_SENT, //
 	AST_SENTBLOCK, // { ... }
 	AST_ASSIGN, // C =D

@@ -22,8 +22,8 @@ public enum GMEXPR_CLASS
 	GMEXPR_BUILTIN(13), // builtin ops (NumNodes, NumNbrs, ...)
 	GMEXPR_BUILTIN_FIELD(14), //builtin ops on property entries
 	GMEXPR_TER(15), // ternary operation
-	GMEXPR_FOREIGN(16);
-// foreign expression
+	GMEXPR_FOREIGN(16), // foreign expression
+	GMEXPR_MAPACCESS(17);//
 
 	private int intValue;
 	private static java.util.HashMap<Integer, GMEXPR_CLASS> mappings;

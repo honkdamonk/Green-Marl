@@ -23,6 +23,7 @@ public enum GM_OPS_T { // list of operators
 	GMOP_TYPECONVERSION, // 
 	GMOP_TERNARY, // 
 	GMOP_ASSIGN, // used in typechecking only.
+	GMOP_MAPACCESS, //
 	GMOP_END;
 	// a marker indicating end of enum
 

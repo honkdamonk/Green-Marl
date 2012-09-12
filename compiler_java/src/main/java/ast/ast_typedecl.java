@@ -8,7 +8,7 @@ import common.gm_dumptree;
 //==========================================================================
 
 public class ast_typedecl extends ast_node { // property or type
-	private ast_typedecl() {
+	protected ast_typedecl() {
 		super(AST_NODE_TYPE.AST_TYPEDECL);
 		this.target_type = null;
 		this.target_graph = null;
@@ -20,7 +20,7 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	// give a deep copy
-	public final ast_typedecl copy() {
+	public ast_typedecl copy() {
 		ast_typedecl p = new ast_typedecl();
 		p.type_id = this.type_id;
 		p.target_type = (this.target_type == null) ? null : this.target_type.copy();
@@ -189,7 +189,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return t;
 	}
 
-	public final GMTYPE_T get_typeid() {
+	public GMTYPE_T get_typeid() {
 		return type_id;
 	}
 
@@ -444,7 +444,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return target_type;
 	}
 
-	public final GMTYPE_T getTypeSummary() // same as get type id
+	public GMTYPE_T getTypeSummary() // same as get type id
 	{
 		return type_id;
 	}
@@ -503,11 +503,11 @@ public class ast_typedecl extends ast_node { // property or type
 	}
 
 	// defined in gm_frontend_api.h
-	private GMTYPE_T type_id;
+	protected GMTYPE_T type_id;
 	private ast_typedecl target_type; // for property
 	private ast_id target_graph; // for property, node, edge, set
 	private ast_id target_collection; // for set-iterator set
 	private ast_id target_nbr; // for nbr-iterator
 	private ast_id target_nbr2; // for common neighbor iterator
-	private boolean _well_defined;
+	protected boolean _well_defined;
 }

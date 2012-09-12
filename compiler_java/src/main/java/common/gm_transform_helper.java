@@ -1,5 +1,6 @@
 package common;
 
+import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -122,6 +123,15 @@ public class gm_transform_helper {
 		gm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_AFTER, need_fix_symtab);
 	}
 
+	public static void gm_replace_sent(ast_sent current, ast_sent target) {
+		gm_replace_sent(current, target, true);
+	}
+
+	public static void gm_replace_sent(ast_sent current, ast_sent target, boolean need_fix_symtab) {
+		gm_add_sent_after(current, target,	need_fix_symtab);
+		gm_ripoff_sent(current, need_fix_symtab);
+	}
+	
 	// --------------------------------------------------------------------
 	// similar to add_sent_*. But explicitly give the sentence bock
 	// --------------------------------------------------------------------
@@ -167,6 +177,18 @@ public class gm_transform_helper {
 		}
 	}
 
+	// --------------------------------------------------------------------
+	// Remove(Rip-Off) sentence from a sentence block
+	// (User should guarantee target does not use any symbol defined in from)
+	// --------------------------------------------------------------------
+	public static void gm_remove_sent_from_sb(ast_sent target, ast_sentblock from) {
+		gm_remove_sent_from_sb(target, from, true);
+	}
+
+	public static void gm_remove_sent_from_sb(ast_sent target, ast_sentblock from, boolean fix_symtab) {
+		gm_ripoff_sent(target, fix_symtab); // this is same from ripoff sent
+	}
+
 	// ------------------------------------------------------------
 	// Scope management
 	// ------------------------------------------------------------
@@ -207,6 +229,48 @@ public class gm_transform_helper {
 		top.traverse_pre(T);
 	}
 
+	//------------------------------------------------------------
+	// Sentenceblock related
+	// ------------------------------------------------------------
+	// Is the sentence block empty? (nothing in there)
+	public static boolean gm_is_sentblock_empty(ast_sentblock sb) {
+		java.util.LinkedList<ast_sent> L = sb.get_sents();
+		return (L.size() == 0);
+	}
+
+	// Is the sentence block trivial? (only one sentence, no definition)-- also
+	// returns the only sentence
+	public static boolean gm_is_sentblock_trivial(ast_sentblock sb, RefObject<ast_sent> s) {
+		java.util.LinkedList<ast_sent> L = sb.get_sents();
+		if (L.size() != 1)
+			return false;
+
+		// also there should be no definitions
+		if (sb.get_symtab_var().get_num_symbols() != 0)
+			return false;
+		if (sb.get_symtab_field().get_num_symbols() != 0)
+			return false;
+		if (sb.get_symtab_proc().get_num_symbols() != 0)
+			return false;
+
+		s.argvalue = L.getFirst();
+		return true;
+	}
+
+	// get the trivivial sententce of s if s is a trivial sent-block. otherwise
+	// returns s itself
+	public static ast_sent gm_get_sentence_if_trivial_sentblock(ast_sent s) {
+		if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+			ast_sent t = null;
+			RefObject<ast_sent> t_wrapper = new RefObject<ast_sent>(t);
+			if (gm_is_sentblock_trivial((ast_sentblock) s, t_wrapper)) {
+				return t_wrapper.argvalue;
+			}
+		}
+
+		return s;
+	}
+	
 	// ------------------------------------------------------------
 	// Symbol addition and creation
 	// ------------------------------------------------------------

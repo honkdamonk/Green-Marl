@@ -1780,33 +1780,6 @@ diff --git a/src/inc/gm_defs.h b/src/inc/gm_defs.h
 index f4a6aa4..e58f727 100644
 --- a/src/inc/gm_defs.h
 +++ b/src/inc/gm_defs.h
-@@ -159,8 +166,25 @@ inline static bool gm_is_unknown_collection_iter_type(int i) {
-     return (i == GMTYPE_ITER_ANY);
- }
- 
-+inline static bool gm_is_collection_of_set_iter_type(int i) {
-+    return i == GMTYPE_COLLECTIONITER_SET;
-+}
-+
-+inline static bool gm_is_collection_of_seq_iter_type(int i) {
-+    return i == GMTYPE_COLLECTIONITER_SEQ;
-+}
-+
-+inline static bool gm_is_collection_of_order_iter_type(int i) {
-+    return i == GMTYPE_COLLECTIONITER_ORDER;
-+}
-+
-+inline static bool gm_is_collection_of_collection_iter_type(int i) {
-+    return gm_is_collection_of_set_iter_type(i) || gm_is_collection_of_order_iter_type(i) || gm_is_collection_of_seq_iter_type(i);
-+}
-+
- inline static bool gm_is_collection_iter_type(int i) {
--    return gm_is_node_collection_iter_type(i) || gm_is_edge_collection_iter_type(i) || gm_is_unknown_collection_iter_type(i);
-+    return gm_is_node_collection_iter_type(i) || gm_is_edge_collection_iter_type(i) || gm_is_unknown_collection_iter_type(i)
-+            || gm_is_collection_of_collection_iter_type(i);
- }
- 
- inline static bool gm_is_property_iter_set_type(int i) {
 @@ -278,18 +302,22 @@ inline static bool gm_is_sequence_collection_type(int i) {
      return gm_is_node_sequence_type(i) || gm_is_edge_sequence_type(i);
  }
@@ -1897,30 +1870,6 @@ index f4a6aa4..e58f727 100644
  enum GM_ACCESS_T
  {   // 16 bit bitmap
      GMACCESS_NONE = 0x0000,
-diff --git a/src/inc/gm_frontend_api.h b/src/inc/gm_frontend_api.h
-index 492c318..752f43a 100644
---- a/src/inc/gm_frontend_api.h
-+++ b/src/inc/gm_frontend_api.h
-@@ -63,6 +63,7 @@ extern ast_node* GM_expr_reduceop(int op, ast_node* iter, ast_node* src, int ite
- extern ast_node* GM_expr_ternary(ast_node* cond, ast_node* left, ast_node* right, int l, int c);
- extern ast_node* GM_expr_builtin_expr(ast_node* id, ast_node* id2, expr_list* l);
- extern ast_node* GM_expr_builtin_field_expr(ast_node* id, ast_node* id2, expr_list* list);
-+extern ast_node* GM_expr_map_access(ast_node* mapAccess, int line, int column);
- 
- extern void GM_start_sentblock();
- extern ast_node* GM_finish_sentblock();
-@@ -94,9 +95,11 @@ extern ast_node* GM_edgetype_ref(ast_node* id);
- 
- extern ast_node* GM_settype_ref(int set_type_id, ast_node* id);
- extern ast_node* GM_queuetype_ref(ast_node* collectionType, ast_node* id);
-+extern ast_node* GM_maptype_ref(ast_node* keyType, ast_node* valueType);
- 
- extern ast_node* GM_id(char* orgname, int line, int col);
- extern ast_node* GM_field(ast_node* id, ast_node* field, bool is_rarrow);
-+extern ast_node* GM_map_access(ast_node* mapId, ast_node* keyExpr);
- 
- extern void GM_add_id_comma_list(ast_node* id);
- extern ast_node* GM_finish_id_comma_list();
 diff --git a/src/inc/gm_ind_opt_steps.h b/src/inc/gm_ind_opt_steps.h
 index 7c1c75e..934a772 100644
 --- a/src/inc/gm_ind_opt_steps.h

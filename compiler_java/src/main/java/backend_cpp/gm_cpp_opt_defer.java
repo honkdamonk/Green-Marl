@@ -13,6 +13,8 @@ import inc.gm_compile_step;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import tangible.RefObject;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -131,7 +133,10 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 			ast_foreach init = create_initializer(src.copy(true), is_nodeprop, old_dest, new_dest);
 
 			ast_sent seq_loop = null;
-			if (check_conditional_initialize(fe, old_dest, seq_loop)) {
+			RefObject<ast_sent> seq_loop_wrapper = new RefObject<ast_sent>(seq_loop);
+			boolean check_result = check_conditional_initialize(fe, old_dest, seq_loop_wrapper);
+			seq_loop = seq_loop_wrapper.argvalue;
+			if (check_result) {
 				// ---------------------------------------
 				// add conditional initializer
 				// Do {
@@ -185,7 +190,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		T.replace_da(target_old, target_new, s);
 	}
 
-	private static boolean check_conditional_initialize(ast_foreach target_fe, gm_symtab_entry target_old, ast_sent seq_loop) {
+	private static boolean check_conditional_initialize(ast_foreach target_fe, gm_symtab_entry target_old, RefObject<ast_sent> seq_loop) {
 		// 1. check if target modifies *old_target* linearly and
 		// unconditionally.
 		// (note: RW-analysis for target_fe has not updated.)
@@ -193,12 +198,12 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 			return false;
 
 		// 2. check if target_fe is inside a seq_loop. (unconditionally)
-		seq_loop = gm_transform_helper.gm_find_enclosing_seq_loop(target_fe);
-		if (seq_loop == null)
+		seq_loop.argvalue = gm_transform_helper.gm_find_enclosing_seq_loop(target_fe);
+		if (seq_loop.argvalue == null)
 			return false;
 
 		// 3. check if target is not modified elswhere inside the seq_loop scope
-		return !check_if_modified_elsewhere(target_old, target_fe, seq_loop); // temp
+		return !check_if_modified_elsewhere(target_old, target_fe, seq_loop.argvalue); // temp
 	}
 
 	private static void add_conditional_initialize(ast_sent seq_loop, ast_foreach target_fe, ast_foreach init, gm_symtab_entry target_old,

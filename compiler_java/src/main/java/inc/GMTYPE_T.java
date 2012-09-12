@@ -17,6 +17,7 @@ public enum GMTYPE_T {
 	GMTYPE_ESEQ(10), //
 	GMTYPE_EORDER(11), //
 	GMTYPE_COLLECTION(12), //
+	GMTYPE_MAP(13), //
 
 	// iterators
 	GMTYPE_NODEITER_ALL(100), //
@@ -510,6 +511,14 @@ public enum GMTYPE_T {
 
 	public boolean is_collection_of_collection_iter_type() {
 		return this.is_collection_of_set_iter_type() || this.is_collection_of_order_iter_type() || this.is_collection_of_seq_iter_type();
+	}
+	
+	public boolean can_be_key_type() {
+	    return is_prim_type() || is_nodeedge_type();
+	}
+
+	public  boolean can_be_value_type() {
+	    return is_prim_type() || is_nodeedge_type();
 	}
 
 	/**

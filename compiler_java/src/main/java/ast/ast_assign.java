@@ -17,7 +17,7 @@ public class ast_assign extends ast_sent {
 	private GM_REDUCE_T reduce_type; // add, mult, min, max
 	private ast_id lhs_scala;
 	private ast_field lhs_field;
-	private ast_expr rhs;
+	protected ast_expr rhs;
 	private ast_id bound; // bounding iterator
 
 	private boolean arg_minmax;
@@ -26,17 +26,6 @@ public class ast_assign extends ast_sent {
 	private LinkedList<ast_node> l_list = new LinkedList<ast_node>();
 	private LinkedList<ast_expr> r_list = new LinkedList<ast_expr>();
 	
-	public void dispose() {
-		if (lhs_scala != null)
-			lhs_scala.dispose();
-		if (lhs_field != null)
-			lhs_field.dispose();
-		if (rhs != null)
-			rhs.dispose();
-		if (bound != null)
-			bound.dispose();
-	}
-
 	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type, ast_id itor) {
 		return new_assign_scala(id, r, assign_type, itor, GM_REDUCE_T.GMREDUCE_NULL);
 	}
@@ -365,7 +354,7 @@ public class ast_assign extends ast_sent {
 		return assign_type;
 	}
 
-	public final gm_assignment_location_t get_lhs_type() {
+	public gm_assignment_location_t get_lhs_type() {
 		return lhs_type;
 	}
 
@@ -411,7 +400,7 @@ public class ast_assign extends ast_sent {
 		return assign_type == gm_assignment_t.GMASSIGN_DEFER;
 	}
 
-	public final boolean is_target_scalar() {
+	public boolean is_target_scalar() {
 		return get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA;
 	}
 
@@ -468,16 +457,15 @@ public class ast_assign extends ast_sent {
 		isReference = isRef;
 	}
 
-	private ast_assign() {
+	protected ast_assign() {
 		super(AST_NODE_TYPE.AST_ASSIGN);
-		this.lhs_scala = null;
-		this.lhs_field = null;
-		this.rhs = null;
-		this.bound = null;
-		this.arg_minmax = false;
 		this.lhs_type = gm_assignment_location_t.GMASSIGN_LHS_SCALA;
 		this.assign_type = gm_assignment_t.GMASSIGN_NORMAL;
 		this.reduce_type = GM_REDUCE_T.GMREDUCE_INVALID;
+	}
+
+	public boolean is_target_map_entry() {
+		return false;
 	}
 
 }

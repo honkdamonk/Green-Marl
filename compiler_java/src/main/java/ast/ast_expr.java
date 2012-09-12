@@ -5,13 +5,13 @@ import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 
-import common.gm_dumptree;
 import common.gm_apply;
+import common.gm_dumptree;
 
 // Numeric or boolean expression
 
 public class ast_expr extends ast_node {
-	
+
 	protected GMEXPR_CLASS expr_class = GMEXPR_CLASS.GMEXPR_ID;
 	protected ast_expr left = null;
 	protected ast_expr right = null;
@@ -24,20 +24,19 @@ public class ast_expr extends ast_node {
 	protected boolean bval = false;
 	protected boolean plus_inf = false;
 	protected GM_OPS_T op_type = GM_OPS_T.GMOP_END;
-	
+
 	/** am I a right-operand? */
 	protected boolean is_right = false;
 	/** am I a conditional-operand? */
-	protected boolean is_cond = false; 
+	protected boolean is_cond = false;
 
 	/** set after local typecheck */
 	protected GMTYPE_T type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
 	/** used for group-assignment only. (during type checking) */
 	protected GMTYPE_T alternative_type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
 	/** used only during typecheck */
-	protected gm_symtab_entry bound_graph_sym = null; 
-	
-	
+	protected gm_symtab_entry bound_graph_sym = null;
+
 	protected ast_expr() {
 		super(AST_NODE_TYPE.AST_EXPR);
 	}
@@ -128,6 +127,8 @@ public class ast_expr extends ast_node {
 		case GMEXPR_FOREIGN:
 			// TODO add some print statements for these?
 			return;
+		default:
+			break;
 		}
 
 		// binop
@@ -233,6 +234,8 @@ public class ast_expr extends ast_node {
 		case GMEXPR_FOREIGN:
 			// TODO add some print statements for these?
 			return;
+		default:
+			break;
 		}
 		String opstr = op_type.get_op_string();
 
@@ -254,7 +257,7 @@ public class ast_expr extends ast_node {
 		boolean for_rhs = a.is_for_rhs();
 
 		// no more sentence behind this
-		if (!(for_id || for_expr || for_symtab || for_rhs)) 
+		if (!(for_id || for_expr || for_symtab || for_rhs))
 			return;
 
 		if (for_expr && is_pre)
@@ -660,7 +663,7 @@ public class ast_expr extends ast_node {
 		return is_inf() && plus_inf;
 	} // true o
 
-	public final ast_id get_id() {
+	public ast_id get_id() {
 		return id1;
 	}
 
@@ -668,11 +671,11 @@ public class ast_expr extends ast_node {
 		return field;
 	}
 
-	public final GMEXPR_CLASS get_opclass() {
+	public GMEXPR_CLASS get_opclass() {
 		return expr_class;
 	}
 
-	public final GM_OPS_T get_optype() {
+	public GM_OPS_T get_optype() {
 		return op_type;
 	}
 
@@ -758,6 +761,10 @@ public class ast_expr extends ast_node {
 
 	public final void set_expr_class(GMEXPR_CLASS ec) {
 		expr_class = ec;
+	}
+
+	public boolean is_mapaccess() {
+		return false;
 	}
 
 }

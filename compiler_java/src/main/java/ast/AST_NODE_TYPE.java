@@ -1,7 +1,9 @@
 package ast;
 
 public enum AST_NODE_TYPE {
-	AST_ID, AST_FIELD, // A.B
+	AST_ID, //
+	AST_FIELD, // A.B
+	AST_MAPACCESS, // A[B]
 	AST_IDLIST, // A, B, C,
 	AST_TYPEDECL, // INT
 	AST_ARGDECL, // a,b : B
@@ -10,7 +12,9 @@ public enum AST_NODE_TYPE {
 	AST_EXPR_RDC, // c + 3
 	AST_EXPR_BUILTIN, // c + 3
 	AST_EXPR_FOREIGN, // Foreign Expression
-	AST_SENT, AST_SENTBLOCK, // { ... }
+	AST_EXPR_MAPACCESS, //
+	AST_SENT, //
+	AST_SENTBLOCK, // { ... }
 	AST_ASSIGN, // C =D
 	AST_VARDECL, // INT x;
 					// NODE_PROPERTY<INT>(G) x;
@@ -24,13 +28,15 @@ public enum AST_NODE_TYPE {
 	AST_NOP, // NOP (for backend-only)
 
 	AST_END;
-	
+
 	public String get_nodetype_string() {
 		switch (this) {
 		case AST_ID:
 			return "AST_ID";
 		case AST_FIELD:
 			return "AST_FIELD";
+		case AST_MAPACCESS:
+			return "AST_MAPACCESS";
 		case AST_PROCDEF:
 			return "AST_PROCDEF";
 		case AST_EXPR:

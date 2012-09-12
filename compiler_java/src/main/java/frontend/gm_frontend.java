@@ -7,6 +7,7 @@ import static ast.AST_NODE_TYPE.AST_EXPR_FOREIGN;
 import static ast.AST_NODE_TYPE.AST_FIELD;
 import static ast.AST_NODE_TYPE.AST_ID;
 import static ast.AST_NODE_TYPE.AST_IDLIST;
+import static ast.AST_NODE_TYPE.AST_MAPACCESS;
 import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
 import static ast.AST_NODE_TYPE.AST_TYPEDECL;
 import inc.GMTYPE_T;
@@ -34,6 +35,7 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_builtin_field;
 import ast.ast_expr_foreign;
+import ast.ast_expr_mapaccess;
 import ast.ast_expr_reduce;
 import ast.ast_field;
 import ast.ast_foreach;
@@ -41,6 +43,8 @@ import ast.ast_foreign;
 import ast.ast_id;
 import ast.ast_idlist;
 import ast.ast_if;
+import ast.ast_mapaccess;
+import ast.ast_maptypedecl;
 import ast.ast_node;
 import ast.ast_procdef;
 import ast.ast_return;
@@ -378,6 +382,12 @@ public class gm_frontend {
 		return n;
 	}
 
+	public static ast_node GM_expr_map_access(ast_node mapAccess, int line, int column) {
+		assert (mapAccess != null);
+		assert (mapAccess.get_nodetype() == AST_MAPACCESS);
+		return ast_expr_mapaccess.new_expr_mapaccess((ast_mapaccess) mapAccess, line, column);
+	}
+
 	public static ast_node GM_expr_ival(int lval, int l, int c) {
 		ast_node n = ast_expr.new_ival_expr(lval);
 		n.set_line(l);
@@ -555,6 +565,18 @@ public class gm_frontend {
 			assert id.get_nodetype() == AST_ID;
 		assert collectionType.get_nodetype() == AST_TYPEDECL;
 		return ast_typedecl.new_queue((ast_id) id, (ast_typedecl) collectionType);
+	}
+
+	public static ast_node GM_maptype_ref(ast_node key, ast_node value) {
+		assert (key != null);
+		assert (value != null);
+		assert (key.get_nodetype() == AST_TYPEDECL);
+		assert (value.get_nodetype() == AST_TYPEDECL);
+		ast_typedecl keyType = (ast_typedecl) key;
+		ast_typedecl valueType = (ast_typedecl) value;
+		assert (keyType.getTypeSummary().can_be_key_type());
+		assert (valueType.getTypeSummary().can_be_value_type());
+		return ast_maptypedecl.new_map(keyType, valueType);
 	}
 
 	public static ast_node GM_nodeprop_ref(ast_node typedecl, ast_node id) {

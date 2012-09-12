@@ -127,4 +127,10 @@ public class gm_resolve_nc
 		T.do_replace(e_old, e_new, top);
 		return T.is_changed();
 	}
+	
+	public static boolean gm_replace_symbol_entry_bound(gm_symtab_entry e_old, gm_symtab_entry e_new, ast_node top) {
+		gm_replace_symbol_entry_bound_t T = new gm_replace_symbol_entry_bound_t();
+		T.do_replace(e_old, e_new, top);
+		return T.is_changed();
+	}
 }

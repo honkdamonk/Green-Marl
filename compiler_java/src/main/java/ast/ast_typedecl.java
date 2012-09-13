@@ -337,36 +337,45 @@ public class ast_typedecl extends ast_node { // property or type
 			}
 		} else if (is_node_property()) {
 			assert target_type != null;
-			assert target_graph != null;
 			Out.push("N_P <");
 			target_type.reproduce(0);
-			Out.push(">(");
-			target_graph.reproduce(0);
-			Out.push(')');
+			Out.push(">");
+			if (target_graph != null) {
+				Out.push("(");
+				target_graph.reproduce(0);
+				Out.push(')');
+			}
 		} else if (is_edge_property()) {
 			assert target_type != null;
-			assert target_graph != null;
 			Out.push("E_P <");
 			target_type.reproduce(0);
-			Out.push(">(");
-			target_graph.reproduce(0);
-			Out.push(')');
+			Out.push(">");
+			if (target_graph != null) {
+				Out.push("(");
+				target_graph.reproduce(0);
+				Out.push(')');
+			}
 		} else if (is_node()) {
-			assert target_graph != null;
-			Out.push("Node (");
-			target_graph.reproduce(0);
-			Out.push(')');
+			Out.push("Node ");
+			if (target_graph != null) {
+				Out.push("(");
+				target_graph.reproduce(0);
+				Out.push(')');
+			}
 		} else if (is_edge()) {
-			assert target_graph != null;
-			Out.push("Edge (");
-			target_graph.reproduce(0);
-			Out.push(')');
+			Out.push("Edge ");
+			if (target_graph != null) {
+				Out.push("(");
+				target_graph.reproduce(0);
+				Out.push(')');
+			}
 		} else if (is_collection()) {
-			assert target_graph != null;
 			Out.push(type_id.get_type_string());
-			Out.push('(');
-			target_graph.reproduce(0);
-			Out.push(')');
+			if (target_graph != null) {
+				Out.push("(");
+				target_graph.reproduce(0);
+				Out.push(')');
+			}
 		} else if (is_void()) {
 			// do nothing
 		} else {
@@ -402,7 +411,8 @@ public class ast_typedecl extends ast_node { // property or type
 			assert target_collection.getTypeInfo() != null;
 			assert target_collection.getTypeInfo().get_target_graph_sym() != null;
 			return target_collection.getTypeInfo().get_target_graph_sym();
-		} else if (is_collection() || is_property() || is_nodeedge() || is_node_iterator() || is_edge_iterator() || is_collection_of_collection() || type_id.is_property_iter_type()) {
+		} else if (is_collection() || is_property() || is_nodeedge() || is_node_iterator() || is_edge_iterator() || is_collection_of_collection()
+				|| type_id.is_property_iter_type()) {
 			assert target_graph != null;
 			assert target_graph.getSymInfo() != null;
 			return target_graph.getSymInfo();

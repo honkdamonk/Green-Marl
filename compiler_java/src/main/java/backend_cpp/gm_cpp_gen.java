@@ -231,6 +231,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		Header.pushln("#endif");
 	}
 
+	@Override
 	public void build_up_language_voca() {
 		gm_vocabulary V = get_language_voca();
 
@@ -466,6 +467,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		_Body.push(") ");
 	}
 
+	@Override
 	public void generate_expr_inf(ast_expr e) {
 		String temp;
 		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;

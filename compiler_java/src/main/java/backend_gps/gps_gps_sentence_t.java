@@ -1,5 +1,7 @@
 package backend_gps;
 
+import java.util.HashMap;
+
 //----------------------------------------------------------------------
 // Basic Block Creation
 //  (1) pre-processing
@@ -14,8 +16,8 @@ public enum gps_gps_sentence_t //TOOD new name?
 	GPS_TYPE_IN_VERTEX(4);
 
 	private int intValue;
-	private static java.util.HashMap<Integer, gps_gps_sentence_t> mappings;
-	private static java.util.HashMap<Integer, gps_gps_sentence_t> getMappings()
+	private static HashMap<Integer, gps_gps_sentence_t> mappings;
+	private static HashMap<Integer, gps_gps_sentence_t> getMappings()
 	{
 		if (mappings == null)
 		{
@@ -23,7 +25,7 @@ public enum gps_gps_sentence_t //TOOD new name?
 			{
 				if (mappings == null)
 				{
-					mappings = new java.util.HashMap<Integer, gps_gps_sentence_t>();
+					mappings = new HashMap<Integer, gps_gps_sentence_t>();
 				}
 			}
 		}

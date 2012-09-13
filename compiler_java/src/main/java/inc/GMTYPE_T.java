@@ -252,6 +252,10 @@ public enum GMTYPE_T {
 		return is_sequence_collection_type() || is_order_collection_type();
 	}
 
+	public boolean is_map_type() {
+		return this == GMTYPE_MAP;
+	}
+
 	// node set -> nodeset iter
 	// edge set -> edgeset iter ...
 	public GMTYPE_T get_natural_collection_iterator() {

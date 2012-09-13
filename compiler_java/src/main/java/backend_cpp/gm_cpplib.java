@@ -154,7 +154,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	private void add_map_def(ast_maptypedecl map, ast_id mapId) {
+	void add_map_def(ast_maptypedecl map, ast_id mapId) {
 
 		int mapType = MEDIUM; // TODO: implement compiler optimization to figure
 								// out what is best here
@@ -172,6 +172,10 @@ public class gm_cpplib extends gm_graph_library {
 
 		String buffer = String.format("%s %s%s;", typeBuffer, mapId.get_genname(), parameterBuffer);
 		Body.pushln(buffer);
+	}
+
+	private String get_function_name_map(gm_method_id_t methodId) {
+		return get_function_name_map(methodId, false);
 	}
 
 	private String get_function_name_map(gm_method_id_t methodId, boolean in_parallel) {
@@ -201,7 +205,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	String get_function_name_map_seq(gm_method_id_t methodId) {
+	private String get_function_name_map_seq(gm_method_id_t methodId) {
 		switch (methodId) {
 		case GM_BLTIN_MAP_HAS_MAX_VALUE:
 			return "hasMaxValue";
@@ -223,7 +227,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	String get_function_name_map_par(gm_method_id_t methodId) {
+	private String get_function_name_map_par(gm_method_id_t methodId) {
 		switch (methodId) {
 		case GM_BLTIN_MAP_HAS_MAX_VALUE:
 			return "hasMaxValue_par";

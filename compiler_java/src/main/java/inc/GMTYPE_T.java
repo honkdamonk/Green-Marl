@@ -251,10 +251,6 @@ public enum GMTYPE_T {
 	public boolean is_sequential_collection_type() {
 		return is_sequence_collection_type() || is_order_collection_type();
 	}
-	
-	public boolean is_map_type() {
-		return (this == GMTYPE_MAP);
-	}
 
 	public boolean is_map_type() {
 		return this == GMTYPE_MAP;

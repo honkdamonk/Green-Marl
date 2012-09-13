@@ -46,7 +46,7 @@ import common.gm_vocabulary;
 // interface for graph library Layer
 //  ==> will be deprecated
 //-----------------------------------------------------------------
-public class gm_cpplib extends gm_graph_library {
+class gm_cpplib extends gm_graph_library {
 
 	// private static final int SMALL = 1;
 	private static final int MEDIUM = 2;
@@ -55,23 +55,19 @@ public class gm_cpplib extends gm_graph_library {
 	private String str_buf;
 	private gm_cpp_gen main;
 
-	public gm_cpplib() {
-		main = null;
-	}
-
-	public gm_cpplib(gm_cpp_gen gen) {
+	gm_cpplib(gm_cpp_gen gen) {
 		main = gen;
 	}
 
-	public final void set_main(gm_cpp_gen gen) {
+	final void set_main(gm_cpp_gen gen) {
 		main = gen;
 	}
 
-	public String get_header_info() {
+	String get_header_info() {
 		return "gm.h";
 	}
 
-	public String get_type_string(GMTYPE_T type) {
+	String get_type_string(GMTYPE_T type) {
 		if (type.is_graph_type()) {
 			return GRAPH_T;
 		} else if (type.is_nodeedge_type()) {
@@ -249,30 +245,31 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	public String get_type_string(ast_typedecl t) {
+	String get_type_string(ast_typedecl t) {
 		return get_type_string(t.getTypeSummary());
 	}
 
-	public String max_node_index(ast_id graph) {
+	String max_node_index(ast_id graph) {
 		str_buf = String.format("%s.%s()", graph.get_genname(), NUM_NODES);
 		return str_buf;
 	}
 
-	public String max_edge_index(ast_id graph) {
+	String max_edge_index(ast_id graph) {
 		str_buf = String.format("%s.%s()", graph.get_genname(), NUM_EDGES);
 		return str_buf;
 	}
 
-	public String node_index(ast_id iter) {
+	String node_index(ast_id iter) {
 		// should check iterator type????
 		return iter.get_genname();
 	}
 
-	public String edge_index(ast_id iter) {
+	String edge_index(ast_id iter) {
 		// should check iterator type????
 		return iter.get_genname();
 	}
 
+	@Override
 	public boolean do_local_optimize() {
 		String[] NAMES = { "[(nothing)]" };
 		final int COUNT = NAMES.length;
@@ -294,7 +291,7 @@ public class gm_cpplib extends gm_graph_library {
 		return is_okay;
 	}
 
-	public void generate_sent_nop(ast_nop f) {
+	void generate_sent_nop(ast_nop f) {
 		nop_enum_cpp subtype = f.get_subtype();
 		switch (subtype) {
 		default:
@@ -303,7 +300,7 @@ public class gm_cpplib extends gm_graph_library {
 		} // FIXME wtf? o.O
 	}
 
-	public void generate_expr_builtin(ast_expr_builtin e, gm_code_writer Body) {
+	void generate_expr_builtin(ast_expr_builtin e, gm_code_writer Body) {
 
 		if (e.driver_is_field()) {
 			generate_expr_builtin_field((ast_expr_builtin_field) e, Body);
@@ -416,7 +413,7 @@ public class gm_cpplib extends gm_graph_library {
 		add_arguments_and_thread(Body, e, add_thread_id);
 	}
 
-	public void generate_expr_nil(ast_expr e, gm_code_writer Body) {
+	void generate_expr_nil(ast_expr e, gm_code_writer Body) {
 		if (e.get_type_summary() == GMTYPE_T.GMTYPE_NIL_EDGE) {
 			Body.push("gm_graph::NIL_EDGE");
 		} else if (e.get_type_summary() == GMTYPE_T.GMTYPE_NIL_NODE) {
@@ -426,7 +423,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	public boolean add_collection_def(ast_id i) {
+	boolean add_collection_def(ast_id i) {
 		Body.push("(");
 
 		ast_typedecl t = i.getTypeInfo();
@@ -463,7 +460,7 @@ public class gm_cpplib extends gm_graph_library {
 		return false;
 	}
 
-	public void build_up_language_voca(gm_vocabulary V) {
+	void build_up_language_voca(gm_vocabulary V) {
 		V.add_word(NODE_T);
 		V.add_word(EDGE_T);
 		V.add_word(GRAPH_T);
@@ -477,7 +474,7 @@ public class gm_cpplib extends gm_graph_library {
 		V.add_word(R_BEGIN);
 	}
 
-	public boolean need_up_initializer(ast_foreach f) {
+	boolean need_up_initializer(ast_foreach f) {
 		GMTYPE_T iter_type = f.get_iter_type();
 		if (iter_type.is_iteration_on_collection())
 			return true;
@@ -486,7 +483,7 @@ public class gm_cpplib extends gm_graph_library {
 		return false;
 	}
 
-	public boolean need_down_initializer(ast_foreach f) {
+	boolean need_down_initializer(ast_foreach f) {
 		GMTYPE_T iter_type = f.get_iter_type();
 
 		if (iter_type.is_iteration_on_collection()) {
@@ -502,7 +499,7 @@ public class gm_cpplib extends gm_graph_library {
 		return false;
 	}
 
-	public void generate_up_initializer(ast_foreach f, gm_code_writer Body) {
+	void generate_up_initializer(ast_foreach f, gm_code_writer Body) {
 		GMTYPE_T iter_type = f.get_iter_type();
 		ast_id source = f.get_source();
 		if (iter_type.is_iteration_on_collection()) {
@@ -539,7 +536,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	public void generate_down_initializer(ast_foreach f, gm_code_writer Body) {
+	void generate_down_initializer(ast_foreach f, gm_code_writer Body) {
 		GMTYPE_T iter_type = f.get_iter_type();
 		ast_id iter = f.get_iterator();
 		ast_id source = f.get_source();
@@ -592,7 +589,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	public void generate_foreach_header(ast_foreach fe, gm_code_writer Body) {
+	void generate_foreach_header(ast_foreach fe, gm_code_writer Body) {
 		ast_id source = fe.get_source();
 		ast_id iter = fe.get_iterator();
 		GMTYPE_T type = fe.get_iter_type();
@@ -661,7 +658,7 @@ public class gm_cpplib extends gm_graph_library {
 		return;
 	}
 
-	public void generate_expr_builtin_field(ast_expr_builtin_field builtinExpr, gm_code_writer body) {
+	void generate_expr_builtin_field(ast_expr_builtin_field builtinExpr, gm_code_writer body) {
 
 		ast_field driver = builtinExpr.get_field_driver();
 		gm_builtin_def definition = builtinExpr.get_builtin_def();
@@ -701,7 +698,7 @@ public class gm_cpplib extends gm_graph_library {
 
 	}
 
-	public String get_function_name_graph(gm_method_id_t methodId) {
+	String get_function_name_graph(gm_method_id_t methodId) {
 		switch (methodId) {
 		case GM_BLTIN_GRAPH_NUM_NODES:
 			return NUM_NODES;
@@ -715,7 +712,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	public String get_function_name_nset(gm_method_id_t methodId, boolean in_parallel) {
+	String get_function_name_nset(gm_method_id_t methodId, boolean in_parallel) {
 		switch (methodId) {
 		case GM_BLTIN_SET_HAS:
 			return "is_in";
@@ -739,7 +736,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	public String get_function_name_nseq(gm_method_id_t methodId) {
+	String get_function_name_nseq(gm_method_id_t methodId) {
 		switch (methodId) {
 		case GM_BLTIN_SET_ADD:
 			return "push_front";
@@ -757,7 +754,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	public String get_function_name_norder(gm_method_id_t methodId) {
+	String get_function_name_norder(gm_method_id_t methodId) {
 		switch (methodId) {
 		case GM_BLTIN_SET_ADD:
 			return "push_front";
@@ -777,14 +774,14 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	public void add_arguments_and_thread(gm_code_writer body, ast_expr_builtin builtinExpr, boolean addThreadId) {
+	void add_arguments_and_thread(gm_code_writer body, ast_expr_builtin builtinExpr, boolean addThreadId) {
 		main.generate_expr_list(builtinExpr.get_args());
 		if (addThreadId)
 			body.push(",gm_rt_thread_id()");
 		body.push(")");
 	}
-	
-	public String get_primitive_type_string(GMTYPE_T type_id) {
+
+	String get_primitive_type_string(GMTYPE_T type_id) {
 		switch (type_id) {
 		case GMTYPE_BYTE:
 			return "int8_t";
@@ -806,7 +803,7 @@ public class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	public String getTypeString(GMTYPE_T type) {
+	String getTypeString(GMTYPE_T type) {
 		if (type.is_prim_type()) {
 			return get_primitive_type_string(type);
 		} else if (type.is_node_type()) {

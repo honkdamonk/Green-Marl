@@ -9,12 +9,11 @@ import ast.ast_sent;
 import common.gm_traverse;
 import common.gm_apply;
 
-public class choose_parallel_t extends gm_apply {
+class choose_parallel_t extends gm_apply {
 	
-	public choose_parallel_t() {
-		this._in_bfs = false;
-	}
-
+	private boolean _in_bfs = false;
+	
+	@Override
 	public final void begin_context(ast_node n) {
 		if ((n.get_nodetype() == AST_NODE_TYPE.AST_BFS) && (((ast_bfs) n).is_bfs())) {
 			assert _in_bfs == false;
@@ -22,12 +21,14 @@ public class choose_parallel_t extends gm_apply {
 		}
 	}
 
+	@Override
 	public final void end_context(ast_node n) {
 		if ((n.get_nodetype() == AST_NODE_TYPE.AST_BFS) && (((ast_bfs) n).is_bfs())) {
 			_in_bfs = false;
 		}
 	}
 
+	@Override
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
@@ -54,5 +55,4 @@ public class choose_parallel_t extends gm_apply {
 		return true;
 	}
 
-	private boolean _in_bfs;
 }

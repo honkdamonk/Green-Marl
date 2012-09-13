@@ -1,5 +1,7 @@
 package backend_cpp;
 
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_foreach;
@@ -7,13 +9,17 @@ import ast.ast_sent;
 
 import common.gm_apply;
 
-public class cpp_check_save_bfs_t extends gm_apply {
-	public cpp_check_save_bfs_t() {
+class cpp_check_save_bfs_t extends gm_apply {
+	
+	private final LinkedList<ast_bfs> L = new LinkedList<ast_bfs>();
+	
+	cpp_check_save_bfs_t() {
 		set_for_sent(true);
 		set_separate_post_apply(true);
 	}
 
 	// pre
+	@Override
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
 			ast_bfs bfs = (ast_bfs) s;
@@ -29,6 +35,7 @@ public class cpp_check_save_bfs_t extends gm_apply {
 		return true;
 	}
 
+	@Override
 	public final boolean apply2(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
 			ast_bfs bfs = (ast_bfs) s;
@@ -38,5 +45,4 @@ public class cpp_check_save_bfs_t extends gm_apply {
 		return true;
 	}
 
-	private java.util.LinkedList<ast_bfs> L = new java.util.LinkedList<ast_bfs>();
 }

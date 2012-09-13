@@ -3,7 +3,8 @@ package backend_cpp;
 import ast.ast_procdef;
 import inc.gm_compile_step;
 
-public class gm_cpp_opt_entry_exit extends gm_compile_step {
+class gm_cpp_opt_entry_exit extends gm_compile_step {
+	
 	private gm_cpp_opt_entry_exit() {
 		set_description("Add procedure enter and exit");
 	}

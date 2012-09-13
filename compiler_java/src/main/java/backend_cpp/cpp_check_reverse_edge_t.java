@@ -21,13 +21,14 @@ import frontend.gm_symtab_entry;
 //   (2) Mark graph symbols if it uses is_neighbor
 //   (3) Mark graph symbols if it uses from/to
 //-------------------------------------------------------------
-public class cpp_check_reverse_edge_t extends gm_apply {
+class cpp_check_reverse_edge_t extends gm_apply {
 	
-	public cpp_check_reverse_edge_t() {
+	cpp_check_reverse_edge_t() {
 		set_for_sent(true);
 		set_for_expr(true);
 	}
 
+	@Override
 	public final boolean apply(ast_expr s) {
 		if (s.is_builtin()) {
 			ast_expr_builtin b = (ast_expr_builtin) s;
@@ -63,6 +64,7 @@ public class cpp_check_reverse_edge_t extends gm_apply {
 		return true;
 	}
 
+	@Override
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
 			ast_bfs bfs = (ast_bfs) s;

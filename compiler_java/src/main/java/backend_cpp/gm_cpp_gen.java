@@ -70,50 +70,50 @@ public class gm_cpp_gen extends BackendGenerator {
 	// -----------------------------------
 	// define labels, which is nothing but a string
 	// -----------------------------------
-	public static String LABEL_PAR_SCOPE = "LABEL_PAR_SCOPE";
-	public static String CPPBE_INFO_HAS_BFS = "CPPBE_INFO_HAS_BFS";
-	public static String CPPBE_INFO_IS_PROC_ENTRY = "CPPBE_INFO_IS_PROC_ENTRY";
-	public static String CPPBE_INFO_HAS_PROPDECL = "CPPBE_INFO_HAS_PROPDECL";
-	public static String CPPBE_INFO_BFS_SYMBOLS = "CPPBE_INFO_BFS_SYMBOLS";
-	public static String CPPBE_INFO_BFS_NAME = "CPPBE_INFO_BFS_NAME";
-	public static String CPPBE_INFO_BFS_LIST = "CPPBE_INFO_BFS_LIST";
-	public static String CPPBE_INFO_COLLECTION_LIST = "CPPBE_INFO_COLLECTION_LIST";
-	public static String CPPBE_INFO_COLLECTION_ITERATOR = "CPPBE_INFO_COLLECTION_ITERATOR";
-	public static String CPPBE_INFO_COMMON_NBR_ITERATOR = "CPPBE_INFO_COMMON_NBR_ITERATOR";
-	public static String CPPBE_INFO_NEIGHBOR_ITERATOR = "CPPBE_INFO_NEIGHBOR_ITERATOR";
-	public static String CPPBE_INFO_USE_REVERSE_EDGE = "CPPBE_INFO_USE_REVERSE_EDGE";
-	public static String CPPBE_INFO_USE_DOWN_NBR = "CPPBE_INFO_USE_DOWN_NBR";
-	public static String CPPBE_INFO_NEED_SEMI_SORT = "CPPBE_INFO_NEED_SEMI_SORT";
-	public static String CPPBE_INFO_NEED_FROM_INFO = "CPPBE_INFO_NEED_FROM_INFO";
+	static final String LABEL_PAR_SCOPE = "LABEL_PAR_SCOPE";
+	static final String CPPBE_INFO_HAS_BFS = "CPPBE_INFO_HAS_BFS";
+	static final String CPPBE_INFO_IS_PROC_ENTRY = "CPPBE_INFO_IS_PROC_ENTRY";
+	static final String CPPBE_INFO_HAS_PROPDECL = "CPPBE_INFO_HAS_PROPDECL";
+	static final String CPPBE_INFO_BFS_SYMBOLS = "CPPBE_INFO_BFS_SYMBOLS";
+	static final String CPPBE_INFO_BFS_NAME = "CPPBE_INFO_BFS_NAME";
+	static final String CPPBE_INFO_BFS_LIST = "CPPBE_INFO_BFS_LIST";
+	static final String CPPBE_INFO_COLLECTION_LIST = "CPPBE_INFO_COLLECTION_LIST";
+	static final String CPPBE_INFO_COLLECTION_ITERATOR = "CPPBE_INFO_COLLECTION_ITERATOR";
+	static final String CPPBE_INFO_COMMON_NBR_ITERATOR = "CPPBE_INFO_COMMON_NBR_ITERATOR";
+	static final String CPPBE_INFO_NEIGHBOR_ITERATOR = "CPPBE_INFO_NEIGHBOR_ITERATOR";
+	static final String CPPBE_INFO_USE_REVERSE_EDGE = "CPPBE_INFO_USE_REVERSE_EDGE";
+	static final String CPPBE_INFO_USE_DOWN_NBR = "CPPBE_INFO_USE_DOWN_NBR";
+	static final String CPPBE_INFO_NEED_SEMI_SORT = "CPPBE_INFO_NEED_SEMI_SORT";
+	static final String CPPBE_INFO_NEED_FROM_INFO = "CPPBE_INFO_NEED_FROM_INFO";
 
 	// ----------------------------------------
 	// For runtime
 	// ----------------------------------------
-	public static String MAX_THREADS = "gm_rt_get_num_threads";
-	public static String THREAD_ID = "gm_rt_thread_id";
-	public static String ALLOCATE_BOOL = "gm_rt_allocate_bool";
-	public static String ALLOCATE_LONG = "gm_rt_allocate_long";
-	public static String ALLOCATE_INT = "gm_rt_allocate_int";
-	public static String ALLOCATE_DOUBLE = "gm_rt_allocate_double";
-	public static String ALLOCATE_FLOAT = "gm_rt_allocate_float";
-	public static String ALLOCATE_NODE = "gm_rt_allocate_node_t";
-	public static String ALLOCATE_EDGE = "gm_rt_allocate_edge_t";
-	public static String ALLOCATE_COLLECTION = "gm_rt_allocate_collection";
-	public static String DEALLOCATE = "gm_rt_deallocate";
-	public static String CLEANUP_PTR = "gm_rt_cleanup";
-	public static String RT_INIT = "gm_rt_initialize";
-	public static String BFS_TEMPLATE = "gm_bfs_template";
-	public static String DFS_TEMPLATE = "gm_dfs_template";
-	public static String DO_BFS_FORWARD = "do_bfs_forward";
-	public static String DO_BFS_REVERSE = "do_bfs_reverse";
-	public static String DO_DFS = "do_dfs";
-	public static String RT_INCLUDE = "gm.h";
-	public static String PREPARE = "prepare";
-	public static String FREEZE = "freeze";
-	public static String MAKE_REVERSE = "make_reverse_edges";
-	public static String SEMI_SORT = "do_semi_sort";
-	public static String IS_SEMI_SORTED = "is_semi_sorted";
-	public static String PREPARE_FROM_INFO = "prepare_edge_source";
+	static final String MAX_THREADS = "gm_rt_get_num_threads";
+	static final String THREAD_ID = "gm_rt_thread_id";
+	static final String ALLOCATE_BOOL = "gm_rt_allocate_bool";
+	static final String ALLOCATE_LONG = "gm_rt_allocate_long";
+	static final String ALLOCATE_INT = "gm_rt_allocate_int";
+	static final String ALLOCATE_DOUBLE = "gm_rt_allocate_double";
+	static final String ALLOCATE_FLOAT = "gm_rt_allocate_float";
+	static final String ALLOCATE_NODE = "gm_rt_allocate_node_t";
+	static final String ALLOCATE_EDGE = "gm_rt_allocate_edge_t";
+	static final String ALLOCATE_COLLECTION = "gm_rt_allocate_collection";
+	static final String DEALLOCATE = "gm_rt_deallocate";
+	static final String CLEANUP_PTR = "gm_rt_cleanup";
+	static final String RT_INIT = "gm_rt_initialize";
+	static final String BFS_TEMPLATE = "gm_bfs_template";
+	static final String DFS_TEMPLATE = "gm_dfs_template";
+	static final String DO_BFS_FORWARD = "do_bfs_forward";
+	static final String DO_BFS_REVERSE = "do_bfs_reverse";
+	static final String DO_DFS = "do_dfs";
+	static final String RT_INCLUDE = "gm.h";
+	static final String PREPARE = "prepare";
+	static final String FREEZE = "freeze";
+	static final String MAKE_REVERSE = "make_reverse_edges";
+	static final String SEMI_SORT = "do_semi_sort";
+	static final String IS_SEMI_SORTED = "is_semi_sorted";
+	static final String PREPARE_FROM_INFO = "prepare_edge_source";
 
 	// data structure for generation
 	protected String fname = null; // current source file (without extension)

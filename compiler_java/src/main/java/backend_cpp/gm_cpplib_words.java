@@ -1,7 +1,7 @@
 package backend_cpp;
 
-public class gm_cpplib_words
-{
+public class gm_cpplib_words {
+	
 	public static String NODE_IDX = "node_idx";
 	public static String EDGE_IDX = "edge_idx";
 	public static String R_NODE_IDX = "r_node_idx";

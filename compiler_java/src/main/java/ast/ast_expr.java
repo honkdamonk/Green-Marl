@@ -315,6 +315,13 @@ public class ast_expr extends ast_node {
 				}
 			}
 			break;
+		case GMEXPR_MAPACCESS: {
+			ast_mapaccess mapAccess = ((ast_expr_mapaccess) this).get_mapaccess();
+			a.set_for_rhs(true);
+			mapAccess.get_key_expr().traverse(a, is_post, is_pre);
+			a.set_for_rhs(for_rhs);
+		}
+			break;
 		case GMEXPR_UOP:
 		case GMEXPR_LUOP:
 			get_left_op().traverse(a, is_post, is_pre);

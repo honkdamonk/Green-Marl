@@ -1,6 +1,7 @@
 package backend_cpp;
 
 import frontend.gm_fe_fixup_bound_symbol;
+import static inc.GM_REDUCE_T.GMREDUCE_PLUS;
 import frontend.gm_fe_restore_vardecl;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
@@ -30,6 +31,7 @@ import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_argdecl;
 import ast.ast_assign;
+import ast.ast_assign_mapentry;
 import ast.ast_bfs;
 import ast.ast_call;
 import ast.ast_expr;
@@ -40,6 +42,8 @@ import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_idlist;
+import ast.ast_mapaccess;
+import ast.ast_maptypedecl;
 import ast.ast_node;
 import ast.ast_nop;
 import ast.ast_procdef;
@@ -51,11 +55,11 @@ import ast.ast_vardecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.gm_apply_compiler_stage;
+import common.gm_builtin_def;
 import common.gm_error;
 import common.gm_main;
-import common.gm_transform_helper;
-import common.gm_builtin_def;
 import common.gm_method_id_t;
+import common.gm_transform_helper;
 import common.gm_vocabulary;
 
 //-----------------------------------------------------------------
@@ -558,6 +562,12 @@ public class gm_cpp_gen extends BackendGenerator {
 			} else {
 				assert false;
 			}
+		} else if (t.is_map()) {
+			ast_maptypedecl mapType = (ast_maptypedecl) t;
+			String keyType = get_type_string(mapType.get_key_type());
+			String valueType = get_type_string(mapType.get_value_type());
+			temp = String.format("gm_map<%s, %s>", keyType, valueType);
+			return temp;
 		} else
 			return get_lib().get_type_string(t);
 
@@ -712,6 +722,14 @@ public class gm_cpp_gen extends BackendGenerator {
 			return;
 		}
 
+		if (t.is_map()) {
+			ast_maptypedecl map = (ast_maptypedecl) t;
+			ast_idlist idl = v.get_idlist();
+			assert (idl.get_length() == 1);
+			get_lib().add_map_def(map, idl.get_item(0));
+			return;
+		}
+
 		_Body.pushSpace(get_type_string(t));
 
 		if (t.is_property()) {
@@ -731,6 +749,44 @@ public class gm_cpp_gen extends BackendGenerator {
 			generate_idlist(v.get_idlist());
 			_Body.pushln(";");
 		}
+	}
+
+	private String get_function_name_map_reduce_assign(GM_REDUCE_T reduceType) {
+		switch (reduceType) {
+		case GMREDUCE_PLUS:
+			return "changeValueAtomicAdd";
+		default:
+			assert (false);
+			return "ERROR";
+		}
+	}
+
+	private void generate_sent_map_assign(ast_assign_mapentry a) {
+		ast_mapaccess mapAccess = a.to_assign_mapentry().get_lhs_mapaccess();
+		ast_id map = mapAccess.get_map_id();
+		String buffer;
+
+		if (a.is_under_parallel_execution()) {
+			if (a.is_reduce_assign() && a.get_reduce_type() == GMREDUCE_PLUS) {
+				buffer = String.format("%s.%s(", map.get_genname(), get_function_name_map_reduce_assign(a.get_reduce_type()));
+			} else {
+				buffer = String.format("%s.setValue_par(", map.get_genname());
+			}
+		} else {
+			if (a.is_reduce_assign() && a.get_reduce_type() == GMREDUCE_PLUS) {
+				// TODO do this without CAS overhead
+				buffer = String.format("%s.%s(", map.get_genname(), get_function_name_map_reduce_assign(a.get_reduce_type()));
+			} else {
+				buffer = String.format("%s.setValue_seq(", map.get_genname());
+			}
+		}
+		_Body.push(buffer);
+
+		ast_expr key = mapAccess.get_key_expr();
+		generate_expr(key);
+		_Body.push(", ");
+		generate_expr(a.get_rhs());
+		_Body.pushln(");");
 	}
 
 	public void generate_sent_foreach(ast_foreach f) {
@@ -910,6 +966,9 @@ public class gm_cpp_gen extends BackendGenerator {
 				}
 			}
 			generate_lhs_id(a.get_lhs_scala());
+		} else if (a.is_target_map_entry()) {
+			generate_sent_map_assign(a.to_assign_mapentry());
+			return;
 		} else {
 			generate_lhs_field(a.get_lhs_field());
 		}

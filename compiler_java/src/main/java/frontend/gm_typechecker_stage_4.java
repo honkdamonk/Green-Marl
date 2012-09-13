@@ -109,6 +109,7 @@ public class gm_typechecker_stage_4 extends gm_apply {
 		case GMEXPR_BVAL:
 		case GMEXPR_INF:
 		case GMEXPR_NIL:
+		case GMEXPR_MAPACCESS:
 			break;
 		case GMEXPR_UOP:
 		case GMEXPR_LUOP:

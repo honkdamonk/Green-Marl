@@ -25,7 +25,7 @@ import common.gm_traverse;
 import common.gm_apply;
 
 public abstract class ast_node {
-	gm_code_writer Out = new gm_code_writer(); // TODO stub!
+	static final gm_code_writer Out = new gm_code_writer(); // TODO stub!
 
 	protected int line;
 	protected int col;

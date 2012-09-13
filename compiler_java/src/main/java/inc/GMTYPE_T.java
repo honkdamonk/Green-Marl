@@ -513,7 +513,8 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_collection_of_collection_iter_type() {
-		return is_collection_of_set_iter_type() || is_collection_of_order_iter_type() || is_collection_of_seq_iter_type() || is_collection_of_collection_iter_type();
+		return is_collection_of_set_iter_type() || is_collection_of_order_iter_type() || is_collection_of_seq_iter_type()
+				|| is_collection_of_collection_iter_type();
 	}
 
 	public boolean can_be_key_type() {
@@ -642,7 +643,8 @@ public enum GMTYPE_T {
 			return "Collection::I";
 		case GMTYPE_VOID:
 			return "Void";
-
+		case GMTYPE_MAP:
+			return "Map";
 		default: // printf("%d\n",t); assert(false);
 			return "Unknown";
 		}
@@ -721,6 +723,10 @@ public enum GMTYPE_T {
 			return GMTYPE_VOID;
 		else if (s.equals("Bool"))
 			return GMTYPE_BOOL;
+		else if (s.equals("Map"))
+			return GMTYPE_MAP;
+		else if (s.equals("Generic"))
+			return GMTYPE_GENERIC;
 		else {
 			assert false;
 			throw new AssertionError();

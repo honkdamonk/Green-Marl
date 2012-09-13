@@ -181,6 +181,9 @@ public class gm_error {
 		case GM_ERROR_COMPARE_MISMATCH:
 			System.out.printf("Typemismatch in Comparison. LHS:%s, RHS:%s \n", str1, str2);
 			break;
+		case GM_ERROR_KEY_MISSMATCH:
+			System.out.printf("Type mismatch for map-key. Expected %s, but was %s\n", str1, str2);
+			break;
 		case GM_ERROR_NEED_BOOLEAN:
 			System.out.print("Need boolean expression.\n");
 			break;

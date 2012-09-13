@@ -9,11 +9,13 @@ import ast.ast_bfs;
 import ast.ast_call;
 import ast.ast_expr;
 import ast.ast_expr_foreign;
+import ast.ast_expr_mapaccess;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_foreign;
 import ast.ast_id;
 import ast.ast_if;
+import ast.ast_mapaccess;
 import ast.ast_node;
 import ast.ast_nop;
 import ast.ast_return;
@@ -26,10 +28,10 @@ import common.gm_reproduce;
 
 // default code generator
 public abstract class gm_code_generator {
-	
+
 	private static String LP = "(";
 	private static String RP = ")";
-	
+
 	protected gm_code_writer _Body;
 
 	public gm_code_generator() {
@@ -90,8 +92,8 @@ public abstract class gm_code_generator {
 			_Body.push(RP);
 	}
 
-	protected abstract String get_type_string(GMTYPE_T gmtype_T); 
-	
+	protected abstract String get_type_string(GMTYPE_T gmtype_T);
+
 	public void generate_expr_list(LinkedList<ast_expr> L) {
 		int i = 0;
 		int size = L.size();
@@ -103,8 +105,19 @@ public abstract class gm_code_generator {
 		}
 	}
 
+	private void generate_mapaccess(ast_expr_mapaccess e) {
+		ast_mapaccess mapAccess = e.get_mapaccess();
+		ast_id map = mapAccess.get_map_id();
+		ast_expr key = mapAccess.get_key_expr();
+		_Body.push(String.format("%s.getValue(", map.get_genname()));
+		generate_expr(key);
+		_Body.push(")");
+	}
+
 	public void generate_expr(ast_expr e) {
-		if (e.is_inf())
+		if (e.is_mapaccess())
+			generate_mapaccess((ast_expr_mapaccess) e);
+		else if (e.is_inf())
 			generate_expr_inf(e);
 		else if (e.is_literal())
 			generate_expr_val(e);
@@ -324,7 +337,7 @@ public abstract class gm_code_generator {
 			break;
 		case AST_ASSIGN: {
 			ast_assign a = (ast_assign) s;
-			if (a.is_reduce_assign()) {
+			if (a.is_reduce_assign() && !a.is_target_map_entry()) {
 				generate_sent_reduce_assign(a);
 			} else if (a.is_defer_assign()) {
 				generate_sent_defer_assign(a);

@@ -1,5 +1,6 @@
 package backend_cpp;
 
+import static inc.GMTYPE_T.*;
 import static backend_cpp.gm_cpplib_words.BEGIN;
 import static backend_cpp.gm_cpplib_words.EDGEITER_T;
 import static backend_cpp.gm_cpplib_words.EDGE_IDX;
@@ -13,6 +14,7 @@ import static backend_cpp.gm_cpplib_words.NUM_EDGES;
 import static backend_cpp.gm_cpplib_words.NUM_NODES;
 import static backend_cpp.gm_cpplib_words.ORDER_T;
 import static backend_cpp.gm_cpplib_words.QUEUE_T;
+import static backend_cpp.gm_cpplib_words.MAP_T;
 import static backend_cpp.gm_cpplib_words.RANDOM_NODE;
 import static backend_cpp.gm_cpplib_words.R_BEGIN;
 import static backend_cpp.gm_cpplib_words.R_EDGE_IDX;
@@ -29,14 +31,15 @@ import ast.ast_expr_builtin_field;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
+import ast.ast_maptypedecl;
 import ast.ast_nop;
 import ast.ast_sent;
 import ast.ast_typedecl;
 
-import common.gm_main;
-import common.gm_transform_helper;
 import common.gm_builtin_def;
+import common.gm_main;
 import common.gm_method_id_t;
+import common.gm_transform_helper;
 import common.gm_vocabulary;
 
 //-----------------------------------------------------------------
@@ -44,10 +47,14 @@ import common.gm_vocabulary;
 //  ==> will be deprecated
 //-----------------------------------------------------------------
 public class gm_cpplib extends gm_graph_library {
-	
+
+	// private static final int SMALL = 1;
+	private static final int MEDIUM = 2;
+	// private static final int LARGE = 3;
+
 	private String str_buf;
 	private gm_cpp_gen main;
-		
+
 	public gm_cpplib() {
 		main = null;
 	}
@@ -87,15 +94,17 @@ public class gm_cpplib extends gm_graph_library {
 			}
 		} else if (type.is_collection_type()) {
 			assert type.is_node_collection_type() || type.is_collection_of_collection_type();
-			if (type.is_set_collection_type())
+			if (type.is_set_collection_type()) {
 				return SET_T;
-			else if (type.is_order_collection_type())
+			} else if (type.is_order_collection_type()) {
 				return ORDER_T;
-			else if (type.is_sequence_collection_type())
+			} else if (type.is_sequence_collection_type()) {
 				return SEQ_T;
-			else if (type.is_collection_of_collection_type())
+			} else if (type.is_collection_of_collection_type()) {
 				return QUEUE_T;
-			else {
+			} else if (type.is_map_type()) {
+				return MAP_T;
+			} else {
 				assert false;
 				return "ERROR";
 			}
@@ -105,6 +114,134 @@ public class gm_cpplib extends gm_graph_library {
 			System.out.printf("type = %d %s\n", type, type.get_type_string());
 			assert false;
 			return "ERROR";
+		}
+	}
+
+	private String getMapTypeString(int type) {
+		if (type == MEDIUM) {
+			return "gm_map_medium";
+		} else {
+			assert (false);
+			return null;
+		}
+	}
+
+	private String getMapDefaultValueForType(GMTYPE_T type) {
+		if (type.is_float_type()) {
+			return "0.0";
+		} else if (type.is_integer_type()) {
+			return "0";
+		} else if (type.is_boolean_type()) {
+			return "false";
+		} else if (type.is_node_type()) {
+			return "gm_graph::NIL_NODE";
+		} else if (type.is_edge_type()) {
+			return "gm_graph::NIL_EDGE";
+		} else {
+			// we only support primitives, nodes and edges in maps (yet)
+			assert (false);
+		}
+		return null;
+	}
+
+	private String getAdditionalMapParameters(int mapType) {
+		switch (mapType) {
+		case MEDIUM:
+			return "gm_rt_get_num_threads(), ";
+		default:
+			assert (false);
+			return "ERROR";
+		}
+	}
+
+	private void add_map_def(ast_maptypedecl map, ast_id mapId) {
+
+		int mapType = MEDIUM; // TODO: implement compiler optimization to figure
+								// out what is best here
+		GMTYPE_T keyType = map.getKeyTypeSummary();
+		GMTYPE_T valueType = map.getValueTypeSummary();
+		if (valueType == GMTYPE_BOOL) {
+			valueType = GMTYPE_INT;
+		}
+
+		// Output: MapType<KeyType, ValueType> VariableName(AdditionalParameters
+		// DefaultValue);
+		String typeBuffer = String.format("%s<%s, %s>", getMapTypeString(mapType), get_type_string(keyType), get_type_string(valueType));
+
+		String parameterBuffer = String.format("(%s %s)", getAdditionalMapParameters(mapType), getMapDefaultValueForType(valueType));
+
+		String buffer = String.format("%s %s%s;", typeBuffer, mapId.get_genname(), parameterBuffer);
+		Body.pushln(buffer);
+	}
+
+	private String get_function_name_map(gm_method_id_t methodId, boolean in_parallel) {
+
+		switch (methodId) {
+		case GM_BLTIN_MAP_SIZE:
+			return "size";
+		case GM_BLTIN_MAP_CLEAR:
+			return "clear";
+		case GM_BLTIN_MAP_HAS_MAX_VALUE:
+		case GM_BLTIN_MAP_HAS_MIN_VALUE:
+		case GM_BLTIN_MAP_HAS_KEY:
+		case GM_BLTIN_MAP_GET_MAX_KEY:
+		case GM_BLTIN_MAP_GET_MIN_KEY:
+		case GM_BLTIN_MAP_GET_MAX_VALUE:
+		case GM_BLTIN_MAP_GET_MIN_VALUE: {
+			if (in_parallel)
+				// if it is in parallel we do not have to use the inherent
+				// parallelism of the map so this is not a bug!!!
+				return get_function_name_map_seq(methodId);
+			else
+				return get_function_name_map_par(methodId);
+		}
+		default:
+			assert (false);
+			return "ERROR";
+		}
+	}
+
+	String get_function_name_map_seq(gm_method_id_t methodId) {
+		switch (methodId) {
+		case GM_BLTIN_MAP_HAS_MAX_VALUE:
+			return "hasMaxValue";
+		case GM_BLTIN_MAP_HAS_MIN_VALUE:
+			return "hasMinValue";
+		case GM_BLTIN_MAP_HAS_KEY:
+			return "hasKey";
+		case GM_BLTIN_MAP_GET_MAX_KEY:
+			return "getMaxKey";
+		case GM_BLTIN_MAP_GET_MIN_KEY:
+			return "getMinKey";
+		case GM_BLTIN_MAP_GET_MAX_VALUE:
+			return "getMaxValue";
+		case GM_BLTIN_MAP_GET_MIN_VALUE:
+			return "getMinValue";
+		default:
+			assert (false);
+			return null;
+		}
+	}
+
+	String get_function_name_map_par(gm_method_id_t methodId) {
+		switch (methodId) {
+		case GM_BLTIN_MAP_HAS_MAX_VALUE:
+			return "hasMaxValue_par";
+		case GM_BLTIN_MAP_HAS_MIN_VALUE:
+			return "hasMinValue_par";
+		case GM_BLTIN_MAP_HAS_KEY:
+			return "hasKey_par";
+		case GM_BLTIN_MAP_GET_MAX_KEY:
+			return "getMaxKey_par";
+		case GM_BLTIN_MAP_GET_MIN_KEY:
+			return "getMinKey_par";
+		case GM_BLTIN_MAP_GET_MAX_VALUE:
+			return "getMaxValue_par";
+		case GM_BLTIN_MAP_GET_MIN_VALUE:
+			return "getMinValue_par";
+		default:
+			assert (false);
+			return null;
 		}
 	}
 
@@ -412,7 +549,7 @@ public class gm_cpplib extends gm_graph_library {
 			else
 				type_name = source.getTypeInfo().is_node_collection() ? NODE_T : EDGE_T;
 
-			if(iter_type.is_collection_of_collection_iter_type()) {
+			if (iter_type.is_collection_of_collection_iter_type()) {
 				str_buf = String.format("%s& %s = %s.get_next();", type_name, f.get_iterator().get_genname(), lst_iter_name);
 			} else {
 				str_buf = String.format("%s %s = %s.get_next();", type_name, f.get_iterator().get_genname(), lst_iter_name);
@@ -457,7 +594,12 @@ public class gm_cpplib extends gm_graph_library {
 		GMTYPE_T type = fe.get_iter_type();
 
 		if (type.is_iteration_on_all_graph()) {
-			String graph_name = source.get_genname();
+			String graph_name;
+			if (source.getTypeSummary().is_node_property_type() || source.getTypeSummary().is_edge_property_type()) {
+				graph_name = source.getTypeInfo().get_target_graph_id().get_orgname();
+			} else {
+				graph_name = source.get_genname();
+			}
 			String it_name = iter.get_genname();
 			str_buf = String.format("for (%s %s = 0; %s < %s.%s(); %s ++) ", get_type_string(type), it_name, it_name, graph_name,
 					type.is_iteration_on_nodes() ? NUM_NODES : NUM_EDGES, it_name);
@@ -540,6 +682,9 @@ public class gm_cpplib extends gm_graph_library {
 			break;
 		case GMTYPE_NORDER:
 			functionName = get_function_name_norder(methodId);
+			break;
+		case GMTYPE_MAP:
+			functionName = get_function_name_map(methodId);
 			break;
 		default:
 			assert false;

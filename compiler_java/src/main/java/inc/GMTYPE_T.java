@@ -517,8 +517,7 @@ public enum GMTYPE_T {
 	}
 
 	public boolean is_collection_of_collection_iter_type() {
-		return is_collection_of_set_iter_type() || is_collection_of_order_iter_type() || is_collection_of_seq_iter_type()
-				|| is_collection_of_collection_iter_type();
+		return is_collection_of_set_iter_type() || is_collection_of_order_iter_type() || is_collection_of_seq_iter_type();
 	}
 
 	public boolean can_be_key_type() {

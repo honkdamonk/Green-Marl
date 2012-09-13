@@ -282,6 +282,9 @@ public class gm_transform_helper {
 	// gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, int nodeedge_type, gm_symtab_entry target_graph, String new_vname);
 	// // assumtpion: no name-conflict.
 
+	//------------------------------------------------------------
+	// Sentence block related
+	//------------------------------------------------------------
 	// returns sentblock that defines the given entry
 	// ast_sentblock gm_find_defining_sentblock_up(ast_node begin, gm_symtab_entry e, boolean is_property);
 
@@ -337,6 +340,8 @@ public class gm_transform_helper {
 	// [the routine expects that there is only 1 instance of old_e inside target top expreesion]
 	// note: symtab hierarchy is *not* re-validated by this routine
 	// (thus be careful if new_e contains Sum/Product...)
+	// (this method should be depricated; use replace_expr_general instead)
+	@Deprecated
 	public static boolean gm_replace_subexpr(ast_expr target, ast_expr old_e, ast_expr new_e) {
 		assert target != old_e;
 

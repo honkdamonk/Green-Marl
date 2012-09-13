@@ -128,6 +128,7 @@ public class gm_resolve_nc
 		return T.is_changed();
 	}
 	
+	// replace symbol entry only for bounds
 	public static boolean gm_replace_symbol_entry_bound(gm_symtab_entry e_old, gm_symtab_entry e_new, ast_node top) {
 		gm_replace_symbol_entry_bound_t T = new gm_replace_symbol_entry_bound_t();
 		T.do_replace(e_old, e_new, top);

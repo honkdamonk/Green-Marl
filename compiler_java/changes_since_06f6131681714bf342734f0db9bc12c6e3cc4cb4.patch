@@ -1130,17 +1130,6 @@ diff --git a/src/inc/gm_backend_cpp.h b/src/inc/gm_backend_cpp.h
 index 59eae0c..ea28fd3 100644
 --- a/src/inc/gm_backend_cpp.h
 +++ b/src/inc/gm_backend_cpp.h
-@@ -44,9 +45,8 @@ public:
-     virtual void generate_sent_nop(ast_nop* n);
-     virtual void generate_expr_builtin(ast_expr_builtin* e, gm_code_writer& Body);
-     virtual void generate_expr_nil(ast_expr* e, gm_code_writer& Body);
--
-     virtual bool add_collection_def(ast_id* set);
--
-+    virtual void add_map_def(ast_maptypedecl* map, ast_id* mapId);
-     virtual void build_up_language_voca(gm_vocabulary& V);
- 
-     virtual bool need_up_initializer(ast_foreach* fe);
 @@ -56,15 +56,63 @@ public:
      virtual void generate_foreach_header(ast_foreach* fe, gm_code_writer& Body);
  
@@ -1207,54 +1196,11 @@ index 59eae0c..ea28fd3 100644
  };
  
  //-----------------------------------------------------------------
-@@ -183,6 +231,7 @@ public:
-     virtual void generate_sent_return(ast_return *r);
-     virtual void generate_sent_call(ast_call* c);
-     virtual void generate_sent_assign(ast_assign* a);
-+    virtual const char* get_function_name_map_reduce_assign(int reduceType);
- 
-     virtual void generate_sent_block_enter(ast_sentblock *b);
-     virtual void generate_sent_block_exit(ast_sentblock* b);
-@@ -218,6 +267,7 @@ private:
-     const char* get_function_name(int methodId, bool& addThreadId);
-     void generate_idlist_primitive(ast_idlist* idList);
-     void generate_lhs_default(int type);
-+    void generate_sent_map_assign(ast_assign_mapentry* a);
- };
- 
- extern gm_cpp_gen CPP_BE;
-diff --git a/src/inc/gm_code_writer.h b/src/inc/gm_code_writer.h
-index 5e47b52..6c31543 100644
---- a/src/inc/gm_code_writer.h
-+++ b/src/inc/gm_code_writer.h
-@@ -237,6 +237,8 @@ public:
-         return gm_need_paranthesis(optype, up_optype, is_right);
-     }
- 
-+    virtual void generate_mapaccess(ast_expr_mapaccess* e);
-+
-     virtual void generate_lhs_id(ast_id* i) =0;
-     virtual void generate_lhs_field(ast_field* i) =0;
-     virtual void generate_sent_nop(ast_nop* n) =0;
 diff --git a/src/inc/gm_defs.h b/src/inc/gm_defs.h
 index f4a6aa4..e58f727 100644
 --- a/src/inc/gm_defs.h
 +++ b/src/inc/gm_defs.h
 @@ -278,18 +302,22 @@ inline static bool gm_is_sequence_collection_type(int i) {
-     return gm_is_node_sequence_type(i) || gm_is_edge_sequence_type(i);
- }
- 
--inline static bool gm_is_collection_type(int i) {
--    return gm_is_node_collection_type(i) || gm_is_edge_collection_type(i);
-+inline static bool gm_is_collection_of_collection_type(int type) {
-+    return type == GMTYPE_COLLECTION;
- }
- 
--inline static bool gm_is_queue_type(int type) {
--    return type == GMTYPE_QUEUE;
-+inline static bool gm_is_collection_type(int i) {
-+    return gm_is_node_collection_type(i) || gm_is_edge_collection_type(i) || gm_is_collection_of_collection_type(i);
- }
  
  inline static bool gm_is_sequential_collection_type(int i) {
      return gm_is_sequence_collection_type(i) || gm_is_order_collection_type(i);
@@ -1267,53 +1213,6 @@ index f4a6aa4..e58f727 100644
  // node set -> nodeset iter
  // edge set -> edgeset iter ...
  inline int gm_get_natural_collection_iterator(int src_type) {
-@@ -305,16 +333,35 @@ inline int gm_get_natural_collection_iterator(int src_type) {
-         return GMTYPE_NODEITER_SEQ;
-     else if (src_type == GMTYPE_EORDER)
-         return GMTYPE_NODEITER_ORDER;
-+    else if (src_type == GMTYPE_COLLECTION)
-+        return GMTYPE_ITER_UNDERSPECIFIED; //handle that later
-     else {
-         assert(false);
--        return 0;
-+        return GMTYPE_INVALID;
-+    }
-+}
-+
-+inline int gm_get_specified_collection_iterator(int type) {
-+    switch (type) {
-+        case GMTYPE_NSET:
-+        case GMTYPE_ESET:
-+            return GMTYPE_COLLECTIONITER_SET;
-+        case GMTYPE_NSEQ:
-+        case GMTYPE_ESEQ:
-+            return GMTYPE_COLLECTIONITER_SEQ;
-+        case GMTYPE_NORDER:
-+        case GMTYPE_EORDER:
-+            return GMTYPE_COLLECTIONITER_ORDER;
-+        default:
-+            assert(false);
-+            return GMTYPE_INVALID;
-     }
- }
- 
- // return true if this type has a target graph
- inline bool gm_has_target_graph_type(int t) {
-     return gm_is_node_edge_compatible_type(t) || // any node-edge iterator (including collection iterator)
--            gm_is_collection_type(t) || gm_is_queue_type(t);
-+            gm_is_collection_type(t) || gm_is_collection_of_collection_type(t);
- }
- 
- inline static bool gm_is_same_type(int i1, int i2) {
-@@ -326,7 +373,7 @@ inline static bool gm_is_same_node_or_edge_compatible_type(int i1, int i2) {
- }
- 
- inline static bool gm_collection_of_collection_compatible_type(int def_src, int source_type) {
--    return gm_is_order_collection_type(def_src) && gm_is_queue_type(source_type);
-+    return gm_is_order_collection_type(def_src) && gm_is_collection_of_collection_type(source_type);
- }
- 
- enum GM_OPS_T
 @@ -429,46 +488,67 @@ inline static bool gm_is_iteration_on_property(int iterType) {
  inline static bool gm_is_iteration_on_neighbors_compatible(int itype) {
      return gm_is_any_nbr_node_iter_type(itype);
@@ -1330,76 +1229,3 @@ index f4a6aa4..e58f727 100644
  enum GM_ACCESS_T
  {   // 16 bit bitmap
      GMACCESS_NONE = 0x0000,
-diff --git a/src/inc/gm_transform_helper.h b/src/inc/gm_transform_helper.h
-index e359afd..357974b 100644
---- a/src/inc/gm_transform_helper.h
-+++ b/src/inc/gm_transform_helper.h
-@@ -48,6 +48,7 @@ extern void gm_add_sent_end(ast_sent* current, ast_sent* newone, bool fix_symtab
- //--------------------------------------------------------------------
- extern void gm_add_sent_before(ast_sent* current, ast_sent* newone, bool fix_symtab = true);
- extern void gm_add_sent_after(ast_sent* current, ast_sent* newone, bool fix_symtab = true);
-+extern void gm_replace_sent(ast_sent* orgone, ast_sent* newone, bool fix_symtab = true);
- 
- //--------------------------------------------------------------------
- // similar to add_sent_*. But explicitly give the sentence bock
-@@ -57,6 +58,12 @@ extern void gm_insert_sent_end_of_sb(ast_sentblock* curr_sb, ast_sent* newone, b
- extern void gm_insert_sent_body_begin(ast_foreach* curr_sb, ast_sent* newone, bool fix_symtab = true);
- extern void gm_insert_sent_body_end(ast_foreach* curr_sb, ast_sent* newone, bool fix_sumtab = true);
- 
-+//--------------------------------------------------------------------
-+// Remove(Rip-Off) sentence from a sentence block
-+// (User should guarantee target does not use any symbol defined in from)
-+//--------------------------------------------------------------------
-+extern void gm_remove_sent_from_sb(ast_sent* target, ast_sentblock* from, bool fix_symtab = true);
-+
- //------------------------------------------------------------
- // Scope management
- //------------------------------------------------------------
-@@ -72,14 +79,25 @@ extern void gm_reconstruct_scope(ast_node* top);  // top should must have a scop
- // Symbol addition and creation
- //------------------------------------------------------------
- // Find an upscope where I can add some symbol defs
--ast_sentblock* gm_find_upscope(ast_sent* s);
-+extern ast_sentblock* gm_find_upscope(ast_sent* s);
- // Add symbols into some scope
--gm_symtab_entry* gm_add_new_symbol_primtype(ast_sentblock* sb, int primtype, char* new_vname); // assumtpion: no name-conflict.
--gm_symtab_entry* gm_add_new_symbol_property(ast_sentblock* sb, int primtype, bool is_nodeprop, gm_symtab_entry* target_graph, char* new_vname); // assumtpion: no name-conflict.
--gm_symtab_entry* gm_add_new_symbol_nodeedge_type(ast_sentblock* sb, int nodeedge_type, gm_symtab_entry* target_graph, char* new_vname); // assumtpion: no name-conflict.
-+extern gm_symtab_entry* gm_add_new_symbol_primtype(ast_sentblock* sb, int primtype, char* new_vname); // assumtpion: no name-conflict.
-+extern gm_symtab_entry* gm_add_new_symbol_property(ast_sentblock* sb, int primtype, bool is_nodeprop, gm_symtab_entry* target_graph, char* new_vname); // assumtpion: no name-conflict.
-+extern gm_symtab_entry* gm_add_new_symbol_nodeedge_type(ast_sentblock* sb, int nodeedge_type, gm_symtab_entry* target_graph, char* new_vname); // assumtpion: no name-conflict.
- 
-+//------------------------------------------------------------
-+// Sentence block related
-+//------------------------------------------------------------
- // returns sentblock that defines the given entry
--ast_sentblock* gm_find_defining_sentblock_up(ast_node* begin, gm_symtab_entry *e, bool is_property = false);
-+extern ast_sentblock* gm_find_defining_sentblock_up(ast_node* begin, gm_symtab_entry *e, bool is_property = false);
-+// Is the sentence block empty?   (nothing in there)
-+extern bool gm_is_sentblock_empty(ast_sentblock* sb);
-+// Is the sentence block trivial? (only one sentence, no definition)--  also returns the only sentence
-+extern bool gm_is_sentblock_trivial(ast_sentblock* sb, ast_sent* &s);
-+
-+// get the trivivial sententce of s if s is a trivial sent-block. otherwise returns s itself
-+extern ast_sent* gm_get_sentence_if_trivial_sentblock(ast_sent* s);
-+
- 
- //------------------------------------------------------------
- // Replace every symbol access
-@@ -133,6 +151,7 @@ ast_expr* gm_new_bottom_symbol(int reduce_type, int lhs_type);
- // [the routine expects that there is only 1 instance of old_e inside target top expreesion]
- // note: symtab hierarchy is *not* re-validated by this routine
- // (thus be careful if new_e contains Sum/Product...)
-+// (this method should be depricated; use replace_expr_general instead)
- extern bool gm_replace_subexpr(ast_expr* top, ast_expr* old_e, ast_expr* new_e);
- 
- // implement following function 
-@@ -159,6 +178,8 @@ extern bool gm_resolve_name_conflict(ast_sent *s, gm_symtab_entry *e, bool is_sc
- // [Assumption. e_new is a valid symbol entry that does not break scoping rule.]
- //---------------------------------------------------------------------------------------
- extern bool gm_replace_symbol_entry(gm_symtab_entry *e_old, gm_symtab_entry*e_new, ast_node* top);
-+// replace symbol entry only for bounds 
-+extern bool gm_replace_symbol_entry_bound(gm_symtab_entry *e_old, gm_symtab_entry *e_new, ast_node* top);
- 
- //---------------------------------------------------------------
- // Merge subblock P,Q into P

@@ -36,8 +36,6 @@ public abstract class ast_node {
 	protected gm_symtab sym_fields;
 	protected gm_symtab sym_procs;
 
-	// C++ TO JAVA CONVERTER TODO TASK: Java has no concept of a 'friend' class:
-	// friend class gm_apply;
 	protected ast_node(AST_NODE_TYPE nt) {
 		this.nodetype = nt;
 		this.parent = null;

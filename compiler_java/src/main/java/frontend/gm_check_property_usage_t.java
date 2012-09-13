@@ -55,7 +55,7 @@ public class gm_check_property_usage_t extends gm_apply {
 			condition_stack.addLast(s);
 		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
-			if (!a.is_target_scalar()) {
+			if (!a.is_target_scalar() && !a.is_target_map_entry()) {
 				ast_field f = a.get_lhs_field();
 				if (a.is_reduce_assign()) // this is read & write
 				{

@@ -15,8 +15,8 @@ import frontend.gm_rw_analysis;
 
 public class gm_merge_loop_t extends gm_apply {
 	
-	protected boolean _changed;
-	protected LinkedList<ast_sent> to_be_deleted = new LinkedList<ast_sent>();
+	private boolean _changed;
+	private LinkedList<ast_sent> to_be_deleted = new LinkedList<ast_sent>();
 	
 	@Override
 	public boolean apply(ast_sent s) {

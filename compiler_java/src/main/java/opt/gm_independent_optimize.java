@@ -17,6 +17,9 @@ import java.util.LinkedList;
 import common.gm_apply_compiler_stage;
 
 public class gm_independent_optimize {
+
+	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
+
 	public gm_independent_optimize() {
 		init_steps();
 	}
@@ -63,7 +66,6 @@ public class gm_independent_optimize {
 	 * do_flip_edges(ast_procdef* p);
 	 */
 
-	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
 }
 /*
  */

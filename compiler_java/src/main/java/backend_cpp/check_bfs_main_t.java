@@ -32,22 +32,23 @@ import frontend.gm_symtab_entry;
 //   For every bfs
 //   - save sym entries of collections that are used inside each bfs
 //---------------------------------------------------------------
-public class check_bfs_main_t extends gm_apply {
+class check_bfs_main_t extends gm_apply {
 
-	public ast_bfs current_bfs = null;
-	public ast_procdef proc;
-	public LinkedList<ast_sent> bfs_lists = new LinkedList<ast_sent>();
-	public boolean has_bfs = false;
-	public boolean in_bfs = false;
+	LinkedList<ast_sent> bfs_lists = new LinkedList<ast_sent>();
+	boolean has_bfs = false;
+	
+	private ast_bfs current_bfs = null;
+	private ast_procdef proc;
+	private boolean in_bfs = false;
 
-	public check_bfs_main_t(ast_procdef p) {
+	check_bfs_main_t(ast_procdef p) {
 		this.proc = p;
 		set_for_sent(true);
 		set_for_expr(true);
 		set_separate_post_apply(true);
 	}
 
-	public final void process_rwinfo(gm_rwinfo_map MAP, LinkedList<Object> LIST) {
+	private final void process_rwinfo(gm_rwinfo_map MAP, LinkedList<Object> LIST) {
 		for (gm_symtab_entry e : MAP.keySet()) {
 			if (!LIST.contains(e)) {
 				LIST.addLast(e);

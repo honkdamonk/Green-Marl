@@ -45,13 +45,14 @@ import frontend.gm_symtab_entry;
 //---------------------------------------------
 // detect all deferred writes in the code
 //---------------------------------------------
-public class gm_defer_write extends gm_apply {
+class gm_defer_write extends gm_apply {
 	
-	protected LinkedList<gm_symtab_entry> target_syms;
-	protected LinkedList<ast_foreach> target_foreach;
-	protected boolean has_found;
+	private LinkedList<gm_symtab_entry> target_syms;
+	private LinkedList<ast_foreach> target_foreach;
+	private boolean has_found;
 
 	// do post-apply
+	@Override
 	public final boolean apply(ast_sent s) {
 		
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)

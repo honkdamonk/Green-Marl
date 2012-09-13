@@ -7,20 +7,19 @@ import java.util.LinkedList;
 // should-be a singleton 
 public class gm_builtin_manager {
 	
-	public final static String GM_BLTIN_MUTATE_GROW = "1";
-	public final static String GM_BLTIN_MUTATE_SHRINK = "2";
-	public final static String GM_BLTIN_FLAG_TRUE = "true";
+	private final static String GM_BLTIN_MUTATE_GROW = "1";
+	private final static String GM_BLTIN_MUTATE_SHRINK = "2";
+	private final static String GM_BLTIN_FLAG_TRUE = "true";
 	
 	public final static String GM_BLTIN_INFO_USE_REVERSE = "GM_BLTIN_INFO_USE_REVERSE";
 	public final static String GM_BLTIN_INFO_CHECK_NBR = "GM_BLTIN_INFO_CHECK_NBR";
 	public final static String GM_BLTIN_INFO_NEED_FROM = "GM_BLTIN_INFO_NEED_FROM";
 	public final static String GM_BLTIN_INFO_MUTATING = "GM_BLTIN_INFO_MUTATING";
-
-	public static String AUX_INFO(String X, String Y) {
-		return X + ":" + Y;
-	}
 	
-	public static final gm_builtin_desc_t[] GM_builtins = { //
+	private final LinkedList<gm_builtin_def> defs = new LinkedList<gm_builtin_def>();
+	private gm_builtin_def last_def;
+
+	private static final gm_builtin_desc_t[] GM_builtins = { //
 			new gm_builtin_desc_t("Graph:NumNodes:Int:0", gm_method_id_t.GM_BLTIN_GRAPH_NUM_NODES, ""),
 			new gm_builtin_desc_t("Graph:NumEdges:Int:0", gm_method_id_t.GM_BLTIN_GRAPH_NUM_EDGES, ""),
 			new gm_builtin_desc_t("Graph:PickRandom:Node:0", gm_method_id_t.GM_BLTIN_GRAPH_RAND_NODE, ""),
@@ -89,11 +88,12 @@ public class gm_builtin_manager {
 			new gm_builtin_desc_t("Map:GetMaxValue:Generic:0:", gm_method_id_t.GM_BLTIN_MAP_GET_MAX_VALUE, ""),
 			new gm_builtin_desc_t("Map:GetMinValue:Generic:0:", gm_method_id_t.GM_BLTIN_MAP_GET_MIN_VALUE, "")
 	};
+	
+	private static String AUX_INFO(String X, String Y) {
+		return X + ":" + Y;
+	}
 
-	private LinkedList<gm_builtin_def> defs = new LinkedList<gm_builtin_def>();
-	private gm_builtin_def last_def;
-
-	public gm_builtin_manager() {
+	gm_builtin_manager() {
 		// -----------------------------------------------------
 		// construct built-in library by
 		// parsing built-in strings in (gm_builtin.h)
@@ -163,7 +163,7 @@ public class gm_builtin_manager {
 		return null;
 	}
 
-	public final gm_builtin_def get_last_def() {
+	final gm_builtin_def get_last_def() {
 		return last_def;
 	}
 }

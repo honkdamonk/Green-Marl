@@ -15,7 +15,13 @@ import common.gm_apply;
 // replace  a.X <= <expr> 
 // with     a.X_new = <expr> 
 //---------------------------------------------------
-public class gm_replace_da_t extends gm_apply {
+class gm_replace_da_t extends gm_apply {
+	
+	private gm_symtab_entry e_old;
+	private gm_symtab_entry e_new;
+	private ast_sent s;
+	
+	@Override
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
 			return true;
@@ -48,9 +54,5 @@ public class gm_replace_da_t extends gm_apply {
 		set_for_sent(true);
 		s.traverse_post(this);
 	}
-
-	protected gm_symtab_entry e_old;
-	protected gm_symtab_entry e_new;
-	protected ast_sent s;
 
 }

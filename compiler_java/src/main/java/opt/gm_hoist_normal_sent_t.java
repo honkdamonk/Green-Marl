@@ -18,7 +18,7 @@ import frontend.gm_rw_analysis_check2;
 // (in the same sent block)
 // target-type should not be a var-decl
 //------------------------------------------------------
-public abstract class gm_hoist_normal_sent_t extends gm_apply {
+abstract class gm_hoist_normal_sent_t extends gm_apply {
 
 	/** if s is a sentence, you want to hoist up */
 	protected abstract boolean check_target(ast_sent s);

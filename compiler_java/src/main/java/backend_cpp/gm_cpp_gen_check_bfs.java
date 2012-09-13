@@ -9,11 +9,13 @@ import ast.ast_extra_info_list;
 import ast.ast_procdef;
 import ast.ast_sent;
 
-public class gm_cpp_gen_check_bfs extends gm_compile_step {
+class gm_cpp_gen_check_bfs extends gm_compile_step {
+
 	private gm_cpp_gen_check_bfs() {
 		set_description("Check BFS routines");
 	}
 
+	@Override
 	public void process(ast_procdef d) {
 		// re-do rw analysis
 		gm_rw_analysis.gm_redo_rw_analysis(d.get_body());

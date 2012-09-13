@@ -40,6 +40,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		set_description("Handle deferred writes");
 	}
 
+	@Override
 	public void process(ast_procdef proc) {
 		LinkedList<gm_symtab_entry> S = new LinkedList<gm_symtab_entry>();
 		LinkedList<ast_foreach> F = new LinkedList<ast_foreach>();

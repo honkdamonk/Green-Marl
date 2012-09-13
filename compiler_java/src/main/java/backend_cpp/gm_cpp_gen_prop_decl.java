@@ -5,7 +5,8 @@ import ast.ast_procdef;
 
 import common.gm_traverse;
 
-public class gm_cpp_gen_prop_decl extends gm_compile_step {
+class gm_cpp_gen_prop_decl extends gm_compile_step {
+	
 	private gm_cpp_gen_prop_decl() {
 		set_description("Check property declaration");
 	}

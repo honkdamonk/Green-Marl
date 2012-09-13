@@ -44,7 +44,10 @@ import frontend.gm_symtab_entry;
 // 
 //---------------------------------------------
 
-public class opt_scalar_reduction_t extends gm_apply {
+class opt_scalar_reduction_t extends gm_apply {
+	
+	private final LinkedList<ast_sent> _targets = new LinkedList<ast_sent>();
+	
 	// choose targets
 	@Override
 	public boolean apply(ast_sent sent) {
@@ -89,8 +92,6 @@ public class opt_scalar_reduction_t extends gm_apply {
 	public final boolean has_targets() {
 		return _targets.size() > 0;
 	}
-
-	private LinkedList<ast_sent> _targets = new LinkedList<ast_sent>();
 
 	// ---------------------------------------------
 	// apply to each BFS

@@ -9,9 +9,9 @@ import common.gm_apply;
 import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab_entry;
 
-public class rename_prop_name_t extends gm_apply {
+class rename_prop_name_t extends gm_apply {
 
-	public rename_prop_name_t() {
+	rename_prop_name_t() {
 		set_for_symtab(true);
 	}
 

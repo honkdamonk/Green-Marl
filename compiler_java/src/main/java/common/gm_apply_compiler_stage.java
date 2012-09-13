@@ -1,12 +1,14 @@
 package common;
 
-import ast.ast_procdef;
 import inc.gm_compile_step;
 
-public class gm_apply_compiler_stage
-{
-	public static boolean gm_apply_compiler_stage(java.util.LinkedList<gm_compile_step> LIST)
-	{
+import java.util.LinkedList;
+
+import ast.ast_procdef;
+
+public class gm_apply_compiler_stage {
+	
+	public static boolean gm_apply_compiler_stage(LinkedList<gm_compile_step> LIST) {
 		boolean is_okay = true;
 		int i = 0;
 
@@ -23,15 +25,13 @@ public class gm_apply_compiler_stage
 		return is_okay;
 	}
 
-	public static boolean gm_apply_all_proc(gm_compile_step org)
-	{
+	public static boolean gm_apply_all_proc(gm_compile_step org) {
 		boolean is_okay = true;
 
 		// apply to every procedure
 		gm_main.FE.prepare_proc_iteration();
 		ast_procdef p;
-		while ((p = gm_main.FE.get_next_proc()) != null)
-		{
+		while ((p = gm_main.FE.get_next_proc()) != null) {
 			gm_compile_step step = org.get_instance();
 
 			step.process(p);
@@ -39,7 +39,7 @@ public class gm_apply_compiler_stage
 			is_okay = is_okay && okay;
 
 			if (step != null)
-			step.dispose();
+				step.dispose();
 		}
 		return is_okay;
 	}

@@ -495,22 +495,6 @@ diff --git a/src/inc/gm_ast.h b/src/inc/gm_ast.h
 index 319459b..a54f1c0 100644
 --- a/src/inc/gm_ast.h
 +++ b/src/inc/gm_ast.h
-@@ -17,6 +17,7 @@ enum AST_NODE_TYPE
- {
-     AST_ID,       // 
-     AST_FIELD,    // A.B
-+    AST_MAPACCESS,    // A[B]
-     AST_IDLIST,   // A, B, C, 
-     AST_TYPEDECL, // INT
-     AST_ARGDECL,  // a,b : B
-@@ -25,6 +26,7 @@ enum AST_NODE_TYPE
-     AST_EXPR_RDC,       // c + 3
-     AST_EXPR_BUILTIN,   // c + 3
-     AST_EXPR_FOREIGN,  // Foreign Expression
-+    AST_EXPR_MAPACCESS,
-     AST_SENT,     // 
-     AST_SENTBLOCK, // { ... }
-     AST_ASSIGN,   // C =D
 @@ -875,6 +880,10 @@ public:
          return gm_is_sequential_collection_type(type_id);
      }

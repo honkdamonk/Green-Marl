@@ -779,5 +779,39 @@ public class gm_cpplib extends gm_graph_library {
 			body.push(",gm_rt_thread_id()");
 		body.push(")");
 	}
+	
+	public String get_primitive_type_string(GMTYPE_T type_id) {
+		switch (type_id) {
+		case GMTYPE_BYTE:
+			return "int8_t";
+		case GMTYPE_SHORT:
+			return "int16_t";
+		case GMTYPE_INT:
+			return "int32_t";
+		case GMTYPE_LONG:
+			return "int64_t";
+		case GMTYPE_FLOAT:
+			return "float";
+		case GMTYPE_DOUBLE:
+			return "double";
+		case GMTYPE_BOOL:
+			return "bool";
+		default:
+			assert (false);
+			return "??";
+		}
+	}
 
+	public String getTypeString(GMTYPE_T type) {
+		if (type.is_prim_type()) {
+			return get_primitive_type_string(type);
+		} else if (type.is_node_type()) {
+			return NODE_T;
+		} else if (type.is_edge_type()) {
+			return EDGE_T;
+		} else {
+			assert (false);
+		}
+		return null;
+	}
 }

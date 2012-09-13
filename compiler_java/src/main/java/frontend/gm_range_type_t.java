@@ -59,44 +59,21 @@ package frontend;
 
 public enum gm_range_type_t
 {
-	GM_RANGE_LINEAR(0), // G.Nodes or G.Edges
-	GM_RANGE_RANDOM(1), // G.Nbrs, ...  (or access via non-iterator variable)
-	GM_RANGE_SINGLE(2), // t.X, t is a fixed iterator
-	GM_RANGE_LEVEL(3), // BFS iteration
-	GM_RANGE_LEVEL_UP(4), // BFS iteration, up level
-	GM_RANGE_LEVEL_DOWN(5), // BFS iteration, down level
-	GM_RANGE_INVALID(6);
-
-	private int intValue;
-	private static java.util.HashMap<Integer, gm_range_type_t> mappings;
-	private static java.util.HashMap<Integer, gm_range_type_t> getMappings()
-	{
-		if (mappings == null)
-		{
-			synchronized (gm_range_type_t.class)
-			{
-				if (mappings == null)
-				{
-					mappings = new java.util.HashMap<Integer, gm_range_type_t>();
-				}
-			}
-		}
-		return mappings;
-	}
-
-	private gm_range_type_t(int value)
-	{
-		intValue = value;
-		gm_range_type_t.getMappings().put(value, this);
-	}
+	GM_RANGE_LINEAR, // G.Nodes or G.Edges
+	GM_RANGE_RANDOM, // G.Nbrs, ...  (or access via non-iterator variable)
+	GM_RANGE_SINGLE, // t.X, t is a fixed iterator
+	GM_RANGE_LEVEL, // BFS iteration
+	GM_RANGE_LEVEL_UP, // BFS iteration, up level
+	GM_RANGE_LEVEL_DOWN, // BFS iteration, down level
+	GM_RANGE_INVALID;
 
 	public int getValue()
 	{
-		return intValue;
+		return this.ordinal();
 	}
 
 	public static gm_range_type_t forValue(int value)
 	{
-		return getMappings().get(value);
+		return values()[value];
 	}
 }

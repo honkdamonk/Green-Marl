@@ -256,10 +256,6 @@ public enum GMTYPE_T {
 		return (this == GMTYPE_MAP);
 	}
 
-	public boolean is_map_type() {
-		return this == GMTYPE_MAP;
-	}
-
 	// node set -> nodeset iter
 	// edge set -> edgeset iter ...
 	public GMTYPE_T get_natural_collection_iterator() {

@@ -45,7 +45,7 @@ public class gm_opt_propagate_trivial_write_t extends gm_apply
 	{
 		gm_symtab_entry z = i.getSymInfo();
 		assert z != null;
-		Integer old = assign_cnt.get(z);
+		Integer old = assign_cnt.containsKey(z) ? assign_cnt.get(z) : 0;
 		assign_cnt.put(z, old + 1);
 		return true;
 	}

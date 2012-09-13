@@ -34,7 +34,7 @@ public class ss2_group_assign extends gm_apply {
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
 			return true;
 		ast_assign a = (ast_assign) s;
-		if (a.is_target_scalar())
+		if (a.is_target_scalar() || a.is_target_map_entry())
 			return true;
 
 		ast_field lhs = a.get_lhs_field();

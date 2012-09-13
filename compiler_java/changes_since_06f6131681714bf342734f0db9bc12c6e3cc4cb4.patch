@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 diff --git a/src/frontend/gm_check_property_argument_usage.cc b/src/frontend/gm_check_property_argument_usage.cc
 index 93316a5..d34b11a 100644
 --- a/src/frontend/gm_check_property_argument_usage.cc
@@ -621,6 +622,8 @@ index 319459b..a54f1c0 100644
 +    ast_expr* rhs;
 +
 +};
+=======
+>>>>>>> 2ca3a11179000e72f18fad33599d2f9e47801e25
 +
 diff --git a/src/inc/gm_backend_cpp.h b/src/inc/gm_backend_cpp.h
 index 59eae0c..ea28fd3 100644

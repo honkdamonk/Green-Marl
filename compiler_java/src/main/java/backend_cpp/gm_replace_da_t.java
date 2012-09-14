@@ -46,7 +46,7 @@ class gm_replace_da_t extends gm_apply {
 		return true;
 	}
 
-	public final void replace_da(gm_symtab_entry o, gm_symtab_entry n, ast_sent _s) {
+	final void replace_da(gm_symtab_entry o, gm_symtab_entry n, ast_sent _s) {
 		e_old = o;
 		e_new = n;
 		s = _s;

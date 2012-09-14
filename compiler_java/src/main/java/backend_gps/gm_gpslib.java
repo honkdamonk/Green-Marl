@@ -45,7 +45,7 @@ import common.gm_builtin_def;
 
 // Nothing happens in this class
 public class gm_gpslib extends gm_graph_library {
-	
+
 	public gm_gpslib() {
 		main = null;
 	}
@@ -314,8 +314,8 @@ public class gm_gpslib extends gm_graph_library {
 
 	public void generate_vertex_prop_class_details(java.util.HashSet<gm_symtab_entry> prop, gm_code_writer Body, boolean is_edge_prop) {
 
-		int total = is_edge_prop ? ((gm_gps_beinfo) gm_main.FE.get_current_backend_info()).get_total_edge_property_size()
-				: ((gm_gps_beinfo) gm_main.FE.get_current_backend_info()).get_total_node_property_size();
+		int total = is_edge_prop ? ((gm_gps_beinfo) gm_main.FE.get_current_backend_info()).get_total_edge_property_size() : ((gm_gps_beinfo) gm_main.FE
+				.get_current_backend_info()).get_total_node_property_size();
 
 		Body.pushln("@Override");
 		Body.push("public int numBytes() {return ");
@@ -830,23 +830,6 @@ public class gm_gpslib extends gm_graph_library {
 		return sz;
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define MESSAGE_PER_TYPE_LOOP_BEGIN(info, SYMS, str_buf)
-	// std::list<gm_gps_congruent_msg_class*>& LOOPS =
-	// info->get_congruent_message_classes();
-	// std::list<gm_gps_congruent_msg_class*>::iterator I; bool is_single =
-	// info->is_single_message(); bool is_first = true; for(I=LOOPS.begin();
-	// I!=LOOPS.end(); I++) { gm_gps_communication_size_info& SYMS =
-	// *((*I)->sz_info); int sz = get_total_size(SYMS); if (!is_single &&
-	// is_first) { is_first = false; sprintf(str_buf,"if (m_type == %d) ",
-	// SYMS.id); Body.push(str_buf); } else if (!is_single) {
-	// sprintf(str_buf,"else if (m_type == %d) ", SYMS.id); Body.push(str_buf);
-	// }
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define MESSAGE_PER_TYPE_LOOP_END() } if (!is_single)
-	// Body.pushln("//for empty messages (signaling only)");
 	public static void generate_message_write_each(gm_gpslib lib, int cnt, GMTYPE_T gm_type, gm_code_writer Body) {
 		for (int i = 0; i < cnt; i++) {
 			String vname = lib.get_message_field_var_name(gm_type, i);
@@ -871,41 +854,6 @@ public class gm_gpslib extends gm_graph_library {
 			vname = null;
 		}
 	}
-
-	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
-	// declaration (not allowed in Java):
-	// private static void
-	// generate_message_class_get_size_generate_message_class_read1(gm_gpslib
-	// lib, gm_gps_beinfo info, gm_code_writer Body) {
-	// }
-
-	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
-	// declaration (not allowed in Java):
-	// private static void
-	// generate_message_class_get_size_generate_message_class_read2(gm_gpslib
-	// lib, gm_gps_beinfo info, gm_code_writer Body) {
-	// }
-
-	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
-	// declaration (not allowed in Java):
-	// private static void
-	// generate_message_class_get_size_generate_message_class_read3(gm_gpslib
-	// lib, gm_gps_beinfo info, gm_code_writer Body) {
-	// }
-
-	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
-	// declaration (not allowed in Java):
-	// private static void
-	// generate_message_class_get_size_generate_message_class_combine(gm_gpslib
-	// lib, gm_gps_beinfo info, gm_code_writer Body) {
-	// }
-
-	// C++ TO JAVA CONVERTER NOTE: This was formerly a static local variable
-	// declaration (not allowed in Java):
-	// private static boolean
-	// generate_message_class_get_size_is_symbol_defined_in_bb(gm_gps_basic_block
-	// b, gm_symtab_entry e) {
-	// }
 
 	public static void generate_message_class_get_size(gm_gps_beinfo info, gm_code_writer Body) {
 		Body.pushln("@Override");
@@ -945,8 +893,6 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("}");
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
-	// allowed in Java) has been moved just prior to the method:
 	static void generate_message_class_write(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
 		Body.pushln("@Override");
 		Body.pushln("public void write(IoBuffer IOB) {");
@@ -983,8 +929,6 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("}");
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
-	// allowed in Java) has been moved just prior to the method:
 	static void generate_message_class_read1(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
 		Body.pushln("@Override");
 		Body.pushln("public void read(IoBuffer IOB) {");
@@ -1021,8 +965,6 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("}");
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
-	// allowed in Java) has been moved just prior to the method:
 	static void generate_message_class_read2(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
 		Body.pushln("@Override");
 		Body.pushln("public int read(byte[] _BA, int _idx) {");
@@ -1086,8 +1028,6 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("}");
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
-	// allowed in Java) has been moved just prior to the method:
 	static void generate_message_class_read3(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
 		Body.pushln("@Override");
 		Body.pushln("public int read(IoBuffer IOB, byte[] _BA, int _idx) {");
@@ -1146,8 +1086,6 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("}");
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
-	// allowed in Java) has been moved just prior to the method:
 	static void generate_message_class_combine(gm_gpslib lib, gm_gps_beinfo info, gm_code_writer Body) {
 		Body.pushln("@Override");
 		Body.pushln("public void combine(byte[] _MQ, byte [] _tA) {");
@@ -1289,8 +1227,6 @@ public class gm_gpslib extends gm_graph_library {
 		assert sents_after_message.size() == 0;
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: This static local variable declaration (not
-	// allowed in Java) has been moved just prior to the method:
 	static boolean is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {
 		java.util.HashMap<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
 		if (!SYMS.containsKey(e))

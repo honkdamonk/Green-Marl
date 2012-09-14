@@ -9,12 +9,11 @@ import frontend.gm_symtab_entry;
 public class check_sym_used extends gm_apply {
 	
 	private gm_symtab_entry _target;
-	private boolean _used;
+	private boolean _used = false;
 	
 	public check_sym_used(gm_symtab_entry t) {
 		set_for_id(true);
 		_target = t;
-		_used = false;
 	}
 
 	@Override

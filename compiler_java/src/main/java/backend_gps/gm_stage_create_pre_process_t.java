@@ -19,7 +19,7 @@ import common.gm_apply;
 //TOOD new name?
 
 public class gm_stage_create_pre_process_t extends gm_apply {
-	
+
 	private boolean master_context;
 	private LinkedList<Boolean> master_context_stack = new LinkedList<Boolean>();
 	private HashMap<ast_sent, gps_gps_sentence_t> s_mark;
@@ -52,25 +52,6 @@ public class gm_stage_create_pre_process_t extends gm_apply {
 			vertex_mode_post(s);
 		return true;
 	}
-
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define ASSERT_MARKED(s) (assert(s_mark->find(s) != s_mark->end()))
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define MARKED_AS_SEQ(s) (s_mark->find(s)->second == GPS_TYPE_SEQ)
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define MARKED_AS_VBEGIN(s) (s_mark->find(s)->second ==
-	// GPS_TYPE_BEGIN_VERTEX)
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define MARKED_AS_CANBE(s) (s_mark->find(s)->second ==
-	// GPS_TYPE_CANBE_VERTEX)
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define MARK_SEQ(s, b) ((*s_mark)[s] = (b) ? GPS_TYPE_SEQ :
-	// GPS_TYPE_CANBE_VERTEX)
 
 	public void master_mode_post(ast_sent s) {
 

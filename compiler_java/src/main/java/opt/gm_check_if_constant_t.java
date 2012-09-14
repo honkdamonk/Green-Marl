@@ -8,10 +8,9 @@ import common.gm_apply;
 
 public class gm_check_if_constant_t extends gm_apply {
 	
-	private boolean _is_const;
+	private boolean _is_const = true;
 	
 	public gm_check_if_constant_t() {
-		this._is_const = true;
 		set_all(false);
 		set_for_expr(true);
 	}

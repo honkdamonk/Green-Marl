@@ -75,24 +75,35 @@ import common.gm_builtin_def;
 // state number,
 // begin sentence
 // is pararell
-//C++ TO JAVA CONVERTER TODO TASK: Multiple inheritance is not available in Java:
 public class gm_gps_gen extends BackendGenerator {
+
+	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
+	protected LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
+
+	protected String dname = null;
+	protected String fname = null;
+	protected gm_code_writer Body = new gm_code_writer();
+	protected File f_body = null;
+	protected PrintStream ps_body;
+	private gm_gpslib glib = new gm_gpslib(this); // graph library
+
+	public boolean _is_master_gen;
+	public boolean _is_receiver_gen;
+
 	public gm_gps_gen() {
 		super();
-		this.dname = null;
-		this.fname = null;
-		this.f_body = null;
-		glib = new gm_gpslib(this);
 		init_opt_steps();
 		init_gen_steps();
 	}
 
+	@Override
 	public void dispose() {
 		close_output_files();
 		dname = null;
 		fname = null;
 	}
 
+	@Override
 	public void setTargetDir(String d) {
 		if (dname != null)
 			System.out.printf("%s = \n", dname);
@@ -100,6 +111,7 @@ public class gm_gps_gen extends BackendGenerator {
 		dname = d;
 	}
 
+	@Override
 	public void setFileName(String f) {
 		assert f != null;
 		fname = f;
@@ -109,10 +121,12 @@ public class gm_gps_gen extends BackendGenerator {
 		return fname;
 	}
 
+	@Override
 	public boolean do_local_optimize_lib() {
 		return get_lib().do_local_optimize();
 	}
 
+	@Override
 	public boolean do_local_optimize() {
 		// -----------------------------------
 		// [TODO]
@@ -138,11 +152,12 @@ public class gm_gps_gen extends BackendGenerator {
 		return gm_apply_compiler_stage.gm_apply_compiler_stage(get_opt_steps());
 	}
 
+	@Override
 	public boolean do_generate() {
-		
+
 		gm_main.FE.prepare_proc_iteration();
 		ast_procdef proc = gm_main.FE.get_next_proc();
-		
+
 		// Check whether procedure name is the same as the filename
 		if (!proc.get_procname().get_genname().equals(fname)) {
 			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
@@ -172,7 +187,8 @@ public class gm_gps_gen extends BackendGenerator {
 		LinkedList<gm_compile_step> L = get_opt_steps();
 		L.addLast(gm_cpp_opt_defer.get_factory());
 		L.addLast(gm_gps_opt_transform_bfs.get_factory());
-		L.addLast(gm_gps_opt_edge_iteration.get_factory()); // expand edge iteration
+		L.addLast(gm_gps_opt_edge_iteration.get_factory()); // expand edge
+															// iteration
 		L.addLast(gm_ind_opt_propagate_trivial_writes.get_factory());
 		L.addLast(gm_ind_opt_remove_unused_scalar.get_factory());
 		L.addLast(gm_ind_opt_move_propdecl.get_factory());
@@ -223,9 +239,6 @@ public class gm_gps_gen extends BackendGenerator {
 	protected final LinkedList<gm_compile_step> get_gen_steps() {
 		return gen_steps;
 	}
-
-	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
-	protected LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
 
 	// ----------------------------------
 	// stages in backend gen
@@ -771,7 +784,8 @@ public class gm_gps_gen extends BackendGenerator {
 		}
 
 		if (gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
-			temp = String.format("%s [] %s; //reverse edges (node IDs) {should this to be marshalled?}", get_lib().is_node_type_int() ? "int" : "long", GPS_REV_NODE_ID);
+			temp = String.format("%s [] %s; //reverse edges (node IDs) {should this to be marshalled?}", get_lib().is_node_type_int() ? "int" : "long",
+					GPS_REV_NODE_ID);
 			Body.pushln(temp);
 		}
 
@@ -936,8 +950,8 @@ public class gm_gps_gen extends BackendGenerator {
 		int id = b.get_id();
 		gm_gps_bbtype_t type = b.get_type();
 
-		String temp = String.format("private void _vertex_state_%d(Iterable<%s.MessageData> _msgs) {", id, gm_main.FE.get_current_proc()
-				.get_procname().get_genname());
+		String temp = String.format("private void _vertex_state_%d(Iterable<%s.MessageData> _msgs) {", id, gm_main.FE.get_current_proc().get_procname()
+				.get_genname());
 		Body.pushln(temp);
 
 		get_lib().generate_vertex_prop_access_prepare(Body);
@@ -1193,15 +1207,8 @@ public class gm_gps_gen extends BackendGenerator {
 		return Body;
 	}
 
-	protected String dname;
-	protected String fname;
-	protected gm_code_writer Body = new gm_code_writer();
-	protected File f_body;
-	protected PrintStream ps_body;
-
-	private gm_gpslib glib; // graph library
-
 	// from code generator interface
+	@Override
 	public String get_type_string(GMTYPE_T gm_type) {
 		switch (gm_type) {
 		case GMTYPE_INT:
@@ -1246,6 +1253,7 @@ public class gm_gps_gen extends BackendGenerator {
 		end_class();
 	}
 
+	@Override
 	public void generate_rhs_id(ast_id i) {
 		if (i.getSymInfo().getType().is_node_iterator()) {
 			if (i.getSymInfo().find_info_bool(GPS_FLAG_COMM_SYMBOL)) {
@@ -1263,10 +1271,12 @@ public class gm_gps_gen extends BackendGenerator {
 		}
 	}
 
+	@Override
 	public void generate_rhs_field(ast_field f) {
 		generate_lhs_field(f);
 	}
 
+	@Override
 	public void generate_expr_builtin(ast_expr e) {
 		ast_expr_builtin be = (ast_expr_builtin) e;
 		gm_builtin_def def = be.get_builtin_def();
@@ -1309,6 +1319,7 @@ public class gm_gps_gen extends BackendGenerator {
 		}
 	}
 
+	@Override
 	public void generate_expr_minmax(ast_expr e) {
 		if (e.get_optype() == GM_OPS_T.GMOP_MIN)
 			Body.push("java.math.min(");
@@ -1324,16 +1335,19 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.push(")");
 	}
 
+	@Override
 	public void generate_expr_abs(ast_expr e) {
 		Body.push("Math.abs(");
 		generate_expr(e.get_left_op());
 		Body.push(")");
 	}
 
+	@Override
 	public void generate_lhs_id(ast_id i) {
 		Body.push(i.get_genname());
 	}
 
+	@Override
 	public void generate_expr_inf(ast_expr e) {
 		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
 		GMTYPE_T t = e.get_type_summary();
@@ -1360,10 +1374,12 @@ public class gm_gps_gen extends BackendGenerator {
 		return;
 	}
 
+	@Override
 	public void generate_expr_nil(ast_expr e) {
 		get_lib().generate_expr_nil(e, Body);
 	}
 
+	@Override
 	public void generate_lhs_field(ast_field f) {
 		ast_id prop = f.get_second();
 		if (is_master_generate()) {
@@ -1394,6 +1410,7 @@ public class gm_gps_gen extends BackendGenerator {
 		assert false;
 	}
 
+	@Override
 	public void generate_sent_reduce_assign(ast_assign a) {
 		if (is_master_generate()) {
 			// [to be done]
@@ -1530,6 +1547,7 @@ public class gm_gps_gen extends BackendGenerator {
 		assert false;
 	}
 
+	@Override
 	public void generate_sent_foreach(ast_foreach fe) {
 		// must be a sending foreach
 		assert fe.get_iter_type().is_iteration_on_out_neighbors() || fe.get_iter_type().is_iteration_on_in_neighbors()
@@ -1538,6 +1556,7 @@ public class gm_gps_gen extends BackendGenerator {
 		get_lib().generate_message_send(fe, Body);
 	}
 
+	@Override
 	public void generate_sent_return(ast_return r) {
 		if (r.get_expr() != null) {
 			Body.push(GPS_RET_VALUE);
@@ -1547,6 +1566,7 @@ public class gm_gps_gen extends BackendGenerator {
 		}
 	}
 
+	@Override
 	public void generate_sent_assign(ast_assign a) {
 		// normal assign
 		if (is_master_generate()) {
@@ -1606,6 +1626,7 @@ public class gm_gps_gen extends BackendGenerator {
 		}
 	}
 
+	@Override
 	public void generate_sent_block(ast_sentblock sb, boolean need_brace) {
 		LinkedList<ast_sent> sents = sb.get_sents();
 
@@ -1646,9 +1667,6 @@ public class gm_gps_gen extends BackendGenerator {
 	public final boolean is_master_generate() {
 		return _is_master_gen;
 	}
-
-	public boolean _is_master_gen;
-	public boolean _is_receiver_gen;
 
 	public final void set_receiver_generate(boolean b) {
 		_is_receiver_gen = b;

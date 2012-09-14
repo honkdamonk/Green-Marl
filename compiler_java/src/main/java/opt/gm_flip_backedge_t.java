@@ -50,8 +50,8 @@ import frontend.gm_symtab_entry;
 //--------------------------------------------------------------------
 public class gm_flip_backedge_t extends gm_apply {
 
-	private LinkedList<ast_sentblock> _tops = new LinkedList<ast_sentblock>();
-	private LinkedList<ast_assign> _cands = new LinkedList<ast_assign>();
+	private final LinkedList<ast_sentblock> _tops = new LinkedList<ast_sentblock>();
+	private final LinkedList<ast_assign> _cands = new LinkedList<ast_assign>();
 
 	public gm_flip_backedge_t() {
 		set_for_sent(true);

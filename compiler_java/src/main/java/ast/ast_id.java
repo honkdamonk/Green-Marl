@@ -9,7 +9,7 @@ import frontend.gm_symtab_entry;
 // access of identifier
 public class ast_id extends ast_node {
 
-	public String name = null;
+	private String name = null;
 	private gm_symtab_entry info = null;
 	private String gen_name = null;
 	private boolean instant_assignment = false;
@@ -49,6 +49,10 @@ public class ast_id extends ast_node {
 	// -------------------------------------------------
 	public final gm_symtab_entry getSymInfo() {
 		return info;
+	}
+	
+	public String get_name() {
+		return name;
 	}
 
 	public final void setSymInfo(gm_symtab_entry e) {

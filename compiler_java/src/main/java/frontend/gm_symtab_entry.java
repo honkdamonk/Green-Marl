@@ -34,7 +34,7 @@ public class gm_symtab_entry {
 		this.isArg = false;
 		id.setSymInfo(this, true);
 		assert type != null;
-		assert id.name != null;
+		assert id.get_name() != null;
 	}
 
 	public final ast_typedecl getType() {

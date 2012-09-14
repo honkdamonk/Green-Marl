@@ -48,13 +48,17 @@ import common.gm_traverse;
 // Traverse for Analysis
 // (Should be 'post-applying')
 //----------------------------------------------------
+
 public class gm_rw_analysis extends gm_apply {
-	
+
 	private static final int GM_BLTIN_MUTATE_GROW = 1;
 	private static final int GM_BLTIN_MUTATE_SHRINK = 2;
-	
+
+	static final String GM_INFOKEY_RW = "GM_INFOKEY_RW";
+	static final HashMap<gm_symtab_entry, range_cond_t> Default_DriverMap = new HashMap<gm_symtab_entry, range_cond_t>();
+
 	private boolean _succ = true;
-	
+
 	@Override
 	public boolean apply(ast_sent s) {
 		boolean b = true;
@@ -112,7 +116,7 @@ public class gm_rw_analysis extends gm_apply {
 	}
 
 	private boolean apply_if(ast_if i) {
-		
+
 		boolean is_okay = true;
 		gm_rwinfo_sets sets = get_rwinfo_sets(i);
 
@@ -177,11 +181,11 @@ public class gm_rw_analysis extends gm_apply {
 		if (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) {
 			target_sym = a.get_lhs_scala().getSymInfo();
 			new_entry = gm_rwinfo.new_scala_inst(a.get_lhs_scala(), bound_op, bound_sym);
-	    } else if (a.get_lhs_type() == GMASSIGN_LHS_MAP) {
-	        ast_mapaccess mapAccess = a.to_assign_mapentry().get_lhs_mapaccess();
-	        target_sym = mapAccess.get_map_id().getSymInfo();
-	        new_entry = gm_rwinfo.new_scala_inst(mapAccess.get_map_id(), bound_op, bound_sym);//TODO
-	    } else {
+		} else if (a.get_lhs_type() == GMASSIGN_LHS_MAP) {
+			ast_mapaccess mapAccess = a.to_assign_mapentry().get_lhs_mapaccess();
+			target_sym = mapAccess.get_map_id().getSymInfo();
+			new_entry = gm_rwinfo.new_scala_inst(mapAccess.get_map_id(), bound_op, bound_sym);// TODO
+		} else {
 			target_sym = a.get_lhs_field().get_second().getSymInfo();
 			gm_symtab_entry iter_sym = a.get_lhs_field().get_first().getSymInfo();
 
@@ -313,7 +317,7 @@ public class gm_rw_analysis extends gm_apply {
 		gm_rwinfo_map W = sets.write_set;
 		gm_rwinfo_map D = sets.reduce_set;
 		gm_rwinfo_map M = sets.mutate_set;
-		
+
 		assert R.size() == 0;
 		assert W.size() == 0;
 		assert D.size() == 0;
@@ -364,7 +368,7 @@ public class gm_rw_analysis extends gm_apply {
 		gm_rwinfo_map W = sets.write_set;
 		gm_rwinfo_map D = sets.reduce_set;
 		gm_rwinfo_map M = sets.mutate_set;
-		
+
 		assert R.size() == 0;
 		assert W.size() == 0;
 		assert D.size() == 0;
@@ -480,7 +484,7 @@ public class gm_rw_analysis extends gm_apply {
 	// [EXPR]::[LHS list]
 	// -----------------------------------------------------------------------------
 	private boolean apply_foreign(ast_foreign f) {
-		
+
 		gm_rwinfo_sets sets = get_rwinfo_sets(f);
 
 		gm_rwinfo_map R = sets.read_set;
@@ -638,9 +642,10 @@ public class gm_rw_analysis extends gm_apply {
 		return true;
 	}
 
-	/** Actual information kept for sentence
-	* Three maps. (readset, writeset, reduce-set)
-	*/
+	/**
+	 * Actual information kept for sentence Three maps. (readset, writeset,
+	 * reduce-set)
+	 */
 	public static void gm_delete_rwinfo_map(gm_rwinfo_map m) {
 		for (gm_rwinfo_list l : m.values()) {
 			for (gm_rwinfo j : l) {
@@ -651,8 +656,6 @@ public class gm_rw_analysis extends gm_apply {
 		}
 		m.clear();
 	}
-
-	public static String GM_INFOKEY_RW = "GM_INFOKEY_RW";
 
 	public static gm_rwinfo_sets get_rwinfo_sets(ast_node n) {
 		// get rwinfo from a node. (create one if not there)
@@ -669,8 +672,8 @@ public class gm_rw_analysis extends gm_apply {
 	}
 
 	/**
-	* additional information for foreach statement
-	*/
+	 * additional information for foreach statement
+	 */
 	public static String GM_INFOKEY_BOUND = "GM_INFOKEY_BOUND";
 
 	public static gm_bound_set_info gm_get_bound_set_info(ast_foreach n) {
@@ -692,9 +695,9 @@ public class gm_rw_analysis extends gm_apply {
 	}
 
 	/**
-	* re-do rw analysis for IR tree s.
-	* (result does not propagate upward from s though.)
-	*/
+	 * re-do rw analysis for IR tree s. (result does not propagate upward from s
+	 * though.)
+	 */
 	public static boolean gm_redo_rw_analysis(ast_sent s) {
 		// nullify previous analysis. (IR tree has been modified)
 		gm_delete_rw_analysis D = new gm_delete_rw_analysis();
@@ -703,7 +706,7 @@ public class gm_rw_analysis extends gm_apply {
 		// do-it again RW analysis
 		gm_rw_analysis RWA = new gm_rw_analysis();
 		gm_traverse.gm_traverse_sents(s, RWA, gm_traverse.GM_POST_APPLY); // post
-																									// apply
+																			// apply
 		return RWA.is_success();
 	}
 
@@ -715,14 +718,14 @@ public class gm_rw_analysis extends gm_apply {
 	}
 
 	/**
-	* AST_IF<br>
-	* If (expr) [Then sent] [Else sent2]<br>
-	* 1) add expr into read set<br>
-	* 2) merge then-part sets and else-part sets<br>
-	* make all the accesses conditional,
-	* unless both-path contain same access
-	* @return is_okay
-	*/
+	 * AST_IF<br>
+	 * If (expr) [Then sent] [Else sent2]<br>
+	 * 1) add expr into read set<br>
+	 * 2) merge then-part sets and else-part sets<br>
+	 * make all the accesses conditional, unless both-path contain same access
+	 * 
+	 * @return is_okay
+	 */
 	public static boolean merge_for_if_else(gm_rwinfo_map Target, gm_rwinfo_map S1, gm_rwinfo_map S2, boolean is_reduce) {
 		boolean is_okay = true;
 
@@ -790,13 +793,12 @@ public class gm_rw_analysis extends gm_apply {
 	}
 
 	/**
-	* Add info to set,
-	* unless the same information already exists in the set<br>
-	*
-	* If current info is 'wider', remove previous information
-	* (i.e. conditional < always)<br>
-	* (note: cannot compare different rages: e.g. linear vs. random)<br>
-	*/
+	 * Add info to set, unless the same information already exists in the set<br>
+	 * 
+	 * If current info is 'wider', remove previous information (i.e. conditional
+	 * < always)<br>
+	 * (note: cannot compare different rages: e.g. linear vs. random)<br>
+	 */
 	public static boolean is_same_entry(gm_rwinfo old, gm_rwinfo neo) {
 		// compare except location
 		if (old.access_range != neo.access_range)
@@ -831,10 +833,11 @@ public class gm_rw_analysis extends gm_apply {
 	}
 
 	/**
-	* check if two symbols bound to the same operator
-	* check if two symbols bound to the same boud
-	* @return true if error
-	*/
+	 * check if two symbols bound to the same operator check if two symbols
+	 * bound to the same boud
+	 * 
+	 * @return true if error
+	 */
 	public static boolean is_reduce_error(gm_rwinfo old, gm_rwinfo neo) {
 		assert neo.bound_symbol != null;
 		assert old.bound_symbol != null;
@@ -853,15 +856,13 @@ public class gm_rw_analysis extends gm_apply {
 		// check if they are bound to the same symbol
 		if (old.bound_symbol != neo.bound_symbol) {
 			// generate error message
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_ITOR, neo.location.get_line(), neo.location.get_col(),
-					old.bound_symbol.getId().get_orgname());
+			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_ITOR, neo.location.get_line(), neo.location.get_col(), old.bound_symbol.getId()
+					.get_orgname());
 			return true;
 		}
 
 		return false;
 	}
-
-	public static HashMap<gm_symtab_entry, range_cond_t> Default_DriverMap = new HashMap<gm_symtab_entry, range_cond_t>();
 
 	public static void traverse_expr_for_readset_adding(ast_expr e, gm_rwinfo_map rset) {
 		traverse_expr_for_readset_adding(e, rset, Default_DriverMap);
@@ -1031,12 +1032,11 @@ public class gm_rw_analysis extends gm_apply {
 	}
 
 	/**
-	* AST_SENTBLOCK
-	* { s1; s2; s3;}
-	* 1) merge sentence sets
-	* 2) remove all the acesses to the varibles defined in the local-scope
-	* @return is_okay
-	*/
+	 * AST_SENTBLOCK { s1; s2; s3;} 1) merge sentence sets 2) remove all the
+	 * acesses to the varibles defined in the local-scope
+	 * 
+	 * @return is_okay
+	 */
 	public static boolean merge_for_sentblock(ast_sentblock s, gm_rwinfo_map target, gm_rwinfo_map old, boolean is_reduce) {
 		boolean is_okay = true;
 		for (gm_symtab_entry e : old.keySet()) {
@@ -1066,12 +1066,11 @@ public class gm_rw_analysis extends gm_apply {
 	}
 
 	/**
-	* AST_WHILE
-	* while(expr) SB or do SB while (expr);
-	* 1) copy sentence-block (conditionally for while, always for do-while)
-	* 2) add expr
-	* @return is_okay
-	*/
+	 * AST_WHILE while(expr) SB or do SB while (expr); 1) copy sentence-block
+	 * (conditionally for while, always for do-while) 2) add expr
+	 * 
+	 * @return is_okay
+	 */
 	public static boolean merge_all(gm_rwinfo_map target, gm_rwinfo_map old, boolean is_reduce) {
 		boolean is_okay = true;
 
@@ -1088,7 +1087,7 @@ public class gm_rw_analysis extends gm_apply {
 
 	// body sentence - top
 	public static boolean merge_body(gm_rwinfo_map R, gm_rwinfo_map W, gm_rwinfo_map D, gm_rwinfo_map M, ast_sent s, boolean is_conditional) {
-		
+
 		gm_rwinfo_sets sets2 = get_rwinfo_sets(s);
 		gm_rwinfo_map R2 = sets2.read_set;
 		gm_rwinfo_map W2 = sets2.write_set;
@@ -1098,13 +1097,13 @@ public class gm_rw_analysis extends gm_apply {
 
 		if (!is_conditional) {
 			// copy as is
-			is_okay = merge_all(R, R2, false) && is_okay; 
+			is_okay = merge_all(R, R2, false) && is_okay;
 			is_okay = merge_all(W, W2, false) && is_okay;
 			is_okay = merge_all(D, D2, true) && is_okay;
 			is_okay = merge_all(M, M2, false) && is_okay;
 		} else {
 			// copy and change it as conditional
-			is_okay = merge_for_if(R, R2, false) && is_okay; 
+			is_okay = merge_for_if(R, R2, false) && is_okay;
 			is_okay = merge_for_if(W, W2, false) && is_okay;
 			is_okay = merge_for_if(D, D2, true) && is_okay;
 			is_okay = merge_for_if(M, M2, false) && is_okay;
@@ -1114,43 +1113,43 @@ public class gm_rw_analysis extends gm_apply {
 	}
 
 	/**
-	* AST_FOREACH<br>
-	* foreach(X)<filter> SB<br>
-	* 1) add filter to readset<br>
-	* 2) copy contents of sentence-block (add conditional flag if filter
-	* exists)<br>
-	* 3) Resolve all the references driven via current iterator<br>
-	* 3b) Resolve all the references driven via outside iterator --> all become
-	* random (if parallel)<br>
-	* 4) Create bound-set<br>
-	*
-	* e.g.) Foreach (n:G.Nodes) <<- at here<br>
-	* A += n.val @ n;<br>
-	* [A Reduce n ---> write to A ]<br>
-	* [val Read via n ---> linear read]<br>
-	*
-	* e.g.2) Foreach (n:...) {<br>
-	* Foreach (t:G.Nodes/n.Nbrs ) { <<- at here<br>
-	* t.A = ==> linear/random write<br>
-	* = t.A ==> linear/random read<br>
-	* n.A = ==> random write<br>
-	* = n.A ==> random read<br>
-	* x ==> write<br>
-	* = x ==> read<br>
-	* } }<br>
-	*
-	* e.g.3) Foreach (n:...) {<br>
-	* For (t:G.Nodes/n.Nbrs ) { <<- at here<br>
-	* t.A = ==> linear/random write<br>
-	* = t.A ==> linear/random read<br>
-	* n.A = ==> write via n<br>
-	* = n.A ==> read via n<br>
-	* x ==> write<br>
-	* = x ==> read<br>
-	* } }
-	*/
+	 * AST_FOREACH<br>
+	 * foreach(X)<filter> SB<br>
+	 * 1) add filter to readset<br>
+	 * 2) copy contents of sentence-block (add conditional flag if filter
+	 * exists)<br>
+	 * 3) Resolve all the references driven via current iterator<br>
+	 * 3b) Resolve all the references driven via outside iterator --> all become
+	 * random (if parallel)<br>
+	 * 4) Create bound-set<br>
+	 * 
+	 * e.g.) Foreach (n:G.Nodes) <<- at here<br>
+	 * A += n.val @ n;<br>
+	 * [A Reduce n ---> write to A ]<br>
+	 * [val Read via n ---> linear read]<br>
+	 * 
+	 * e.g.2) Foreach (n:...) {<br>
+	 * Foreach (t:G.Nodes/n.Nbrs ) { <<- at here<br>
+	 * t.A = ==> linear/random write<br>
+	 * = t.A ==> linear/random read<br>
+	 * n.A = ==> random write<br>
+	 * = n.A ==> random read<br>
+	 * x ==> write<br>
+	 * = x ==> read<br>
+	 * } }<br>
+	 * 
+	 * e.g.3) Foreach (n:...) {<br>
+	 * For (t:G.Nodes/n.Nbrs ) { <<- at here<br>
+	 * t.A = ==> linear/random write<br>
+	 * = t.A ==> linear/random read<br>
+	 * n.A = ==> write via n<br>
+	 * = n.A ==> read via n<br>
+	 * x ==> write<br>
+	 * = x ==> read<br>
+	 * } }
+	 */
 	public static boolean cleanup_iterator_access(ast_id iter, gm_rwinfo_map T_temp, gm_rwinfo_map T, GMTYPE_T iter_type, boolean is_parallel) {
-		
+
 		boolean is_okay = true;
 
 		gm_symtab_entry iter_sym = iter.getSymInfo();
@@ -1164,8 +1163,7 @@ public class gm_rw_analysis extends gm_apply {
 				gm_rwinfo cp = e.copy();
 				if (cp.driver != null)
 					// replace access from this iterator
-					if (cp.driver == iter_sym) 
-					{
+					if (cp.driver == iter_sym) {
 						cp.driver = null;
 						cp.access_range = range;
 					} else {
@@ -1178,19 +1176,21 @@ public class gm_rw_analysis extends gm_apply {
 							cp.access_range = GM_RANGE_RANDOM;
 							cp.driver = null;
 						}
-					} else if (is_parallel) {
-						// cp->access_range = GM_RANGE_RANDOM;
-						// cp->driver = NULL;
 					}
+				else if (is_parallel) {
+					// cp->access_range = GM_RANGE_RANDOM;
+					// cp->driver = NULL;
+				}
 				is_okay = gm_add_rwinfo_to_set(T, sym, cp, false) && is_okay;
 			}
 		}
 		return is_okay;
 	}
 
-	/** (called after cleanup_iterator_access if called)
-	* replace LEVEL(_UP/_DOWN) -> (LINEAR + conditional)
-	*/
+	/**
+	 * (called after cleanup_iterator_access if called) replace LEVEL(_UP/_DOWN)
+	 * -> (LINEAR + conditional)
+	 */
 	public static void cleanup_iterator_access_bfs(gm_rwinfo_map T) {
 		// bfs iter ==> conditional, linear iteration
 		boolean new_always = false;
@@ -1221,9 +1221,10 @@ public class gm_rw_analysis extends gm_apply {
 		}
 	}
 
-	/** Nodes or NBRS - bound-set for Foreach - write - reduce map of the
-	* Foreach-statement - reduce map of the body
-	*/
+	/**
+	 * Nodes or NBRS - bound-set for Foreach - write - reduce map of the
+	 * Foreach-statement - reduce map of the body
+	 */
 	public static boolean cleanup_iterator_access_reduce(ast_id iter, gm_rwinfo_map D_temp, gm_rwinfo_map D, gm_rwinfo_map W, gm_rwinfo_map B,
 			GMTYPE_T iter_type, boolean is_parallel) {
 		boolean is_okay = true;
@@ -1280,7 +1281,7 @@ public class gm_rw_analysis extends gm_apply {
 		}
 		return is_okay;
 	}
-	
+
 	private static boolean is_modified_with_condition(ast_sent S, gm_symtab_entry e, gm_rwinfo_query Q) {
 		assert Q != null;
 		gm_rwinfo_map W = gm_rw_analysis_check2.gm_get_write_set(S);

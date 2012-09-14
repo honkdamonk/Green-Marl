@@ -977,28 +977,26 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("// Vertex Input format");
 		Body.pushln("//----------------------------------------------");
 
-		Body.pushln(String.format("static class %sVertexInputFormat extends TextVertexInputFormat<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data,
-				edge_data, message_data));
+		Body.pushlnf("static class %sVertexInputFormat extends TextVertexInputFormat<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data,
+				edge_data, message_data);
 		Body.pushln("@Override");
-		Body.pushln(String.format(" VertexReader<%s, %s, %s, %s>", vertex_id, vertex_data, edge_data, message_data));
+		Body.pushlnf(" VertexReader<%s, %s, %s, %s>", vertex_id, vertex_data, edge_data, message_data);
 		Body.pushln("createVertexReader(InputSplit split, TaskAttemptContext context) throws IOException {");
-		Body.pushln(String.format("return new %sVertexReader(textInputFormat.createRecordReader(split, context));", proc_name));
+		Body.pushlnf("return new %sVertexReader(textInputFormat.createRecordReader(split, context));", proc_name);
 		Body.pushln("}");
 		Body.NL();
 
-		Body.pushln(String.format("static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, %s, %s, %s> {", proc_name, vertex_id,
-				vertex_data, edge_data, message_data));
-		Body.pushln(String.format(" %sVertexReader(RecordReader<LongWritable, Text> lineRecordReader) {", proc_name));
+		Body.pushlnf("static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, %s, %s, %s> {", proc_name, vertex_id,
+				vertex_data, edge_data, message_data);
+		Body.pushlnf(" %sVertexReader(RecordReader<LongWritable, Text> lineRecordReader) {", proc_name);
 		Body.pushln("super(lineRecordReader);");
 		Body.pushln("}");
 		Body.NL();
 
 		Body.pushln("@Override");
-		Body.pushln(String.format(" Vertex<%s, %s, %s, %s> getCurrentVertex() throws IOException, InterruptedException {", vertex_id, vertex_data, edge_data,
-				message_data));
-		Body.pushln(String.format("Vertex<%s, %s, %s, %s> vertex =", vertex_id, vertex_data, edge_data, message_data));
-		Body.pushln(String.format("    BspUtils.<%s, %s, %s, %s> createVertex(getContext().getConfiguration());", vertex_id, vertex_data, edge_data,
-				message_data));
+		Body.pushlnf(" Vertex<%s, %s, %s, %s> getCurrentVertex() throws IOException, InterruptedException {", vertex_id, vertex_data, edge_data, message_data);
+		Body.pushlnf("Vertex<%s, %s, %s, %s> vertex =", vertex_id, vertex_data, edge_data, message_data);
+		Body.pushlnf("    BspUtils.<%s, %s, %s, %s> createVertex(getContext().getConfiguration());", vertex_id, vertex_data, edge_data, message_data);
 		Body.NL();
 
 		Body.pushln("Text line = getRecordReader().getCurrentValue();");
@@ -1009,7 +1007,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			Body.pushln("LongWritable vertexId = new LongWritable(Long.parseLong(values[0]));");
 		}
 		Body.pushln("double vertexValue = Double.parseDouble(values[1]);");
-		Body.pushln(String.format("Map<%s, %s> edges = Maps.newHashMap();", vertex_id, edge_data));
+		Body.pushlnf("Map<%s, %s> edges = Maps.newHashMap();", vertex_id, edge_data);
 		Body.pushln("for (int i = 2; i < values.length; i += 2) {");
 		if (get_lib().is_node_type_int()) {
 			Body.pushln("IntWritable edgeId = new IntWritable(Integer.parseInt(values[i]));");
@@ -1018,12 +1016,12 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 		if (proc.find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
 			Body.pushln("double edgeValue = Double.parseDouble(values[i+1]);");
-			Body.pushln(String.format("edges.put(edgeId, new %s(edgeValue));", edge_data));
+			Body.pushlnf("edges.put(edgeId, new %s(edgeValue));", edge_data);
 		} else {
 			Body.pushln("edges.put(edgeId, NullWritable.get());");
 		}
 		Body.pushln("}");
-		Body.pushln(String.format("vertex.initialize(vertexId, new %sVertex.VertexData(vertexValue), edges, null);", proc_name));
+		Body.pushlnf("vertex.initialize(vertexId, new %sVertex.VertexData(vertexValue), edges, null);", proc_name);
 		Body.pushln("return vertex;");
 		Body.pushln("}");
 		Body.NL();
@@ -1039,31 +1037,31 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("// ----------------------------------------------");
 		Body.pushln("// Vertex Output format");
 		Body.pushln("// ----------------------------------------------");
-		Body.pushln(String.format("static class %sVertexOutputFormat extends", proc_name));
-		Body.pushln(String.format("TextVertexOutputFormat<%s, %s, %s> {", vertex_id, vertex_data, edge_data));
+		Body.pushlnf("static class %sVertexOutputFormat extends", proc_name);
+		Body.pushlnf("TextVertexOutputFormat<%s, %s, %s> {", vertex_id, vertex_data, edge_data);
 		Body.pushln("@Override");
-		Body.pushln(String.format(" VertexWriter<%s, %s, %s> createVertexWriter(", vertex_id, vertex_data, edge_data));
+		Body.pushlnf(" VertexWriter<%s, %s, %s> createVertexWriter(", vertex_id, vertex_data, edge_data);
 		Body.pushln("TaskAttemptContext context) throws IOException, InterruptedException {");
-		Body.pushln(String.format("return new %sVertexWriter(textOutputFormat.getRecordWriter(context));", proc_name));
+		Body.pushlnf("return new %sVertexWriter(textOutputFormat.getRecordWriter(context));", proc_name);
 		Body.pushln("}");
 		Body.NL();
 
-		Body.pushln(String.format("static class %sVertexWriter", proc_name));
-		Body.pushln(String.format("extends TextVertexOutputFormat.TextVertexWriter<%s, %s, %s> {", vertex_id, vertex_data, edge_data));
-		Body.pushln(String.format(" %sVertexWriter(RecordWriter<Text, Text> lineRecordReader) {", proc_name));
+		Body.pushlnf("static class %sVertexWriter", proc_name);
+		Body.pushlnf("extends TextVertexOutputFormat.TextVertexWriter<%s, %s, %s> {", vertex_id, vertex_data, edge_data);
+		Body.pushlnf(" %sVertexWriter(RecordWriter<Text, Text> lineRecordReader) {", proc_name);
 		Body.pushln("super(lineRecordReader);");
 		Body.pushln("}");
 		Body.NL();
 
 		Body.pushln("@Override");
 		Body.pushln("public void writeVertex(");
-		Body.pushln(String.format("Vertex<%s, %s, %s, ?> vertex)", vertex_id, vertex_data, edge_data));
+		Body.pushlnf("Vertex<%s, %s, %s, ?> vertex)", vertex_id, vertex_data, edge_data);
 		Body.pushln("throws IOException, InterruptedException {");
 		Body.pushln("StringBuffer sb = new StringBuffer(vertex.getId().toString());");
 		Body.pushln("sb.append('\\t').append(vertex.getValue());");
 		Body.NL();
 
-		Body.pushln(String.format("for (Edge<%s, %s> edge : vertex.getEdges()) {", vertex_id, edge_data));
+		Body.pushlnf("for (Edge<%s, %s> edge : vertex.getEdges()) {", vertex_id, edge_data);
 		if (proc.find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
 			Body.pushln("sb.append('\\t').append(edge.getTargetVertexId());");
 			Body.pushln("sb.append('\\t').append(edge.getValue());");

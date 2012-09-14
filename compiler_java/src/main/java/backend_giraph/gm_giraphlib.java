@@ -75,19 +75,19 @@ public class gm_giraphlib extends gm_gpslib {
 
 	@Override
 	public void generate_broadcast_reduce_initialize_master(ast_id id, gm_code_writer Body, GM_REDUCE_T reduce_op_type, String base_value) {
-		Body.push(String.format("setAggregatedValue(%s, new ", create_key_string(id)));
+		Body.pushf("setAggregatedValue(%s, new ", create_key_string(id));
 		generate_broadcast_writable_type(id.getTypeSummary(), Body);
-		Body.pushln(String.format("(%s));", base_value));
+		Body.pushlnf("(%s));", base_value);
 	}
 
 	@Override
 	public void generate_broadcast_state_master(String state_var, gm_code_writer Body) {
-		Body.pushln(String.format("setAggregatedValue(%s, new IntWritable(%s));", GPS_KEY_FOR_STATE, state_var));
+		Body.pushlnf("setAggregatedValue(%s, new IntWritable(%s));", GPS_KEY_FOR_STATE, state_var);
 	}
 
 	@Override
 	public void generate_broadcast_isFirst_master(String is_first_var, gm_code_writer Body) {
-		Body.pushln(String.format("setAggregatedValue(\"%s\", new BooleanWritable(%s));", is_first_var, is_first_var));
+		Body.pushlnf("setAggregatedValue(\"%s\", new BooleanWritable(%s));", is_first_var, is_first_var);
 	}
 
 	public void generate_broadcast_aggregator_type(GMTYPE_T type_id, gm_code_writer Body) {
@@ -210,7 +210,7 @@ public class gm_giraphlib extends gm_gpslib {
 		// ---------------------------------------------------
 		// create new BV
 		// ---------------------------------------------------
-		Body.push(String.format("setAggregatedValue(%s, new ", create_key_string(id)));
+		Body.pushf("setAggregatedValue(%s, new ", create_key_string(id));
 		generate_broadcast_writable_type(id.getTypeSummary(), Body);
 
 		// ---------------------------------------------------
@@ -263,7 +263,7 @@ public class gm_giraphlib extends gm_gpslib {
 
 		Body.push("this.<");
 		generate_broadcast_writable_type(id.getTypeSummary(), Body);
-		Body.push(String.format(">getAggregatedValue(%s).get()", create_key_string(id)));
+		Body.pushf(">getAggregatedValue(%s).get()", create_key_string(id));
 		if (need_paren)
 			Body.push(")");
 		Body.pushln(";");
@@ -306,7 +306,7 @@ public class gm_giraphlib extends gm_gpslib {
 		assert a.is_target_scalar();
 		ast_id id = a.get_lhs_scala();
 
-		Body.push(String.format("aggregate(%s, new ", create_key_string(id)));
+		Body.pushf("aggregate(%s, new ", create_key_string(id));
 		generate_broadcast_writable_type(id.getTypeSummary(), Body);
 
 		// ---------------------------------------------------
@@ -322,7 +322,7 @@ public class gm_giraphlib extends gm_gpslib {
 	public void generate_broadcast_receive_vertex(ast_id id, gm_code_writer Body) {
 		Body.push("this.<");
 		generate_broadcast_writable_type(id.getTypeSummary(), Body);
-		Body.push(String.format("> getAggregatedValue(%s).get()", create_key_string(id)));
+		Body.pushf("> getAggregatedValue(%s).get()", create_key_string(id));
 	}
 
 	public void generate_parameter_read_vertex(ast_id id, gm_code_writer Body) {
@@ -450,12 +450,12 @@ public class gm_giraphlib extends gm_gpslib {
 
 	@Override
 	public void generate_receive_state_vertex(String state_var, gm_code_writer Body) {
-		Body.pushln(String.format("int %s = this.<IntWritable>getAggregatedValue(%s).get();", state_var, GPS_KEY_FOR_STATE));
+		Body.pushlnf("int %s = this.<IntWritable>getAggregatedValue(%s).get();", state_var, GPS_KEY_FOR_STATE);
 	}
 
 	@Override
 	public void generate_receive_isFirst_vertex(String is_first_var, gm_code_writer Body) {
-		Body.push(String.format("boolean %s = this.<BooleanWritable>getAggregatedValue(\"%s\").get();", is_first_var, is_first_var));
+		Body.pushf("boolean %s = this.<BooleanWritable>getAggregatedValue(\"%s\").get();", is_first_var, is_first_var);
 	}
 
 	@Override

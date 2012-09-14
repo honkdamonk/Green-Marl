@@ -109,7 +109,7 @@ public abstract class gm_code_generator {
 		ast_mapaccess mapAccess = e.get_mapaccess();
 		ast_id map = mapAccess.get_map_id();
 		ast_expr key = mapAccess.get_key_expr();
-		_Body.push(String.format("%s.getValue(", map.get_genname()));
+		_Body.pushf("%s.getValue(", map.get_genname());
 		generate_expr(key);
 		_Body.push(")");
 	}

@@ -60,6 +60,14 @@ public class gm_code_writer {
 		}
 	}
 
+	public final void pushf(String s, Object... args) {
+		push(String.format(s, args));
+	}
+	
+	public final void pushlnf(String s, Object... args) {
+		pushln(String.format(s, args));
+	}
+	
 	public final void pushln(String s) {
 		push(s);
 		NL();

@@ -9,11 +9,12 @@ import ast.ast_procdef;
 import ast.gm_rwinfo_map;
 
 public class gm_fe_check_property_argument_usage extends gm_compile_step {
-	
+
 	private gm_fe_check_property_argument_usage() {
 		set_description("Checking property usages");
 	}
 
+	@Override
 	public void process(ast_procdef proc) {
 		gm_symtab props = proc.get_symtab_field();
 		HashSet<gm_symtab_entry> SET = props.get_entries();
@@ -28,7 +29,7 @@ public class gm_fe_check_property_argument_usage extends gm_compile_step {
 				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_IN.getValue());
 			else {
 				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GM_PROP_USAGE_T.GMUSAGE_INVALID.getValue()); // temporary
-																														// marking
+																											// marking
 			}
 		}
 
@@ -55,4 +56,5 @@ public class gm_fe_check_property_argument_usage extends gm_compile_step {
 	public static gm_compile_step get_factory() {
 		return new gm_fe_check_property_argument_usage();
 	}
+	
 }

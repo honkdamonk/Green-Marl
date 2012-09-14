@@ -12,9 +12,10 @@ import common.gm_apply;
 
 public class gm_fe_check_argmin_lhs_consistency extends gm_apply {
 
+	private boolean _is_okay = true;
+
 	public gm_fe_check_argmin_lhs_consistency() {
 		set_for_sent(true);
-		_is_okay = true;
 	}
 
 	public final boolean is_okay() {
@@ -56,6 +57,4 @@ public class gm_fe_check_argmin_lhs_consistency extends gm_apply {
 		return true;
 	}
 
-	private boolean _is_okay;
 }
-// bool gm_frontend::do_typecheck_step5_check_assign(ast_procdef* p)

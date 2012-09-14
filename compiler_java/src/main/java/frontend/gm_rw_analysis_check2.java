@@ -5,7 +5,7 @@ import ast.ast_sent;
 import ast.gm_rwinfo_map;
 
 public class gm_rw_analysis_check2 {
-		
+
 	// ==================================================================
 	// For depenendcy detection
 	// ==================================================================
@@ -40,7 +40,7 @@ public class gm_rw_analysis_check2 {
 		assert S != null;
 		return gm_rw_analysis.get_rwinfo_sets(S).write_set;
 	}
-	
+
 	public static boolean gm_has_dependency(gm_rwinfo_sets P_SET, gm_rwinfo_sets Q_SET) {
 
 		gm_rwinfo_map P_R = P_SET.read_set;
@@ -75,7 +75,7 @@ public class gm_rw_analysis_check2 {
 
 		return false;
 	}
-	
+
 	public static boolean gm_has_dependency(ast_sent P, ast_sent Q) {
 		assert P.get_nodetype() != AST_NODE_TYPE.AST_VARDECL; // temporary hack
 

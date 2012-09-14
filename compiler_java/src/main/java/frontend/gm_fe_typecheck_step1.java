@@ -4,10 +4,12 @@ import inc.gm_compile_step;
 import ast.ast_procdef;
 
 public class gm_fe_typecheck_step1 extends gm_compile_step {
+
 	private gm_fe_typecheck_step1() {
 		set_description("Typecheck: check symbols");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		gm_typechecker_stage_1 T = new gm_typechecker_stage_1();
 		p.traverse_pre(T); // pre-apply: for SENT and for EXPR

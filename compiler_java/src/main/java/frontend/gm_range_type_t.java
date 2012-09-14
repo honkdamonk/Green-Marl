@@ -9,8 +9,6 @@ package frontend;
 // (however, doubly bound reductions are checked in this phase)
 //----------------------------------------------------------
 
-
-
 //-----------------------------------------------------------------
 // Read-Write Analysis 
 //
@@ -57,23 +55,12 @@ package frontend;
 // Note. Same variable may have multiple WSET/RSET entries
 //-----------------------------------------------------------------
 
-public enum gm_range_type_t
-{
+public enum gm_range_type_t {
 	GM_RANGE_LINEAR, // G.Nodes or G.Edges
-	GM_RANGE_RANDOM, // G.Nbrs, ...  (or access via non-iterator variable)
+	GM_RANGE_RANDOM, // G.Nbrs, ... (or access via non-iterator variable)
 	GM_RANGE_SINGLE, // t.X, t is a fixed iterator
 	GM_RANGE_LEVEL, // BFS iteration
 	GM_RANGE_LEVEL_UP, // BFS iteration, up level
 	GM_RANGE_LEVEL_DOWN, // BFS iteration, down level
 	GM_RANGE_INVALID;
-
-	public int getValue()
-	{
-		return this.ordinal();
-	}
-
-	public static gm_range_type_t forValue(int value)
-	{
-		return values()[value];
-	}
 }

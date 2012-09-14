@@ -15,13 +15,13 @@ import java.util.LinkedList;
 import ast.gm_rwinfo_map;
 
 public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
-	
+
 	private LinkedList<gps_intra_merge_candidate_t> cands;
 	private LinkedList<gm_gps_basic_block> stack = new LinkedList<gm_gps_basic_block>();
 	private int current_trace_head = -1;
 	private gm_gps_basic_block curr_head = null;
 	private gm_gps_basic_block curr_tail = null;
-	
+
 	public gps_find_intra_merge_candidate_t(LinkedList<gps_intra_merge_candidate_t> L) {
 		cands = new LinkedList<gps_intra_merge_candidate_t>(L);
 	}
@@ -68,19 +68,19 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 
 				int i = 0;
 				p1 = stack.get(i);
-				if(!p1.is_vertex()) {
+				if (!p1.is_vertex()) {
 					s0 = p1;
 					i++;
 					p1 = stack.get(i);
 				}
-				
+
 				i++;
 				s1 = stack.get(i);
 				i = stack.size() - 1;
 				s2 = stack.get(i);
 				i--;
 				p2 = stack.get(i);
-				
+
 				boolean is_okay = false;
 				if (p1.is_vertex() && p2.is_vertex() && !s1.is_vertex() && !s2.is_vertex() && ((s0 == null) || (!s0.is_vertex()))) {
 					is_okay = true;
@@ -89,8 +89,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 				// check PAR1 contains no receive
 				if (p1.has_receiver())
 					is_okay = false;
-				else if (p2.find_info_bool(GPS_FLAG_HAS_COMMUNICATION)
-						|| p2.find_info_bool(GPS_FLAG_HAS_COMMUNICATION_RANDOM))
+				else if (p2.find_info_bool(GPS_FLAG_HAS_COMMUNICATION) || p2.find_info_bool(GPS_FLAG_HAS_COMMUNICATION_RANDOM))
 					is_okay = false;
 
 				gm_rwinfo_sets rwi = null;
@@ -124,15 +123,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 						// check dependency between p1 and s0
 						if (gm_rw_analysis_check2.gm_has_dependency(rwi_0, rwi))
 							is_okay = false;
-
-						if (rwi_0 != null)
-							rwi_0.dispose();
-						if (rwi_s1 != null)
-							rwi_s1.dispose();
 					}
-
-					if (rwi_n != null)
-						rwi_n.dispose();
 				}
 
 				if (is_okay) {
@@ -176,12 +167,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 					// check if future is modified
 					is_okay = !gm_rw_analysis_check2.gm_does_intersect(rwi.write_set, rwi2.read_set);
 
-					if (rwi2 != null)
-						rwi2.dispose();
 				}
-
-				if (rwi != null)
-					rwi.dispose();
 
 				if (is_okay) {
 					gps_intra_merge_candidate_t C = new gps_intra_merge_candidate_t();
@@ -204,7 +190,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 		current_trace_head = -1;
 		curr_head = null;
 	}
-	
+
 	private static boolean check_if_argument_is_modified(gm_rwinfo_map M) {
 		for (gm_symtab_entry e : M.keySet()) {
 			if (e.isArgument())
@@ -212,7 +198,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 		}
 		return false;
 	}
-	
+
 	private static gm_rwinfo_sets gm_gps_get_rwinfo_from_all_reachable_bb(gm_gps_basic_block BB, gm_rwinfo_sets S) {
 		return gm_gps_get_rwinfo_from_all_reachable_bb(BB, S, false);
 	}
@@ -231,11 +217,11 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 		T.set_check_receiver(check_receivers);
 
 		// post && pre
-		gm_gps_misc.gps_bb_traverse_ast(BB, T, true, true); 
+		gm_gps_misc.gps_bb_traverse_ast(BB, T, true, true);
 
 		return S;
 	}
-	
+
 	private static gm_rwinfo_sets gm_gps_get_rwinfo_from_bb(gm_gps_basic_block BB, gm_rwinfo_sets S) {
 		return gm_gps_get_rwinfo_from_bb(BB, S, false);
 	}
@@ -257,7 +243,7 @@ public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 
 		return S;
 	}
-	
+
 	private static void gps_bb_traverse_ast_single(gm_gps_basic_block entry, gps_apply_bb_ast apply, boolean is_post, boolean is_pre) {
 		apply.set_is_post(is_post);
 		apply.set_is_pre(is_pre);

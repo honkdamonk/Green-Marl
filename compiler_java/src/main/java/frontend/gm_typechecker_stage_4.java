@@ -36,6 +36,7 @@ public class gm_typechecker_stage_4 extends gm_apply {
 		ret_type = r_type;
 	}
 
+	@Override
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;

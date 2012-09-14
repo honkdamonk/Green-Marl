@@ -47,10 +47,11 @@ import common.gm_method_id_t;
 public class gm_typechecker_stage_3 extends gm_apply {
 
 	/** expression, dest-type */
-	public HashMap<ast_expr, GMTYPE_T> coercion_targets = new HashMap<ast_expr, GMTYPE_T>();
+	public final HashMap<ast_expr, GMTYPE_T> coercion_targets = new HashMap<ast_expr, GMTYPE_T>();
+
+	private boolean _is_okay = true;
 
 	public gm_typechecker_stage_3() {
-		_is_okay = true;
 		set_for_expr(true);
 		set_for_sent(true);
 	}
@@ -218,32 +219,32 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		}
 		return true;
 	}
-	
+
 	private GMTYPE_T resolveGenericInputType(ast_expr_builtin b, int argPosition) {
 
-	    gm_builtin_def def = b.get_builtin_def();
-	    ast_id driver = b.get_driver();
-	    assert(driver.getTypeSummary() == GMTYPE_MAP);
-	    // we only support maps atm
-	    ast_typedecl typeDecl = driver.getTypeInfo();
-	    ast_maptypedecl mapTypeDecl = (ast_maptypedecl) typeDecl;
-	    if (def.genericArgumentTypeIsKeyType(argPosition))
-	        return mapTypeDecl.getKeyTypeSummary();
-	    else
-	        return mapTypeDecl.getValueTypeSummary();
+		gm_builtin_def def = b.get_builtin_def();
+		ast_id driver = b.get_driver();
+		assert (driver.getTypeSummary() == GMTYPE_MAP);
+		// we only support maps atm
+		ast_typedecl typeDecl = driver.getTypeInfo();
+		ast_maptypedecl mapTypeDecl = (ast_maptypedecl) typeDecl;
+		if (def.genericArgumentTypeIsKeyType(argPosition))
+			return mapTypeDecl.getKeyTypeSummary();
+		else
+			return mapTypeDecl.getValueTypeSummary();
 	}
 
 	private GMTYPE_T tryResolveUnknownType(GMTYPE_T type) {
-	    switch (type) {
-	        case GMTYPE_COLLECTIONITER_SET:
-	            return GMTYPE_NSET;
-	        case GMTYPE_COLLECTIONITER_ORDER:
-	            return GMTYPE_NORDER;
-	        case GMTYPE_COLLECTIONITER_SEQ:
-	            return GMTYPE_NSEQ;
-	        default:
-	            return type;
-	    }
+		switch (type) {
+		case GMTYPE_COLLECTIONITER_SET:
+			return GMTYPE_NSET;
+		case GMTYPE_COLLECTIONITER_ORDER:
+			return GMTYPE_NORDER;
+		case GMTYPE_COLLECTIONITER_SEQ:
+			return GMTYPE_NSEQ;
+		default:
+			return type;
+		}
 	}
 
 	public final void set_okay(boolean b) {
@@ -253,8 +254,6 @@ public class gm_typechecker_stage_3 extends gm_apply {
 	public final boolean is_okay() {
 		return _is_okay;
 	}
-
-	private boolean _is_okay;
 
 	// type resolve for u-op
 	private boolean check_uop(ast_expr e) {
@@ -434,32 +433,32 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		// now check the binary part of the expression
 		return check_binary(e);
 	}
-	
+
 	private boolean resolveGenericOutputType(ast_expr_builtin b) {
-	    gm_builtin_def def = b.get_builtin_def();
-	    ast_id driver = b.get_driver();
-	    assert(driver.getTypeSummary() == GMTYPE_MAP);
-	    ast_typedecl typeDecl = driver.getTypeInfo();
-	    assert(typeDecl.is_map());
-	    ast_maptypedecl mapTypeDecl = (ast_maptypedecl) typeDecl;
-	    GMTYPE_T funcReturnType;
-	    if (def.genericTypeIsKeyType())
-	        funcReturnType = mapTypeDecl.getKeyTypeSummary();
-	    else
-	        funcReturnType = mapTypeDecl.getValueTypeSummary();
+		gm_builtin_def def = b.get_builtin_def();
+		ast_id driver = b.get_driver();
+		assert (driver.getTypeSummary() == GMTYPE_MAP);
+		ast_typedecl typeDecl = driver.getTypeInfo();
+		assert (typeDecl.is_map());
+		ast_maptypedecl mapTypeDecl = (ast_maptypedecl) typeDecl;
+		GMTYPE_T funcReturnType;
+		if (def.genericTypeIsKeyType())
+			funcReturnType = mapTypeDecl.getKeyTypeSummary();
+		else
+			funcReturnType = mapTypeDecl.getValueTypeSummary();
 
-	    b.set_type_summary(funcReturnType);
+		b.set_type_summary(funcReturnType);
 
-	    if (funcReturnType.has_target_graph_type()) {
-	        gm_symtab_entry graph;
-	        if (def.genericTypeIsKeyType())
-	            graph = mapTypeDecl.get_key_type().get_target_graph_sym();
-	        else
-	            graph = mapTypeDecl.get_value_type().get_target_graph_sym();
-	        b.set_bound_graph(graph);
-	    }
+		if (funcReturnType.has_target_graph_type()) {
+			gm_symtab_entry graph;
+			if (def.genericTypeIsKeyType())
+				graph = mapTypeDecl.get_key_type().get_target_graph_sym();
+			else
+				graph = mapTypeDecl.get_value_type().get_target_graph_sym();
+			b.set_bound_graph(graph);
+		}
 
-	    return true;
+		return true;
 	}
 
 	private boolean check_builtin(ast_expr_builtin b) {
@@ -467,11 +466,11 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		boolean okay = check_arguments(b);
 		gm_builtin_def def = b.get_builtin_def();
 		GMTYPE_T fun_ret_type = def.get_result_type_summary();
-		
-		if(fun_ret_type == GMTYPE_GENERIC) {
+
+		if (fun_ret_type == GMTYPE_GENERIC) {
 			return resolveGenericOutputType(b);
 		}
-		
+
 		b.set_type_summary(fun_ret_type);
 
 		if (fun_ret_type.has_target_graph_type()) {
@@ -495,15 +494,15 @@ public class gm_typechecker_stage_3 extends gm_apply {
 		for (ast_expr e : args) {
 			GMTYPE_T currentType = e.get_type_summary();
 			GMTYPE_T def_type = def.get_arg_type(position);
-			if(def_type == GMTYPE_T.GMTYPE_GENERIC) {
+			if (def_type == GMTYPE_T.GMTYPE_GENERIC) {
 				def_type = resolveGenericInputType(b, position);
 			} else if (currentType.is_unknown_type()) {
 				okay = false;
 				continue;
 			}
-			
+
 			currentType = tryResolveUnknownType(currentType);
-			
+
 			boolean isCompatible;
 			RefObject<Boolean> warning_ref = new RefObject<Boolean>(null);
 			RefObject<GMTYPE_T> coerced_type_ref = new RefObject<GMTYPE_T>(null);

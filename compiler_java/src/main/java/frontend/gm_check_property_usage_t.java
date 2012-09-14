@@ -25,13 +25,12 @@ import common.gm_apply;
  */
 public class gm_check_property_usage_t extends gm_apply {
 
-	private HashSet<gm_symtab_entry> under_current_linear_update = new HashSet<gm_symtab_entry>();
-	private gm_symtab_entry topmost_iterator;
-	private LinkedList<ast_sent> condition_stack = new LinkedList<ast_sent>();
-	private LinkedList<ast_sent> random_iter_stack = new LinkedList<ast_sent>();
+	private final HashSet<gm_symtab_entry> under_current_linear_update = new HashSet<gm_symtab_entry>();
+	private gm_symtab_entry topmost_iterator = null;
+	private final LinkedList<ast_sent> condition_stack = new LinkedList<ast_sent>();
+	private final LinkedList<ast_sent> random_iter_stack = new LinkedList<ast_sent>();
 
 	public gm_check_property_usage_t() {
-		topmost_iterator = null;
 		set_separate_post_apply(true);
 		set_for_sent(true);
 		set_for_expr(true);

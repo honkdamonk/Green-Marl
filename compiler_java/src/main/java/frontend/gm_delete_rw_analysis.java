@@ -12,17 +12,13 @@ import common.gm_apply;
 // (procedure locally) gather rw info and save it into each ast node.
 //----------------------------------------------------------------------
 //bool gm_frontend::do_rw_analysis(ast_procdef* p)
-
 //===========================================================================
-
 public class gm_delete_rw_analysis extends gm_apply {
-	
+
 	@Override
 	public boolean apply(ast_sent n) {
 		gm_rwinfo_sets rwi = (gm_rwinfo_sets) n.find_info(gm_rw_analysis.GM_INFOKEY_RW);
 		if (rwi != null) {
-			if (rwi != null)
-				rwi.dispose();
 			n.add_info(gm_rw_analysis.GM_INFOKEY_RW, null);
 		}
 		if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {

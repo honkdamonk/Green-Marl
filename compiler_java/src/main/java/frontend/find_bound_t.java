@@ -38,8 +38,7 @@ package frontend;
 //
 //-----------------------------------------------------------------
 
-public class find_bound_t
-{
+public class find_bound_t {
 	public gm_symtab v_scope;
 	public gm_symtab f_scope;
 	public boolean is_par;

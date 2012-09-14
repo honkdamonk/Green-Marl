@@ -609,28 +609,20 @@ public class gm_rw_analysis extends gm_apply {
 
 					is_error = is_reduce_error(e2, new_entry);
 					if (is_error) {
-						if (new_entry != null)
-							new_entry.dispose(); // not required
 						return false;
 					}
 
 				}
 
 				if (is_same_entry(e2, new_entry)) {
-					if (new_entry != null)
-						new_entry.dispose(); // not required
 					return true;
 				} // old entry is wider
 				else if (is_wider_entry(new_entry, e2)) {
-					if (new_entry != null)
-						new_entry.dispose(); // drop new entry
 					return true;
 				} // new_entry is wider
 				else if (is_wider_entry(e2, new_entry)) {
 					// hack. copy new entry into old one
 					e2.copyFrom(new_entry);
-					if (new_entry != null)
-						new_entry.dispose(); // not required
 					return true;
 				}
 
@@ -648,10 +640,6 @@ public class gm_rw_analysis extends gm_apply {
 	 */
 	public static void gm_delete_rwinfo_map(gm_rwinfo_map m) {
 		for (gm_rwinfo_list l : m.values()) {
-			for (gm_rwinfo j : l) {
-				if (j != null)
-					j.dispose();
-			}
 			l.clear();
 		}
 		m.clear();

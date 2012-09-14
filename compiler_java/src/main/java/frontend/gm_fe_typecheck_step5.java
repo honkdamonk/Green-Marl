@@ -17,6 +17,7 @@ public class gm_fe_typecheck_step5 extends gm_compile_step {
 		set_description("Typecheck: check assignments and call-sites");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		gm_typechecker_stage_5 T = new gm_typechecker_stage_5();
 		T.set_return_type(p.get_return_type());

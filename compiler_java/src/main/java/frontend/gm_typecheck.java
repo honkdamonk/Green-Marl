@@ -5,7 +5,7 @@ import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 
 public class gm_typecheck {
-	
+
 	public static final boolean GM_READ_AVAILABLE = true;
 	public static final boolean GM_READ_NOT_AVAILABLE = false;
 	public static final boolean GM_WRITE_AVAILABLE = true;
@@ -14,7 +14,7 @@ public class gm_typecheck {
 	// ----------------------------------------------------------------------------------------------------------------
 	// Utility functions (Type summary)
 	// ----------------------------------------------------------------------------------------------------------------
-	
+
 	/** check the byte size of two numeric type */
 	public static int gm_compare_numeric_type_size(GMTYPE_T t1, GMTYPE_T t2) {
 		// GMTYPE_... is defined as small to larger

@@ -35,16 +35,15 @@ import common.gm_error;
 import common.gm_apply;
 
 /**
-* Traverse a subtree S. Assuming S is executed in parallel.
-* Find and report any conflicts in S.
-*/
+ * Traverse a subtree S. Assuming S is executed in parallel. Find and report any
+ * conflicts in S.
+ */
 public class gm_check_conf_t extends gm_apply {
-	
-	boolean is_okay;
-	private LinkedList<conf_info_t> Report = new LinkedList<conf_info_t>();
+
+	boolean is_okay = true;
+	private final LinkedList<conf_info_t> Report = new LinkedList<conf_info_t>();
 
 	public gm_check_conf_t() {
-		is_okay = true;
 		set_for_sent(true);
 	}
 
@@ -58,17 +57,23 @@ public class gm_check_conf_t extends gm_apply {
 			ast_sent body = fe.get_body();
 
 			gm_rwinfo_map R = gm_rw_analysis.get_rwinfo_sets(fe).read_set; // body
-																															// +
-																															// filter
+																			// +
+																			// filter
 			gm_rwinfo_map W = gm_rw_analysis.get_rwinfo_sets(body).write_set;
 			gm_rwinfo_map D = gm_rw_analysis.get_rwinfo_sets(body).reduce_set;
 			gm_rwinfo_map M = gm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
-			check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W																												// (warning)
-			check_rw_conf_error(W, W, gm_conflict_t.WW_CONFLICT, Report); // W-W																												// (warning)
-			check_rw_conf_error(R, M, gm_conflict_t.RM_CONFLICT, Report); // R-M																												// (warning)
+			check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W
+																			// //
+																			// (warning)
+			check_rw_conf_error(W, W, gm_conflict_t.WW_CONFLICT, Report); // W-W
+																			// //
+																			// (warning)
+			check_rw_conf_error(R, M, gm_conflict_t.RM_CONFLICT, Report); // R-M
+																			// //
+																			// (warning)
 			check_rw_conf_error(M, M, gm_conflict_t.MM_CONFLICT, Report); // M-M
-			//(warning)
+			// (warning)
 			is_okay = is_okay && check_rw_conf_error(R, D, gm_conflict_t.RD_CONFLICT, Report); // R-D
 			is_okay = is_okay && check_rw_conf_error(W, D, gm_conflict_t.WD_CONFLICT, Report); // W-D
 			is_okay = is_okay && check_rw_conf_error(W, M, gm_conflict_t.WM_CONFLICT, Report); // W-M
@@ -119,12 +124,20 @@ public class gm_check_conf_t extends gm_apply {
 				gm_rwinfo_map D = gm_rw_analysis.get_rwinfo_sets(body).reduce_set;
 				gm_rwinfo_map M = gm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
-				check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W																													// (warning)
-				check_rw_conf_error(R_filter, W, gm_conflict_t.RW_CONFLICT, Report); // R-W																														// (warning)
-				check_rw_conf_error(W, W, gm_conflict_t.WW_CONFLICT, Report); // W-W																													// (warning)
-				check_rw_conf_error(R, M, gm_conflict_t.RM_CONFLICT, Report); // R-M																													// (warning)
+				check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W
+																				// //
+																				// (warning)
+				check_rw_conf_error(R_filter, W, gm_conflict_t.RW_CONFLICT, Report); // R-W
+																						// //
+																						// (warning)
+				check_rw_conf_error(W, W, gm_conflict_t.WW_CONFLICT, Report); // W-W
+																				// //
+																				// (warning)
+				check_rw_conf_error(R, M, gm_conflict_t.RM_CONFLICT, Report); // R-M
+																				// //
+																				// (warning)
 				check_rw_conf_error(M, M, gm_conflict_t.MM_CONFLICT, Report); // M-M
-																													// (warning)
+																				// (warning)
 				is_okay = is_okay && check_rw_conf_error(R, D, gm_conflict_t.RD_CONFLICT, Report); // R-D
 				is_okay = is_okay && check_rw_conf_error(R_filter, D, gm_conflict_t.RD_CONFLICT, Report); // R-D
 				is_okay = is_okay && check_rw_conf_error(W, D, gm_conflict_t.WD_CONFLICT, Report); // W-D
@@ -145,12 +158,20 @@ public class gm_check_conf_t extends gm_apply {
 				// printf("R:");gm_print_rwinfo_set(R);
 				// printf("D:");gm_print_rwinfo_set(D);
 
-				check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W																													// (warning)
-				check_rw_conf_error(R_filter, W, gm_conflict_t.RW_CONFLICT, Report); // R-W																														// (warning)
-				check_rw_conf_error(W, W, gm_conflict_t.WW_CONFLICT, Report); // W-W																													// (warning)
-				check_rw_conf_error(R, M, gm_conflict_t.RM_CONFLICT, Report); // R-M																													// (warning)
+				check_rw_conf_error(R, W, gm_conflict_t.RW_CONFLICT, Report); // R-W
+																				// //
+																				// (warning)
+				check_rw_conf_error(R_filter, W, gm_conflict_t.RW_CONFLICT, Report); // R-W
+																						// //
+																						// (warning)
+				check_rw_conf_error(W, W, gm_conflict_t.WW_CONFLICT, Report); // W-W
+																				// //
+																				// (warning)
+				check_rw_conf_error(R, M, gm_conflict_t.RM_CONFLICT, Report); // R-M
+																				// //
+																				// (warning)
 				check_rw_conf_error(M, M, gm_conflict_t.MM_CONFLICT, Report); // M-M
-																													// (warning)
+																				// (warning)
 				is_okay = is_okay && check_rw_conf_error(R, D, gm_conflict_t.RD_CONFLICT, Report); // R-D
 				is_okay = is_okay && check_rw_conf_error(R_filter, D, gm_conflict_t.RD_CONFLICT, Report); // R-D
 				is_okay = is_okay && check_rw_conf_error(W, D, gm_conflict_t.WD_CONFLICT, Report); // W-D
@@ -160,12 +181,13 @@ public class gm_check_conf_t extends gm_apply {
 
 		return true;
 	}
-	
+
 	/**
-	* [todo] Handling Scalar conflict (need scope info as well)
-	* check if two sets may conflict with each other
-	* @return is_okay.
-	*/
+	 * [todo] Handling Scalar conflict (need scope info as well) check if two
+	 * sets may conflict with each other
+	 * 
+	 * @return is_okay.
+	 */
 	private static boolean check_rw_conf_error(gm_rwinfo_map S1, gm_rwinfo_map S2, gm_conflict_t conf_type, LinkedList<conf_info_t> Report) {
 		boolean is_okay = true;
 		boolean is_warning;
@@ -239,7 +261,7 @@ public class gm_check_conf_t extends gm_apply {
 		}
 		return is_okay;
 	}
-	
+
 	private static boolean is_reported(LinkedList<conf_info_t> errors, gm_symtab_entry t, gm_symtab_entry b, gm_conflict_t y) {
 		for (conf_info_t db : errors) {
 			if ((db.sym1 == t) && (db.sym2 == b) && (db.conflict_type == y))
@@ -255,14 +277,14 @@ public class gm_check_conf_t extends gm_apply {
 		T.conflict_type = conf_type;
 		errors.addLast(T);
 	}
-	
+
 	/**
-	* Examine two lists (for the same symbol)
-	* @return true if conflict
-	* <li>If they have different level, they do not conflict
-	* <li>(R-W, W-W) If they have the same driver, they do not conflict
-	* <li>(R-D) => If D is 'deferring write', no conflict
-	*/
+	 * Examine two lists (for the same symbol)
+	 * 
+	 * @return true if conflict <li>If they have different level, they do not
+	 *         conflict <li>(R-W, W-W) If they have the same driver, they do not
+	 *         conflict <li>(R-D) => If D is 'deferring write', no conflict
+	 */
 	private static int check_leveled_access(gm_rwinfo e1) {
 		// -----------------------
 		// -1: no level

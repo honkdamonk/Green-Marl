@@ -1,6 +1,7 @@
 package inc;
 
 import java.util.LinkedList;
+import java.util.List;
 
 import ast.ast_assign;
 import ast.ast_expr;
@@ -15,12 +16,19 @@ import frontend.gm_symtab_entry;
 
 public class nop_reduce_scalar extends ast_nop {
 
+	private List<gm_symtab_entry> old_s = new LinkedList<gm_symtab_entry>();
+	private List<gm_symtab_entry> new_s = new LinkedList<gm_symtab_entry>();
+	private List<GM_REDUCE_T> reduce_op = new LinkedList<GM_REDUCE_T>();
+	// supplimental lhs for argmin/argmax
+	private List<LinkedList<gm_symtab_entry>> old_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
+	private List<LinkedList<gm_symtab_entry>> new_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
+
 	public nop_reduce_scalar() {
 		super(nop_enum_cpp.NOP_REDUCE_SCALAR);
 	}
 
-	public void set_symbols(LinkedList<gm_symtab_entry> O, LinkedList<gm_symtab_entry> N, LinkedList<GM_REDUCE_T> R,
-			LinkedList<LinkedList<gm_symtab_entry>> O_S, LinkedList<LinkedList<gm_symtab_entry>> N_S) {
+	public void set_symbols(List<gm_symtab_entry> O, List<gm_symtab_entry> N, List<GM_REDUCE_T> R, List<LinkedList<gm_symtab_entry>> O_S,
+			List<LinkedList<gm_symtab_entry>> N_S) {
 		// shallow copy the whole list
 		old_s = O;
 		new_s = N;
@@ -105,12 +113,4 @@ public class nop_reduce_scalar extends ast_nop {
 		}
 	}
 
-	public LinkedList<gm_symtab_entry> old_s = new LinkedList<gm_symtab_entry>();
-	public LinkedList<gm_symtab_entry> new_s = new LinkedList<gm_symtab_entry>();
-	public LinkedList<GM_REDUCE_T> reduce_op = new LinkedList<GM_REDUCE_T>();
-	public LinkedList<LinkedList<gm_symtab_entry>> old_supple = new LinkedList<LinkedList<gm_symtab_entry>>(); // supplimental
-																												// lhs
-																												// for
-																												// argmin/argmax
-	public LinkedList<LinkedList<gm_symtab_entry>> new_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
 }

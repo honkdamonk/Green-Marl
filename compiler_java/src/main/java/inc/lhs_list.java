@@ -1,10 +1,10 @@
 package inc;
 
+import java.util.LinkedList;
+
 import ast.ast_node;
 
-
-public class lhs_list
-{
+public class lhs_list {
 	// temporary class used only during parsing
-	public java.util.LinkedList<ast_node> LIST = new java.util.LinkedList<ast_node>();
+	public LinkedList<ast_node> LIST = new LinkedList<ast_node>();
 }

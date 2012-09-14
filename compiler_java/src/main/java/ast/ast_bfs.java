@@ -1,11 +1,15 @@
 package ast;
 
+import static inc.GMTYPE_T.GMTYPE_NODEITER_BFS;
+import static inc.GMTYPE_T.GMTYPE_NODEITER_IN_NBRS;
+import static inc.GMTYPE_T.GMTYPE_NODEITER_NBRS;
 import inc.GMTYPE_T;
+
 import common.gm_apply;
 
 // BFS or DFS
 public class ast_bfs extends ast_sent {
-	
+
 	private ast_sentblock f_body = null;
 	private ast_sentblock b_body = null;
 
@@ -16,15 +20,16 @@ public class ast_bfs extends ast_sent {
 	private ast_id iter = null;
 	private ast_id src = null;
 	private ast_id root = null;
-	private ast_id iter2 = null; // iterator used for frontier expansion [xxx] what?
+	private ast_id iter2 = null; // iterator used for frontier expansion [xxx]
+									// what?
 	private boolean use_transpose = false;
 	private boolean _bfs = true;
-	
+
 	protected ast_bfs() {
 		super(AST_NODE_TYPE.AST_BFS);
 		create_symtabs();
 	}
-	
+
 	public static ast_bfs new_bfs(ast_id it, ast_id src, ast_id root, ast_expr navigator, ast_expr f_filter, ast_expr b_filter, ast_sentblock fb,
 			ast_sentblock bb, boolean use_tp) {
 		return new_bfs(it, src, root, navigator, f_filter, b_filter, fb, bb, use_tp, true);
@@ -128,12 +133,14 @@ public class ast_bfs extends ast_sent {
 	}
 
 	public final void set_fbody(ast_sentblock b) {
-		if (b != null) b.set_parent(this);
+		if (b != null)
+			b.set_parent(this);
 		f_body = b;
 	}
 
 	public final void set_bbody(ast_sentblock b) {
-		if (b != null) b.set_parent(this);
+		if (b != null)
+			b.set_parent(this);
 		b_body = b;
 	}
 
@@ -260,11 +267,11 @@ public class ast_bfs extends ast_sent {
 	}
 
 	public final GMTYPE_T get_iter_type() {
-		return GMTYPE_T.GMTYPE_NODEITER_BFS;
+		return GMTYPE_NODEITER_BFS;
 	}
 
 	public final GMTYPE_T get_iter_type2() {
-		return is_transpose() ? GMTYPE_T.GMTYPE_NODEITER_IN_NBRS : GMTYPE_T.GMTYPE_NODEITER_NBRS;
+		return is_transpose() ? GMTYPE_NODEITER_IN_NBRS : GMTYPE_NODEITER_NBRS;
 	}
 
 	@Override

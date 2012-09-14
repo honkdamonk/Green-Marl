@@ -1,7 +1,5 @@
 package frontend;
 
-import static backend_cpp.DefineConstants.GM_BLTIN_MUTATE_GROW;
-import static backend_cpp.DefineConstants.GM_BLTIN_MUTATE_SHRINK;
 import static frontend.gm_range_type_t.GM_RANGE_LEVEL;
 import static frontend.gm_range_type_t.GM_RANGE_LEVEL_DOWN;
 import static frontend.gm_range_type_t.GM_RANGE_LEVEL_UP;
@@ -51,6 +49,9 @@ import common.gm_traverse;
 // (Should be 'post-applying')
 //----------------------------------------------------
 public class gm_rw_analysis extends gm_apply {
+	
+	private static final int GM_BLTIN_MUTATE_GROW = 1;
+	private static final int GM_BLTIN_MUTATE_SHRINK = 2;
 	
 	private boolean _succ = true;
 	

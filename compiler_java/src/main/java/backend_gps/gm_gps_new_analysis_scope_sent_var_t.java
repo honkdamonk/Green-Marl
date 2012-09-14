@@ -40,9 +40,22 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 		// ---------------------------------------------------------------------------
 		// This information is redundant at this moment. Need to be clear up
 		// ---------------------------------------------------------------------------
-		add_syminfo_struct(e, (symtab_type != SYMTAB_TYPES.GM_SYMTAB_FIELD),
-				(current_scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_GLOBAL) ? gm_gps_scope_t.GPS_SCOPE_GLOBAL
-						: (current_scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN) ? gm_gps_scope_t.GPS_SCOPE_INNER : gm_gps_scope_t.GPS_SCOPE_OUTER);
+		gm_gps_scope_t s;
+		switch (current_scope) {
+		case GPS_NEW_SCOPE_GLOBAL:
+			s = gm_gps_scope_t.GPS_SCOPE_GLOBAL;
+			break;
+		case GPS_NEW_SCOPE_IN:
+			s = gm_gps_scope_t.GPS_SCOPE_INNER;
+			break;
+		case GPS_NEW_SCOPE_EDGE:
+		case GPS_NEW_SCOPE_RANDOM:
+		case GPS_NEW_SCOPE_OUT:
+		default:
+			s = gm_gps_scope_t.GPS_SCOPE_OUTER;
+			break;
+		}
+		add_syminfo_struct(e, (symtab_type != SYMTAB_TYPES.GM_SYMTAB_FIELD), s);
 
 		return true;
 	}

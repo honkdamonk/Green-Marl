@@ -1,5 +1,7 @@
 package common;
 
+import java.util.HashSet;
+
 import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
@@ -8,8 +10,11 @@ import frontend.gm_symtab_entry;
 // remove set of symbols
 //---------------------------------------------------------------------------
 public class gm_remove_symbols_t extends gm_apply {
-	public gm_remove_symbols_t(java.util.HashSet<gm_symtab_entry> S) {
-		this.TARGETS = new java.util.HashSet<gm_symtab_entry>(S);
+	
+	private HashSet<gm_symtab_entry> TARGETS = new HashSet<gm_symtab_entry>();
+	
+	public gm_remove_symbols_t(HashSet<gm_symtab_entry> S) {
+		TARGETS = new HashSet<gm_symtab_entry>(S);
 		set_for_symtab(true);
 	}
 
@@ -20,9 +25,7 @@ public class gm_remove_symbols_t extends gm_apply {
 				e.remove_entry_in_the_tab(t);
 			}
 		}
-
 		return true;
 	}
 
-	private java.util.HashSet<gm_symtab_entry> TARGETS = new java.util.HashSet<gm_symtab_entry>();
 }

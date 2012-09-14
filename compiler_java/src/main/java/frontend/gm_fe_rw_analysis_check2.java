@@ -42,6 +42,7 @@ public class gm_fe_rw_analysis_check2 extends gm_compile_step {
 		set_description("Check RW conflict errors");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		set_okay(gm_check_parall_conflict_error(p.get_body()));
 	}

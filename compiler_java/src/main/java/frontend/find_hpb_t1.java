@@ -1,5 +1,7 @@
 package frontend;
 
+import java.util.HashMap;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -34,14 +36,16 @@ import common.gm_apply;
  * } }</code><br>
  */
 public class find_hpb_t1 extends gm_apply {
-	// ------------------------
-	// make a big table
-	// each symbol -> depth
-	// ------------------------
-	public find_hpb_t1() {
-		current_depth = 0;
-	}
 
+	private int current_depth = 0;
+
+	/** map of symbol & depth */
+	private final HashMap<gm_symtab_entry, Integer> depth_map = new HashMap<gm_symtab_entry, Integer>();
+
+	/** map of iterator symbol & is parallel */
+	private final HashMap<gm_symtab_entry, Boolean> para_iter_map = new HashMap<gm_symtab_entry, Boolean>();
+
+	@Override
 	public final void begin_context(ast_node t) {
 		if (t.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) t;
@@ -57,6 +61,7 @@ public class find_hpb_t1 extends gm_apply {
 		}
 	}
 
+	@Override
 	public final void end_context(ast_node t) {
 		if (t.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) t;
@@ -183,17 +188,4 @@ public class find_hpb_t1 extends gm_apply {
 		return HPB;
 	}
 
-	private int current_depth;
-	private java.util.HashMap<gm_symtab_entry, Integer> depth_map = new java.util.HashMap<gm_symtab_entry, Integer>(); // map
-																														// of
-																														// symbol
-																														// &
-																														// depth
-	private java.util.HashMap<gm_symtab_entry, Boolean> para_iter_map = new java.util.HashMap<gm_symtab_entry, Boolean>(); // map
-																															// of
-																															// iterator
-																															// symbol
-																															// &
-																															// is
-																															// parallel
 }

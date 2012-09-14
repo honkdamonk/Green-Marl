@@ -31,7 +31,6 @@ public class gm_symtab_entry {
 		this.type = _type;
 		this.isRA = _isRA;
 		this.isWA = _isWA;
-		this.isArg = false;
 		id.setSymInfo(this, true);
 		assert type != null;
 		assert id.get_name() != null;

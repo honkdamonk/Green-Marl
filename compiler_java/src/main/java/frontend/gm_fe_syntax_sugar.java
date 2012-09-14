@@ -17,6 +17,7 @@ public class gm_fe_syntax_sugar extends gm_compile_step {
 		set_description("Regularize syntax (without typeinfo)");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		gm_ss1_filter s1 = new gm_ss1_filter();
 		gm_traverse.gm_traverse_sents(p, s1);

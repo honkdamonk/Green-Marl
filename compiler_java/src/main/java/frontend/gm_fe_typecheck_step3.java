@@ -9,10 +9,12 @@ import ast.ast_expr;
 import ast.ast_procdef;
 
 public class gm_fe_typecheck_step3 extends gm_compile_step {
+
 	private gm_fe_typecheck_step3() {
 		set_description("Typecheck: resolve expression types");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		gm_typechecker_stage_3 T = new gm_typechecker_stage_3();
 		p.traverse_post(T); // post-apply
@@ -36,7 +38,7 @@ public class gm_fe_typecheck_step3 extends gm_compile_step {
 	public static gm_compile_step get_factory() {
 		return new gm_fe_typecheck_step3();
 	}
-	
+
 	private static void insert_explicit_type_conversion_for_op(HashMap<ast_expr, GMTYPE_T> coercion_targets) {
 		for (ast_expr t : coercion_targets.keySet()) {
 			GMTYPE_T dest_type = coercion_targets.get(t);

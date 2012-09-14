@@ -16,9 +16,9 @@ import common.gm_transform_helper;
 import common.gm_apply;
 
 public class find_hpb_t extends gm_apply {
-	
-	private LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
-	private LinkedList<find_bound_t> scope = new LinkedList<find_bound_t>();
+
+	private final LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
+	private final LinkedList<find_bound_t> scope = new LinkedList<find_bound_t>();
 	private boolean opt_seq_bound = false;
 
 	// ------------------------
@@ -40,6 +40,7 @@ public class find_hpb_t extends gm_apply {
 		opt_seq_bound = b;
 	}
 
+	@Override
 	public final void begin_context(ast_node t) {
 
 		find_bound_t curr_T = new find_bound_t();
@@ -70,6 +71,7 @@ public class find_hpb_t extends gm_apply {
 		scope.addLast(curr_T);
 	}
 
+	@Override
 	public final void end_context(ast_node t) {
 		// curr_T = scope.back();
 		scope.removeLast();
@@ -165,7 +167,8 @@ public class find_hpb_t extends gm_apply {
 				a.set_bound(bound.getId().copy(true));
 			}
 		} else if (a.is_reduce_assign()) {
-			if(a.is_map_entry_assign()) return true;
+			if (a.is_map_entry_assign())
+				return true;
 			// null bound
 			// find higest parallel region
 			if (a.get_bound() == null) {

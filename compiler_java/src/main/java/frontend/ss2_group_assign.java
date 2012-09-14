@@ -1,5 +1,6 @@
 package frontend;
 
+import static ast.AST_NODE_TYPE.AST_ASSIGN;
 import static inc.GMTYPE_T.GMTYPE_EDGE;
 import static inc.GMTYPE_T.GMTYPE_EDGEITER_ALL;
 import static inc.GMTYPE_T.GMTYPE_NODE;
@@ -8,7 +9,6 @@ import inc.GMTYPE_T;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -18,12 +18,14 @@ import ast.ast_id;
 import ast.ast_nop;
 import ast.ast_sent;
 
+import common.gm_apply;
 import common.gm_main;
 import common.gm_new_sents_after_tc;
 import common.gm_transform_helper;
-import common.gm_apply;
 
 public class ss2_group_assign extends gm_apply {
+
+	protected final LinkedList<ast_assign> target_list = new LinkedList<ast_assign>();
 
 	protected gm_symtab_entry old_driver_sym;
 	protected ast_id new_driver;
@@ -31,7 +33,7 @@ public class ss2_group_assign extends gm_apply {
 	/** traverse sentence */
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+		if (s.get_nodetype() != AST_ASSIGN)
 			return true;
 		ast_assign a = (ast_assign) s;
 		if (a.is_target_scalar() || a.is_target_map_entry())
@@ -53,8 +55,6 @@ public class ss2_group_assign extends gm_apply {
 		}
 		target_list.clear();
 	}
-
-	protected LinkedList<ast_assign> target_list = new LinkedList<ast_assign>();
 
 	protected final boolean post_process_item(ast_assign a) {
 		// temporary node

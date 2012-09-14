@@ -27,15 +27,16 @@ import common.gm_builtin_def;
 //----------------------------------------------------------------
 public class gm_typechecker_stage_2 extends gm_apply {
 
+	private boolean _is_group_assignment = false;
+	private boolean _is_group_assignment_node_prop = false; // node or edge
+	private boolean _is_okay = true;
+	private int bfs_level = 0;
+	private gm_symtab_entry _group_sym = null;
+
 	public gm_typechecker_stage_2() {
-		_is_okay = true;
 		set_for_expr(true);
 		set_for_sent(true);
 		set_separate_post_apply(true);
-		bfs_level = 0;
-		_is_group_assignment = false;
-		_is_group_assignment_node_prop = false; // node or edge property
-		_group_sym = null;
 	}
 
 	// pre
@@ -140,12 +141,6 @@ public class gm_typechecker_stage_2 extends gm_apply {
 	public final boolean is_okay() {
 		return _is_okay;
 	}
-
-	private boolean _is_group_assignment;
-	private boolean _is_group_assignment_node_prop; // node or edge
-	private boolean _is_okay;
-	private int bfs_level;
-	private gm_symtab_entry _group_sym;
 
 	private boolean apply_on_builtin(ast_expr_builtin builtinExpr) {
 		GMTYPE_T sourceType = builtinExpr.get_source_type();

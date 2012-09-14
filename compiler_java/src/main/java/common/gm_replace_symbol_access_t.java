@@ -12,8 +12,12 @@ import ast.ast_node;
 import ast.ast_sent;
 
 public class gm_replace_symbol_access_t extends gm_apply {
+
+	private gm_sym_change_info INFO;
+	private boolean changed;
+
 	public gm_replace_symbol_access_t(gm_sym_change_info I) {
-		this.INFO = new gm_sym_change_info(I);
+		INFO = new gm_sym_change_info(I);
 		set_for_sent(I.change_lhs);
 		set_for_expr(I.change_rhs);
 		changed = false;
@@ -75,6 +79,7 @@ public class gm_replace_symbol_access_t extends gm_apply {
 			return make_replace_id(src);
 	}
 
+	@Override
 	public final boolean apply(ast_expr e) {
 		if (e.is_id() && (INFO.src_scalar)) {
 			ast_id i = e.get_id();
@@ -107,6 +112,7 @@ public class gm_replace_symbol_access_t extends gm_apply {
 	}
 
 	// LHS changing
+	@Override
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
@@ -180,8 +186,5 @@ public class gm_replace_symbol_access_t extends gm_apply {
 	public final boolean is_changed() {
 		return changed;
 	}
-
-	private gm_sym_change_info INFO;
-	private boolean changed;
 
 }

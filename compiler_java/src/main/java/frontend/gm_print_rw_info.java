@@ -12,7 +12,6 @@ import common.gm_apply;
 //----------------------------------------------------------------------
 // routines for degugging
 //----------------------------------------------------------------------
-
 // print rw info per sentence
 // (need to make it sentence block, such as then-clause, for best print-out)
 public class gm_print_rw_info extends gm_apply {
@@ -94,10 +93,10 @@ public class gm_print_rw_info extends gm_apply {
 	@Override
 	public void begin_context(ast_node n) {
 		_tab++;
-	} // printf("XXXX:%d\n",_tab);}
+	}
 
 	@Override
 	public void end_context(ast_node n) {
 		_tab--;
-	} // printf("YYYY\n");}
+	}
 }

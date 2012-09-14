@@ -23,7 +23,7 @@ public class gm_check_reduce_error_t extends gm_apply {
 
 	public boolean is_okay = true;
 	// all the bounded syms in the current scope
-	public LinkedList<bound_info_t> B_scope = new LinkedList<bound_info_t>();
+	public final LinkedList<bound_info_t> B_scope = new LinkedList<bound_info_t>();
 
 	@Override
 	public void begin_context(ast_node n) {

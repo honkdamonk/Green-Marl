@@ -13,11 +13,10 @@ import ast.ast_vardecl;
 import common.gm_transform_helper;
 import common.gm_apply;
 
-public class gm_ss1_initial_expr extends gm_apply
-{
+public class gm_ss1_initial_expr extends gm_apply {
+	
 	@Override
-	public boolean apply(ast_sent s)
-	{
+	public boolean apply(ast_sent s) {
 		if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL)
 			return true;
 
@@ -44,5 +43,5 @@ public class gm_ss1_initial_expr extends gm_apply
 		return true;
 	}
 }
-//bool gm_frontend::do_syntax_sugar_1(ast_procdef* p)
+// bool gm_frontend::do_syntax_sugar_1(ast_procdef* p)
 

@@ -9,12 +9,15 @@ import common.gm_error;
 import common.gm_apply;
 
 public class check_argmax_num_args_t extends gm_apply {
+	
+	private boolean _is_okay = true;
+	
 	public check_argmax_num_args_t() {
-		_is_okay = true;
 		set_for_sent(true);
 	}
 
 	// post apply
+	@Override
 	public final boolean apply(ast_sent e) {
 		if (e.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
 			ast_assign a = (ast_assign) e;
@@ -36,5 +39,4 @@ public class check_argmax_num_args_t extends gm_apply {
 		return _is_okay;
 	}
 
-	private boolean _is_okay;
 }

@@ -1,28 +1,12 @@
 package common;
 
-import java.io.PrintStream;
-
 import inc.gm_code_writer;
 
-public class gm_reproduce {
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define TO_STR(X) #X
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define DEF_STRING(X) static const char *X = "X"
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP(CLASS, DESC) class CLASS : public
-	// gm_compile_step { private: CLASS() {set_description(DESC);}public:
-	// virtual void process(ast_procdef*p); virtual gm_compile_step*
-	// get_instance(){return new CLASS();} static gm_compile_step*
-	// get_factory(){return new CLASS();} };
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define GM_COMPILE_STEP_FACTORY(CLASS) CLASS::get_factory()
+import java.io.PrintStream;
 
-	public static gm_code_writer Out = new gm_code_writer();
+public class gm_reproduce {
+
+	public static final gm_code_writer Out = new gm_code_writer();
 
 	public static void gm_flush_reproduce() {
 		Out.flush();
@@ -44,8 +28,3 @@ public class gm_reproduce {
 		Out.push(s);
 	}
 }
-// ----------------------------------------------------------------------------------------
-// For debugging.
-// : Reproduce parsed input into GM text
-// ----------------------------------------------------------------------------------------
-

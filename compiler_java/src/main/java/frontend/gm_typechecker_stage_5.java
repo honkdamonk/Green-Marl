@@ -2,12 +2,14 @@ package frontend;
 
 import static ast.AST_NODE_TYPE.AST_MAPACCESS;
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_KEY_MISSMATCH;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH;
 import static inc.GMTYPE_T.GMTYPE_NORDER;
 import static inc.GMTYPE_T.GMTYPE_NSEQ;
 import static inc.GMTYPE_T.GMTYPE_NSET;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
-import static common.GM_ERRORS_AND_WARNINGS.*;
+
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -44,10 +46,14 @@ import common.gm_error;
 
 // resolve type of every sub-expression
 public class gm_typechecker_stage_5 extends gm_apply {
+
+	public final HashMap<ast_expr, GMTYPE_T> coercion_targets = new HashMap<ast_expr, GMTYPE_T>();
+
+	private boolean _is_okay = true;
+	private ast_typedecl ret = null;
+
 	public gm_typechecker_stage_5() {
-		_is_okay = true;
 		set_for_sent(true);
-		ret = null;
 	}
 
 	public final void set_return_type(ast_typedecl t) {
@@ -311,8 +317,4 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		return _is_okay;
 	}
 
-	private boolean _is_okay;
-	private ast_typedecl ret;
-
-	public java.util.HashMap<ast_expr, GMTYPE_T> coercion_targets = new java.util.HashMap<ast_expr, GMTYPE_T>();
 }

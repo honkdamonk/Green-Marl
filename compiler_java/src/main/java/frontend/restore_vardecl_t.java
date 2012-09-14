@@ -1,6 +1,7 @@
 package frontend;
 
-import ast.AST_NODE_TYPE;
+import static ast.AST_NODE_TYPE.AST_NOP;
+import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
 import ast.ast_id;
 import ast.ast_procdef;
 import ast.ast_sent;
@@ -8,16 +9,15 @@ import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_vardecl;
 
+import common.gm_apply;
 import common.gm_transform_helper;
 import common.gm_traverse;
-import common.gm_apply;
 
-public class restore_vardecl_t extends gm_apply
-{
+public class restore_vardecl_t extends gm_apply {
+	
 	@Override
-	public boolean apply(ast_sent b)
-	{
-		if (b.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+	public boolean apply(ast_sent b) {
+		if (b.get_nodetype() != AST_SENTBLOCK)
 			return true;
 
 		ast_sentblock sb = (ast_sentblock) b;
@@ -27,21 +27,20 @@ public class restore_vardecl_t extends gm_apply
 		java.util.HashSet<gm_symtab_entry> Fs = F.get_entries();
 
 		ast_sent top = null;
-		//-------------------------------------
+		// -------------------------------------
 		// Add vardecls after all 'NOP's
-		//-------------------------------------
+		// -------------------------------------
 		java.util.LinkedList<ast_sent> sents = sb.get_sents();
-		for (ast_sent sent : sents)
-		{
-			if (sent.get_nodetype() != AST_NODE_TYPE.AST_NOP)
+		for (ast_sent sent : sents) {
+			if (sent.get_nodetype() != AST_NOP)
 				break;
 			top = sent;
 		}
 
-		//----------------------------------------
-		// Iterate over symtab. 
+		// ----------------------------------------
+		// Iterate over symtab.
 		// Add vardecl for each symbol
-		//----------------------------------------
+		// ----------------------------------------
 		for (gm_symtab_entry e : Vs) // scalar
 		{
 			ast_typedecl type = e.getType().copy();
@@ -50,12 +49,12 @@ public class restore_vardecl_t extends gm_apply
 			ast_vardecl v = ast_vardecl.new_vardecl(type, id);
 
 			if (id.is_instantly_assigned())
-				continue; //we throw away the vardecl here, because we will declare it later at the assignment
+				continue; // we throw away the vardecl here, because we will
+							// declare it later at the assignment
 
 			if (top == null)
 				gm_transform_helper.gm_insert_sent_begin_of_sb(sb, v, gm_transform_helper.GM_NOFIX_SYMTAB);
-			else
-			{
+			else {
 				gm_transform_helper.gm_add_sent_after(top, v, gm_transform_helper.GM_NOFIX_SYMTAB);
 			}
 			top = v;
@@ -70,8 +69,7 @@ public class restore_vardecl_t extends gm_apply
 			assert v.get_idlist().get_item(0).getSymInfo() != null;
 			if (top == null)
 				gm_transform_helper.gm_insert_sent_begin_of_sb(sb, v, gm_transform_helper.GM_NOFIX_SYMTAB);
-			else
-			{
+			else {
 				gm_transform_helper.gm_add_sent_after(top, v, gm_transform_helper.GM_NOFIX_SYMTAB);
 			}
 			top = v;
@@ -79,8 +77,7 @@ public class restore_vardecl_t extends gm_apply
 		return true;
 	}
 
-	public final void do_restore(ast_procdef p)
-	{
+	public final void do_restore(ast_procdef p) {
 		set_all(false);
 		set_for_sent(true);
 		gm_traverse.gm_traverse_sents(p, this, gm_traverse.GM_POST_APPLY);

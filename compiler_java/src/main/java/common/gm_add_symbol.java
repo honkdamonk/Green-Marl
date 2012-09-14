@@ -62,8 +62,7 @@ public class gm_add_symbol {
 		return e;
 	}
 
-	public static gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, GMTYPE_T nodeedge_type, gm_symtab_entry graph_sym,
-			String newname) {
+	public static gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, GMTYPE_T nodeedge_type, gm_symtab_entry graph_sym, String newname) {
 		assert sb != null;
 
 		gm_symtab target_syms;

@@ -4,6 +4,10 @@ import java.util.HashMap;
 
 public class gm_userargs {
 
+	private final HashMap<String, String> str_args = new HashMap<String, String>();
+	private final HashMap<String, Boolean> bool_args = new HashMap<String, Boolean>();
+	private final HashMap<String, Integer> int_args = new HashMap<String, Integer>();
+
 	// key (and value) will be copied before it is stored.
 	public final void set_arg_string(String key, String val) {
 		assert key != null;
@@ -46,13 +50,4 @@ public class gm_userargs {
 		return get_arg_bool(key);
 	}
 
-	private HashMap<String, String> str_args = new HashMap<String, String>();
-	// private HashMap<String, String, gm_lesscstr> str_args = new
-	// HashMap<String, String, gm_lesscstr>();
-	private HashMap<String, Boolean> bool_args = new HashMap<String, Boolean>();
-	// private HashMap<String, boolean, gm_lesscstr> bool_args = new
-	// HashMap<String, boolean, gm_lesscstr>();
-	private HashMap<String, Integer> int_args = new HashMap<String, Integer>();
-	// private HashMap<String, int, gm_lesscstr> int_args = new HashMap<String,
-	// int, gm_lesscstr>();
 }

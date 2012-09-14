@@ -63,17 +63,17 @@ import common.gm_vocabulary;
 
 public class gm_frontend {
 
-	public static String GMUSAGE_PROPERTY = "GMUSAGE_PROPERTY";
+	public static final String GMUSAGE_PROPERTY = "GMUSAGE_PROPERTY";
 
-	private LinkedList<gm_compile_step> local_steps = new LinkedList<gm_compile_step>();
+	private final LinkedList<gm_compile_step> local_steps = new LinkedList<gm_compile_step>();
 
 	/** temporary fields used during parsing */
-	private LinkedList<ast_sentblock> blocks = new LinkedList<ast_sentblock>();
+	private final LinkedList<ast_sentblock> blocks = new LinkedList<ast_sentblock>();
 	private ast_procdef curr_proc = null;
 	private ast_idlist curr_idlist = null;
 	private Iterator<ast_procdef> I;
-	private ArrayList<ast_procdef> procs = new ArrayList<ast_procdef>();
-	private HashMap<ast_procdef, gm_procinfo> proc_info = new HashMap<ast_procdef, gm_procinfo>();
+	private final ArrayList<ast_procdef> procs = new ArrayList<ast_procdef>();
+	private final HashMap<ast_procdef, gm_procinfo> proc_info = new HashMap<ast_procdef, gm_procinfo>();
 	private ast_procdef _curr_proc;
 
 	/** a hack for debug */

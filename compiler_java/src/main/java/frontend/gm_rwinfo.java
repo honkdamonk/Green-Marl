@@ -4,6 +4,7 @@ import inc.GM_REDUCE_T;
 import ast.ast_id;
 
 public class gm_rwinfo {
+	
 	// RANGE_LINEAR, RANGE_RANDOM, RANGE_SINGLE
 	public gm_range_type_t access_range;
 	public gm_symtab_entry driver; // N.F --> N is the driver
@@ -33,8 +34,8 @@ public class gm_rwinfo {
 		location = null;
 		always = true;
 		reduce_op = GM_REDUCE_T.GMREDUCE_NULL;
-		access_range = gm_range_type_t.GM_RANGE_SINGLE; // default is single
-														// access
+		// default is single access
+		access_range = gm_range_type_t.GM_RANGE_SINGLE; 
 		mutate_direction = -1;
 		org_lhs = null;
 		is_supplement = false;
@@ -168,7 +169,4 @@ public class gm_rwinfo {
 		System.out.print(")");
 	}
 
-	public void dispose() {
-
-	}
 }

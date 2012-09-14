@@ -6,72 +6,45 @@ import common.gm_apply;
 import common.gm_dumptree;
 
 public class ast_while extends ast_sent {
-	
-	private ast_sentblock body = null;
-	private ast_expr cond = null;
-	private boolean do_while = false; // if true do_while, else while
 
-	private ast_while() {
+	protected ast_sentblock body = null;
+	protected ast_expr cond = null;
+
+	protected ast_while(ast_expr c, ast_sentblock s) {
 		super(AST_WHILE);
+		cond = c;
+		body = s;
+		c.set_parent(this);
+		s.set_parent(this);
 	}
 
 	public static ast_while new_while(ast_expr c, ast_sentblock s) {
-		ast_while w = new ast_while();
-		w.cond = c;
-		w.body = s;
-		w.do_while = false;
-		c.set_parent(w);
-		s.set_parent(w);
-		return w;
+		return new ast_while(c, s);
 	}
 
 	public static ast_while new_do_while(ast_expr c, ast_sentblock s) {
-		ast_while w = new ast_while();
-		w.cond = c;
-		w.body = s;
-		w.do_while = true;
-		c.set_parent(w);
-		s.set_parent(w);
-		return w;
+		return new ast_do_while(c, s);
 	}
 
 	@Override
 	public void reproduce(int ind_level) {
-		if (is_do_while()) {
-			Out.push("Do ");
-			body.reproduce(ind_level); // body is always sentence block
-			Out.push("While (");
-			cond.reproduce(0);
-			Out.pushln(" );");
-		} else {
-			Out.push("While (");
-			cond.reproduce(0);
-			Out.pushln(" )");
-			body.reproduce(ind_level); // body is always sentence blco
-		}
+		Out.push("While (");
+		cond.reproduce(0);
+		Out.pushln(" )");
+		body.reproduce(ind_level); // body is always sentence blco
 	}
 
 	@Override
 	public void dump_tree(int ind_level) {
 		gm_dumptree.IND(ind_level);
 		assert parent != null;
-		if (is_do_while()) {
-			System.out.print("[DO BODY: \n");
-			body.dump_tree(ind_level + 1);
-			System.out.print(" WHILE ");
-			cond.dump_tree(0);
-			System.out.print("\n");
-			gm_dumptree.IND(ind_level);
-			System.out.print("]");
-		} else {
-			System.out.print("[WHILE ");
-			cond.dump_tree(0);
-			System.out.print("  BODY: \n");
-			body.dump_tree(ind_level + 1);
-			System.out.print("\n");
-			gm_dumptree.IND(ind_level);
-			System.out.print("]");
-		}
+		System.out.print("[WHILE ");
+		cond.dump_tree(0);
+		System.out.print("  BODY: \n");
+		body.dump_tree(ind_level + 1);
+		System.out.print("\n");
+		gm_dumptree.IND(ind_level);
+		System.out.print("]");
 	}
 
 	@Override
@@ -91,8 +64,8 @@ public class ast_while extends ast_sent {
 		return cond;
 	}
 
-	public final boolean is_do_while() {
-		return do_while;
+	public boolean is_do_while() {
+		return true;
 	}
 
 	public final void set_body(ast_sentblock s) {

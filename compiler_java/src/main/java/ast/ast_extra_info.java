@@ -5,7 +5,7 @@ public class ast_extra_info {
 
 	public int ival = 0;
 	public boolean bval = false;
-	public float fval = 0.0f;
+	public float fval = 0f;
 	public Object ptr1 = null;
 	public Object ptr2 = null;
 

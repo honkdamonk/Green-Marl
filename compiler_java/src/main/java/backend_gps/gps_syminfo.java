@@ -1,7 +1,10 @@
 package backend_gps;
 
-import ast.ast_extra_info;
 import inc.GM_REDUCE_T;
+
+import java.util.ArrayList;
+
+import ast.ast_extra_info;
 
 public class gps_syminfo extends ast_extra_info {
 	public gps_syminfo(boolean sc) {
@@ -156,9 +159,9 @@ public class gps_syminfo extends ast_extra_info {
 	private int last_BB;
 	private boolean _scalar;
 	private boolean _is_arg;
-	private java.util.ArrayList<Integer> used_BB = new java.util.ArrayList<Integer>();
-	private java.util.ArrayList<gm_gps_symbol_usage_t> used_type = new java.util.ArrayList<gm_gps_symbol_usage_t>();
-	private java.util.ArrayList<gm_gps_symbol_usage_location_t> used_context = new java.util.ArrayList<gm_gps_symbol_usage_location_t>();
+	private ArrayList<Integer> used_BB = new ArrayList<Integer>();
+	private ArrayList<gm_gps_symbol_usage_t> used_type = new ArrayList<gm_gps_symbol_usage_t>();
+	private ArrayList<gm_gps_symbol_usage_location_t> used_context = new ArrayList<gm_gps_symbol_usage_location_t>();
 	private gm_gps_scope_t scope; // GPS_SCOPE_XX
 
 	private boolean used_as_rhs;

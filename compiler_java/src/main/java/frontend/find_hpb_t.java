@@ -11,9 +11,9 @@ import ast.ast_node;
 import ast.ast_sent;
 
 import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_apply;
 import common.gm_error;
 import common.gm_transform_helper;
-import common.gm_apply;
 
 public class find_hpb_t extends gm_apply {
 

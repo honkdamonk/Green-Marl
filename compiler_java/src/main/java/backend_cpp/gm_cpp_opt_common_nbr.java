@@ -1,10 +1,13 @@
 package backend_cpp;
 
-import tangible.RefObject;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.gm_compile_step;
+
+import java.util.LinkedList;
+
+import tangible.RefObject;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_id;
@@ -80,7 +83,7 @@ class gm_cpp_opt_common_nbr extends gm_compile_step {
 				return false;
 
 			if (b.get_builtin_def().get_method_id() == gm_method_id_t.GM_BLTIN_NODE_IS_NBR) {
-				java.util.LinkedList<ast_expr> L = b.get_args();
+				LinkedList<ast_expr> L = b.get_args();
 				ast_expr arg = L.getFirst();
 				assert arg != null;
 				if (!arg.is_id())

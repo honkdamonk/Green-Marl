@@ -1,5 +1,10 @@
 package backend_gps;
 
+import inc.GMTYPE_T;
+import inc.GM_OPS_T;
+
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -9,13 +14,11 @@ import ast.ast_id;
 import ast.ast_if;
 import ast.ast_sent;
 import ast.ast_sentblock;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
 
+import common.gm_apply;
 import common.gm_main;
 import common.gm_new_sents_after_tc;
 import common.gm_transform_helper;
-import common.gm_apply;
 
 //-----------------------------------------------------
 // replace random-write in sequential context
@@ -80,6 +83,6 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 		}
 	}
 
-	private java.util.LinkedList<ast_assign> targets = new java.util.LinkedList<ast_assign>();
+	private LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
 	private int depth;
 }

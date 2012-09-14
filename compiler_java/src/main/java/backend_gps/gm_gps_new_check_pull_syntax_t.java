@@ -13,8 +13,8 @@ import ast.ast_node;
 import ast.ast_sent;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 
 import frontend.gm_symtab_entry;
 

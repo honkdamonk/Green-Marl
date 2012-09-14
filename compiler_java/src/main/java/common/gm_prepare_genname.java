@@ -1,7 +1,7 @@
 package common;
 
-import ast.ast_procdef;
 import inc.gm_procinfo;
+import ast.ast_procdef;
 
 public class gm_prepare_genname {
 

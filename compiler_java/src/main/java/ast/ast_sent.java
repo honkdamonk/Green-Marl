@@ -1,7 +1,7 @@
 package ast;
 
-import common.gm_traverse;
 import common.gm_apply;
+import common.gm_traverse;
 
 //==========================================================================
 public abstract class ast_sent extends ast_node {

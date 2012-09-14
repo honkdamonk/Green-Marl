@@ -1,7 +1,7 @@
 package backend_gps;
 
-import ast.ast_sent;
 import inc.gps_apply_bb;
+import ast.ast_sent;
 
 //------------------------------------------------------------------
 // Merge simple basic blocks

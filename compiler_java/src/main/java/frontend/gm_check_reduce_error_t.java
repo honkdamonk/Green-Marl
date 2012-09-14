@@ -7,7 +7,6 @@ import inc.GM_REDUCE_T;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_foreach;
@@ -16,8 +15,8 @@ import ast.ast_node;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 
 public class gm_check_reduce_error_t extends gm_apply {
 

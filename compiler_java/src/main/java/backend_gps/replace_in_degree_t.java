@@ -4,10 +4,11 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_field;
 import ast.ast_id;
-import frontend.gm_symtab_entry;
 
 import common.gm_expr_replacement_t;
 import common.gm_method_id_t;
+
+import frontend.gm_symtab_entry;
 
 public class replace_in_degree_t extends gm_expr_replacement_t
 {

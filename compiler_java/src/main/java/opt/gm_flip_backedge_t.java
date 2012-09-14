@@ -21,13 +21,13 @@ import ast.ast_sentblock;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
+import common.gm_apply;
 import common.gm_new_sents_after_tc;
 import common.gm_resolve_nc;
 import common.gm_transform_helper;
-import common.gm_apply;
 
-import frontend.gm_rw_analysis;
 import frontend.gm_range_type_t;
+import frontend.gm_rw_analysis;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;

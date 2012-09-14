@@ -2,9 +2,10 @@ package opt;
 
 import ast.ast_expr;
 import ast.ast_id;
-import frontend.gm_symtab_entry;
 
 import common.gm_expr_replacement_t;
+
+import frontend.gm_symtab_entry;
 
 public class replace_avg_to_varaible_t extends gm_expr_replacement_t
 {

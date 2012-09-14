@@ -19,11 +19,11 @@ import ast.ast_sentblock;
 import ast.gm_rwinfo_map;
 
 import common.gm_add_symbol;
+import common.gm_apply;
 import common.gm_main;
 import common.gm_new_sents_after_tc;
 import common.gm_transform_helper;
 import common.gm_traverse;
-import common.gm_apply;
 
 import frontend.gm_rw_analysis;
 import frontend.gm_symtab_entry;

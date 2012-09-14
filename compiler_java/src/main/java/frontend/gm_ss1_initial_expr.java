@@ -10,8 +10,8 @@ import ast.ast_idlist;
 import ast.ast_sent;
 import ast.ast_vardecl;
 
-import common.gm_transform_helper;
 import common.gm_apply;
+import common.gm_transform_helper;
 
 public class gm_ss1_initial_expr extends gm_apply {
 	

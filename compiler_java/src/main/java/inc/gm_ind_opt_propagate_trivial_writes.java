@@ -1,8 +1,8 @@
 package inc;
 
 import opt.gm_opt_propagate_trivial_write_t;
-import frontend.gm_rw_analysis;
 import ast.ast_procdef;
+import frontend.gm_rw_analysis;
 
 public class gm_ind_opt_propagate_trivial_writes extends gm_compile_step
 {

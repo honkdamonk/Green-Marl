@@ -32,13 +32,13 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.gm_add_symbol;
+import common.gm_apply;
+import common.gm_builtin_def;
 import common.gm_main;
+import common.gm_method_id_t;
 import common.gm_new_sents_after_tc;
 import common.gm_resolve_nc;
 import common.gm_transform_helper;
-import common.gm_apply;
-import common.gm_builtin_def;
-import common.gm_method_id_t;
 
 /**
  * --------------------------------------------------- reduction_op =>

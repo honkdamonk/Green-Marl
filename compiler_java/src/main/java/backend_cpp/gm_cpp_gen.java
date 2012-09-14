@@ -1,7 +1,7 @@
 package backend_cpp;
 
-import frontend.gm_fe_fixup_bound_symbol;
 import static inc.GM_REDUCE_T.GMREDUCE_PLUS;
+import frontend.gm_fe_fixup_bound_symbol;
 import frontend.gm_fe_restore_vardecl;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;

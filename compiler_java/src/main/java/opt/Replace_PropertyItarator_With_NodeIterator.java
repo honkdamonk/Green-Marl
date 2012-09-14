@@ -2,9 +2,9 @@ package opt;
 
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_DUPLICATE;
 import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_UNDEFINED;
-import frontend.gm_typecheck;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
+import frontend.gm_typecheck;
 import inc.GMTYPE_T;
 
 import java.util.LinkedList;
@@ -20,9 +20,9 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 
+import common.gm_apply;
 import common.gm_error;
 import common.gm_main;
-import common.gm_apply;
 
 public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 

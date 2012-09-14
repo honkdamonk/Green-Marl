@@ -1,12 +1,14 @@
 package backend_gps;
 
 import static backend_gps.GPSConstants.GPS_FLAG_HAS_DOWN_NBRS;
-import tangible.RefObject;
+import frontend.gm_rw_analysis;
+import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
 import inc.gm_assignment_t;
 import inc.gm_compile_step;
+import tangible.RefObject;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -25,9 +27,6 @@ import common.gm_main;
 import common.gm_new_sents_after_tc;
 import common.gm_resolve_nc;
 import common.gm_transform_helper;
-
-import frontend.gm_rw_analysis;
-import frontend.gm_symtab_entry;
 
 //-------------------------------------------
 // [Step 1]

@@ -1,15 +1,16 @@
 package opt;
 
-import java.util.LinkedList;
 import static ast.AST_NODE_TYPE.AST_ASSIGN;
+
+import java.util.LinkedList;
 
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.gm_transform_helper;
 import common.gm_apply;
+import common.gm_transform_helper;
 
 import frontend.gm_rw_analysis_check2;
 

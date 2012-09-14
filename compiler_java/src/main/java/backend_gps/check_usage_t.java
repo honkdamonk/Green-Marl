@@ -6,6 +6,10 @@ import static backend_gps.gm_gps_opt_merge_ebb_again.FOR_SEQ1;
 import frontend.gm_symtab_entry;
 import inc.GM_REDUCE_T;
 import inc.gps_apply_bb_ast;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -116,7 +120,7 @@ public class check_usage_t extends gps_apply_bb_ast {
 				return true;
 
 			if (a.is_argminmax_assign()) {
-				java.util.LinkedList<ast_node> L = a.get_lhs_list();
+				LinkedList<ast_node> L = a.get_lhs_list();
 				for (ast_node node : L) {
 					assert node.get_nodetype() == AST_NODE_TYPE.AST_ID;
 					gm_symtab_entry e2 = ((ast_id) node).getSymInfo();
@@ -146,7 +150,7 @@ public class check_usage_t extends gps_apply_bb_ast {
 			gm_symtab_entry e = a.get_lhs_scala().getSymInfo();
 			if (a.is_argminmax_assign()) {
 				usage.put(e, GM_REDUCE_T.GMREDUCE_INVALID); // normal write
-				java.util.LinkedList<ast_node> L = a.get_lhs_list();
+				LinkedList<ast_node> L = a.get_lhs_list();
 				for (ast_node node : L) {
 					assert node.get_nodetype() == AST_NODE_TYPE.AST_ID;
 					gm_symtab_entry e2 = ((ast_id) node).getSymInfo();
@@ -179,8 +183,8 @@ public class check_usage_t extends gps_apply_bb_ast {
 		return true;
 	}
 
-	private java.util.HashMap<gm_symtab_entry, GM_REDUCE_T> usage = new java.util.HashMap<gm_symtab_entry, GM_REDUCE_T>();
-	private java.util.HashMap<gm_symtab_entry, GM_REDUCE_T> read_usage = new java.util.HashMap<gm_symtab_entry, GM_REDUCE_T>();
+	private HashMap<gm_symtab_entry, GM_REDUCE_T> usage = new HashMap<gm_symtab_entry, GM_REDUCE_T>();
+	private HashMap<gm_symtab_entry, GM_REDUCE_T> read_usage = new HashMap<gm_symtab_entry, GM_REDUCE_T>();
 	private boolean _okay_to_merge;
 	private int _state;
 }

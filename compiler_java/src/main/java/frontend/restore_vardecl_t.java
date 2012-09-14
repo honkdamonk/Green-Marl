@@ -2,6 +2,10 @@ package frontend;
 
 import static ast.AST_NODE_TYPE.AST_NOP;
 import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
+
+import java.util.HashSet;
+import java.util.LinkedList;
+
 import ast.ast_id;
 import ast.ast_procdef;
 import ast.ast_sent;
@@ -23,14 +27,14 @@ public class restore_vardecl_t extends gm_apply {
 		ast_sentblock sb = (ast_sentblock) b;
 		gm_symtab V = sb.get_symtab_var();
 		gm_symtab F = sb.get_symtab_field();
-		java.util.HashSet<gm_symtab_entry> Vs = V.get_entries();
-		java.util.HashSet<gm_symtab_entry> Fs = F.get_entries();
+		HashSet<gm_symtab_entry> Vs = V.get_entries();
+		HashSet<gm_symtab_entry> Fs = F.get_entries();
 
 		ast_sent top = null;
 		// -------------------------------------
 		// Add vardecls after all 'NOP's
 		// -------------------------------------
-		java.util.LinkedList<ast_sent> sents = sb.get_sents();
+		LinkedList<ast_sent> sents = sb.get_sents();
 		for (ast_sent sent : sents) {
 			if (sent.get_nodetype() != AST_NOP)
 				break;

@@ -64,10 +64,10 @@ import backend_cpp.gm_cpp_opt_defer;
 
 import common.GM_ERRORS_AND_WARNINGS;
 import common.gm_apply_compiler_stage;
+import common.gm_builtin_def;
 import common.gm_error;
 import common.gm_main;
 import common.gm_reproduce;
-import common.gm_builtin_def;
 
 //-----------------------------------------------------------------
 // interface for graph library Layer

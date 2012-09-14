@@ -1,16 +1,19 @@
 package backend_gps;
 
+import inc.GMTYPE_T;
+import inc.GM_OPS_T;
+
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_if;
 import ast.ast_sent;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
 
-import common.gm_transform_helper;
 import common.gm_apply;
+import common.gm_transform_helper;
 
 import frontend.gm_symtab_entry;
 
@@ -69,7 +72,7 @@ public class gps_opt_find_updown_foreach_t extends gm_apply
 		}
 	}
 
-	private java.util.LinkedList<ast_foreach> targets = new java.util.LinkedList<ast_foreach>();
+	private LinkedList<ast_foreach> targets = new LinkedList<ast_foreach>();
 	private gm_symtab_entry curr_sym;
 	private gm_symtab_entry lev_sym;
 

@@ -6,8 +6,8 @@ import ast.ast_foreach;
 import ast.ast_node;
 import ast.ast_sent;
 
-import common.gm_traverse;
 import common.gm_apply;
+import common.gm_traverse;
 
 class choose_parallel_t extends gm_apply {
 	

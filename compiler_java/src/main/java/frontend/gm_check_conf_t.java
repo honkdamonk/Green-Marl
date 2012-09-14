@@ -19,10 +19,10 @@ import static frontend.gm_range_type_t.GM_RANGE_LEVEL_UP;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
 import ast.ast_foreach;
@@ -31,8 +31,8 @@ import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 
 /**
  * Traverse a subtree S. Assuming S is executed in parallel. Find and report any
@@ -313,8 +313,8 @@ public class gm_check_conf_t extends gm_apply {
 
 	private static boolean check_if_conflict(gm_rwinfo_list l1, gm_rwinfo_list l2, RefObject<gm_rwinfo> e1_ref, RefObject<gm_rwinfo> e2_ref,
 			gm_conflict_t conf_type) {
-		java.util.Iterator<gm_rwinfo> i1;
-		java.util.Iterator<gm_rwinfo> i2;
+		Iterator<gm_rwinfo> i1;
+		Iterator<gm_rwinfo> i2;
 		gm_rwinfo e1 = null;
 		gm_rwinfo e2 = null;
 		for (i1 = l1.iterator(); i1.hasNext();) {

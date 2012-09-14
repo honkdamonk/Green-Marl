@@ -5,9 +5,9 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.gm_error;
 import common.gm_apply;
 import common.gm_builtin_def;
+import common.gm_error;
 
 public class gps_check_synth2_t extends gm_apply
 {

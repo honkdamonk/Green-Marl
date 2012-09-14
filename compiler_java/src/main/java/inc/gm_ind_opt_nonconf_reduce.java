@@ -1,8 +1,8 @@
 package inc;
 
-import ast.ast_procdef;
 import opt.gm_opt_optimize_single_reduction_t;
 import opt.gm_reduce_opt_linear_t;
+import ast.ast_procdef;
 import frontend.gm_rw_analysis;
 
 public class gm_ind_opt_nonconf_reduce extends gm_compile_step

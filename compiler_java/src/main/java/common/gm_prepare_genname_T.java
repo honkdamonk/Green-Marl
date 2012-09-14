@@ -1,9 +1,9 @@
 package common;
 
-import ast.ast_id;
-import inc.gm_procinfo;
 import frontend.SYMTAB_TYPES;
 import frontend.gm_symtab_entry;
+import inc.gm_procinfo;
+import ast.ast_id;
 
 public class gm_prepare_genname_T extends gm_apply {
 

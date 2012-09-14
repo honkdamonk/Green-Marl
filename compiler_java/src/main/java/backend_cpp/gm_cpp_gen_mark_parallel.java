@@ -1,7 +1,8 @@
 package backend_cpp;
 
-import ast.ast_procdef;
 import inc.gm_compile_step;
+import ast.ast_procdef;
+
 import common.gm_parallel_helper;
 
 class gm_cpp_gen_mark_parallel extends gm_compile_step {

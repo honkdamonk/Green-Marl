@@ -9,8 +9,8 @@ import ast.AST_NODE_TYPE;
 import ast.ast_foreach;
 import ast.ast_sent;
 
-import common.gm_transform_helper;
 import common.gm_apply;
+import common.gm_transform_helper;
 
 //-----------------------------------------------------------------
 // Rewrite expressions to make the messages compact

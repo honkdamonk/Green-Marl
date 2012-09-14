@@ -1,6 +1,9 @@
 package common;
 
 import inc.GMTYPE_T;
+
+import java.util.HashSet;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_id;
 import ast.ast_node;
@@ -193,13 +196,13 @@ public class gm_add_symbol {
 		return sb;
 	}
 
-	public static void gm_remove_symbols(ast_node top, java.util.HashSet<gm_symtab_entry> S) {
+	public static void gm_remove_symbols(ast_node top, HashSet<gm_symtab_entry> S) {
 		gm_remove_symbols_t T = new gm_remove_symbols_t(S);
 		top.traverse_pre(T);
 	}
 
 	public static void gm_remove_symbol(ast_node top, gm_symtab_entry e) {
-		java.util.HashSet<gm_symtab_entry> S = new java.util.HashSet<gm_symtab_entry>();
+		HashSet<gm_symtab_entry> S = new HashSet<gm_symtab_entry>();
 		S.add(e);
 
 		gm_remove_symbols_t T = new gm_remove_symbols_t(S);

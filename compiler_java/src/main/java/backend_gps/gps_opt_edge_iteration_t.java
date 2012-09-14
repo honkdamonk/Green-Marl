@@ -2,6 +2,10 @@ package backend_gps;
 
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -68,7 +72,7 @@ public class gps_opt_edge_iteration_t extends gm_apply
 
 	public final void post_process()
 	{
-		java.util.Iterator<ast_foreach> I;
+		Iterator<ast_foreach> I;
 		for (I = _targets.iterator(); I.hasNext();)
 		{
 			ast_foreach fe = I.next();
@@ -129,7 +133,7 @@ public class gps_opt_edge_iteration_t extends gm_apply
 		}
 	}
 
-	private java.util.LinkedList<ast_foreach> _targets = new java.util.LinkedList<ast_foreach>();
+	private LinkedList<ast_foreach> _targets = new LinkedList<ast_foreach>();
 	private void replace_from_to_builtin(ast_node body, gm_symtab_entry old_edge, gm_symtab_entry outer, gm_symtab_entry inner)
 	{
 

@@ -22,6 +22,8 @@ import inc.GM_REDUCE_T;
 import inc.gm_code_writer;
 import inc.gm_graph_library;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 
 import tangible.RefObject;
@@ -36,8 +38,8 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 
-import common.gm_main;
 import common.gm_builtin_def;
+import common.gm_main;
 
 //-----------------------------------------------------------------
 // interface for graph library Layer
@@ -312,7 +314,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.push(")).getValue().getValue()");
 	}
 
-	public void generate_vertex_prop_class_details(java.util.HashSet<gm_symtab_entry> prop, gm_code_writer Body, boolean is_edge_prop) {
+	public void generate_vertex_prop_class_details(HashSet<gm_symtab_entry> prop, gm_code_writer Body, boolean is_edge_prop) {
 
 		int total = is_edge_prop ? ((gm_gps_beinfo) gm_main.FE.get_current_backend_info()).get_total_edge_property_size() : ((gm_gps_beinfo) gm_main.FE
 				.get_current_backend_info()).get_total_node_property_size();
@@ -1228,7 +1230,7 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	static boolean is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {
-		java.util.HashMap<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
+		HashMap<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
 		if (!SYMS.containsKey(e))
 			return false;
 		else

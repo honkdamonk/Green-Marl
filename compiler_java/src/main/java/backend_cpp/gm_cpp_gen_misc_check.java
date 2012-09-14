@@ -1,7 +1,7 @@
 package backend_cpp;
 
-import ast.ast_procdef;
 import inc.gm_compile_step;
+import ast.ast_procdef;
 
 class gm_cpp_gen_misc_check extends gm_compile_step {
 	

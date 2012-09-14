@@ -1,6 +1,9 @@
 package backend_gps;
 
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
+
+import java.util.HashSet;
+
 import ast.ast_extra_info;
 
 import common.gm_apply;
@@ -13,10 +16,10 @@ import frontend.gm_symtab_entry;
 //-----------------------------------------------------------------------------------
 
 public class gps_flat_symbol_t extends gm_apply {
-	public gps_flat_symbol_t(java.util.HashSet<gm_symtab_entry> s, java.util.HashSet<gm_symtab_entry> p, java.util.HashSet<gm_symtab_entry> e) {
-		this.scalar = new java.util.HashSet<gm_symtab_entry>(s);
-		this.prop = new java.util.HashSet<gm_symtab_entry>(p);
-		this.edge_prop = new java.util.HashSet<gm_symtab_entry>(e);
+	public gps_flat_symbol_t(HashSet<gm_symtab_entry> s, HashSet<gm_symtab_entry> p, HashSet<gm_symtab_entry> e) {
+		this.scalar = new HashSet<gm_symtab_entry>(s);
+		this.prop = new HashSet<gm_symtab_entry>(p);
+		this.edge_prop = new HashSet<gm_symtab_entry>(e);
 		set_for_symtab(true);
 	}
 
@@ -63,7 +66,7 @@ public class gps_flat_symbol_t extends gm_apply {
 		return true;
 	}
 
-	private java.util.HashSet<gm_symtab_entry> scalar;
-	private java.util.HashSet<gm_symtab_entry> prop;
-	private java.util.HashSet<gm_symtab_entry> edge_prop;
+	private HashSet<gm_symtab_entry> scalar;
+	private HashSet<gm_symtab_entry> prop;
+	private HashSet<gm_symtab_entry> edge_prop;
 }

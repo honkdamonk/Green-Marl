@@ -1,8 +1,8 @@
 package backend_gps;
 
+import frontend.gm_range_type_t;
 import frontend.gm_rw_analysis;
 import frontend.gm_rw_analysis_check2;
-import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
@@ -13,7 +13,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-
 import ast.AST_NODE_TYPE;
 import ast.ast_foreach;
 import ast.ast_if;

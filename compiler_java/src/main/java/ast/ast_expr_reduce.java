@@ -4,9 +4,9 @@ import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.GM_REDUCE_T;
 
+import common.gm_apply;
 import common.gm_dumptree;
 import common.gm_traverse;
-import common.gm_apply;
 
 // Reduction expression
 public class ast_expr_reduce extends ast_expr {

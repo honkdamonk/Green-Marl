@@ -1,5 +1,10 @@
 package backend_gps;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
+
 import ast.ast_extra_info;
 import ast.ast_foreach;
 import ast.ast_id;
@@ -46,7 +51,7 @@ public class gm_gps_basic_block {
 			return null;
 	}
 
-	public final java.util.LinkedList<ast_sent> get_sents() {
+	public final LinkedList<ast_sent> get_sents() {
 		return sents;
 	}
 
@@ -207,7 +212,7 @@ public class gm_gps_basic_block {
 
 			if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) && (has_receiver()) && reproduce_receiver) {
 				gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
-				java.util.LinkedList<gm_gps_comm_unit> L = get_receivers();
+				LinkedList<gm_gps_comm_unit> L = get_receivers();
 				for (gm_gps_comm_unit U : L) {
 					if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_NESTED) {
 						gm_reproduce.gm_push_reproduce("//Receive Nested Loop");
@@ -217,7 +222,7 @@ public class gm_gps_basic_block {
 					} else if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_RANDOM_WRITE) {
 						gm_reproduce.gm_push_reproduce("//Receive Random Write Sent");
 						gm_reproduce.gm_newline_reproduce();
-						java.util.LinkedList<ast_sent> LL = info.get_random_write_sents(U);
+						LinkedList<ast_sent> LL = info.get_random_write_sents(U);
 						for (ast_sent s : LL) {
 							s.reproduce(0);
 						}
@@ -268,7 +273,7 @@ public class gm_gps_basic_block {
 		receivers.addLast(u);
 	}
 
-	public final java.util.LinkedList<gm_gps_comm_unit> get_receivers() {
+	public final LinkedList<gm_gps_comm_unit> get_receivers() {
 		return receivers;
 	}
 
@@ -280,21 +285,21 @@ public class gm_gps_basic_block {
 		return receivers.size() > 0;
 	}
 
-	private java.util.Iterator<ast_sent> I;
-	private java.util.LinkedList<ast_sent> sents = new java.util.LinkedList<ast_sent>();
+	private Iterator<ast_sent> I;
+	private LinkedList<ast_sent> sents = new LinkedList<ast_sent>();
 
 	// std::list<ast_foreach*> receivers;
-	private java.util.LinkedList<gm_gps_comm_unit> receivers = new java.util.LinkedList<gm_gps_comm_unit>();
+	private LinkedList<gm_gps_comm_unit> receivers = new LinkedList<gm_gps_comm_unit>();
 
-	private java.util.ArrayList<gm_gps_basic_block> exits = new java.util.ArrayList<gm_gps_basic_block>();
-	private java.util.ArrayList<gm_gps_basic_block> entries = new java.util.ArrayList<gm_gps_basic_block>();
+	private ArrayList<gm_gps_basic_block> exits = new ArrayList<gm_gps_basic_block>();
+	private ArrayList<gm_gps_basic_block> entries = new ArrayList<gm_gps_basic_block>();
 	private int id;
 	private gm_gps_bbtype_t type;
 	private boolean after_vertex;
 	// bool _has_sender;
 
 	// map of used symbols inside this BB
-	private java.util.HashMap<gm_symtab_entry, gps_syminfo> symbols = new java.util.HashMap<gm_symtab_entry, gps_syminfo>();
+	private HashMap<gm_symtab_entry, gps_syminfo> symbols = new HashMap<gm_symtab_entry, gps_syminfo>();
 
 	public final gps_syminfo find_symbol_info(gm_symtab_entry sym) {
 		if (!symbols.containsKey(sym))
@@ -307,7 +312,7 @@ public class gm_gps_basic_block {
 		symbols.put(sym, info);
 	}
 
-	public final java.util.HashMap<gm_symtab_entry, gps_syminfo> get_symbols() {
+	public final HashMap<gm_symtab_entry, gps_syminfo> get_symbols() {
 		return symbols;
 	}
 

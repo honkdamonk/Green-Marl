@@ -21,8 +21,8 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.gm_add_symbol;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 
 import frontend.gm_symtab_entry;
 

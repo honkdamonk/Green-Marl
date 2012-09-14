@@ -1,6 +1,7 @@
 package ast;
 
-import static ast.AST_NODE_TYPE.*;
+import static ast.AST_NODE_TYPE.AST_PROCDEF;
+
 import java.util.LinkedList;
 
 import common.gm_apply;

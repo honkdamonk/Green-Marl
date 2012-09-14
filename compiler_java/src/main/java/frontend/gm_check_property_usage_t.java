@@ -59,7 +59,7 @@ public class gm_check_property_usage_t extends gm_apply {
 				if (a.is_reduce_assign()) // this is read & write
 				{
 					property_is_read(f.get_second().getSymInfo(), f.get_first().getSymInfo(), true);
-					java.util.LinkedList<ast_node> L = a.get_lhs_list();
+					LinkedList<ast_node> L = a.get_lhs_list();
 					for (ast_node n : L) {
 						assert n.get_nodetype() == AST_NODE_TYPE.AST_FIELD;
 						ast_field f2 = (ast_field) n;

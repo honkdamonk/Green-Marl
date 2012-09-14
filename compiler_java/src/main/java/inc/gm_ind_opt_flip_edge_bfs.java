@@ -1,7 +1,7 @@
 package inc;
 
-import ast.ast_procdef;
 import opt.gm_flip_backedge_t;
+import ast.ast_procdef;
 
 import common.gm_argopts;
 import common.gm_main;

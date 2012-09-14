@@ -20,8 +20,8 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_sent;
 
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 import common.gm_method_id_t;
 
 import frontend.SYMTAB_TYPES;

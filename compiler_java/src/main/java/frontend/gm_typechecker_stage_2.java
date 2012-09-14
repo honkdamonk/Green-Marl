@@ -1,6 +1,9 @@
 package frontend;
 
 import inc.GMTYPE_T;
+
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;
@@ -12,10 +15,10 @@ import ast.ast_sent;
 import ast.ast_typedecl;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.gm_error;
-import common.gm_main;
 import common.gm_apply;
 import common.gm_builtin_def;
+import common.gm_error;
+import common.gm_main;
 
 //----------------------------------------------------------------
 // Type-Check Step 2:
@@ -186,7 +189,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 		builtinExpr.set_builtin_def(builtinDef);
 
 		if (isOkay) {
-			java.util.LinkedList<ast_expr> arguments = builtinExpr.get_args();
+			LinkedList<ast_expr> arguments = builtinExpr.get_args();
 
 			int argCount = arguments.size();
 			if (argCount != builtinDef.get_num_args()) {

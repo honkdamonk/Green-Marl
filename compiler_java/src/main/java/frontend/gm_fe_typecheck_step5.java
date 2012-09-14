@@ -1,9 +1,10 @@
 package frontend;
 
-import java.util.HashMap;
-
 import inc.GMTYPE_T;
 import inc.gm_compile_step;
+
+import java.util.HashMap;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_expr;

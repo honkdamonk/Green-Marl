@@ -1,15 +1,16 @@
 package backend_cpp;
 
+import inc.GM_REDUCE_T;
+import inc.gm_assignment_t;
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_id;
 import ast.ast_sent;
-import frontend.gm_symtab_entry;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
 
 import common.gm_apply;
+
+import frontend.gm_symtab_entry;
 
 //---------------------------------------------------
 // replace  a.X <= <expr> 

@@ -1,8 +1,8 @@
 package inc;
 
-import ast.ast_procdef;
 import opt.Replace_PropertyItarator_With_NodeIterator;
 import opt.ss2_reduce_op;
+import ast.ast_procdef;
 
 public class gm_ind_opt_syntax_sugar2 extends gm_compile_step
 {

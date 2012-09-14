@@ -1,12 +1,13 @@
 package backend_gps;
 
+import inc.gm_code_writer;
 import ast.ast_expr;
 import ast.ast_sentblock;
-import frontend.gm_symtab_entry;
-import inc.gm_code_writer;
 
-import common.gm_main;
 import common.gm_apply;
+import common.gm_main;
+
+import frontend.gm_symtab_entry;
 
 public class gps_random_write_rhs_t extends gm_apply {
 	

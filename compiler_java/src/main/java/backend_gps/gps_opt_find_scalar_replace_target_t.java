@@ -1,15 +1,20 @@
 package backend_gps;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_assign;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
-import frontend.SYMTAB_TYPES;
-import frontend.gm_symtab_entry;
 
 import common.gm_apply;
+
+import frontend.SYMTAB_TYPES;
+import frontend.gm_symtab_entry;
 
 //----------------------------------------------------
 // Foreach (n: G.Nodes) {
@@ -33,8 +38,8 @@ import common.gm_apply;
 
 public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 
-	public gps_opt_find_scalar_replace_target_t(java.util.HashMap<ast_foreach, ast_foreach> M) {
-		this.MAP = new java.util.HashMap<ast_foreach, ast_foreach>(M);
+	public gps_opt_find_scalar_replace_target_t(HashMap<ast_foreach, ast_foreach> M) {
+		this.MAP = new HashMap<ast_foreach, ast_foreach>(M);
 		set_for_sent(true);
 		set_for_symtab(true);
 		set_separate_post_apply(true);
@@ -81,7 +86,7 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 				}
 
 				if (a.has_lhs_list()) {
-					java.util.LinkedList<ast_node> lhs_list = a.get_lhs_list();
+					LinkedList<ast_node> lhs_list = a.get_lhs_list();
 					for (ast_node n : lhs_list) {
 						if (n.get_nodetype() != AST_NODE_TYPE.AST_ID)
 							continue;
@@ -109,13 +114,13 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 		return true;
 	}
 
-	public final java.util.HashMap<gm_symtab_entry, ast_foreach> get_target_syms_and_outer_loop() {
+	public final HashMap<gm_symtab_entry, ast_foreach> get_target_syms_and_outer_loop() {
 		return target_syms;
 	}
 
-	private java.util.HashMap<ast_foreach, ast_foreach> MAP;
-	private java.util.HashSet<gm_symtab_entry> potential_target_syms = new java.util.HashSet<gm_symtab_entry>();
-	private java.util.HashMap<gm_symtab_entry, ast_foreach> target_syms = new java.util.HashMap<gm_symtab_entry, ast_foreach>();
+	private HashMap<ast_foreach, ast_foreach> MAP;
+	private HashSet<gm_symtab_entry> potential_target_syms = new HashSet<gm_symtab_entry>();
+	private HashMap<gm_symtab_entry, ast_foreach> target_syms = new HashMap<gm_symtab_entry, ast_foreach>();
 	private ast_foreach outloop;
 	private ast_foreach inloop;
 	private int level;

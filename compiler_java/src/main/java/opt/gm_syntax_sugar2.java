@@ -1,10 +1,10 @@
 package opt;
 
-import tangible.RefObject;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;
 import inc.gm_assignment_t;
+import tangible.RefObject;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_reduce;
@@ -12,8 +12,8 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.gm_add_symbol;
-import common.gm_transform_helper;
 import common.gm_method_id_t;
+import common.gm_transform_helper;
 
 import frontend.gm_symtab_entry;
 

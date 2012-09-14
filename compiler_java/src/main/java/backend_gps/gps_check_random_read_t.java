@@ -7,8 +7,8 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 
 //-----------------------------------------------------------------
 // Check random access

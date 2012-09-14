@@ -2,8 +2,8 @@ package ast;
 
 import inc.GMTYPE_T;
 
-import common.gm_dumptree;
 import common.gm_apply;
+import common.gm_dumptree;
 
 public class ast_foreach extends ast_sent {
 	

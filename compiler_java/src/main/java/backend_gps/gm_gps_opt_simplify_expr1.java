@@ -1,16 +1,16 @@
 package backend_gps;
 
+import frontend.gm_symtab_entry;
+import inc.gm_compile_step;
+
 import java.util.HashMap;
 
 import tangible.Pair;
-
-import common.gm_method_id_t;
-
-import frontend.gm_symtab_entry;
-import inc.gm_compile_step;
 import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
+
+import common.gm_method_id_t;
 
 public class gm_gps_opt_simplify_expr1 extends gm_compile_step {
 	private gm_gps_opt_simplify_expr1() {

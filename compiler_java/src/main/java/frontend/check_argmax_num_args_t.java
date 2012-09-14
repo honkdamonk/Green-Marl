@@ -5,8 +5,8 @@ import ast.ast_assign;
 import ast.ast_sent;
 
 import common.GM_ERRORS_AND_WARNINGS;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 
 public class check_argmax_num_args_t extends gm_apply {
 	

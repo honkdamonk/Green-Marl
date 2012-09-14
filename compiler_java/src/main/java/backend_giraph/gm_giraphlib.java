@@ -18,6 +18,8 @@ import inc.GM_REDUCE_T;
 import inc.gm_code_writer;
 import inc.gps_apply_bb;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -360,7 +362,7 @@ public class gm_giraphlib extends gm_gpslib {
 		Body.push(temp);
 	}
 
-	public void generate_master_class_details(java.util.HashSet<gm_symtab_entry> prop, gm_code_writer Body) {
+	public void generate_master_class_details(HashSet<gm_symtab_entry> prop, gm_code_writer Body) {
 		Body.pushln("@Override");
 		Body.pushln("public void write(DataOutput out) throws IOException {");
 		Body.pushln("out.writeInt(_master_state);");
@@ -395,7 +397,7 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	@Override
-	public void generate_vertex_prop_class_details(java.util.HashSet<gm_symtab_entry> prop, gm_code_writer Body, boolean is_edge_prop) {
+	public void generate_vertex_prop_class_details(HashSet<gm_symtab_entry> prop, gm_code_writer Body, boolean is_edge_prop) {
 		if (is_edge_prop) {
 			Body.pushln("public EdgeData() {");
 			Body.pushln("// Default constructor needed for Giraph");
@@ -886,10 +888,10 @@ public class gm_giraphlib extends gm_gpslib {
 		}
 
 		// check if any edge updates that should be done before message sending
-		java.util.LinkedList<ast_sent> sents_after_message = new java.util.LinkedList<ast_sent>();
+		LinkedList<ast_sent> sents_after_message = new LinkedList<ast_sent>();
 
 		if ((fe != null) && (fe.has_info_list(GPS_LIST_EDGE_PROP_WRITE))) {
-			java.util.LinkedList<Object> L = fe.get_info_list(GPS_LIST_EDGE_PROP_WRITE);
+			LinkedList<Object> L = fe.get_info_list(GPS_LIST_EDGE_PROP_WRITE);
 
 			for (Object obj : L) {
 				ast_sent s = (ast_sent) obj;
@@ -972,7 +974,7 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	static boolean is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {
-		java.util.HashMap<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
+		HashMap<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
 		if (!SYMS.containsKey(e))
 			return false;
 		else
@@ -996,7 +998,7 @@ public class gm_giraphlib extends gm_gpslib {
 	public void generate_message_receive_begin(gm_gps_comm_unit U, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
 		gm_gps_beinfo info = (gm_gps_beinfo) FE.get_current_backend_info();
 
-		java.util.LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
+		LinkedList<gm_gps_communication_symbol_info> LIST = info.get_all_communication_symbols(U);
 		// int comm_id = info->find_communication_size_info(fe).id;
 		int comm_id = (info.find_communication_size_info(U)).msg_class.id;
 
@@ -1039,7 +1041,7 @@ public class gm_giraphlib extends gm_gpslib {
 	@Override
 	public void generate_expr_builtin(ast_expr_builtin be, gm_code_writer Body, boolean is_master) {
 		gm_builtin_def def = be.get_builtin_def();
-		java.util.LinkedList<ast_expr> ARGS = be.get_args();
+		LinkedList<ast_expr> ARGS = be.get_args();
 
 		switch (def.get_method_id()) {
 		case GM_BLTIN_TOP_DRAND: // rand function

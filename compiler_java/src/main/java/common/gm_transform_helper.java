@@ -1,5 +1,7 @@
 package common;
 
+import java.util.LinkedList;
+
 import tangible.RefObject;
 import ast.AST_NODE_TYPE;
 import ast.ast_bfs;
@@ -76,7 +78,7 @@ public class gm_transform_helper {
 			gm_transform_helper.gm_ripoff_upper_scope(target);
 		}
 
-		java.util.LinkedList<ast_sent> sents = sb.get_sents();
+		LinkedList<ast_sent> sents = sb.get_sents();
 
 		target.set_parent(null);
 
@@ -234,14 +236,14 @@ public class gm_transform_helper {
 	// ------------------------------------------------------------
 	// Is the sentence block empty? (nothing in there)
 	public static boolean gm_is_sentblock_empty(ast_sentblock sb) {
-		java.util.LinkedList<ast_sent> L = sb.get_sents();
+		LinkedList<ast_sent> L = sb.get_sents();
 		return (L.size() == 0);
 	}
 
 	// Is the sentence block trivial? (only one sentence, no definition)-- also
 	// returns the only sentence
 	public static boolean gm_is_sentblock_trivial(ast_sentblock sb, RefObject<ast_sent> s) {
-		java.util.LinkedList<ast_sent> L = sb.get_sents();
+		LinkedList<ast_sent> L = sb.get_sents();
 		if (L.size() != 1)
 			return false;
 
@@ -318,7 +320,7 @@ public class gm_transform_helper {
 
 	// remove set of symbols definitions in the given AST
 	// caller should make sure that deleted symbols are not used anymore
-	// void gm_remove_symbols(ast_node top, java.util.HashSet<gm_symtab_entry> S);
+	// void gm_remove_symbols(ast_node top, HashSet<gm_symtab_entry> S);
 	// void gm_remove_symbol(ast_node top, gm_symtab_entry sym);
 
 	// ------------------------------------------------------------
@@ -587,7 +589,7 @@ public class gm_transform_helper {
 			ast_sentblock old_sb = (ast_sentblock) up;
 
 			// replace old sentence (s) into new one (sb) in old sb
-			java.util.LinkedList<ast_sent> Sents = old_sb.get_sents();
+			LinkedList<ast_sent> Sents = old_sb.get_sents();
 			while (Sents.contains(s)) {
 				int index = Sents.indexOf(s);
 				Sents.set(index, sb);
@@ -632,7 +634,7 @@ public class gm_transform_helper {
 			gm_transform_helper.gm_put_new_upper_scope_on_null(target, S);
 		}
 
-		java.util.LinkedList<ast_sent> sents = sb.get_sents();
+		LinkedList<ast_sent> sents = sb.get_sents();
 
 		target.set_parent(sb);
 		switch (gmInsertBegin) {
@@ -662,7 +664,7 @@ public class gm_transform_helper {
 			gm_transform_helper.gm_put_new_upper_scope_on_null(target, S);
 		}
 
-		java.util.LinkedList<ast_sent> sents = sb.get_sents();
+		LinkedList<ast_sent> sents = sb.get_sents();
 		target.set_parent(sb);
 		switch (gmInsertBegin) {
 		case GM_INSERT_BEGIN:

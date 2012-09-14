@@ -2,6 +2,8 @@ package backend_gps;
 
 import inc.gps_apply_bb;
 
+import java.util.LinkedList;
+
 //------------------------------------------------
 // Find congruent message classes
 //  - Iterate over basic blocks, check all messaging loops
@@ -16,7 +18,7 @@ public class gm_find_congruent_t extends gps_apply_bb
 	public gm_find_congruent_t(gm_gps_beinfo beinfo)
 	{
 		this.BEINFO = beinfo;
-		this.CLIST = new java.util.LinkedList<gm_gps_congruent_msg_class>(beinfo.get_congruent_message_classes());
+		this.CLIST = new LinkedList<gm_gps_congruent_msg_class>(beinfo.get_congruent_message_classes());
 		// do nothing 
 	}
 
@@ -25,7 +27,7 @@ public class gm_find_congruent_t extends gps_apply_bb
 	{
 		// iterate over messages and find congruent class
 		// add one if not-exist
-		java.util.LinkedList<gm_gps_comm_unit> LOOPS = b.get_receivers();
+		LinkedList<gm_gps_comm_unit> LOOPS = b.get_receivers();
 		for (gm_gps_comm_unit unit : LOOPS)
 		{
 			find_congruent_class_per_loop(unit, b);
@@ -70,5 +72,5 @@ public class gm_find_congruent_t extends gps_apply_bb
 	}
 
 	private gm_gps_beinfo BEINFO;
-	private java.util.LinkedList<gm_gps_congruent_msg_class> CLIST;
+	private LinkedList<gm_gps_congruent_msg_class> CLIST;
 }

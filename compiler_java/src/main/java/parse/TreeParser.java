@@ -1,6 +1,7 @@
 package parse;
 
-import org.antlr.runtime.*;
+import org.antlr.runtime.RecognitionException;
+import org.antlr.runtime.RecognizerSharedState;
 import org.antlr.runtime.tree.TreeNodeStream;
 
 import frontend.gm_frontend;

@@ -1,5 +1,7 @@
 package common;
 
+import java.util.LinkedList;
+
 import ast.AST_NODE_TYPE;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -42,7 +44,7 @@ public class gm_merge_sentblock {
 		// (3.1) keep decls at the highest position
 		// (3.2) other sentneces at the bottem
 		ast_sent anchor = null;
-		java.util.LinkedList<ast_sent> Ps = P.get_sents();
+		LinkedList<ast_sent> Ps = P.get_sents();
 		for (ast_sent s : Ps) {
 			if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL) // stop at the
 																// first
@@ -52,7 +54,7 @@ public class gm_merge_sentblock {
 			anchor = s;
 		}
 
-		java.util.LinkedList<ast_sent> Qs = Q.get_sents(); // work on a copy
+		LinkedList<ast_sent> Qs = Q.get_sents(); // work on a copy
 		for (ast_sent s : Qs) {
 			gm_transform_helper.gm_ripoff_sent(s);
 			if (s.get_nodetype() == AST_NODE_TYPE.AST_VARDECL) {

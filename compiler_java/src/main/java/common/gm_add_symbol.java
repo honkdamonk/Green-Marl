@@ -148,8 +148,6 @@ public class gm_add_symbol {
 	 * - move a symbol entry up into another symbol table [assumption] new_tab
 	 * belongs to a sentence block<br>
 	 * - name conflict does not happen
-	 * 
-	 * @return the sentence block which is the new scope
 	 */
 	public static void gm_move_symbol_into(gm_symtab_entry e, gm_symtab old_tab, gm_symtab new_tab, boolean is_scalar) {
 		assert new_tab.get_ast().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;

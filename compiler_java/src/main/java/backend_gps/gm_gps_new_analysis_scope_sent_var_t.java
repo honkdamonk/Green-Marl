@@ -123,16 +123,16 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 	// Int x2;
 	//
 	// Foreach(s: G.Nodes) { // outer loop
-	// Int y;
-	// Int y2;
+	//   Int y;
+	//   Int y2;
 	//
-	// If (s.A + x > 0) // (s.A + x > 0) ==> EXPR_OUT
-	// x2 += s.B; // assignment: PREFIX_COND_OUT, lhs: GLOBAL, rhs: OUT,
+	//   If (s.A + x > 0) // (s.A + x > 0) ==> EXPR_OUT
+	//     x2 += s.B; // assignment: PREFIX_COND_OUT, lhs: GLOBAL, rhs: OUT,
 	//
-	// Foreach(t: s.Nbrs) { // inner loop
-	// Int z;
-	// Int z2;
-	// }
+	//   Foreach(t: s.Nbrs) { // inner loop
+	//     Int z;
+	//     Int z2;
+	//   }
 	// }
 	// -----------------------------------------------------------------------------------------------------------------------
 	public static void add_syminfo_struct(gm_symtab_entry sym, boolean is_scalar, gm_gps_scope_t scope) {

@@ -71,10 +71,6 @@ public class gm_scope {
 		set_group_expr(for_group, null, false);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void set_group_expr(boolean for_group, gm_symtab_entry *g
-	// = null, boolean np = false)
 	public final void set_group_expr(boolean for_group, gm_symtab_entry g, boolean np) {
 		for_group_expr = for_group;
 		G = g;

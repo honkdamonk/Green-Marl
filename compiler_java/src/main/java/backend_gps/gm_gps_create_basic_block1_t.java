@@ -15,8 +15,8 @@ import common.gm_apply;
 
 public class gm_gps_create_basic_block1_t extends gm_apply {
 	
-	private HashMap<ast_sent, gm_gps_basic_block> prev_map = new HashMap<ast_sent, gm_gps_basic_block>();
-	private HashMap<ast_sent, gm_gps_basic_block> next_map = new HashMap<ast_sent, gm_gps_basic_block>();
+	private final HashMap<ast_sent, gm_gps_basic_block> prev_map = new HashMap<ast_sent, gm_gps_basic_block>();
+	private final HashMap<ast_sent, gm_gps_basic_block> next_map = new HashMap<ast_sent, gm_gps_basic_block>();
 	private HashMap<ast_sent, gps_gps_sentence_t> s_mark;
 
 	private gm_gps_basic_block prev;
@@ -24,8 +24,8 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 	private gm_gps_basic_block next;
 	private gm_gps_basic_block exit;
 
-	private LinkedList<gm_gps_basic_block> prev_stack = new LinkedList<gm_gps_basic_block>();
-	private LinkedList<gm_gps_basic_block> next_stack = new LinkedList<gm_gps_basic_block>();
+	private final LinkedList<gm_gps_basic_block> prev_stack = new LinkedList<gm_gps_basic_block>();
+	private final LinkedList<gm_gps_basic_block> next_stack = new LinkedList<gm_gps_basic_block>();
 
 	private boolean already_added = false;
 	private int added_depth = 0;
@@ -229,9 +229,6 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 		return newBB(gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: gm_gps_basic_block* newBB(int t = GM_GPS_BBTYPE_SEQ)
 	private gm_gps_basic_block newBB(gm_gps_bbtype_t gmGpsBbtypeSeq) {
 		assert gen != null;
 		gm_gps_basic_block bb = new gm_gps_basic_block(gen.issue_basicblock_id(), gmGpsBbtypeSeq);

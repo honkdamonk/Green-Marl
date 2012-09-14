@@ -125,10 +125,6 @@ public class gm_procinfo {
 		add_info_ptr(id, ptr1, null);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void add_info_ptr(String id, Object* ptr1, Object* ptr2 =
-	// null)
 	public final void add_info_ptr(String id, Object ptr1, Object ptr2) {
 		body.add_info_ptr(id, ptr1, ptr2);
 	}

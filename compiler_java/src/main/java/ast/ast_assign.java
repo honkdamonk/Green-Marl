@@ -84,11 +84,6 @@ public class ast_assign extends ast_sent {
 		return new_assign_field(id, r, GMASSIGN_NORMAL, null, GMREDUCE_NULL);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: static ast_assign* new_assign_field(ast_field* id,
-	// ast_expr* r, int assign_type = GMASSIGN_NORMAL, ast_id* itor = null, int
-	// reduce_type = GMREDUCE_NULL)
 	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment_t assign_type, ast_id itor, GM_REDUCE_T reduce_type) {
 		// assign to property
 		ast_assign A = new ast_assign();

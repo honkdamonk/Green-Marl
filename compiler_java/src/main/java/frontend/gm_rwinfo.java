@@ -57,11 +57,6 @@ public class gm_rwinfo {
 		return new_scala_inst(loc, GM_REDUCE_T.GMREDUCE_NULL, null, false, null);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: static gm_rwinfo* new_scala_inst(ast_id* loc, int
-	// reduce_op = GMREDUCE_NULL, gm_symtab_entry* bound_symbol = null, boolean
-	// supple = false, gm_symtab_entry* org = null)
 	public static gm_rwinfo new_scala_inst(ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple, gm_symtab_entry org) {
 		gm_rwinfo g = new gm_rwinfo();
 		g.location = loc;
@@ -95,11 +90,6 @@ public class gm_rwinfo {
 		return new_field_inst(driver, loc, GM_REDUCE_T.GMREDUCE_NULL, null, false, null);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: static gm_rwinfo* new_field_inst(gm_symtab_entry* driver,
-	// ast_id* loc, int reduce_op = GMREDUCE_NULL, gm_symtab_entry* bound_symbol
-	// = null, boolean supple = false, gm_symtab_entry* org = null)
 	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple,
 			gm_symtab_entry org) {
 		gm_rwinfo g = new gm_rwinfo();
@@ -123,11 +113,6 @@ public class gm_rwinfo {
 	// make a copy of this instance
 	public final gm_rwinfo copy() {
 		gm_rwinfo rwie = new gm_rwinfo();
-		// C++ TO JAVA CONVERTER WARNING: The following line was determined to
-		// be a copy assignment (rather than a reference assignment) - this
-		// should be verified and a 'copyFrom' method should be created if it
-		// does not yet exist:
-		// ORIGINAL LINE: *rwie = *this;
 		rwie.copyFrom(this); // copy by assignment
 		return rwie;
 	}

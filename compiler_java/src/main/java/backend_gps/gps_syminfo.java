@@ -39,10 +39,6 @@ public class gps_syminfo extends ast_extra_info {
 		add_usage_in_BB(bb_no, usage, context, GM_REDUCE_T.GMREDUCE_NULL);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void add_usage_in_BB(int bb_no, int usage, int context,
-	// int reduce_type = GMREDUCE_NULL)
 	public final void add_usage_in_BB(int bb_no, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context, GM_REDUCE_T reduce_type) {
 		// if not already in
 		for (int i = 0; i < (int) used_BB.size(); i++) {

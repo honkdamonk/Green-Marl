@@ -177,10 +177,6 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 		update_access_information(i, is_scalar, usage, context, GM_REDUCE_T.GMREDUCE_NULL);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void update_access_information(ast_id *i, boolean
-	// is_scalar, int usage, int context, int r_type = GMREDUCE_NULL)
 	protected final void update_access_information(ast_id i, boolean is_scalar, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context,
 			GM_REDUCE_T r_type) {
 		// update global information

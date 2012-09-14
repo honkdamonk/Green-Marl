@@ -48,11 +48,6 @@ public class gm_symtab {
 		return check_duplicate_and_add_symbol(id, type, old_def_ref, true, true);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: boolean check_duplicate_and_add_symbol(ast_id* id,
-	// ast_typedecl* type, gm_symtab_entry*& old_def, boolean isRA = true,
-	// boolean isWA = true)
 	public final boolean check_duplicate_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA, boolean isWA) {
 		assert id.getSymInfo() == null;
 		// printf("check duplicate for %s\n", id->get_orgname());
@@ -71,11 +66,6 @@ public class gm_symtab {
 		return check_and_add_symbol(id, type, old_def_ref, true, true);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: boolean check_and_add_symbol(ast_id* id, ast_typedecl*
-	// type, gm_symtab_entry*& old_def, boolean isRA = true, boolean isWA =
-	// true)
 	public final boolean check_and_add_symbol(ast_id id, ast_typedecl type, RefObject<gm_symtab_entry> old_def_ref, boolean isRA, boolean isWA) {
 		return check_duplicate_and_add_symbol(id, type, old_def_ref, isRA, isWA);
 	}

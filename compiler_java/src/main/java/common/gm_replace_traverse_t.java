@@ -189,8 +189,6 @@ public class gm_replace_traverse_t extends gm_apply {
 		}
 		// remove positions
 		for (ast_expr expr : OLDS) {
-			// C++ TO JAVA CONVERTER TODO TASK: There is no direct equivalent to
-			// the STL list 'erase' method in Java:
 			ARGS.remove(expr);
 		}
 	}

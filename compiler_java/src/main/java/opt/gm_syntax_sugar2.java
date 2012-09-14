@@ -167,12 +167,6 @@ public class gm_syntax_sugar2 {
 			// ---------------------------------
 			has_other_rhs.argvalue = false;
 
-			// C++ TO JAVA CONVERTER NOTE: The following #define macro was
-			// replaced
-			// in-line:
-			// /#define CHECK_SAME_REDUCTION(expr, rtype)
-			// ((expr)->is_reduction() &&
-			// (((ast_expr_reduce*)(expr))->get_reduce_type() == rtype))
 			if (((body).is_reduction() && (((ast_expr_reduce) (body)).get_reduce_type() == rtype))) {
 				b1 = (ast_expr_reduce) body;
 				return true;

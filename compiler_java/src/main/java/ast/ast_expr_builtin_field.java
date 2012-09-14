@@ -8,16 +8,20 @@ import java.util.LinkedList;
 
 public class ast_expr_builtin_field extends ast_expr_builtin {
 
-	public void dispose() {
-		if (field_driver != null)
-			field_driver.dispose();
+	private ast_field field_driver;
+
+	private ast_expr_builtin_field() {
+		super();
+		field_driver = null;
 	}
 
+	@Override
 	public final ast_id get_driver() {
 		assert false;
 		return null;
 	}
 
+	@Override
 	public final boolean driver_is_field() {
 		return true;
 	}
@@ -26,10 +30,12 @@ public class ast_expr_builtin_field extends ast_expr_builtin {
 		return field_driver;
 	}
 
+	@Override
 	public final ast_field get_field() {
 		return field_driver;
 	}
 
+	@Override
 	public final GMTYPE_T get_source_type() {
 		assert field_driver != null;
 		return field_driver.get_second().getTargetTypeInfo().getTypeSummary();
@@ -49,7 +55,7 @@ public class ast_expr_builtin_field extends ast_expr_builtin {
 
 		if (exList != null) {
 			// shallow copy LIST
-			newExpression.args = new LinkedList<ast_expr>(exList.LIST); 
+			newExpression.args = new LinkedList<ast_expr>(exList.LIST);
 			// but not set 'up' pointer.
 			for (ast_expr e : newExpression.args)
 				e.set_parent(newExpression);
@@ -57,10 +63,4 @@ public class ast_expr_builtin_field extends ast_expr_builtin {
 		return newExpression;
 	}
 
-	private ast_expr_builtin_field() {
-		super();
-		this.field_driver = null;
-	}
-
-	private ast_field field_driver;
 }

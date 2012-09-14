@@ -9,9 +9,6 @@ public class ast_extra_info_map extends ast_extra_info {
 	public ast_extra_info_map() {
 	}
 
-	public void dispose() {
-	}
-
 	@Override
 	public ast_extra_info copy() {
 		assert false;

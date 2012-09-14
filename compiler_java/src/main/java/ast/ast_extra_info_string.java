@@ -1,15 +1,8 @@
 package ast;
 
 public class ast_extra_info_string extends ast_extra_info {
+
 	public String str;
-
-	public ast_extra_info_string() {
-		this.str = null;
-	}
-
-	public void dispose() {
-		str = null;
-	}
 
 	public ast_extra_info_string(String org) {
 		assert org != null;
@@ -17,9 +10,10 @@ public class ast_extra_info_string extends ast_extra_info {
 	}
 
 	public String get_string() {
-		return (String) str;
+		return str;
 	}
 
+	@Override
 	public ast_extra_info copy() {
 		ast_extra_info_string s = new ast_extra_info_string(str);
 		s.base_copy(this);

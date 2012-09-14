@@ -1,5 +1,15 @@
 package ast;
 
+import static ast.AST_NODE_TYPE.AST_ASSIGN;
+import static ast.AST_NODE_TYPE.AST_FIELD;
+import static ast.AST_NODE_TYPE.AST_ID;
+import static inc.GM_REDUCE_T.GMREDUCE_INVALID;
+import static inc.GM_REDUCE_T.GMREDUCE_NULL;
+import static inc.gm_assignment_location_t.GMASSIGN_LHS_FIELD;
+import static inc.gm_assignment_location_t.GMASSIGN_LHS_SCALA;
+import static inc.gm_assignment_t.GMASSIGN_DEFER;
+import static inc.gm_assignment_t.GMASSIGN_NORMAL;
+import static inc.gm_assignment_t.GMASSIGN_REDUCE;
 import inc.GM_REDUCE_T;
 import inc.gm_assignment_location_t;
 import inc.gm_assignment_t;
@@ -11,7 +21,7 @@ import common.gm_apply;
 import common.gm_dumptree;
 
 public class ast_assign extends ast_sent {
-	
+
 	private gm_assignment_t assign_type; // normal, deferred, reduce
 	private gm_assignment_location_t lhs_type; // scalar, field
 	private GM_REDUCE_T reduce_type; // add, mult, min, max
@@ -25,17 +35,24 @@ public class ast_assign extends ast_sent {
 
 	private LinkedList<ast_node> l_list = new LinkedList<ast_node>();
 	private LinkedList<ast_expr> r_list = new LinkedList<ast_expr>();
-	
+
+	protected ast_assign() {
+		super(AST_ASSIGN);
+		lhs_type = GMASSIGN_LHS_SCALA;
+		assign_type = GMASSIGN_NORMAL;
+		reduce_type = GMREDUCE_INVALID;
+	}
+
 	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type, ast_id itor) {
-		return new_assign_scala(id, r, assign_type, itor, GM_REDUCE_T.GMREDUCE_NULL);
+		return new_assign_scala(id, r, assign_type, itor, GMREDUCE_NULL);
 	}
 
 	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type) {
-		return new_assign_scala(id, r, assign_type, null, GM_REDUCE_T.GMREDUCE_NULL);
+		return new_assign_scala(id, r, assign_type, null, GMREDUCE_NULL);
 	}
 
 	public static ast_assign new_assign_scala(ast_id id, ast_expr r) {
-		return new_assign_scala(id, r, gm_assignment_t.GMASSIGN_NORMAL, null, GM_REDUCE_T.GMREDUCE_NULL);
+		return new_assign_scala(id, r, GMASSIGN_NORMAL, null, GMREDUCE_NULL);
 	}
 
 	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type, ast_id itor, GM_REDUCE_T reduce_type) {
@@ -45,7 +62,7 @@ public class ast_assign extends ast_sent {
 		A.rhs = r;
 		id.set_parent(A);
 		r.set_parent(A);
-		A.lhs_type = gm_assignment_location_t.GMASSIGN_LHS_SCALA;
+		A.lhs_type = GMASSIGN_LHS_SCALA;
 		if (itor != null) {
 			itor.set_parent(A);
 		}
@@ -56,15 +73,15 @@ public class ast_assign extends ast_sent {
 	}
 
 	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment_t assign_type, ast_id itor) {
-		return new_assign_field(id, r, assign_type, itor, GM_REDUCE_T.GMREDUCE_NULL);
+		return new_assign_field(id, r, assign_type, itor, GMREDUCE_NULL);
 	}
 
 	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment_t assign_type) {
-		return new_assign_field(id, r, assign_type, null, GM_REDUCE_T.GMREDUCE_NULL);
+		return new_assign_field(id, r, assign_type, null, GMREDUCE_NULL);
 	}
 
 	public static ast_assign new_assign_field(ast_field id, ast_expr r) {
-		return new_assign_field(id, r, gm_assignment_t.GMASSIGN_NORMAL, null, GM_REDUCE_T.GMREDUCE_NULL);
+		return new_assign_field(id, r, GMASSIGN_NORMAL, null, GMREDUCE_NULL);
 	}
 
 	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
@@ -79,7 +96,7 @@ public class ast_assign extends ast_sent {
 		A.rhs = r;
 		id.set_parent(A);
 		r.set_parent(A);
-		A.lhs_type = gm_assignment_location_t.GMASSIGN_LHS_FIELD;
+		A.lhs_type = GMASSIGN_LHS_FIELD;
 		if (itor != null) {
 			itor.set_parent(A);
 		}
@@ -89,15 +106,16 @@ public class ast_assign extends ast_sent {
 		return A;
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		boolean argmin = is_argminmax_assign();
 
 		if (argmin) {
 			Out.push('<');
 		}
-		if (lhs_type == gm_assignment_location_t.GMASSIGN_LHS_SCALA) {
+		if (lhs_type == GMASSIGN_LHS_SCALA) {
 			lhs_scala.reproduce(0);
-		} else if (lhs_type == gm_assignment_location_t.GMASSIGN_LHS_FIELD) {
+		} else if (lhs_type == GMASSIGN_LHS_FIELD) {
 			lhs_field.reproduce(0);
 		}
 
@@ -107,11 +125,11 @@ public class ast_assign extends ast_sent {
 			int cnt = 0;
 			int last = L.size();
 			for (ast_node n : L) {
-				if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+				if (n.get_nodetype() == AST_FIELD) {
 					ast_field f = (ast_field) n;
 					f.reproduce(0);
 				} else {
-					assert n.get_nodetype() == AST_NODE_TYPE.AST_ID;
+					assert n.get_nodetype() == AST_ID;
 					ast_id i = (ast_id) n;
 					i.reproduce(0);
 				}
@@ -124,13 +142,13 @@ public class ast_assign extends ast_sent {
 			Out.push('>');
 		}
 
-		if (assign_type == gm_assignment_t.GMASSIGN_NORMAL) {
+		if (assign_type == GMASSIGN_NORMAL) {
 			Out.push(" = ");
-		} else if (assign_type == gm_assignment_t.GMASSIGN_REDUCE) {
+		} else if (assign_type == GMASSIGN_REDUCE) {
 			Out.SPC();
 			Out.push(reduce_type.get_reduce_string());
 			Out.SPC();
-		} else if (assign_type == gm_assignment_t.GMASSIGN_DEFER) {
+		} else if (assign_type == GMASSIGN_DEFER) {
 			Out.push(" <= ");
 		} else {
 			assert false;
@@ -155,7 +173,7 @@ public class ast_assign extends ast_sent {
 			Out.push('>');
 		}
 
-		if ((assign_type == gm_assignment_t.GMASSIGN_REDUCE) || (assign_type == gm_assignment_t.GMASSIGN_DEFER)) {
+		if ((assign_type == GMASSIGN_REDUCE) || (assign_type == GMASSIGN_DEFER)) {
 			if (bound != null) {
 				Out.push(" @ ");
 				bound.reproduce(0);
@@ -165,12 +183,13 @@ public class ast_assign extends ast_sent {
 		Out.pushln(";");
 	}
 
+	@Override
 	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre) {
 		boolean for_id = a.is_for_id();
 
 		if (is_pre) {
 			if (for_id) {
-				if (get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) {
+				if (get_lhs_type() == GMASSIGN_LHS_SCALA) {
 					a.apply(get_lhs_scala());
 				} // LHS_FIELD
 				else {
@@ -182,7 +201,7 @@ public class ast_assign extends ast_sent {
 
 				if (is_argminmax_assign()) {
 					for (ast_node n : l_list) {
-						if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+						if (n.get_nodetype() == AST_ID) {
 							ast_id i = (ast_id) n;
 							a.apply(i);
 						} else {
@@ -199,13 +218,13 @@ public class ast_assign extends ast_sent {
 		boolean for_lhs = a.is_for_lhs();
 
 		if (for_lhs || for_rhs) {
-			a.set_matching_lhs((get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) ? (ast_node) get_lhs_scala() : (ast_node) get_lhs_field());
+			a.set_matching_lhs((get_lhs_type() == GMASSIGN_LHS_SCALA) ? (ast_node) get_lhs_scala() : (ast_node) get_lhs_field());
 
 			a.set_matching_rhs_top(get_rhs());
 		}
 
 		if (is_pre && for_lhs) {
-			if (get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) {
+			if (get_lhs_type() == GMASSIGN_LHS_SCALA) {
 				a.apply_lhs(get_lhs_scala());
 			} // LHS_FIELD
 			else {
@@ -214,7 +233,7 @@ public class ast_assign extends ast_sent {
 		}
 		get_rhs().traverse(a, is_post, is_pre);
 		if (is_post && for_lhs) {
-			if (get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) {
+			if (get_lhs_type() == GMASSIGN_LHS_SCALA) {
 				if (a.has_separate_post_apply())
 					a.apply_lhs2(get_lhs_scala());
 				else
@@ -240,7 +259,7 @@ public class ast_assign extends ast_sent {
 				}
 
 				if (is_pre && for_lhs) {
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+					if (n.get_nodetype() == AST_ID) {
 						a.apply_lhs((ast_id) n);
 					} else {
 						a.apply_lhs((ast_field) n);
@@ -249,13 +268,13 @@ public class ast_assign extends ast_sent {
 				e.traverse(a, is_post, is_pre);
 				if (is_post && for_lhs) {
 					if (a.has_separate_post_apply()) {
-						if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+						if (n.get_nodetype() == AST_ID) {
 							a.apply_lhs2((ast_id) n);
 						} else {
 							a.apply_lhs2((ast_field) n);
 						}
 					} else {
-						if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+						if (n.get_nodetype() == AST_ID) {
 							a.apply_lhs((ast_id) n);
 						} else {
 							a.apply_lhs((ast_field) n);
@@ -269,7 +288,7 @@ public class ast_assign extends ast_sent {
 		if (is_post) {
 			boolean b = a.has_separate_post_apply();
 			if (for_id) {
-				if (get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) {
+				if (get_lhs_type() == GMASSIGN_LHS_SCALA) {
 					if (b)
 						a.apply2(get_lhs_scala());
 					else
@@ -293,7 +312,7 @@ public class ast_assign extends ast_sent {
 				}
 				if (is_argminmax_assign()) {
 					for (ast_node n : l_list) {
-						if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+						if (n.get_nodetype() == AST_ID) {
 							ast_id i = (ast_id) n;
 							if (b)
 								a.apply2(i);
@@ -320,13 +339,14 @@ public class ast_assign extends ast_sent {
 		}
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		gm_dumptree.IND(ind_level);
 		assert parent != null;
 
-		if (assign_type == gm_assignment_t.GMASSIGN_NORMAL) {
+		if (assign_type == GMASSIGN_NORMAL) {
 			System.out.print("[ASSIGN ");
-		} else if (assign_type == gm_assignment_t.GMASSIGN_REDUCE) {
+		} else if (assign_type == GMASSIGN_REDUCE) {
 			System.out.print("[ASSIGN_REDUCE ");
 			System.out.printf(" <%s @ ", reduce_type.get_reduce_string());
 			if (bound == null)
@@ -338,9 +358,9 @@ public class ast_assign extends ast_sent {
 		} else
 			assert false;
 
-		if (lhs_type == gm_assignment_location_t.GMASSIGN_LHS_SCALA) {
+		if (lhs_type == GMASSIGN_LHS_SCALA) {
 			lhs_scala.dump_tree(0);
-		} else if (lhs_type == gm_assignment_location_t.GMASSIGN_LHS_FIELD) {
+		} else if (lhs_type == GMASSIGN_LHS_FIELD) {
 			lhs_field.dump_tree(0);
 		}
 		System.out.print("\n");
@@ -393,15 +413,15 @@ public class ast_assign extends ast_sent {
 	}
 
 	public final boolean is_reduce_assign() {
-		return assign_type == gm_assignment_t.GMASSIGN_REDUCE;
+		return assign_type == GMASSIGN_REDUCE;
 	}
 
 	public final boolean is_defer_assign() {
-		return assign_type == gm_assignment_t.GMASSIGN_DEFER;
+		return assign_type == GMASSIGN_DEFER;
 	}
 
 	public boolean is_target_scalar() {
-		return get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA;
+		return get_lhs_type() == GMASSIGN_LHS_SCALA;
 	}
 
 	public final void set_rhs(ast_expr r) {
@@ -440,28 +460,21 @@ public class ast_assign extends ast_sent {
 	public final void set_lhs_scala(ast_id new_id) {
 		lhs_scala = new_id;
 		if (new_id != null)
-			lhs_type = gm_assignment_location_t.GMASSIGN_LHS_SCALA;
+			lhs_type = GMASSIGN_LHS_SCALA;
 	}
 
 	public final void set_lhs_field(ast_field new_id) {
 		lhs_field = new_id;
 		if (new_id != null)
-			lhs_type = gm_assignment_location_t.GMASSIGN_LHS_FIELD;
+			lhs_type = GMASSIGN_LHS_FIELD;
 	}
-	
+
 	public final boolean is_reference() {
 		return isReference;
 	}
-	
+
 	public final void set_is_reference(boolean isRef) {
 		isReference = isRef;
-	}
-
-	protected ast_assign() {
-		super(AST_NODE_TYPE.AST_ASSIGN);
-		this.lhs_type = gm_assignment_location_t.GMASSIGN_LHS_SCALA;
-		this.assign_type = gm_assignment_t.GMASSIGN_NORMAL;
-		this.reduce_type = GM_REDUCE_T.GMREDUCE_INVALID;
 	}
 
 	public boolean is_target_map_entry() {

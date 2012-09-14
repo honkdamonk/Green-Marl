@@ -27,18 +27,6 @@ public class gm_symtab {
 		return symtab_type;
 	}
 
-	public void dispose() {
-		/*
-		 * for(int i=0;i<entries.size(); i++) { gm_symtab_entry* e = entries[i];
-		 * delete e; }
-		 */
-		for (gm_symtab_entry e : entries) {
-			if (e != null)
-				e.dispose();
-		}
-		// printf("delete:%p\n", this);
-	}
-
 	public final void set_parent(gm_symtab p) {
 		parent = p;
 		assert this != parent;

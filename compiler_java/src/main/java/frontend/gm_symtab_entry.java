@@ -37,18 +37,6 @@ public class gm_symtab_entry {
 		assert id.name != null;
 	}
 
-	public void dispose() {
-		if (id != null)
-			id.dispose();
-		if (type != null)
-			type.dispose();
-		// TODO not tested!
-		for (String s : extra.keySet()) {
-			if (extra.get(s) != null)
-				extra.get(s).dispose();
-		}
-	}
-
 	public final ast_typedecl getType() {
 		return type;
 	}

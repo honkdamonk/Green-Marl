@@ -11,12 +11,14 @@ import static backend_gps.GPSConstants.GPS_LIST_INTRA_MERGED_CONDITIONAL;
 import static backend_gps.GPSConstants.GPS_PREPARE_STEP1;
 import static backend_gps.GPSConstants.GPS_RET_VALUE;
 import static backend_gps.GPSConstants.GPS_REV_NODE_ID;
+import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import inc.GM_REDUCE_T;
 import inc.gm_compile_step;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -51,7 +53,6 @@ import backend_gps.gm_gps_opt_merge_ebb_intra_loop;
 import backend_gps.gm_gps_opt_split_comm_ebb;
 import backend_gps.gps_syminfo;
 
-import common.GM_ERRORS_AND_WARNINGS;
 import common.gm_apply_compiler_stage;
 import common.gm_argopts;
 import common.gm_error;
@@ -65,6 +66,9 @@ import common.gm_reproduce;
 // begin sentence
 // is parallel
 public class gm_giraph_gen extends gm_gps_gen {
+
+	private gm_giraphlib glib; // graph library
+
 	public gm_giraph_gen() {
 		super();
 		glib = new gm_giraphlib(this);
@@ -75,8 +79,9 @@ public class gm_giraph_gen extends gm_gps_gen {
 		return glib;
 	}
 
+	@Override
 	public void init_gen_steps() {
-		java.util.LinkedList<gm_compile_step> L = get_gen_steps();
+		LinkedList<gm_compile_step> L = get_gen_steps();
 		// no more change of AST at this point
 		L.addLast(gm_gps_opt_check_reverse_edges.get_factory());
 		L.addLast(gm_gps_new_check_depth_two.get_factory());
@@ -101,24 +106,24 @@ public class gm_giraph_gen extends gm_gps_gen {
 	// ----------------------------------
 	// stages in backend gen
 	// ----------------------------------
-
+	@Override
 	public boolean do_generate() {
-		
-	    gm_main.FE.prepare_proc_iteration();
-	    ast_procdef proc = gm_main.FE.get_next_proc();
-	
-	    // Check whether procedure name is the same as the filename
-	    String proc_name = proc.get_procname().get_genname();
-	    if (!proc_name.equals(fname)) {
-	        gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
-	        return false;
-	    }
-	
-	    // Append 'Vertex' to filename if we only generate vertex logic
-	    if (gm_main.OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_GIRAPH_VERTEX_ONLY)) {
-	        String filename = String.format("%sVertex", proc.get_procname().get_genname());
-	        gm_main.PREGEL_BE.setFileName(filename);
-	    }
+
+		gm_main.FE.prepare_proc_iteration();
+		ast_procdef proc = gm_main.FE.get_next_proc();
+
+		// Check whether procedure name is the same as the filename
+		String proc_name = proc.get_procname().get_genname();
+		if (!proc_name.equals(fname)) {
+			gm_error.gm_backend_error(GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
+			return false;
+		}
+
+		// Append 'Vertex' to filename if we only generate vertex logic
+		if (gm_main.OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_GIRAPH_VERTEX_ONLY)) {
+			String filename = String.format("%sVertex", proc.get_procname().get_genname());
+			gm_main.PREGEL_BE.setFileName(filename);
+		}
 
 		if (!open_output_files())
 			return false;
@@ -129,12 +134,14 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 		return b;
 	}
-	
+
+	@Override
 	public void write_headers() {
 		get_lib().generate_headers(Body);
 		Body.NL();
 	}
 
+	@Override
 	public void begin_class() {
 		ast_procdef proc = gm_main.FE.get_current_proc();
 		Body.push("public class ");
@@ -144,11 +151,12 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.NL();
 	}
 
+	@Override
 	public void end_class() {
 		Body.pushln("}");
 	}
 
-	public void do_generate_global_variables() {
+	void do_generate_global_variables() {
 		ast_procdef proc = gm_main.FE.get_current_proc();
 		Body.pushln("// Class logger");
 		String temp = String.format("private static final Logger LOG = Logger.getLogger(%s.class);", proc.get_procname().get_genname());
@@ -159,6 +167,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.NL();
 	}
 
+	@Override
 	public void do_generate_master() {
 		do_generate_shared_variables_keys();
 		set_master_generate(true);
@@ -170,6 +179,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.NL();
 	}
 
+	@Override
 	public void do_generate_master_states() {
 		Body.pushln("//----------------------------------------------------------");
 		Body.pushln("// Master's State-machine ");
@@ -223,6 +233,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 
+	@Override
 	public void do_generate_master_class() {
 		ast_procdef proc = gm_main.FE.get_current_proc();
 		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
@@ -230,7 +241,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		// --------------------------------------------------------------------
 		// create master class
 		// --------------------------------------------------------------------
-		String temp = String.format("public static class %sMasterCompute extends MasterCompute {", proc.get_procname().get_genname());
+		String temp = String.format(" static class %sMasterCompute extends MasterCompute {", proc.get_procname().get_genname());
 		Body.pushln(temp);
 		Body.pushln("// Control fields");
 		boolean prep = gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE);
@@ -279,7 +290,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		// Iterate symbol table
 		gm_symtab args = proc.get_symtab_var();
 		assert args != null;
-		java.util.HashSet<gm_symtab_entry> syms = args.get_entries();
+		HashSet<gm_symtab_entry> syms = args.get_entries();
 		for (gm_symtab_entry s : syms) {
 			// check if used in master
 			gps_syminfo syminfo = (gps_syminfo) s.find_info(GPS_TAG_BB_USAGE);
@@ -307,7 +318,9 @@ public class gm_giraph_gen extends gm_gps_gen {
 				case GMTYPE_FLOAT:
 					temp = String.format("getFloat(\"%s\", -1.0f);", argname);
 					break;
-				// TODO Waiting for https://issues.apache.org/jira/browse/HADOOP-8415 to be accepted
+				// TODO Waiting for
+				// https://issues.apache.org/jira/browse/HADOOP-8415 to be
+				// accepted
 				// case GMTYPE_DOUBLE:
 				// sprintf(temp, "getDouble(\"%s\", -1.0);", argname);
 				// break;
@@ -354,6 +367,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.NL();
 	}
 
+	@Override
 	public void do_generate_master_scalar() {
 		Body.pushln("//----------------------------------------------------------");
 		Body.pushln("// Scalar Variables ");
@@ -390,12 +404,13 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.NL();
 	}
 
-	public void do_generate_master_serialization() {
+	void do_generate_master_serialization() {
 		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 		get_lib().generate_master_class_details(scalar, Body);
 	}
 
+	@Override
 	public void do_generate_master_state_body(gm_gps_basic_block b) {
 		int id = b.get_id();
 		gm_gps_bbtype_t type = b.get_type();
@@ -433,7 +448,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			}
 
 			// define local variables
-			java.util.HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
+			HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
 			for (gm_symtab_entry sym : symbols.keySet()) {
 				gps_syminfo local_info = symbols.get(sym);
 				if (!local_info.is_scalar() || sym.isArgument()) // TODO: why is
@@ -544,9 +559,10 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("}"); // end of state function
 	}
 
+	@Override
 	public void do_generate_scalar_broadcast_send(gm_gps_basic_block b) {
 		// check if scalar variable is used inside the block
-		java.util.HashMap<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
+		HashMap<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
 		for (gm_symtab_entry entry : syms.keySet()) {
 			gps_syminfo local_info = syms.get(entry);
 			gps_syminfo global_info = (gps_syminfo) entry.find_info(GPS_TAG_BB_USAGE);
@@ -571,13 +587,14 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 	}
 
+	@Override
 	public void do_generate_scalar_broadcast_receive(gm_gps_basic_block b) {
 		assert b.get_num_entries() == 1;
 		gm_gps_basic_block pred = b.get_nth_entry(0);
 		assert pred.is_vertex();
 
 		// check if scalar variable is modified inside the block
-		java.util.HashMap<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
+		HashMap<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
 		for (gm_symtab_entry entry : syms.keySet()) {
 			gps_syminfo local_info = syms.get(entry);
 			gps_syminfo global_info = (gps_syminfo) entry.find_info(GPS_TAG_BB_USAGE);
@@ -592,10 +609,11 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 	}
 
+	@Override
 	public void do_generate_shared_variables_keys() {
 		Body.pushln("// Keys for shared_variables ");
 		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
-		java.util.HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
+		HashSet<gm_symtab_entry> scalar = info.get_scalar_symbols();
 
 		for (gm_symtab_entry sym : scalar) {
 			gps_syminfo syminfo = (gps_syminfo) sym.find_info(GPS_TAG_BB_USAGE);
@@ -615,7 +633,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.NL();
 	}
 
-	public void do_generate_vertex_body() {
+	void do_generate_vertex_body() {
 		set_master_generate(false);
 		do_generate_vertex_states();
 		do_generate_worker_context_class();
@@ -660,8 +678,8 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("} // end of vertex class");
 		Body.NL();
 	}
-	
-	public void do_generate_worker_context_class() {
+
+	void do_generate_worker_context_class() {
 		String proc_name = gm_main.FE.get_current_proc().get_procname().get_genname();
 
 		Body.pushln("//----------------------------------------------");
@@ -690,6 +708,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.NL();
 	}
 
+	@Override
 	public void do_generate_vertex_property_class(boolean is_edge_prop) {
 		Body.pushln("//----------------------------------------------");
 		if (is_edge_prop)
@@ -699,7 +718,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("//----------------------------------------------");
 		ast_procdef proc = gm_main.FE.get_current_proc();
 		assert proc != null;
-		String temp = String.format("public static class %s implements Writable {", is_edge_prop ? "EdgeData" : "VertexData");
+		String temp = String.format(" static class %s implements Writable {", is_edge_prop ? "EdgeData" : "VertexData");
 		Body.pushln(temp);
 
 		// list out property
@@ -715,8 +734,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 
 		if (gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
-			temp = String.format("%s[] %s; //reverse edges (node IDs)", get_lib().is_node_type_int() ? "IntWritable"
-					: "LongWritable", GPS_REV_NODE_ID);
+			temp = String.format("%s[] %s; //reverse edges (node IDs)", get_lib().is_node_type_int() ? "IntWritable" : "LongWritable", GPS_REV_NODE_ID);
 			Body.pushln(temp);
 		}
 
@@ -728,6 +746,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 	}
 
+	@Override
 	public void do_generate_message_class() {
 		Body.pushln("//----------------------------------------------");
 		Body.pushln("// Message Data ");
@@ -756,6 +775,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.NL();
 	}
 
+	@Override
 	public void do_generate_vertex_states() {
 		Body.NL();
 		Body.pushln("@Override");
@@ -792,6 +812,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		gm_reproduce.gm_baseindent_reproduce(0);
 	}
 
+	@Override
 	public void do_generate_vertex_state_body(gm_gps_basic_block b) {
 		int id = b.get_id();
 		gm_gps_bbtype_t type = b.get_type();
@@ -831,7 +852,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			Body.pushln("// Begin msg receive");
 			Body.pushln("for (MessageData _msg : _msgs) {");
 
-			java.util.LinkedList<gm_gps_comm_unit> R = b.get_receivers();
+			LinkedList<gm_gps_comm_unit> R = b.get_receivers();
 			for (gm_gps_comm_unit U : R) {
 				if (U.get_type() == gm_gps_comm_t.GPS_COMM_NESTED) {
 					ast_foreach fe = U.fe;
@@ -906,7 +927,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			Body.pushln("-----*/");
 			Body.NL();
 
-			java.util.LinkedList<ast_sent> sents = b.get_sents();
+			LinkedList<ast_sent> sents = b.get_sents();
 			int cnt = 0;
 			for (ast_sent s : sents) {
 				assert s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH;
@@ -937,10 +958,11 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("}");
 	}
 
+	@Override
 	public void do_generate_vertex_state_receive_global(gm_gps_basic_block b) {
 
 		// load scalar variable
-		java.util.HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
+		HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
 		for (gm_symtab_entry sym : symbols.keySet()) {
 			gps_syminfo local_info = symbols.get(sym);
 			if (!local_info.is_scalar())
@@ -976,7 +998,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		}
 	}
 
-	public void do_generate_input_output_formats() {
+	void do_generate_input_output_formats() {
 		ast_procdef proc = gm_main.FE.get_current_proc();
 
 		String proc_name = proc.get_procname().get_genname();
@@ -994,24 +1016,28 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("// Vertex Input format");
 		Body.pushln("//----------------------------------------------");
 
-		Body.pushln(String.format("static class %sVertexInputFormat extends TextVertexInputFormat<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data, edge_data, message_data));
+		Body.pushln(String.format("static class %sVertexInputFormat extends TextVertexInputFormat<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data,
+				edge_data, message_data));
 		Body.pushln("@Override");
-		Body.pushln(String.format("public VertexReader<%s, %s, %s, %s>", vertex_id, vertex_data, edge_data, message_data));
+		Body.pushln(String.format(" VertexReader<%s, %s, %s, %s>", vertex_id, vertex_data, edge_data, message_data));
 		Body.pushln("createVertexReader(InputSplit split, TaskAttemptContext context) throws IOException {");
 		Body.pushln(String.format("return new %sVertexReader(textInputFormat.createRecordReader(split, context));", proc_name));
 		Body.pushln("}");
 		Body.NL();
 
-		Body.pushln(String.format("static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data, edge_data, message_data));
-		Body.pushln(String.format("public %sVertexReader(RecordReader<LongWritable, Text> lineRecordReader) {", proc_name));
+		Body.pushln(String.format("static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, %s, %s, %s> {", proc_name, vertex_id,
+				vertex_data, edge_data, message_data));
+		Body.pushln(String.format(" %sVertexReader(RecordReader<LongWritable, Text> lineRecordReader) {", proc_name));
 		Body.pushln("super(lineRecordReader);");
 		Body.pushln("}");
 		Body.NL();
 
 		Body.pushln("@Override");
-		Body.pushln(String.format("public Vertex<%s, %s, %s, %s> getCurrentVertex() throws IOException, InterruptedException {", vertex_id, vertex_data, edge_data, message_data));
+		Body.pushln(String.format(" Vertex<%s, %s, %s, %s> getCurrentVertex() throws IOException, InterruptedException {", vertex_id, vertex_data, edge_data,
+				message_data));
 		Body.pushln(String.format("Vertex<%s, %s, %s, %s> vertex =", vertex_id, vertex_data, edge_data, message_data));
-		Body.pushln(String.format("    BspUtils.<%s, %s, %s, %s> createVertex(getContext().getConfiguration());", vertex_id, vertex_data, edge_data, message_data));
+		Body.pushln(String.format("    BspUtils.<%s, %s, %s, %s> createVertex(getContext().getConfiguration());", vertex_id, vertex_data, edge_data,
+				message_data));
 		Body.NL();
 
 		Body.pushln("Text line = getRecordReader().getCurrentValue();");
@@ -1055,7 +1081,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln(String.format("static class %sVertexOutputFormat extends", proc_name));
 		Body.pushln(String.format("TextVertexOutputFormat<%s, %s, %s> {", vertex_id, vertex_data, edge_data));
 		Body.pushln("@Override");
-		Body.pushln(String.format("public VertexWriter<%s, %s, %s> createVertexWriter(", vertex_id, vertex_data, edge_data));
+		Body.pushln(String.format(" VertexWriter<%s, %s, %s> createVertexWriter(", vertex_id, vertex_data, edge_data));
 		Body.pushln("TaskAttemptContext context) throws IOException, InterruptedException {");
 		Body.pushln(String.format("return new %sVertexWriter(textOutputFormat.getRecordWriter(context));", proc_name));
 		Body.pushln("}");
@@ -1063,7 +1089,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 
 		Body.pushln(String.format("static class %sVertexWriter", proc_name));
 		Body.pushln(String.format("extends TextVertexOutputFormat.TextVertexWriter<%s, %s, %s> {", vertex_id, vertex_data, edge_data));
-		Body.pushln(String.format("public %sVertexWriter(RecordWriter<Text, Text> lineRecordReader) {", proc_name));
+		Body.pushln(String.format(" %sVertexWriter(RecordWriter<Text, Text> lineRecordReader) {", proc_name));
 		Body.pushln("super(lineRecordReader);");
 		Body.pushln("}");
 		Body.NL();
@@ -1093,6 +1119,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("} // end of vertex output format");
 	}
 
+	@Override
 	public void do_generate_job_configuration() {
 		ast_procdef proc = gm_main.FE.get_current_proc();
 		String proc_name = proc.get_procname().get_genname();
@@ -1245,12 +1272,11 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("}");
 	}
 
-	private gm_giraphlib glib; // graph library
-
 	// from code generator interface
+	@Override
 	public void generate_proc(ast_procdef proc) {
 		write_headers();
-		
+
 		if (!gm_main.OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_GIRAPH_VERTEX_ONLY)) {
 			begin_class();
 			do_generate_global_variables();

@@ -10,19 +10,15 @@ import common.gm_apply;
 
 public class ast_expr_foreign extends ast_expr {
 
-	private String orig_text;
+	private String orig_text = null;
 
 	// parsed foreign syntax
 	private LinkedList<ast_node> parsed_gm = new LinkedList<ast_node>();
 	private LinkedList<String> parsed_foreign = new LinkedList<String>();
 
-	public void dispose() {
-		// Iterator<ast_node> I;
-		// for (I = parsed_gm.iterator(); I.hasNext();)
-		// {
-		// I.next() = null;
-		// }
-		// orig_text = null;
+	// void parse_foreign_syntax();
+	private ast_expr_foreign() {
+		set_nodetype(AST_NODE_TYPE.AST_EXPR_FOREIGN);
 	}
 
 	public static ast_expr_foreign new_expr_foreign(String text) {
@@ -34,6 +30,7 @@ public class ast_expr_foreign extends ast_expr {
 		return aef;
 	}
 
+	@Override
 	public void traverse(gm_apply a, boolean is_post, boolean is_pre) {
 		boolean for_id = a.is_for_id();
 		boolean for_expr = a.is_for_expr();
@@ -61,6 +58,7 @@ public class ast_expr_foreign extends ast_expr {
 
 	}
 
+	@Override
 	public void reproduce(int ind_lvel) {
 
 		LinkedList<ast_node> N = this.get_parsed_nodes();
@@ -89,12 +87,6 @@ public class ast_expr_foreign extends ast_expr {
 
 	public final LinkedList<String> get_parsed_text() {
 		return parsed_foreign;
-	}
-
-	// void parse_foreign_syntax();
-	private ast_expr_foreign() {
-		this.orig_text = null;
-		set_nodetype(AST_NODE_TYPE.AST_EXPR_FOREIGN);
 	}
 
 	public void apply_id(gm_apply a, boolean apply2) {
@@ -163,8 +155,6 @@ public class ast_expr_foreign extends ast_expr {
 		private int ID_begin_col = 0;
 		private int FIELD_begin_line = 0;
 		private int FIELD_begin_col = 0;
-		private int TEXT_begin_line = 0;
-		private int TEXT_begin_col = 0;
 
 		private int state = 0;
 		private int line = get_line();
@@ -184,8 +174,6 @@ public class ast_expr_foreign extends ast_expr {
 
 		void parse() {
 			TEXT_begin = curr_ptr;
-			TEXT_begin_line = line;
-			TEXT_begin_col = col;
 			state = S_TEXT;
 
 			// [TODO] consideration for built-in functions
@@ -265,8 +253,6 @@ public class ast_expr_foreign extends ast_expr {
 						state = AFTER_DOT;
 					} else {
 						TEXT_begin = curr_ptr;
-						TEXT_begin_line = line;
-						TEXT_begin_col = col;
 						state = S_TEXT;
 					}
 				} else if (Character.isWhitespace(c)) {
@@ -292,15 +278,11 @@ public class ast_expr_foreign extends ast_expr {
 					} else {
 						finishElement();
 						TEXT_begin = curr_ptr;
-						TEXT_begin_line = line;
-						TEXT_begin_col = col;
 						state = S_TEXT;
 					}
 				} else {
 					finishElement();
 					TEXT_begin = curr_ptr;
-					TEXT_begin_line = line;
-					TEXT_begin_col = col;
 					state = S_TEXT;
 				}
 			}
@@ -331,8 +313,6 @@ public class ast_expr_foreign extends ast_expr {
 				doAssertOnField();
 				finishElement();
 				TEXT_begin = curr_ptr;
-				TEXT_begin_line = line;
-				TEXT_begin_col = col;
 				state = S_TEXT;
 			}
 		}

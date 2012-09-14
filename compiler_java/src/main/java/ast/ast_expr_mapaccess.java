@@ -11,7 +11,6 @@ public class ast_expr_mapaccess extends ast_expr {
 	private ast_mapaccess mapAccess;
 
 	private ast_expr_mapaccess() {
-		// ast_expr(), mapAccess(null) {
 		set_nodetype(AST_EXPR_MAPACCESS);
 	}
 

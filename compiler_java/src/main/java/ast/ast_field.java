@@ -1,6 +1,7 @@
 package ast;
 
 import inc.GMTYPE_T;
+
 import common.gm_dumptree;
 
 /**
@@ -8,23 +9,32 @@ import common.gm_dumptree;
  */
 public class ast_field extends ast_node {
 
-	private ast_id first;
-	private ast_id second;
-	private boolean rarrow;
+	private ast_id first = null;
+	private ast_id second = null;
+	private boolean rarrow = false;
 
-	public void dispose() {
-		if (first != null)
-			first.dispose();
-		if (second != null)
-			second.dispose();
+	private ast_field() {
+		super(AST_NODE_TYPE.AST_FIELD);
 	}
 
+	private ast_field(ast_id l, ast_id f) {
+		super(AST_NODE_TYPE.AST_FIELD);
+		first = l;
+		second = f;
+		first.set_parent(this);
+		second.set_parent(this);
+		line = first.get_line();
+		col = first.get_col();
+	}
+
+	@Override
 	public void reproduce(int ind_level) {
 		first.reproduce(0);
 		Out.push('.');
 		second.reproduce(0);
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		assert parent != null;
 		gm_dumptree.IND(ind_level);
@@ -33,24 +43,6 @@ public class ast_field extends ast_node {
 		System.out.print(".");
 		second.dump_tree(0);
 		System.out.print("]");
-	}
-
-	private ast_field() {
-		super(AST_NODE_TYPE.AST_FIELD);
-		this.first = null;
-		this.second = null;
-		this.rarrow = false;
-	}
-
-	private ast_field(ast_id l, ast_id f) {
-		super(AST_NODE_TYPE.AST_FIELD);
-		this.first = l;
-		this.second = f;
-		this.rarrow = false;
-		first.set_parent(this);
-		second.set_parent(this);
-		this.line = first.get_line();
-		this.col = first.get_col();
 	}
 
 	public static ast_field new_field(ast_id l, ast_id f) {

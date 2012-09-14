@@ -6,19 +6,18 @@ import tangible.RefObject;
 
 public class gm_code_writer {
 
-	public static final int MAX_COL = 1024;
+	private static final int MAX_COL = 1024;
 
 	private PrintStream _out = System.out;
-	public int indent = 0;
-	public int tabSize = 4;
-	public int col = 0;
-	public int max_col = MAX_COL;
-	public StringBuffer line_buf = new StringBuffer();
-	public int base_indent = 0;
+	private int indent = 0;
+	private int tabSize = 4;
+	private int col = 0;
+	private StringBuffer line_buf = new StringBuffer();
+	private int base_indent = 0;
 
 	// buffered file write.
 	// (to implement 'inserting codes'
-	public StringBuffer file_buf = new StringBuffer();
+	private StringBuffer file_buf = new StringBuffer();
 
 	public final void setBaseIndent(int i) {
 		base_indent = i;

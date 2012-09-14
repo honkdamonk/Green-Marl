@@ -6,31 +6,19 @@ import common.gm_dumptree;
 import common.gm_apply;
 
 public class ast_foreach extends ast_sent {
-	public void dispose() {
-		if (body != null)
-			body.dispose();
-		if (iterator != null)
-			iterator.dispose();
-		if (source != null)
-			source.dispose();
-		if (source2 != null)
-			source2.dispose();
-		if (cond != null)
-			cond.dispose();
-		// delete symbol info
-		delete_symtabs();
-	}
+	
+	private ast_sent body = null;
+	private ast_id iterator = null;
+	private ast_id source = null; // graph
+	private ast_id source2 = null; // common nbr
+	private GMTYPE_T iter_type; // GM_ITERATORS
+	private ast_expr cond = null;
+	private boolean seq_exe = false;
+	private boolean use_reverse = false;
 
 	private ast_foreach() {
 		super(AST_NODE_TYPE.AST_FOREACH);
-		this.body = null;
-		this.iterator = null;
-		this.source = null;
-		this.source2 = null;
-		this.cond = null;
-		this.seq_exe = false;
-		this.use_reverse = false;
-		this.iter_type = GMTYPE_T.GMTYPE_GRAPH;
+		iter_type = GMTYPE_T.GMTYPE_GRAPH;
 		create_symtabs();
 	}
 
@@ -39,10 +27,6 @@ public class ast_foreach extends ast_sent {
 		return new_foreach(it, src, b, iter_type, null);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: static ast_foreach* new_foreach(ast_id* it, ast_id* src,
-	// ast_sent* b, int iter_type, ast_expr* cond = null)
 	public static ast_foreach new_foreach(ast_id it, ast_id src, ast_sent b, GMTYPE_T iter_type, ast_expr cond) {
 		ast_foreach d = new ast_foreach();
 		d.iterator = it;
@@ -225,9 +209,6 @@ public class ast_foreach extends ast_sent {
 		set_filter(null);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: void set_filter(ast_expr* expr = null)
 	public final void set_filter(ast_expr expr) {
 		cond = expr;
 		if (cond != null)
@@ -275,13 +256,5 @@ public class ast_foreach extends ast_sent {
 	public final void set_reverse_iteration(boolean b) {
 		use_reverse = b;
 	}
-
-	private ast_sent body;
-	private ast_id iterator;
-	private ast_id source; // graph
-	private ast_id source2; // common nbr
-	private GMTYPE_T iter_type; // GM_ITERATORS
-	private ast_expr cond;
-	private boolean seq_exe;
-	private boolean use_reverse;
+	
 }

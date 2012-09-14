@@ -5,39 +5,31 @@ import common.gm_apply;
 
 // BFS or DFS
 public class ast_bfs extends ast_sent {
-	public void dispose() {
-		if (f_body != null)
-			f_body.dispose();
-		if (b_body != null)
-			b_body.dispose();
-		if (f_filter != null)
-			f_filter.dispose();
-		if (b_filter != null)
-			b_filter.dispose();
-		if (navigator != null)
-			navigator.dispose();
-		if (iter != null)
-			iter.dispose();
-		if (src != null)
-			src.dispose();
-		if (root != null)
-			root.dispose();
-		if (iter2 != null)
-			iter2.dispose();
-		delete_symtabs();
-	}
+	
+	private ast_sentblock f_body = null;
+	private ast_sentblock b_body = null;
 
+	private ast_expr f_filter = null;
+	private ast_expr b_filter = null;
+	private ast_expr navigator = null;
+
+	private ast_id iter = null;
+	private ast_id src = null;
+	private ast_id root = null;
+	private ast_id iter2 = null; // iterator used for frontier expansion [xxx] what?
+	private boolean use_transpose = false;
+	private boolean _bfs = true;
+	
+	protected ast_bfs() {
+		super(AST_NODE_TYPE.AST_BFS);
+		create_symtabs();
+	}
+	
 	public static ast_bfs new_bfs(ast_id it, ast_id src, ast_id root, ast_expr navigator, ast_expr f_filter, ast_expr b_filter, ast_sentblock fb,
 			ast_sentblock bb, boolean use_tp) {
 		return new_bfs(it, src, root, navigator, f_filter, b_filter, fb, bb, use_tp, true);
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: Java does not allow default values for
-	// parameters. Overloaded methods are inserted above.
-	// ORIGINAL LINE: static ast_bfs* new_bfs(ast_id* it, ast_id* src, ast_id*
-	// root, ast_expr* navigator, ast_expr* f_filter, ast_expr* b_filter,
-	// ast_sentblock* fb, ast_sentblock* bb, boolean use_tp, boolean is_bfs =
-	// true)
 	public static ast_bfs new_bfs(ast_id it, ast_id src, ast_id root, ast_expr navigator, ast_expr f_filter, ast_expr b_filter, ast_sentblock fb,
 			ast_sentblock bb, boolean use_tp, boolean is_bfs) {
 		ast_bfs d = new ast_bfs();
@@ -145,6 +137,7 @@ public class ast_bfs extends ast_sent {
 		b_body = b;
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		Out.push("InBFS (");
 		iter.reproduce(0);
@@ -156,14 +149,7 @@ public class ast_bfs extends ast_sent {
 		Out.push(" ; ");
 		root.reproduce(0);
 		Out.push(")");
-		/*
-		 * if ((edge_cond != NULL) || (node_cond != NULL)) { Out.push ('['); if
-		 * (node_cond != NULL) node_cond->reproduce(0); Out.push (';'); if
-		 * (edge_cond != NULL) edge_cond->reproduce(0); Out.push (']'); }
-		 * 
-		 * if (filter != NULL) { Out.push('('); filter->reproduce(0);
-		 * Out.push(')'); }
-		 */
+
 		if (navigator != null) {
 			Out.push('[');
 			navigator.reproduce(0);
@@ -192,11 +178,13 @@ public class ast_bfs extends ast_sent {
 		}
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		// later
 		assert false;
 	}
 
+	@Override
 	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre) {
 		boolean for_id = a.is_for_id();
 		boolean for_rhs = a.is_for_rhs();
@@ -294,33 +282,4 @@ public class ast_bfs extends ast_sent {
 		return is_bfs();
 	} // sequential execution
 
-	protected ast_bfs() {
-		super(AST_NODE_TYPE.AST_BFS);
-		this.f_body = null;
-		this.b_body = null;
-		this.f_filter = null;
-		this.b_filter = null;
-		this.navigator = null;
-		this.iter = null;
-		this.src = null;
-		this.root = null;
-		this.iter2 = null;
-		this.use_transpose = false;
-		this._bfs = true;
-		create_symtabs();
-	}
-
-	private ast_sentblock f_body;
-	private ast_sentblock b_body;
-
-	private ast_expr f_filter;
-	private ast_expr b_filter;
-	private ast_expr navigator;
-
-	private ast_id iter;
-	private ast_id src;
-	private ast_id root;
-	private ast_id iter2; // iterator used for frontier expansion [xxx] what?
-	private boolean use_transpose;
-	private boolean _bfs;
 }

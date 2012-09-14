@@ -5,16 +5,20 @@ import common.gm_apply;
 
 public class ast_call extends ast_sent {
 
-	public void dispose() {
-		if (b_in != null)
-			b_in.dispose();
+	private ast_expr_builtin b_in = null;
+	private boolean is_blt_in = false;
+
+	private ast_call() {
+		super(AST_NODE_TYPE.AST_CALL);
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		assert is_builtin_call();
 		b_in.reproduce(ind_level);
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		gm_dumptree.IND(ind_level);
 		System.out.print("[CALL\n");
@@ -26,6 +30,7 @@ public class ast_call extends ast_sent {
 
 	}
 
+	@Override
 	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre) {
 		assert is_builtin_call();
 		b_in.traverse(a, is_post, is_pre);
@@ -37,12 +42,6 @@ public class ast_call extends ast_sent {
 		C.b_in = b;
 		C.is_blt_in = true;
 		return C;
-	}
-
-	private ast_call() {
-		super(AST_NODE_TYPE.AST_CALL);
-		this.b_in = null;
-		this.is_blt_in = false;
 	}
 
 	public final ast_expr_builtin get_builtin() {
@@ -59,6 +58,4 @@ public class ast_call extends ast_sent {
 		return is_blt_in;
 	}
 
-	private ast_expr_builtin b_in;
-	private boolean is_blt_in;
 }

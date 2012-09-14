@@ -3,19 +3,13 @@ package ast;
 import common.gm_dumptree;
 
 public class ast_argdecl extends ast_node {
-	
-	public void dispose() {
-		if (idlist != null)
-			idlist.dispose();
-		if (type != null)
-			type.dispose();
-	}
+
+	private ast_idlist idlist = null;
+	private ast_typedecl type = null;
+	private boolean tc_finished = false; // is typecheck finished?
 
 	private ast_argdecl() {
 		super(AST_NODE_TYPE.AST_ARGDECL);
-		this.tc_finished = false;
-		this.idlist = null;
-		this.type = null;
 	}
 
 	public static ast_argdecl new_argdecl(ast_idlist id, ast_typedecl type) {
@@ -27,12 +21,14 @@ public class ast_argdecl extends ast_node {
 		return d;
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		idlist.reproduce(0);
 		Out.push(" : ");
 		type.reproduce(0);
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		assert parent != null;
 		gm_dumptree.IND(ind_level);
@@ -56,7 +52,4 @@ public class ast_argdecl extends ast_node {
 		return idlist;
 	}
 
-	private ast_idlist idlist;
-	private ast_typedecl type;
-	private boolean tc_finished; // is typecheck finished?
 }

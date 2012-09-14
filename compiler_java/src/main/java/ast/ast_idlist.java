@@ -1,20 +1,18 @@
 package ast;
 
+import static ast.AST_NODE_TYPE.AST_IDLIST;
+
 import java.util.ArrayList;
 
-import common.gm_dumptree;
 import common.gm_apply;
+import common.gm_dumptree;
 
 public class ast_idlist extends ast_node {
-	public ast_idlist() {
-		super(AST_NODE_TYPE.AST_IDLIST);
-	}
 
-	public void dispose() {
-		for (int i = 0; i < (int) lst.size(); i++)
-			if (lst.get(i) != null)
-				lst.get(i).dispose();
-		lst.clear();
+	private ArrayList<ast_id> lst = new ArrayList<ast_id>();
+
+	public ast_idlist() {
+		super(AST_IDLIST);
 	}
 
 	public final ast_idlist copy() {
@@ -50,6 +48,7 @@ public class ast_idlist extends ast_node {
 		}
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		for (int i = 0; i < (int) lst.size(); i++) {
 			ast_id id = lst.get(i);
@@ -59,6 +58,7 @@ public class ast_idlist extends ast_node {
 		}
 	}
 
+	@Override
 	public void dump_tree(int ind_lv) {
 		assert parent != null;
 		gm_dumptree.IND(ind_lv);
@@ -78,15 +78,16 @@ public class ast_idlist extends ast_node {
 		return false;
 	}
 
+	@Override
 	public final int get_line() {
 		assert get_length() > 0;
 		return lst.get(0).get_line();
 	}
 
+	@Override
 	public final int get_col() {
 		assert get_length() > 0;
 		return lst.get(0).get_col();
 	}
 
-	private ArrayList<ast_id> lst = new ArrayList<ast_id>();
 }

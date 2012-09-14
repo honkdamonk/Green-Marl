@@ -22,6 +22,7 @@ public abstract class ast_sent extends ast_node {
 		eline = t;
 	}
 
+	@Override
 	public void traverse(gm_apply a, boolean is_post, boolean is_pre) {
 		a.set_current_sent(this);
 

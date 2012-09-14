@@ -10,18 +10,21 @@ import common.gm_apply;
 
 // Reduction expression
 public class ast_expr_reduce extends ast_expr {
-	public void dispose() {
-		if (iter != null)
-			iter.dispose();
-		if (body != null)
-			body.dispose();
-		if (filter != null)
-			filter.dispose();
-		if (src != null)
-			src.dispose();
-		if (src2 != null)
-			src2.dispose();
-		delete_symtabs();
+
+	private ast_id iter = null;
+	private ast_id src = null;
+	private ast_id src2 = null;
+	private ast_expr body = null;
+	private ast_expr filter = null;
+	private GM_REDUCE_T reduce_type;
+	private GMTYPE_T iter_type;
+
+	private ast_expr_reduce() {
+		super();
+		this.reduce_type = GM_REDUCE_T.GMREDUCE_NULL;
+		this.iter_type = GMTYPE_T.GMTYPE_INVALID;
+		set_nodetype(AST_NODE_TYPE.AST_EXPR_RDC);
+		create_symtabs();
 	}
 
 	public static ast_expr_reduce new_reduce_expr(GM_REDUCE_T optype, ast_id iter, ast_id src, GMTYPE_T iter_op, ast_expr body) {
@@ -50,6 +53,7 @@ public class ast_expr_reduce extends ast_expr {
 		return e;
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		Out.SPC();
 		Out.push(reduce_type.get_reduce_expr_string());
@@ -76,6 +80,7 @@ public class ast_expr_reduce extends ast_expr {
 		Out.push("} ");
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		gm_dumptree.IND(ind_level);
 		System.out.printf("[%s ", reduce_type.get_reduce_expr_string());
@@ -100,6 +105,7 @@ public class ast_expr_reduce extends ast_expr {
 		System.out.print("]");
 	}
 
+	@Override
 	public void traverse(gm_apply a, boolean is_post, boolean is_pre) {
 		a.begin_context(this);
 
@@ -240,6 +246,7 @@ public class ast_expr_reduce extends ast_expr {
 			e.set_parent(this);
 	}
 
+	@Override
 	public ast_expr copy(boolean b) {
 		// --------------------------------------------------------
 		// this is wrong. a new local symbol table should be built.
@@ -252,24 +259,4 @@ public class ast_expr_reduce extends ast_expr {
 		return e;
 	}
 
-	private ast_expr_reduce() {
-		super();
-		this.iter = null;
-		this.src = null;
-		this.src2 = null;
-		this.body = null;
-		this.filter = null;
-		this.reduce_type = GM_REDUCE_T.GMREDUCE_NULL;
-		this.iter_type = GMTYPE_T.GMTYPE_INVALID;
-		set_nodetype(AST_NODE_TYPE.AST_EXPR_RDC);
-		create_symtabs();
-	}
-
-	private ast_id iter;
-	private ast_id src;
-	private ast_id src2;
-	private ast_expr body;
-	private ast_expr filter;
-	private GM_REDUCE_T reduce_type;
-	private GMTYPE_T iter_type;
 }

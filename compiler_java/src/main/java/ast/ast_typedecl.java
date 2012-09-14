@@ -1,11 +1,16 @@
 package ast;
 
+import static inc.GMTYPE_T.GMTYPE_COLLECTION;
+import static inc.GMTYPE_T.GMTYPE_EDGE;
+import static inc.GMTYPE_T.GMTYPE_EDGEPROP;
+import static inc.GMTYPE_T.GMTYPE_INVALID;
+import static inc.GMTYPE_T.GMTYPE_NODE;
+import static inc.GMTYPE_T.GMTYPE_NODEPROP;
+import static inc.GMTYPE_T.GMTYPE_VOID;
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
 
 import common.gm_dumptree;
-
-//==========================================================================
 
 public class ast_typedecl extends ast_node { // property or type
 
@@ -20,22 +25,21 @@ public class ast_typedecl extends ast_node { // property or type
 
 	protected ast_typedecl() {
 		super(AST_NODE_TYPE.AST_TYPEDECL);
-		this.type_id = GMTYPE_T.GMTYPE_INVALID;
+		type_id = GMTYPE_INVALID;
 	}
 
 	// give a deep copy
 	public ast_typedecl copy() {
 		ast_typedecl p = new ast_typedecl();
-		p.type_id = this.type_id;
-		p.target_type = (this.target_type == null) ? null : this.target_type.copy();
-		p.target_graph = (this.target_graph == null) ? null : this.target_graph.copy(true);
-		p.target_collection = (this.target_collection == null) ? null : this.target_collection.copy(true);
-		p.target_nbr = (this.target_nbr == null) ? null : this.target_nbr.copy(true);
-		p.target_nbr2 = (this.target_nbr2 == null) ? null : this.target_nbr2.copy(true);
-		p.line = this.line;
-		p.col = this.col;
-		p._well_defined = this._well_defined;
-
+		p.type_id = type_id;
+		p.target_type = (target_type == null) ? null : target_type.copy();
+		p.target_graph = (target_graph == null) ? null : target_graph.copy(true);
+		p.target_collection = (target_collection == null) ? null : target_collection.copy(true);
+		p.target_nbr = (target_nbr == null) ? null : target_nbr.copy(true);
+		p.target_nbr2 = (target_nbr2 == null) ? null : target_nbr2.copy(true);
+		p.line = line;
+		p.col = col;
+		p._well_defined = _well_defined;
 		return p;
 	}
 
@@ -53,7 +57,7 @@ public class ast_typedecl extends ast_node { // property or type
 
 	public static ast_typedecl new_nodetype(ast_id tg) {
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_NODE;
+		t.type_id = GMTYPE_NODE;
 		if (tg == null) // no graph defined for this node - we will handle this
 						// later (typecheck step 1)
 			return t;
@@ -64,7 +68,7 @@ public class ast_typedecl extends ast_node { // property or type
 
 	public static ast_typedecl new_edgetype(ast_id tg) {
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_EDGE;
+		t.type_id = GMTYPE_EDGE;
 		if (tg == null) // no graph defined for this edge - we will handle this
 						// later (typecheck step 1)
 			return t;
@@ -115,7 +119,7 @@ public class ast_typedecl extends ast_node { // property or type
 
 	public static ast_typedecl new_queue(ast_id targetGraph, ast_typedecl collectionType) {
 		ast_typedecl typeDecl = new ast_typedecl();
-		typeDecl.type_id = GMTYPE_T.GMTYPE_COLLECTION;
+		typeDecl.type_id = GMTYPE_COLLECTION;
 		typeDecl.target_type = collectionType;
 		if (targetGraph == null) // no graph defined for this queue - we will
 									// handle this later (typecheck step 1)
@@ -144,7 +148,7 @@ public class ast_typedecl extends ast_node { // property or type
 
 	public static ast_typedecl new_nodeprop(ast_typedecl type, ast_id tg) {
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_NODEPROP;
+		t.type_id = GMTYPE_NODEPROP;
 		t.target_type = type;
 		type.set_parent(t);
 		if (tg == null) // no graph defined for this property - we will handle
@@ -157,7 +161,7 @@ public class ast_typedecl extends ast_node { // property or type
 
 	public static ast_typedecl new_edgeprop(ast_typedecl type, ast_id tg) {
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_EDGEPROP;
+		t.type_id = GMTYPE_EDGEPROP;
 		t.target_type = type;
 		type.set_parent(t);
 		if (tg == null) // no graph defined for this property - we will handle
@@ -178,7 +182,7 @@ public class ast_typedecl extends ast_node { // property or type
 
 	public static ast_typedecl new_void() {
 		ast_typedecl t = new ast_typedecl();
-		t.type_id = GMTYPE_T.GMTYPE_VOID;
+		t.type_id = GMTYPE_VOID;
 		return t;
 	}
 
@@ -323,6 +327,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return type_id.is_sequential_collection_type();
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		if (is_primitive()) {
 			Out.push(type_id.get_type_string());
@@ -383,6 +388,7 @@ public class ast_typedecl extends ast_node { // property or type
 		}
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		assert parent != null;
 		gm_dumptree.IND(ind_level);

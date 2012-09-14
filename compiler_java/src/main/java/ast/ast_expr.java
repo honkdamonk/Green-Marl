@@ -161,6 +161,7 @@ public class ast_expr extends ast_node {
 		}
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 
 		gm_dumptree.IND(ind_level);
@@ -251,6 +252,7 @@ public class ast_expr extends ast_node {
 		System.out.print("]");
 	}
 
+	@Override
 	public void traverse(gm_apply a, boolean is_post, boolean is_pre) {
 		boolean for_id = a.is_for_id();
 		boolean for_expr = a.is_for_expr();

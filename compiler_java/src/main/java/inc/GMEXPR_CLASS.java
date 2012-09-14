@@ -22,5 +22,4 @@ public enum GMEXPR_CLASS {
 	GMEXPR_TER, // ternary operation
 	GMEXPR_FOREIGN, // foreign expression
 	GMEXPR_MAPACCESS;
-
 }

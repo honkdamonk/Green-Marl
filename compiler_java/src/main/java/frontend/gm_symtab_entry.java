@@ -34,19 +34,7 @@ public class gm_symtab_entry {
 		this.isArg = false;
 		id.setSymInfo(this, true);
 		assert type != null;
-		assert id.name != null;
-	}
-
-	public void dispose() {
-		if (id != null)
-			id.dispose();
-		if (type != null)
-			type.dispose();
-		// TODO not tested!
-		for (String s : extra.keySet()) {
-			if (extra.get(s) != null)
-				extra.get(s).dispose();
-		}
+		assert id.get_name() != null;
 	}
 
 	public final ast_typedecl getType() {

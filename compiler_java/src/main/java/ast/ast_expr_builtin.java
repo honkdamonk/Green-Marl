@@ -1,24 +1,32 @@
 package ast;
 
+import static ast.AST_NODE_TYPE.AST_EXPR_BUILTIN;
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.expr_list;
 
-import common.gm_dumptree;
+import java.util.LinkedList;
+
 import common.gm_apply;
 import common.gm_builtin_def;
+import common.gm_dumptree;
 
 public class ast_expr_builtin extends ast_expr {
 
-	public void dispose() {
-		orgname = null;
-		if (driver != null)
-			driver.dispose();
-		// java.util.Iterator<ast_expr> I;
-		// for (I = args.iterator(); I.hasNext();)
-		// I.next() = null;
+	protected ast_id driver; // canbe null
+	protected String orgname;
+	protected LinkedList<ast_expr> args = new LinkedList<ast_expr>();
+	protected gm_builtin_def def;
+
+	protected ast_expr_builtin() {
+		super();
+		this.driver = null;
+		this.orgname = null;
+		this.def = null;
+		set_nodetype(AST_EXPR_BUILTIN);
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		if (this.get_opclass() == GMEXPR_CLASS.GMEXPR_ID) {
 			id1.reproduce(0);
@@ -43,6 +51,7 @@ public class ast_expr_builtin extends ast_expr {
 		Out.push(')');
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		gm_dumptree.IND(ind_level);
 		System.out.print("[ ");
@@ -63,6 +72,7 @@ public class ast_expr_builtin extends ast_expr {
 			System.out.print(")]");
 	}
 
+	@Override
 	public void traverse(gm_apply a, boolean is_post, boolean is_pre) {
 		boolean for_id = a.is_for_id();
 		boolean for_expr = a.is_for_expr();
@@ -114,6 +124,7 @@ public class ast_expr_builtin extends ast_expr {
 		}
 	}
 
+	@Override
 	public ast_expr copy(boolean b) {
 		expr_list T = new expr_list();
 		for (ast_expr e : args) {
@@ -143,8 +154,8 @@ public class ast_expr_builtin extends ast_expr {
 		assert orgname != null;
 		E.orgname = orgname;
 		if (t != null) {
-			E.args = new java.util.LinkedList<ast_expr>(t.LIST); // shallow copy
-																	// LIST
+			E.args = new LinkedList<ast_expr>(t.LIST); // shallow copy
+														// LIST
 			// but not set 'up' pointer.
 			for (ast_expr e : E.args)
 				e.set_parent(E);
@@ -152,7 +163,6 @@ public class ast_expr_builtin extends ast_expr {
 		return E;
 	}
 
-	// defined in gm_builtin.cc
 	public static ast_expr_builtin new_builtin_expr(ast_id id, gm_builtin_def d, expr_list t) {
 		ast_expr_builtin E = new ast_expr_builtin();
 		E.expr_class = GMEXPR_CLASS.GMEXPR_BUILTIN;
@@ -188,7 +198,7 @@ public class ast_expr_builtin extends ast_expr {
 		i.set_parent(this);
 	}
 
-	public final java.util.LinkedList<ast_expr> get_args() {
+	public final LinkedList<ast_expr> get_args() {
 		return args;
 	}
 
@@ -199,18 +209,5 @@ public class ast_expr_builtin extends ast_expr {
 	public final void set_builtin_def(gm_builtin_def d) {
 		def = d;
 	}
-
-	protected ast_expr_builtin() {
-		super();
-		this.driver = null;
-		this.orgname = null;
-		this.def = null;
-		set_nodetype(AST_NODE_TYPE.AST_EXPR_BUILTIN);
-	}
-
-	protected ast_id driver; // canbe null
-	protected String orgname;
-	protected java.util.LinkedList<ast_expr> args = new java.util.LinkedList<ast_expr>();
-	protected gm_builtin_def def;
 
 }

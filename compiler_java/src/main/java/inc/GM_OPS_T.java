@@ -26,7 +26,7 @@ public enum GM_OPS_T { // list of operators
 	GMOP_END; // a marker indicating end of enum
 
 	public int getValue() {
-		return this.ordinal();
+		return ordinal();
 	}
 
 	public boolean is_numeric_op() {

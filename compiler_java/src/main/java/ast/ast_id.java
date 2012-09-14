@@ -1,49 +1,28 @@
 package ast;
 
 import inc.GMTYPE_T;
+
 import common.gm_dumptree;
 
 import frontend.gm_symtab_entry;
 
 // access of identifier
-//C++ TO JAVA CONVERTER NOTE: Java has no need of forward class declarations:
-//class ast_typedecl;
 public class ast_id extends ast_node {
-	
-	public String name;
 
-	private gm_symtab_entry info;
-	private String gen_name;
+	private String name = null;
+	private gm_symtab_entry info = null;
+	private String gen_name = null;
+	private boolean instant_assignment = false;
 
-	private boolean instant_assignment;	
-	
 	private ast_id() {
 		super(AST_NODE_TYPE.AST_ID);
-		this.name = null;
-		this.info = null;
-		this.gen_name = null;
-		this.instant_assignment = false;
 	}
 
 	private ast_id(String org, int l, int c) {
 		super(AST_NODE_TYPE.AST_ID);
-		this.info = null;
-		this.gen_name = null;
-		this.instant_assignment = false;
-		if (org != null) {
-			name = org;
-		} else {
-			name = null;
-		}
+		name = org;
 		set_line(l);
 		set_col(c);
-	}
-	
-	// C++ TO JAVA CONVERTER TODO TASK: Java has no concept of a 'friend' class:
-	// friend class gm_symtab_entry;
-	public void dispose() {
-		name = null;
-		gen_name = null; // if name is not usable in generator
 	}
 
 	// make a copy of id reference
@@ -70,6 +49,10 @@ public class ast_id extends ast_node {
 	// -------------------------------------------------
 	public final gm_symtab_entry getSymInfo() {
 		return info;
+	}
+	
+	public String get_name() {
+		return name;
 	}
 
 	public final void setSymInfo(gm_symtab_entry e) {
@@ -149,10 +132,12 @@ public class ast_id extends ast_node {
 		gen_name = c;
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		Out.push(get_orgname());
 	}
 
+	@Override
 	public void dump_tree(int ind_lv) {
 		// assert(parent!=NULL);
 		gm_dumptree.IND(ind_lv);

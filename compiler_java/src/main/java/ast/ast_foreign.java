@@ -7,11 +7,14 @@ import java.util.LinkedList;
 import common.gm_apply;
 
 public class ast_foreign extends ast_sent {
-	public void dispose() {
-		if (expr != null)
-			expr.dispose();
+	
+	private ast_expr_foreign expr = null;
+	private LinkedList<ast_node> modified = new LinkedList<ast_node>();
+	
+	private ast_foreign() {
+		super(AST_NODE_TYPE.AST_FOREIGN);
 	}
-
+	
 	public static ast_foreign new_foreign(ast_expr_foreign f) {
 		ast_foreign S = new ast_foreign();
 		S.set_expr(f);
@@ -32,6 +35,7 @@ public class ast_foreign extends ast_sent {
 		return (S);
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		expr.reproduce(ind_level);
 		if (modified.size() > 0) {
@@ -47,6 +51,7 @@ public class ast_foreign extends ast_sent {
 		Out.pushln(";");
 	}
 
+	@Override
 	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre) {
 		boolean for_id = a.is_for_id();
 		boolean for_expr = a.is_for_expr();
@@ -148,12 +153,5 @@ public class ast_foreign extends ast_sent {
 	public final void set_expr(ast_expr_foreign f) {
 		expr = f;
 	}
-
-	private ast_foreign() {
-		super(AST_NODE_TYPE.AST_FOREIGN);
-		this.expr = null;
-	}
-
-	private ast_expr_foreign expr;
-	private LinkedList<ast_node> modified = new LinkedList<ast_node>();
+	
 }

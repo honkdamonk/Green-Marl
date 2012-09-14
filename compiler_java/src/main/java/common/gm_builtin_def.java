@@ -15,13 +15,13 @@ public class gm_builtin_def {
 	private String orgname = null;
 	private gm_method_id_t method_id;
 	private boolean need_strict = false;
-	private HashMap<String, ast_extra_info> extra_info = new HashMap<String, ast_extra_info>();
+	private final HashMap<String, ast_extra_info> extra_info = new HashMap<String, ast_extra_info>();
 
 	private boolean synonym = false;
 	private gm_builtin_def org_def = null;
 
 	public gm_builtin_def(gm_builtin_desc_t def, gm_builtin_manager manager) {
-		this.method_id = def.method_id;
+		method_id = def.method_id;
 
 		// parse string
 		assert def.def_string != null;
@@ -69,7 +69,7 @@ public class gm_builtin_def {
 			if (num_args > 0) {
 				arg_types = new GMTYPE_T[num_args];
 				for (int i = 0; i < num_args; i++) {
-					arg_types[i] = GMTYPE_T.gm_get_type_from_string(p[i+4]);
+					arg_types[i] = GMTYPE_T.gm_get_type_from_string(p[i + 4]);
 				}
 			}
 
@@ -82,13 +82,13 @@ public class gm_builtin_def {
 			if (p.length > 1) {
 				for (int i = 0; i < p.length; i += 2) {
 					String key = p[i];
-					if (p[i+1].equals("true")) {
+					if (p[i + 1].equals("true")) {
 						add_info_bool(key, true);
 						assert find_info_bool(key) == true;
-					} else if (p[i+1].equals("false")) {
+					} else if (p[i + 1].equals("false")) {
 						add_info_bool(key, false);
 					} else {
-						add_info_int(key, Integer.parseInt(p[i+1]));
+						add_info_int(key, Integer.parseInt(p[i + 1]));
 					}
 				}
 			}
@@ -120,11 +120,12 @@ public class gm_builtin_def {
 		case GM_BLTIN_MAP_HAS_KEY:
 			return true;
 		default:
-			assert (false); // if you called it with the wrong method_id, then your code must be wrong...
+			assert (false); // if you called it with the wrong method_id, then
+							// your code must be wrong...
 			return false;
 		}
 	}
-	
+
 	public final gm_method_id_t get_method_id() {
 		return method_id;
 	}
@@ -150,11 +151,12 @@ public class gm_builtin_def {
 		case GM_BLTIN_MAP_GET_MIN_VALUE:
 			return false;
 		default:
-			assert (false); // if you called it with the wrong method_id, then your code must be wrong...
+			assert (false); // if you called it with the wrong method_id, then
+							// your code must be wrong...
 			return false;
 		}
 	}
-	
+
 	public final void add_info_int(String key, int v) {
 		String s = key;
 		if (!extra_info.containsKey(key)) {

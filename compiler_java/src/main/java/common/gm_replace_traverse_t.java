@@ -1,5 +1,7 @@
 package common;
 
+import java.util.LinkedList;
+
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_call;
@@ -13,70 +15,55 @@ import ast.ast_sent;
 import ast.ast_while;
 
 public class gm_replace_traverse_t extends gm_apply {
+
+	private boolean _changed = false;
+	private gm_expr_replacement_t _CHECK;
+
 	public gm_replace_traverse_t(gm_expr_replacement_t E) {
-		this._CHECK = E;
+		_CHECK = E;
 		set_for_sent(true);
 		set_for_expr(true);
-		_changed = false;
 	}
 
 	public final boolean is_changed() {
 		return _changed;
 	}
 
-	// C++ TO JAVA CONVERTER NOTE: The following #define macro was replaced
-	// in-line:
-	// /#define CHECK_AND_REPLACE(SRC, NAME) { ast_expr* f =
-	// replace((SRC)->get_##NAME()); if (f!=NULL) {(SRC)->set_##NAME(f);}}
-
+	@Override
 	public final boolean apply(ast_expr e) {
 		if (e.is_foreign()) {
 			// [XXX]
 		} else if (e.is_reduction()) {
 			ast_expr_reduce r = (ast_expr_reduce) e;
-			{
-				ast_expr f = replace((r).get_filter());
-				if (f != null) {
-					(r).set_filter(f);
-				}
+			ast_expr f = replace((r).get_filter());
+			if (f != null) {
+				(r).set_filter(f);
 			}
-			;
-			{
-				ast_expr f = replace((r).get_body());
-				if (f != null) {
-					(r).set_body(f);
-				}
+			f = replace((r).get_body());
+			if (f != null) {
+				(r).set_body(f);
 			}
-			;
 		} else if (e.is_builtin()) {
 			ast_expr_builtin b = (ast_expr_builtin) e;
 			check_and_replace_list(b.get_args());
 		} else {
-			{
-				ast_expr f = replace((e).get_left_op());
-				if (f != null) {
-					(e).set_left_op(f);
-				}
+			ast_expr f = replace((e).get_left_op());
+			if (f != null) {
+				(e).set_left_op(f);
 			}
-			;
-			{
-				ast_expr f = replace((e).get_right_op());
-				if (f != null) {
-					(e).set_right_op(f);
-				}
+			f = replace((e).get_right_op());
+			if (f != null) {
+				(e).set_right_op(f);
 			}
-			;
-			{
-				ast_expr f = replace((e).get_cond_op());
-				if (f != null) {
-					(e).set_cond_op(f);
-				}
+			f = replace((e).get_cond_op());
+			if (f != null) {
+				(e).set_cond_op(f);
 			}
-			;
 		}
 		return true;
 	}
 
+	@Override
 	public final boolean apply(ast_sent s) {
 		switch (s.get_nodetype()) {
 		case AST_IF: {
@@ -169,9 +156,6 @@ public class gm_replace_traverse_t extends gm_apply {
 		return true;
 	}
 
-	private boolean _changed;
-	private gm_expr_replacement_t _CHECK;
-
 	private ast_expr replace(ast_expr old) // check-replace-desotry
 	{
 		if (old == null)
@@ -192,8 +176,8 @@ public class gm_replace_traverse_t extends gm_apply {
 		return null;
 	}
 
-	private void check_and_replace_list(java.util.LinkedList<ast_expr> ARGS) {
-		java.util.LinkedList<ast_expr> OLDS = new java.util.LinkedList<ast_expr>();
+	private void check_and_replace_list(LinkedList<ast_expr> ARGS) {
+		LinkedList<ast_expr> OLDS = new LinkedList<ast_expr>();
 		// check and insert
 		for (int i = 0; i < ARGS.size(); i++) {
 			ast_expr expr = ARGS.get(i);

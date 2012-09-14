@@ -15,26 +15,27 @@ import frontend.gm_symtab_entry;
 // codes for traverse
 
 public abstract class gm_apply {
-	
+
 	protected boolean for_id = false;
 	protected boolean for_symtab = false;
 	protected boolean for_sent = false;
-	protected boolean for_expr = false ;
-	protected boolean for_proc = false ;
-	protected boolean for_lhs = false ;
-	protected boolean for_rhs = false ;
+	protected boolean for_expr = false;
+	protected boolean for_proc = false;
+	protected boolean for_lhs = false;
+	protected boolean for_rhs = false;
 	protected boolean for_builtin = false;
 	protected boolean separate_post_apply = false;
-	protected boolean traverse_local_expr_only = false ;
-	protected ast_sent curr_sent_being_traversed = null; // [xxx] who sets up this?
+	protected boolean traverse_local_expr_only = false;
+	protected ast_sent curr_sent_being_traversed = null; // [xxx] who sets up
+															// this?
 	protected ast_node matching_lhs = null;
 	protected ast_expr matching_rhs = null;
-	
+
 	// SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
 	public boolean apply(gm_symtab_entry gm_symtab_entry, SYMTAB_TYPES symtab_type) {
 		return true;
-	} 
-	
+	}
+
 	public boolean apply(gm_symtab e, SYMTAB_TYPES symtabType) {
 		return true;
 	}
@@ -86,8 +87,8 @@ public abstract class gm_apply {
 	// SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
 	public boolean apply2(gm_symtab_entry gm_symtab_entry, SYMTAB_TYPES symtab_type) {
 		return true;
-	} 
-	
+	}
+
 	public boolean apply2(gm_symtab e, SYMTAB_TYPES symtabType) {
 		return true;
 	}

@@ -8,6 +8,11 @@ import ast.ast_sent;
 import frontend.gm_symtab_entry;
 
 public class gm_replace_symbol_entry_bound_t extends gm_apply {
+	
+	protected boolean _changed;
+	protected gm_symtab_entry _src;
+	protected gm_symtab_entry _target;
+	
 	@Override
 	public boolean apply(ast_sent s) {
 		assert _src != null;
@@ -40,8 +45,5 @@ public class gm_replace_symbol_entry_bound_t extends gm_apply {
 		_changed = false;
 		top.traverse_pre(this);
 	}
-
-	protected boolean _changed;
-	protected gm_symtab_entry _src;
-	protected gm_symtab_entry _target;
+	
 }

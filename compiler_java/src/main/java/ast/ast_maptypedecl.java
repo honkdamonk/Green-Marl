@@ -22,6 +22,7 @@ public class ast_maptypedecl extends ast_typedecl {
 		return newMap;
 	}
 
+	@Override
 	public ast_typedecl copy() {
 		ast_maptypedecl clone = new ast_maptypedecl();
 		clone.type_id = type_id;

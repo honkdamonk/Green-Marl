@@ -1,29 +1,31 @@
 package ast;
 
+import static ast.AST_NODE_TYPE.*;
+import java.util.LinkedList;
+
+import common.gm_apply;
 import common.gm_dumptree;
 import common.gm_traverse;
-import common.gm_apply;
 
 //-------------------------------------------------------
 // Procedure declaration
 //-------------------------------------------------------
 public class ast_procdef extends ast_node {
-	public void dispose() {
-		// java.util.Iterator<ast_argdecl> it;
-		// for (it = in_args.iterator(); it.hasNext();)
-		// it.next() = null;
-		// for (it = out_args.iterator(); it.hasNext();)
-		// it.next() = null;
-		delete_symtabs();
 
-		if (id != null)
-			id.dispose();
-		if (sents != null)
-			sents.dispose();
-		if (ret_type != null)
-			ret_type.dispose();
+	private final LinkedList<ast_argdecl> in_args = new LinkedList<ast_argdecl>();
+	private final LinkedList<ast_argdecl> out_args = new LinkedList<ast_argdecl>();
+
+	private ast_id id = null;
+	private ast_sentblock sents = null;
+	private ast_typedecl ret_type = null;
+	private boolean local = false;
+
+	private ast_procdef() {
+		super(AST_PROCDEF);
+		create_symtabs();
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		Out.push("Procedure ");
 		id.reproduce(0);
@@ -42,7 +44,7 @@ public class ast_procdef extends ast_node {
 		if (last > 0) {
 			Out.push(";\n");
 			cnt = 0;
-			for(ast_argdecl d : out_args) {
+			for (ast_argdecl d : out_args) {
 				d.reproduce(ind_level);
 				if (cnt != (last - 1))
 					Out.push(",\n");
@@ -62,6 +64,7 @@ public class ast_procdef extends ast_node {
 		Out.flush();
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		gm_dumptree.IND(ind_level);
 		System.out.print("[PROC ");
@@ -69,14 +72,14 @@ public class ast_procdef extends ast_node {
 		System.out.print("\n");
 		gm_dumptree.IND(ind_level);
 		System.out.print(" IN:\n");
-		for(ast_argdecl d : in_args) {
+		for (ast_argdecl d : in_args) {
 			d.dump_tree(ind_level + 1);
 			System.out.print("\n");
 		}
 		System.out.print("\n");
 		gm_dumptree.IND(ind_level);
 		System.out.print(" OUT:\n");
-		for(ast_argdecl d : in_args) {
+		for (ast_argdecl d : in_args) {
 			d.dump_tree(ind_level + 1);
 			System.out.print("\n");
 		}
@@ -93,6 +96,7 @@ public class ast_procdef extends ast_node {
 		System.out.print("\n");
 	}
 
+	@Override
 	public void traverse(gm_apply a, boolean is_post, boolean is_pre) {
 		boolean for_symtab = a.is_for_symtab();
 		boolean for_id = a.is_for_id();
@@ -135,14 +139,14 @@ public class ast_procdef extends ast_node {
 		// [todo] symbol-table for (name && signature, return type)
 		// a->apply(get_procname());
 		{
-			java.util.LinkedList<ast_argdecl> args = get_in_args();
+			LinkedList<ast_argdecl> args = get_in_args();
 			for (ast_argdecl decl : args) {
 				ast_idlist idl = decl.get_idlist();
 				idl.apply_id(a, is_post);
 			}
 		}
 		{
-			java.util.LinkedList<ast_argdecl> args = get_out_args();
+			LinkedList<ast_argdecl> args = get_out_args();
 			for (ast_argdecl decl : args) {
 				ast_idlist idl = decl.get_idlist();
 				idl.apply_id(a, is_post);
@@ -153,15 +157,6 @@ public class ast_procdef extends ast_node {
 	@Override
 	public boolean has_scope() {
 		return true;
-	}
-
-	private ast_procdef() {
-		super(AST_NODE_TYPE.AST_PROCDEF);
-		this.id = null;
-		this.sents = null;
-		this.ret_type = null;
-		this.local = false;
-		create_symtabs();
 	}
 
 	public static ast_procdef begin_new_procdef(ast_id id) {
@@ -191,11 +186,11 @@ public class ast_procdef extends ast_node {
 		t.set_parent(this);
 	}
 
-	public final java.util.LinkedList<ast_argdecl> get_in_args() {
+	public final LinkedList<ast_argdecl> get_in_args() {
 		return in_args;
 	}
 
-	public final java.util.LinkedList<ast_argdecl> get_out_args() {
+	public final LinkedList<ast_argdecl> get_out_args() {
 		return out_args;
 	}
 
@@ -219,10 +214,4 @@ public class ast_procdef extends ast_node {
 		return local;
 	}
 
-	private ast_id id; // function name
-	private java.util.LinkedList<ast_argdecl> in_args = new java.util.LinkedList<ast_argdecl>();
-	private java.util.LinkedList<ast_argdecl> out_args = new java.util.LinkedList<ast_argdecl>();
-	private ast_sentblock sents;
-	private ast_typedecl ret_type;
-	private boolean local;
 }

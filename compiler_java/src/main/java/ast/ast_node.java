@@ -25,35 +25,24 @@ import common.gm_traverse;
 import common.gm_apply;
 
 public abstract class ast_node {
-	static final gm_code_writer Out = new gm_code_writer();
+	
+	protected static final gm_code_writer Out = new gm_code_writer();
 
-	protected int line;
-	protected int col;
+	protected int line = 0;
+	protected int col = 0;
 	protected HashMap<String, ast_extra_info> extra = new HashMap<String, ast_extra_info>();
-	protected AST_NODE_TYPE nodetype;
-	protected ast_node parent;
-	protected gm_symtab sym_vars;
-	protected gm_symtab sym_fields;
-	protected gm_symtab sym_procs;
+	protected AST_NODE_TYPE nodetype = null;
+	protected ast_node parent = null;
+	protected gm_symtab sym_vars = null;
+	protected gm_symtab sym_fields = null;
+	protected gm_symtab sym_procs = null;
 
 	protected ast_node(AST_NODE_TYPE nt) {
-		this.nodetype = nt;
-		this.parent = null;
-		this.line = 0;
-		this.col = 0;
-		this.sym_vars = null;
-		this.sym_procs = null;
-		this.sym_fields = null;
+		nodetype = nt;
 	}
 
 	protected ast_node() {
-		this.nodetype = AST_END;
-		this.parent = null;
-		this.line = 0;
-		this.col = 0;
-		this.sym_vars = null;
-		this.sym_procs = null;
-		this.sym_fields = null;
+		nodetype = AST_END;
 	}
 
 	public final void set_nodetype(AST_NODE_TYPE nt) {

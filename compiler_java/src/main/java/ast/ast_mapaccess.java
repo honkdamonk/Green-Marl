@@ -10,7 +10,6 @@ public class ast_mapaccess extends ast_node {
 
 	private ast_id mapId;
 	private ast_expr keyExpr;
-
 	private gm_symtab_entry keyGraph;
 	private gm_symtab_entry valueGraph;
 

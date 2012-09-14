@@ -1,24 +1,20 @@
 package ast;
 
+import static ast.AST_NODE_TYPE.AST_VARDECL;
+
+import common.gm_apply;
 import common.gm_dumptree;
 import common.gm_traverse;
-import common.gm_apply;
 
 public class ast_vardecl extends ast_sent {
-	public void dispose() {
-		if (idlist != null)
-			idlist.dispose();
-		if (type != null)
-			type.dispose();
-		// assert(init_expr == NULL);
-	}
+
+	private ast_idlist idlist = null;
+	private ast_typedecl type = null;
+	private ast_expr init_expr = null; // for syntax sugar.
+	private boolean tc_finished = false;
 
 	private ast_vardecl() {
-		super(AST_NODE_TYPE.AST_VARDECL);
-		this.idlist = null;
-		this.type = null;
-		this.init_expr = null;
-		this.tc_finished = false;
+		super(AST_VARDECL);
 	}
 
 	public final void set_typechecked(boolean b) {
@@ -60,6 +56,7 @@ public class ast_vardecl extends ast_sent {
 		return d;
 	}
 
+	@Override
 	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre) {
 		boolean for_id = a.is_for_id();
 		if (for_id) {
@@ -73,6 +70,7 @@ public class ast_vardecl extends ast_sent {
 		}
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		type.reproduce(0);
 		Out.SPC();
@@ -80,6 +78,7 @@ public class ast_vardecl extends ast_sent {
 		Out.pushln(";");
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		gm_dumptree.IND(ind_level);
 		assert parent != null;
@@ -123,11 +122,6 @@ public class ast_vardecl extends ast_sent {
 	public final void set_tc_finished(boolean b) {
 		tc_finished = b;
 	} // who calls it?
-
-	private ast_idlist idlist;
-	private ast_typedecl type;
-	private ast_expr init_expr; // for syntax sugar.
-	private boolean tc_finished;
 
 	private static boolean check_instant_assignment(ast_typedecl type, ast_expr init) {
 

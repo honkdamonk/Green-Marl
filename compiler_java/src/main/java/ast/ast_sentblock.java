@@ -1,16 +1,19 @@
 package ast;
 
-import common.gm_dumptree;
+import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
+
+import java.util.LinkedList;
+
 import common.gm_apply;
+import common.gm_dumptree;
 
 public class ast_sentblock extends ast_sent {
-	public void dispose() {
-		// java.util.Iterator<ast_sent> it;
-		// for (it = sents.iterator(); it.hasNext();)
-		// {
-		// it.next() = null;
-		// }
-		delete_symtabs();
+	
+	private final LinkedList<ast_sent> sents = new LinkedList<ast_sent>();
+	
+	private ast_sentblock() {
+		super(AST_SENTBLOCK);
+		create_symtabs();
 	}
 
 	public static ast_sentblock new_sentblock() {
@@ -22,6 +25,7 @@ public class ast_sentblock extends ast_sent {
 		s.set_parent(this);
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		Out.pushln("{");
 		for (ast_sent s : sents)
@@ -29,6 +33,7 @@ public class ast_sentblock extends ast_sent {
 		Out.pushln("}");
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		assert parent != null;
 		gm_dumptree.IND(ind_level);
@@ -41,12 +46,13 @@ public class ast_sentblock extends ast_sent {
 		System.out.print("]");
 	}
 
+	@Override
 	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre) {
 		// a->begin_context(this);
 		if (a.is_traverse_local_expr_only())
 			return;
 
-		java.util.LinkedList<ast_sent> sents = get_sents();
+		LinkedList<ast_sent> sents = get_sents();
 		for (int i = 0; i < sents.size(); i++) {
 			sents.get(i).traverse(a, is_post, is_pre);
 		}
@@ -59,15 +65,8 @@ public class ast_sentblock extends ast_sent {
 		return true;
 	}
 
-	public final java.util.LinkedList<ast_sent> get_sents() {
+	public final LinkedList<ast_sent> get_sents() {
 		return sents;
 	}
-
-	private ast_sentblock() {
-		super(AST_NODE_TYPE.AST_SENTBLOCK);
-		create_symtabs();
-	}
-
-	private java.util.LinkedList<ast_sent> sents = new java.util.LinkedList<ast_sent>();
 
 }

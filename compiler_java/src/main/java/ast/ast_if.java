@@ -1,19 +1,16 @@
 package ast;
 
-import common.gm_dumptree;
 import common.gm_apply;
+import common.gm_dumptree;
 
 public class ast_if extends ast_sent {
 
-	private ast_sent then_part;
-	private ast_sent else_part;
-	private ast_expr cond;
+	private ast_sent then_part = null;
+	private ast_sent else_part = null;
+	private ast_expr cond = null;
 
 	private ast_if() {
 		super(AST_NODE_TYPE.AST_IF);
-		this.then_part = null;
-		this.else_part = null;
-		this.cond = null;
 	}
 
 	public static ast_if new_if(ast_expr c, ast_sent t, ast_sent e) {
@@ -28,6 +25,7 @@ public class ast_if extends ast_sent {
 		return ifs;
 	}
 
+	@Override
 	public void reproduce(int ind_level) {
 		Out.push("If (");
 		cond.reproduce(0);
@@ -54,6 +52,7 @@ public class ast_if extends ast_sent {
 		}
 	}
 
+	@Override
 	public void dump_tree(int ind_level) {
 		gm_dumptree.IND(ind_level);
 		assert parent != null;
@@ -70,6 +69,7 @@ public class ast_if extends ast_sent {
 		System.out.print("]");
 	}
 
+	@Override
 	public void traverse_sent(gm_apply a, boolean is_post, boolean is_pre) {
 		// traverse only
 		get_cond().traverse(a, is_post, is_pre);
@@ -94,12 +94,14 @@ public class ast_if extends ast_sent {
 	}
 
 	public final void set_then(ast_sent s) {
-		if (s != null) s.set_parent(this);
+		if (s != null)
+			s.set_parent(this);
 		then_part = s;
 	}
 
 	public final void set_else(ast_sent s) {
-		if (s != null) s.set_parent(this);
+		if (s != null)
+			s.set_parent(this);
 		else_part = s;
 	}
 

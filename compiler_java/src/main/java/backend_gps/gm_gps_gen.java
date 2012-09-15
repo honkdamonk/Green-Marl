@@ -631,7 +631,7 @@ public class gm_gps_gen extends BackendGenerator {
 			int source_id = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
 			Body.pushlnf("if (%s%d) _master_state_nxt = %d;", GPS_INTRA_MERGE_IS_FIRST, source_id, b.get_nth_exit(0).get_id());
 			Body.pushlnf("else _master_state_nxt = %d;", b.get_nth_exit(1).get_id());
-			String temp = String.format("%s%d = false;\n", GPS_INTRA_MERGE_IS_FIRST, source_id);
+			Body.pushlnf("%s%d = false;", GPS_INTRA_MERGE_IS_FIRST, source_id);
 		} else {
 			assert false;
 		}

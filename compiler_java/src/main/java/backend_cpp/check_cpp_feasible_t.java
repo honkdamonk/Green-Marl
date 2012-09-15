@@ -1,9 +1,9 @@
 package backend_cpp;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_sent;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
 
@@ -20,9 +20,9 @@ class check_cpp_feasible_t extends gm_apply {
 
 	@Override
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			if (bfs_depth > 0) {
-				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_CPP_UNSUPPORTED_SYNTAX, s.get_line(), s.get_col(), "nested DFS/BFS.");
+				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_CPP_UNSUPPORTED_SYNTAX, s.get_line(), s.get_col(), "nested DFS/BFS.");
 				set_okay(false);
 			}
 			bfs_depth++;
@@ -32,7 +32,7 @@ class check_cpp_feasible_t extends gm_apply {
 
 	@Override
 	public final boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			bfs_depth--;
 		}
 		return true;

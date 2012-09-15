@@ -2,7 +2,7 @@ package opt;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -20,7 +20,7 @@ public class gm_merge_loop_t extends gm_apply {
 	
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+		if (s.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 			return true;
 
 		ast_sentblock sb = (ast_sentblock) s;
@@ -31,14 +31,14 @@ public class gm_merge_loop_t extends gm_apply {
 		for(int i = 0; i < sents.size(); i++) {
 		ast_sent sent = sents.get(i);
 			if (prev == null) {
-				if (sent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
+				if (sent.get_nodetype() == ast_node_type.AST_FOREACH)
 					prev = (ast_foreach) sent;
 				continue;
 			} else {
 				// pick two consecutive foreach blocks.
 				// check they are mergeable.
 				// If so, merge. delete the second one.
-				if (sent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+				if (sent.get_nodetype() == ast_node_type.AST_FOREACH) {
 					ast_foreach curr = (ast_foreach) sent;
 					if (gm_merge_loops.gm_is_mergeable_loops(prev, curr)) {
 
@@ -46,9 +46,9 @@ public class gm_merge_loop_t extends gm_apply {
 						gm_merge_loops.replace_iterator_sym(prev, curr);
 
 						// merge body and delete curr.
-						if (prev.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+						if (prev.get_body().get_nodetype() != ast_node_type.AST_SENTBLOCK)
 							gm_transform_helper.gm_make_it_belong_to_sentblock(prev.get_body());
-						if (curr.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+						if (curr.get_body().get_nodetype() != ast_node_type.AST_SENTBLOCK)
 							gm_transform_helper.gm_make_it_belong_to_sentblock(curr.get_body());
 
 						gm_merge_sentblock.gm_merge_sentblock((ast_sentblock) prev.get_body(), (ast_sentblock) curr.get_body());

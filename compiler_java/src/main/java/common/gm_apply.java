@@ -8,7 +8,7 @@ import ast.ast_id;
 import ast.ast_node;
 import ast.ast_procdef;
 import ast.ast_sent;
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
@@ -32,11 +32,11 @@ public abstract class gm_apply {
 	protected ast_expr matching_rhs = null;
 
 	// SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
-	public boolean apply(gm_symtab_entry gm_symtab_entry, SYMTAB_TYPES symtab_type) {
+	public boolean apply(gm_symtab_entry gm_symtab_entry, symtab_types symtab_type) {
 		return true;
 	}
 
-	public boolean apply(gm_symtab e, SYMTAB_TYPES symtabType) {
+	public boolean apply(gm_symtab e, symtab_types symtabType) {
 		return true;
 	}
 
@@ -85,11 +85,11 @@ public abstract class gm_apply {
 	}
 
 	// SYMTAB_ARG, SYMTAB_FIELD, SYMTAB_VAR, SYMTAB_PROC
-	public boolean apply2(gm_symtab_entry gm_symtab_entry, SYMTAB_TYPES symtab_type) {
+	public boolean apply2(gm_symtab_entry gm_symtab_entry, symtab_types symtab_type) {
 		return true;
 	}
 
-	public boolean apply2(gm_symtab e, SYMTAB_TYPES symtabType) {
+	public boolean apply2(gm_symtab e, symtab_types symtabType) {
 		return true;
 	}
 

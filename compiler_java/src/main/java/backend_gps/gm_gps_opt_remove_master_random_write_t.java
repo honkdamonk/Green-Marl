@@ -1,6 +1,6 @@
 package backend_gps;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
@@ -32,12 +32,12 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 	// pre
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			if (((ast_foreach) s).is_parallel())
 				depth++;
 		}
 
-		if ((depth == 0) && (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)) {
+		if ((depth == 0) && (s.get_nodetype() == ast_node_type.AST_ASSIGN)) {
 			ast_assign a = (ast_assign) s;
 			if (!a.is_target_scalar() && !a.is_reduce_assign()) {
 				if (a.get_lhs_field().get_first().getTypeInfo().get_target_graph_sym() != null)
@@ -49,7 +49,7 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			if (((ast_foreach) s).is_parallel())
 				depth--;
 		}

@@ -9,7 +9,7 @@ public class ast_call extends ast_sent {
 	private boolean is_blt_in = false;
 
 	private ast_call() {
-		super(AST_NODE_TYPE.AST_CALL);
+		super(ast_node_type.AST_CALL);
 	}
 
 	@Override

@@ -14,11 +14,11 @@ public class ast_field extends ast_node {
 	private boolean rarrow = false;
 
 	private ast_field() {
-		super(AST_NODE_TYPE.AST_FIELD);
+		super(ast_node_type.AST_FIELD);
 	}
 
 	private ast_field(ast_id l, ast_id f) {
-		super(AST_NODE_TYPE.AST_FIELD);
+		super(ast_node_type.AST_FIELD);
 		first = l;
 		second = f;
 		first.set_parent(this);

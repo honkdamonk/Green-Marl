@@ -12,16 +12,16 @@ public class gm_symtab {
 
 	private final HashSet<gm_symtab_entry> entries = new HashSet<gm_symtab_entry>();
 	private gm_symtab parent = null;
-	private SYMTAB_TYPES symtab_type;
+	private symtab_types symtab_type;
 	private ast_node ast; // where this belongs to
 	private boolean default_graph_used = false;
 
-	public gm_symtab(SYMTAB_TYPES _symtab_type, ast_node _ast) {
+	public gm_symtab(symtab_types _symtab_type, ast_node _ast) {
 		symtab_type = _symtab_type;
 		ast = _ast;
 	}
 
-	public final SYMTAB_TYPES get_symtab_type() {
+	public final symtab_types get_symtab_type() {
 		return symtab_type;
 	}
 

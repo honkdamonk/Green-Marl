@@ -1,7 +1,7 @@
 package opt;
 
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_DUPLICATE;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_UNDEFINED;
+import static common.gm_errors_and_warnings.GM_ERROR_DUPLICATE;
+import static common.gm_errors_and_warnings.GM_ERROR_UNDEFINED;
 import frontend.gm_typecheck;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
@@ -10,7 +10,7 @@ import inc.GMTYPE_T;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
@@ -36,7 +36,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent sent) {
-		if (sent.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)
+		if (sent.get_nodetype() != ast_node_type.AST_FOREACH)
 			return true;
 		fe = (ast_foreach) sent;
 		if (!fe.get_iter_type().is_property_iter_type())
@@ -96,14 +96,14 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 	private ast_sent getNewBody() {
 
 		ast_sentblock newBody;
-		if (fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (fe.get_body().get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 			newBody = (ast_sentblock) fe.get_body();
 		} else {
 			newBody = ast_sentblock.new_sentblock();
 		}
 
 		LinkedList<ast_sent> statements = newBody.get_sents();
-		if (fe.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (fe.get_body().get_nodetype() != ast_node_type.AST_SENTBLOCK) {
 			statements.add(fe.get_body());
 		}
 

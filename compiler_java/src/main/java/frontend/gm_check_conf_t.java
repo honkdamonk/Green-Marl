@@ -1,12 +1,12 @@
 package frontend;
 
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_MUTATE_MUTATE_CONFLICT;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_MUTATE_CONFLICT;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_REDUCE_CONFLICT;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_READ_WRITE_CONFLICT;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_MUTATE_CONFLICT;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_REDUCE_CONFLICT;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_WRITE_WRITE_CONFLICT;
+import static common.gm_errors_and_warnings.GM_ERROR_MUTATE_MUTATE_CONFLICT;
+import static common.gm_errors_and_warnings.GM_ERROR_READ_MUTATE_CONFLICT;
+import static common.gm_errors_and_warnings.GM_ERROR_READ_REDUCE_CONFLICT;
+import static common.gm_errors_and_warnings.GM_ERROR_READ_WRITE_CONFLICT;
+import static common.gm_errors_and_warnings.GM_ERROR_WRITE_MUTATE_CONFLICT;
+import static common.gm_errors_and_warnings.GM_ERROR_WRITE_REDUCE_CONFLICT;
+import static common.gm_errors_and_warnings.GM_ERROR_WRITE_WRITE_CONFLICT;
 import static frontend.gm_conflict_t.MM_CONFLICT;
 import static frontend.gm_conflict_t.RD_CONFLICT;
 import static frontend.gm_conflict_t.RM_CONFLICT;
@@ -23,14 +23,14 @@ import java.util.LinkedList;
 
 import tangible.RefObject;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_sent;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_error;
 import common.gm_apply;
 
@@ -49,7 +49,7 @@ public class gm_check_conf_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (fe.is_sequential())
 				return true;
@@ -78,7 +78,7 @@ public class gm_check_conf_t extends gm_apply {
 			is_okay = is_okay && check_rw_conf_error(W, D, gm_conflict_t.WD_CONFLICT, Report); // W-D
 			is_okay = is_okay && check_rw_conf_error(W, M, gm_conflict_t.WM_CONFLICT, Report); // W-M
 
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		} else if (s.get_nodetype() == ast_node_type.AST_BFS) {
 
 			// [TODO] consideration for DFS
 
@@ -191,7 +191,7 @@ public class gm_check_conf_t extends gm_apply {
 	private static boolean check_rw_conf_error(gm_rwinfo_map S1, gm_rwinfo_map S2, gm_conflict_t conf_type, LinkedList<conf_info_t> Report) {
 		boolean is_okay = true;
 		boolean is_warning;
-		GM_ERRORS_AND_WARNINGS error_code;
+		gm_errors_and_warnings error_code;
 		switch (conf_type) {
 		case RW_CONFLICT:
 			error_code = GM_ERROR_READ_WRITE_CONFLICT;

@@ -1,6 +1,6 @@
 package frontend;
 
-public enum SYMTAB_TYPES {
+public enum symtab_types {
 	GM_SYMTAB_ARG, // argument
 	GM_SYMTAB_VAR, // variable
 	GM_SYMTAB_FIELD, // node/edge property

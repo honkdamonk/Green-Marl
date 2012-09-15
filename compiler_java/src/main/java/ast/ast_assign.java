@@ -1,8 +1,8 @@
 package ast;
 
-import static ast.AST_NODE_TYPE.AST_ASSIGN;
-import static ast.AST_NODE_TYPE.AST_FIELD;
-import static ast.AST_NODE_TYPE.AST_ID;
+import static ast.ast_node_type.AST_ASSIGN;
+import static ast.ast_node_type.AST_FIELD;
+import static ast.ast_node_type.AST_ID;
 import static inc.GM_REDUCE_T.GMREDUCE_INVALID;
 import static inc.GM_REDUCE_T.GMREDUCE_NULL;
 import static inc.gm_assignment_location_t.GMASSIGN_LHS_FIELD;

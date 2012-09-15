@@ -5,7 +5,7 @@ import inc.GMTYPE_T;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_foreach;
@@ -28,7 +28,7 @@ public class gm_flip_find_candidate extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			RefObject<ast_foreach> in_ref = new RefObject<ast_foreach>(null);
 			RefObject<ast_sent> dest_ref = new RefObject<ast_sent>(null);
@@ -48,7 +48,7 @@ public class gm_flip_find_candidate extends gm_apply {
 			}
 
 			if (avoid_pull) {
-				if (dest.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+				if (dest.get_nodetype() == ast_node_type.AST_ASSIGN) {
 					ast_assign d = (ast_assign) dest;
 					if (!d.is_target_scalar()) {
 						ast_field f = d.get_lhs_field();

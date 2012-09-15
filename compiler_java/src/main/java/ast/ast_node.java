@@ -1,16 +1,16 @@
 package ast;
 
-import static ast.AST_NODE_TYPE.AST_BFS;
-import static ast.AST_NODE_TYPE.AST_END;
-import static ast.AST_NODE_TYPE.AST_EXPR_RDC;
-import static ast.AST_NODE_TYPE.AST_FOREACH;
-import static ast.AST_NODE_TYPE.AST_PROCDEF;
-import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
-import static frontend.SYMTAB_TYPES.GM_SYMTAB_ARG;
-import static frontend.SYMTAB_TYPES.GM_SYMTAB_FIELD;
-import static frontend.SYMTAB_TYPES.GM_SYMTAB_PROC;
-import static frontend.SYMTAB_TYPES.GM_SYMTAB_VAR;
-import frontend.SYMTAB_TYPES;
+import static ast.ast_node_type.AST_BFS;
+import static ast.ast_node_type.AST_END;
+import static ast.ast_node_type.AST_EXPR_RDC;
+import static ast.ast_node_type.AST_FOREACH;
+import static ast.ast_node_type.AST_PROCDEF;
+import static ast.ast_node_type.AST_SENTBLOCK;
+import static frontend.symtab_types.GM_SYMTAB_ARG;
+import static frontend.symtab_types.GM_SYMTAB_FIELD;
+import static frontend.symtab_types.GM_SYMTAB_PROC;
+import static frontend.symtab_types.GM_SYMTAB_VAR;
+import frontend.symtab_types;
 import frontend.gm_scope;
 import frontend.gm_symtab;
 import inc.gm_code_writer;
@@ -31,13 +31,13 @@ public abstract class ast_node {
 	protected int line = 0;
 	protected int col = 0;
 	protected HashMap<String, ast_extra_info> extra = new HashMap<String, ast_extra_info>();
-	protected AST_NODE_TYPE nodetype = null;
+	protected ast_node_type nodetype = null;
 	protected ast_node parent = null;
 	protected gm_symtab sym_vars = null;
 	protected gm_symtab sym_fields = null;
 	protected gm_symtab sym_procs = null;
 
-	protected ast_node(AST_NODE_TYPE nt) {
+	protected ast_node(ast_node_type nt) {
 		nodetype = nt;
 	}
 
@@ -45,7 +45,7 @@ public abstract class ast_node {
 		nodetype = AST_END;
 	}
 
-	public final void set_nodetype(AST_NODE_TYPE nt) {
+	public final void set_nodetype(ast_node_type nt) {
 		nodetype = nt;
 	}
 
@@ -53,7 +53,7 @@ public abstract class ast_node {
 		extra.clear();
 	}
 
-	public final AST_NODE_TYPE get_nodetype() {
+	public final ast_node_type get_nodetype() {
 		return nodetype;
 	}
 
@@ -102,7 +102,7 @@ public abstract class ast_node {
 	public void apply_symtabs(gm_apply a, boolean is_post) {
 		assert has_scope();
 		boolean post_apply = is_post && a.has_separate_post_apply();
-		SYMTAB_TYPES t = get_nodetype() == AST_PROCDEF ? GM_SYMTAB_ARG : GM_SYMTAB_VAR;
+		symtab_types t = get_nodetype() == AST_PROCDEF ? GM_SYMTAB_ARG : GM_SYMTAB_VAR;
 		if (post_apply) {
 			a.apply2(get_symtab_var(), t);
 		} else {

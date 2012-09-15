@@ -10,15 +10,15 @@ public class gm_error {
 	public static boolean need_print = true;
 	public static boolean parse_error = false;
 
-	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id, String str1) {
+	public static void gm_type_error(gm_errors_and_warnings errno, ast_id id, String str1) {
 		gm_type_error(errno, id, str1, "");
 	}
 
-	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id) {
+	public static void gm_type_error(gm_errors_and_warnings errno, ast_id id) {
 		gm_type_error(errno, id, "", "");
 	}
 
-	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id, String str1, String str2) {
+	public static void gm_type_error(gm_errors_and_warnings errno, ast_id id, String str1, String str2) {
 		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
@@ -74,7 +74,7 @@ public class gm_error {
 		}
 	}
 
-	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, ast_id id1, ast_id id2) {
+	public static void gm_type_error(gm_errors_and_warnings errno, ast_id id1, ast_id id2) {
 		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
@@ -111,19 +111,19 @@ public class gm_error {
 		}
 	}
 
-	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1, String str2) {
+	public static void gm_type_error(gm_errors_and_warnings errno, int l, int c, String str1, String str2) {
 		gm_type_error(errno, l, c, str1, str2, "");
 	}
 
-	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1) {
+	public static void gm_type_error(gm_errors_and_warnings errno, int l, int c, String str1) {
 		gm_type_error(errno, l, c, str1, "", "");
 	}
 
-	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c) {
+	public static void gm_type_error(gm_errors_and_warnings errno, int l, int c) {
 		gm_type_error(errno, l, c, "", "", "");
 	}
 
-	public static void gm_type_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1, String str2, String str3) {
+	public static void gm_type_error(gm_errors_and_warnings errno, int l, int c, String str1, String str2, String str3) {
 		gm_error.gm_print_error_header();
 
 		if (curr_file != null)
@@ -226,7 +226,7 @@ public class gm_error {
 		}
 	}
 
-	public static void gm_conf_error(GM_ERRORS_AND_WARNINGS errno, gm_symtab_entry target, ast_id ev1, ast_id ev2, boolean is_warning) {
+	public static void gm_conf_error(gm_errors_and_warnings errno, gm_symtab_entry target, ast_id ev1, ast_id ev2, boolean is_warning) {
 		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
@@ -270,13 +270,13 @@ public class gm_error {
 	}
 
 	// TODO: should be differend error routines for different back-ends
-	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, String str1) {
+	public static void gm_backend_error(gm_errors_and_warnings errno, String str1) {
 		gm_backend_error(errno, str1, "");
 	}
 
 	// extern void gm_conf_warning(int errnumber, gm_symtab_entry* target,
 	// ast_id* evidence1, ast_id* evidence2);
-	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, String str1, String str2) {
+	public static void gm_backend_error(gm_errors_and_warnings errno, String str1, String str2) {
 		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);
@@ -297,11 +297,11 @@ public class gm_error {
 		}
 	}
 
-	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, int l, int c) {
+	public static void gm_backend_error(gm_errors_and_warnings errno, int l, int c) {
 		gm_backend_error(errno, l, c, "");
 	}
 
-	public static void gm_backend_error(GM_ERRORS_AND_WARNINGS errno, int l, int c, String str1) {
+	public static void gm_backend_error(gm_errors_and_warnings errno, int l, int c, String str1) {
 		gm_error.gm_print_error_header();
 		if (curr_file != null)
 			System.out.printf("%s:", curr_file);

@@ -14,7 +14,7 @@ import java.util.LinkedList;
 
 import tangible.RefObject;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_if;
 import ast.ast_node;
@@ -121,14 +121,14 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		while (true) {
 			ast_node node = current.get_parent();
 			assert node != null;
-			if (node.get_nodetype() == AST_NODE_TYPE.AST_IF) {
+			if (node.get_nodetype() == ast_node_type.AST_IF) {
 				frame.addLast(node);
 				current = node;
 				continue;
-			} else if (node.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+			} else if (node.get_nodetype() == ast_node_type.AST_FOREACH) {
 				out = (ast_foreach) node;
 				break;
-			} else if (node.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+			} else if (node.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 				ast_sentblock sb = (ast_sentblock) node;
 				frame.addLast(sb);
 
@@ -168,7 +168,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 
 		assert out.get_iter_type().is_iteration_on_all_graph();
 		gm_transform_helper.gm_make_it_belong_to_sentblock(out);
-		assert out.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+		assert out.get_parent().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 
 		// check if there are dependencies via scalar variable
 		// also mark each scalar symbols whether they are used by elder siblings
@@ -215,9 +215,9 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		HashSet<gm_symtab_entry> ALL = new HashSet<gm_symtab_entry>();
 		
 		for (ast_node node : frame) {
-			if (node.get_nodetype() == AST_NODE_TYPE.AST_IF) {
+			if (node.get_nodetype() == ast_node_type.AST_IF) {
 				// continue
-			} else if (node.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+			} else if (node.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 				ast_sentblock sb = (ast_sentblock) node;
 				LinkedList<ast_sent> OLD = elder.get(sb);
 				LinkedList<ast_sent> NEW = younger.get(sb);
@@ -270,7 +270,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 	
 	private static void reconstruct_old_new_main(ast_node n, HashMap<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old, RefObject<ast_node> last) {
 
-		if (n.get_nodetype() == AST_NODE_TYPE.AST_IF) {
+		if (n.get_nodetype() == ast_node_type.AST_IF) {
 			if (last.argvalue == null) // can ignore this if loop
 				return;
 
@@ -280,7 +280,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 			new_if.set_col(iff.get_col());
 			last.argvalue = new_if;
 
-		} else if ((n).get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		} else if ((n).get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 			ast_sentblock sb_org = (ast_sentblock) (n);
 			ast_sentblock sb = ast_sentblock.new_sentblock();
 			LinkedList<ast_sent> SIB = siblings.get(sb_org);
@@ -495,7 +495,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 				assert parent != null;
 				// printf(" parent = %p %s\n", parent,
 				// gm_get_nodetype_string(parent->get_nodetype()));
-				if (parent.get_nodetype() == AST_NODE_TYPE.AST_IF) {
+				if (parent.get_nodetype() == ast_node_type.AST_IF) {
 					if (meet_if) {
 						is_target = false;
 						break;
@@ -505,7 +505,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 						is_target = false;
 						break;
 					}
-				} else if (parent.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+				} else if (parent.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 					// todo: this is a little bit to restrictive.
 					// we can relax this by changing more scalars into node
 					// properties.
@@ -519,7 +519,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 					 * if ((sb->get_symtab_field()->get_num_symbols() > 0) ||
 					 * (sb->get_symtab_var()->get_num_symbols() > 0)) {
 					 */
-				} else if (parent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+				} else if (parent.get_nodetype() == ast_node_type.AST_FOREACH) {
 					ast_foreach fe = (ast_foreach) parent;
 					if (fe == out)
 						break;

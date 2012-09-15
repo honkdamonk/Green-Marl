@@ -1,7 +1,7 @@
 package common;
 
 import inc.GMTYPE_T;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
@@ -20,7 +20,7 @@ public class gm_add_symbol {
 		ast_node up = s.get_parent();
 		if (up == null)
 			return null;
-		if (up.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK)
+		if (up.get_nodetype() == ast_node_type.AST_SENTBLOCK)
 			return (ast_sentblock) up;
 		if (up.is_sentence())
 			return gm_add_symbol.gm_find_upscope((ast_sent) up);
@@ -149,7 +149,7 @@ public class gm_add_symbol {
 	 * - name conflict does not happen
 	 */
 	public static void gm_move_symbol_into(gm_symtab_entry e, gm_symtab old_tab, gm_symtab new_tab, boolean is_scalar) {
-		assert new_tab.get_ast().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+		assert new_tab.get_ast().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 		assert old_tab.is_entry_in_the_tab(e);
 
 		// delete from the old-table
@@ -178,7 +178,7 @@ public class gm_add_symbol {
 			up = old_tab.get_parent();
 			if (up == null)
 				break;
-			if (up.get_ast().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+			if (up.get_ast().get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 				found = true;
 				break;
 			}
@@ -215,15 +215,15 @@ public class gm_add_symbol {
 			if (node.has_symtab()) {
 				if (is_property) {
 					if (node.get_symtab_field().is_entry_in_the_tab(e)) {
-						assert node.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+						assert node.get_nodetype() == ast_node_type.AST_SENTBLOCK;
 						return (ast_sentblock) node;
 					}
 				} else {
 					if (node.get_symtab_var().is_entry_in_the_tab(e)) {
-						if (node.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
+						if (node.get_nodetype() != ast_node_type.AST_SENTBLOCK) {
 							System.out.printf("%s not defined in a sentblock\n", e.getId().get_genname());
 						}
-						assert node.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+						assert node.get_nodetype() == ast_node_type.AST_SENTBLOCK;
 						return (ast_sentblock) node;
 					}
 				}

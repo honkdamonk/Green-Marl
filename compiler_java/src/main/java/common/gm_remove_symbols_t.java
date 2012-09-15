@@ -2,7 +2,7 @@ package common;
 
 import java.util.HashSet;
 
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
@@ -19,7 +19,7 @@ public class gm_remove_symbols_t extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab e, SYMTAB_TYPES symtab_sype) {
+	public boolean apply(gm_symtab e, symtab_types symtab_sype) {
 		for (gm_symtab_entry t : TARGETS) {
 			if (e.is_entry_in_the_tab(t)) {
 				e.remove_entry_in_the_tab(t);

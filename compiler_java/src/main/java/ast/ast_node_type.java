@@ -1,6 +1,6 @@
 package ast;
 
-public enum AST_NODE_TYPE {
+public enum ast_node_type {
 	AST_ID, //
 	AST_FIELD, // A.B
 	AST_MAPACCESS, // A[B]

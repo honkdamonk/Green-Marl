@@ -24,7 +24,7 @@ public class ast_typedecl extends ast_node { // property or type
 	private ast_id target_nbr2; // for common neighbor iterator
 
 	protected ast_typedecl() {
-		super(AST_NODE_TYPE.AST_TYPEDECL);
+		super(ast_node_type.AST_TYPEDECL);
 		type_id = GMTYPE_INVALID;
 	}
 

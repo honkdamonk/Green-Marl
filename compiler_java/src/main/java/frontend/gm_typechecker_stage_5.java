@@ -1,8 +1,8 @@
 package frontend;
 
-import static ast.AST_NODE_TYPE.AST_MAPACCESS;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_KEY_MISSMATCH;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH;
+import static ast.ast_node_type.AST_MAPACCESS;
+import static common.gm_errors_and_warnings.GM_ERROR_KEY_MISSMATCH;
+import static common.gm_errors_and_warnings.GM_ERROR_TARGET_MISMATCH;
 import static inc.GMTYPE_T.GMTYPE_NORDER;
 import static inc.GMTYPE_T.GMTYPE_NSEQ;
 import static inc.GMTYPE_T.GMTYPE_NSET;
@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -31,7 +31,7 @@ import ast.ast_sent;
 import ast.ast_typedecl;
 import ast.ast_while;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
 
@@ -103,7 +103,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 				break;
 
 			if (r.get_expr() == null) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
 						GMTYPE_T.GMTYPE_VOID.get_type_string());
 				break;
 			}
@@ -115,7 +115,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			boolean test = gm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 			boolean warn = warn_ref.argvalue;
 			if (!test) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
 						summary_rhs.get_type_string());
 
 				okay = false;
@@ -160,7 +160,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		GMTYPE_T summary_rhs;
 		gm_symtab_entry l_sym = null;
 
-		if (lhs.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+		if (lhs.get_nodetype() == ast_node_type.AST_ID) {
 			ast_id l2 = (ast_id) lhs;
 			summary_lhs = l2.getTypeSummary();
 
@@ -169,7 +169,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			}
 
 			if (!l2.getSymInfo().isWriteable()) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_READONLY, l2);
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_READONLY, l2);
 				return false;
 			}
 		} else if (lhs.get_nodetype() == AST_MAPACCESS) {
@@ -207,7 +207,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		boolean test = gm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 		boolean warn = warn_ref.argvalue;
 		if (!test) {
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(), summary_rhs.get_type_string());
+			gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(), summary_rhs.get_type_string());
 			return false;
 		}
 		if (warn && summary_lhs.is_prim_type()) {
@@ -269,12 +269,12 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			GM_REDUCE_T reduce_op = a.get_reduce_type();
 			if (reduce_op.is_numeric_reduce_op()) {
 				if (!summary_lhs.is_numeric_type()) {
-					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_NUMERIC_REDUCE, l, c);
+					gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_REQUIRE_NUMERIC_REDUCE, l, c);
 					return false;
 				}
 			} else if (reduce_op.is_boolean_reduce_op()) {
 				if (!summary_lhs.is_boolean_type()) {
-					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_BOOLEAN_REDUCE, l, c);
+					gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_REQUIRE_BOOLEAN_REDUCE, l, c);
 					return false;
 				}
 			}
@@ -303,7 +303,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 
 	public final boolean should_be_boolean(ast_expr e) {
 		if (!e.get_type_summary().is_boolean_type()) {
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_BOOLEAN, e.get_line(), e.get_col());
+			gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_NEED_BOOLEAN, e.get_line(), e.get_col());
 			return false;
 		}
 		return true;

@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 import inc.GMTYPE_T;
 import inc.gm_compile_step;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_node;
@@ -50,10 +50,10 @@ public class gm_fe_typecheck_step5 extends gm_compile_step {
 
 			ast_expr tc = ast_expr.new_typeconv_expr(dest_type, t);
 
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+			if (n.get_nodetype() == ast_node_type.AST_ASSIGN) {
 				ast_assign a = (ast_assign) n;
 				a.set_rhs(tc);
-			} else if (n.get_nodetype() == AST_NODE_TYPE.AST_RETURN) {
+			} else if (n.get_nodetype() == ast_node_type.AST_RETURN) {
 				ast_return r = (ast_return) n;
 				r.set_expr(tc);
 			} else {

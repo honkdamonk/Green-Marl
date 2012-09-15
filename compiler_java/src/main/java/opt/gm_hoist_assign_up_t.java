@@ -1,6 +1,6 @@
 package opt;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_sent;
 
@@ -15,7 +15,7 @@ public class gm_hoist_assign_up_t extends gm_hoist_normal_sent_t {
 	@Override
 	protected boolean check_target(ast_sent target) {
 		// check if assign
-		if (target.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+		if (target.get_nodetype() != ast_node_type.AST_ASSIGN)
 			return false;
 		ast_assign a = (ast_assign) target;
 
@@ -30,7 +30,7 @@ public class gm_hoist_assign_up_t extends gm_hoist_normal_sent_t {
 
 	@Override
 	protected boolean check_trivial_pred(ast_sent S) {
-		if ((S.get_nodetype() == AST_NODE_TYPE.AST_VARDECL) || (S.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN))
+		if ((S.get_nodetype() == ast_node_type.AST_VARDECL) || (S.get_nodetype() == ast_node_type.AST_ASSIGN))
 			return true;
 		else
 			return false;

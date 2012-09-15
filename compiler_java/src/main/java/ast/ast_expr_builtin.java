@@ -1,6 +1,6 @@
 package ast;
 
-import static ast.AST_NODE_TYPE.AST_EXPR_BUILTIN;
+import static ast.ast_node_type.AST_EXPR_BUILTIN;
 import inc.GMEXPR_CLASS;
 import inc.GMTYPE_T;
 import inc.expr_list;

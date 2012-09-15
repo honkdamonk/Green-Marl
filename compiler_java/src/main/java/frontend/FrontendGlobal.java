@@ -7,7 +7,7 @@ import inc.gm_assignment_t;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
@@ -34,7 +34,7 @@ public final class FrontendGlobal {
 		assert a.is_reduce_assign();
 
 		// assumption: a belongs to a sentence block
-		assert a.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+		assert a.get_parent().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 
 		ast_expr base;
 		if (a.is_target_scalar()) {
@@ -113,9 +113,9 @@ public final class FrontendGlobal {
 				ast_node l = I.next();
 				ast_expr r = J.next();
 				ast_assign aa;
-				if (l.get_nodetype() == AST_NODE_TYPE.AST_ID)
+				if (l.get_nodetype() == ast_node_type.AST_ID)
 					aa = ast_assign.new_assign_scala((ast_id) l, r);
-				else if (l.get_nodetype() == AST_NODE_TYPE.AST_FIELD)
+				else if (l.get_nodetype() == ast_node_type.AST_FIELD)
 					aa = ast_assign.new_assign_field((ast_field) l, r);
 				else {
 					assert false;

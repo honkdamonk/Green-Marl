@@ -15,11 +15,11 @@ public class ast_id extends ast_node {
 	private boolean instant_assignment = false;
 
 	private ast_id() {
-		super(AST_NODE_TYPE.AST_ID);
+		super(ast_node_type.AST_ID);
 	}
 
 	private ast_id(String org, int l, int c) {
-		super(AST_NODE_TYPE.AST_ID);
+		super(ast_node_type.AST_ID);
 		name = org;
 		set_line(l);
 		set_col(c);

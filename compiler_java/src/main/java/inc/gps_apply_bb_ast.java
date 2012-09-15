@@ -14,7 +14,7 @@ import static backend_gps.gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_expr;
 import ast.ast_foreach;
 import ast.ast_if;
@@ -92,7 +92,7 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 
 			LinkedList<ast_sent> sents = _curr.get_sents();
 			for (ast_sent s : sents) {
-				assert s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH;
+				assert s.get_nodetype() == ast_node_type.AST_FOREACH;
 				ast_foreach fe = (ast_foreach) s;
 				fe.traverse(this, is_post(), is_pre());
 			}
@@ -100,7 +100,7 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 			assert _curr.get_num_sents() == 1;
 			// traverse cond expr
 			ast_sent s = _curr.get_1st_sent();
-			assert s.get_nodetype() == AST_NODE_TYPE.AST_IF;
+			assert s.get_nodetype() == ast_node_type.AST_IF;
 			ast_if i = (ast_if) s;
 			ast_expr c = i.get_cond();
 
@@ -110,7 +110,7 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 
 			// traverse cond expr
 			ast_sent s = _curr.get_1st_sent();
-			assert s.get_nodetype() == AST_NODE_TYPE.AST_WHILE;
+			assert s.get_nodetype() == ast_node_type.AST_WHILE;
 			ast_while w = (ast_while) s;
 			ast_expr c = w.get_cond();
 

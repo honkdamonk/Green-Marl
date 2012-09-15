@@ -1,6 +1,6 @@
 package backend_cpp;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_id;
@@ -23,7 +23,7 @@ class gm_replace_da_t extends gm_apply {
 	
 	@Override
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+		if (s.get_nodetype() != ast_node_type.AST_ASSIGN)
 			return true;
 		ast_assign a = (ast_assign) s;
 		if (a.is_defer_assign()) {

@@ -6,7 +6,7 @@ import static backend_gps.GPSConstants.GPS_FLAG_WHILE_TAIL;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_if;
 import ast.ast_sent;
 import ast.ast_while;
@@ -85,9 +85,9 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 		}
 
 		else if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX)) {
-			if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+			if (s.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 				// do nothing but recurse
-			} else if (s.get_nodetype() == AST_NODE_TYPE.AST_IF) {
+			} else if (s.get_nodetype() == ast_node_type.AST_IF) {
 				ast_if i = (ast_if) s;
 				boolean has_else = (i.get_else() != null);
 
@@ -123,7 +123,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 				// prev/next after this sentence
 				prev = fin;
 
-			} else if (s.get_nodetype() == AST_NODE_TYPE.AST_WHILE) {
+			} else if (s.get_nodetype() == ast_node_type.AST_WHILE) {
 				// create while blocks
 				ast_while w = (ast_while) s;
 

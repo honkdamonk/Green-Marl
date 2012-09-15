@@ -2,7 +2,7 @@ package opt;
 
 import java.util.HashMap;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_id;
 import ast.ast_sent;
@@ -54,7 +54,7 @@ public class gm_opt_propagate_trivial_write_t extends gm_apply
 	public boolean apply(ast_sent s)
 	{
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN)
 		{
 			ast_assign a = (ast_assign) s;
 			if (a.is_defer_assign() || a.is_reduce_assign())

@@ -7,7 +7,7 @@ import static backend_gps.GPSConstants.GPS_INT_SYMBOL_SCOPE;
 import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import inc.GMTYPE_T;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -19,7 +19,7 @@ import ast.ast_sent;
 import common.gm_apply;
 import common.gm_method_id_t;
 
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab_entry;
 
 public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
@@ -34,7 +34,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 		set_for_symtab(true);
 	}
 
-	public final boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
+	public final boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
 		e.add_info_int(GPS_INT_SYMBOL_SCOPE, current_scope.getValue());
 
 		// ---------------------------------------------------------------------------
@@ -55,7 +55,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 			s = gm_gps_scope_t.GPS_SCOPE_OUTER;
 			break;
 		}
-		add_syminfo_struct(e, (symtab_type != SYMTAB_TYPES.GM_SYMTAB_FIELD), s);
+		add_syminfo_struct(e, (symtab_type != symtab_types.GM_SYMTAB_FIELD), s);
 
 		return true;
 	}
@@ -63,7 +63,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 	public final boolean apply(ast_sent s) {
 		s.add_info_int(GPS_INT_SYNTAX_CONTEXT, current_scope.getValue());
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (outer_loop == null) {
 				assert fe.get_iterator().getTypeSummary() == GMTYPE_T.GMTYPE_NODEITER_ALL;
@@ -83,7 +83,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 			} else {
 				assert false;
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		} else if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			if (a.is_target_scalar() && a.get_lhs_scala().getTypeInfo().is_edge_compatible()) {
 				if (current_scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN) {

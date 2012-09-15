@@ -1,12 +1,12 @@
 package backend_gps;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab_entry;
 
 import common.gm_apply;
@@ -44,9 +44,9 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
+	public boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
 		// find scalar variables defined in the first level
-		if ((level == 1) && (symtab_type == SYMTAB_TYPES.GM_SYMTAB_VAR)) {
+		if ((level == 1) && (symtab_type == symtab_types.GM_SYMTAB_VAR)) {
 			if (e.getType().is_primitive())
 				potential_target_syms.add(e);
 		}
@@ -56,7 +56,7 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 	@Override
 	public boolean apply(ast_sent s) {
 		// level management
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (level == 0) {
 				if (MAP.containsKey(fe)) {
@@ -71,7 +71,7 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 			}
 		}
 
-		else if ((level == 2) && (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN)) {
+		else if ((level == 2) && (s.get_nodetype() == ast_node_type.AST_ASSIGN)) {
 			ast_assign a = (ast_assign) s;
 			if (a.is_target_scalar()) {
 				// check if LHS is potential target
@@ -83,7 +83,7 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 				if (a.has_lhs_list()) {
 					java.util.LinkedList<ast_node> lhs_list = a.get_lhs_list();
 					for (ast_node n : lhs_list) {
-						if (n.get_nodetype() != AST_NODE_TYPE.AST_ID)
+						if (n.get_nodetype() != ast_node_type.AST_ID)
 							continue;
 						ast_id id = (ast_id) n;
 						target = id.getSymInfo();
@@ -98,7 +98,7 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if ((level == 2) && (inloop == fe)) {
 				level = 1;

@@ -1,14 +1,14 @@
 package frontend;
 
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_ITOR;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_OP;
+import static common.gm_errors_and_warnings.GM_ERROR_DOUBLE_BOUND_ITOR;
+import static common.gm_errors_and_warnings.GM_ERROR_DOUBLE_BOUND_OP;
 import inc.GM_REDUCE_T;
 
 import java.util.LinkedList;
 
 import tangible.RefObject;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_id;
@@ -30,9 +30,9 @@ public class gm_check_reduce_error_t extends gm_apply {
 		// [hack] bfs body is always sent-block.
 		// check If I am bfs body (forward/reverse)
 		// add bound-set to the context
-		if ((n.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) && (n.get_parent() != null)) {
+		if ((n.get_nodetype() == ast_node_type.AST_SENTBLOCK) && (n.get_parent() != null)) {
 			ast_node t = n.get_parent();
-			if (t.get_nodetype() != AST_NODE_TYPE.AST_BFS)
+			if (t.get_nodetype() != ast_node_type.AST_BFS)
 				return;
 			ast_bfs bfs = (ast_bfs) t;
 			if (n == bfs.get_fbody()) {
@@ -47,7 +47,7 @@ public class gm_check_reduce_error_t extends gm_apply {
 			} else {
 				assert false;
 			}
-		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		} else if (n.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) n;
 			gm_rwinfo_map B = gm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 			is_okay = check_add_and_report_conflicts(B_scope, B) && is_okay;
@@ -56,9 +56,9 @@ public class gm_check_reduce_error_t extends gm_apply {
 
 	@Override
 	public void end_context(ast_node n) {
-		if ((n.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) && (n.get_parent() != null)) {
+		if ((n.get_nodetype() == ast_node_type.AST_SENTBLOCK) && (n.get_parent() != null)) {
 			ast_node t = n.get_parent();
-			if (t.get_nodetype() != AST_NODE_TYPE.AST_BFS)
+			if (t.get_nodetype() != ast_node_type.AST_BFS)
 				return;
 			ast_bfs bfs = (ast_bfs) t;
 			if (n == bfs.get_fbody()) {
@@ -70,7 +70,7 @@ public class gm_check_reduce_error_t extends gm_apply {
 			} else {
 				assert false;
 			}
-		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		} else if (n.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) n;
 			gm_rwinfo_map B = gm_rw_analysis.gm_get_bound_set_info(fe).bound_set;
 			remove_all(B_scope, B);

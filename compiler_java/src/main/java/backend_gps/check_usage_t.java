@@ -6,7 +6,7 @@ import static backend_gps.gm_gps_opt_merge_ebb_again.FOR_SEQ1;
 import frontend.gm_symtab_entry;
 import inc.GM_REDUCE_T;
 import inc.gps_apply_bb_ast;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;
@@ -101,7 +101,7 @@ public class check_usage_t extends gps_apply_bb_ast {
 
 	// ----------------------------------------------------------------------
 	public final boolean apply_par2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 
 			// property access is fine
@@ -118,7 +118,7 @@ public class check_usage_t extends gps_apply_bb_ast {
 			if (a.is_argminmax_assign()) {
 				java.util.LinkedList<ast_node> L = a.get_lhs_list();
 				for (ast_node node : L) {
-					assert node.get_nodetype() == AST_NODE_TYPE.AST_ID;
+					assert node.get_nodetype() == ast_node_type.AST_ID;
 					gm_symtab_entry e2 = ((ast_id) node).getSymInfo();
 					if (!check_symbol_write_in_par2(e2, GM_REDUCE_T.GMREDUCE_INVALID))
 						return true;
@@ -136,7 +136,7 @@ public class check_usage_t extends gps_apply_bb_ast {
 
 	// check reductions to global scala symbols
 	public final boolean apply_par1(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 
 			// property access is fine
@@ -148,7 +148,7 @@ public class check_usage_t extends gps_apply_bb_ast {
 				usage.put(e, GM_REDUCE_T.GMREDUCE_INVALID); // normal write
 				java.util.LinkedList<ast_node> L = a.get_lhs_list();
 				for (ast_node node : L) {
-					assert node.get_nodetype() == AST_NODE_TYPE.AST_ID;
+					assert node.get_nodetype() == ast_node_type.AST_ID;
 					gm_symtab_entry e2 = ((ast_id) node).getSymInfo();
 					usage.put(e2, GM_REDUCE_T.GMREDUCE_INVALID);
 				}

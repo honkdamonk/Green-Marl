@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import tangible.Pair;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_id;
@@ -63,7 +63,7 @@ public class gps_opt_replace_builtin_t extends gm_apply {
 
 				// tricky.
 				// change this call into ID
-				e.set_nodetype(AST_NODE_TYPE.AST_EXPR);
+				e.set_nodetype(ast_node_type.AST_EXPR);
 				e.set_expr_class(GMEXPR_CLASS.GMEXPR_ID);
 				ast_id new_id = target.getId().copy(true);
 				e.set_id(new_id);

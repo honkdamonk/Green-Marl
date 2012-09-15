@@ -17,7 +17,7 @@ public class ast_foreach extends ast_sent {
 	private boolean use_reverse = false;
 
 	private ast_foreach() {
-		super(AST_NODE_TYPE.AST_FOREACH);
+		super(ast_node_type.AST_FOREACH);
 		iter_type = GMTYPE_T.GMTYPE_GRAPH;
 		create_symtabs();
 	}
@@ -65,7 +65,7 @@ public class ast_foreach extends ast_sent {
 			cond.reproduce(0);
 			Out.pushln(")");
 		}
-		if (body.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK)
+		if (body.get_nodetype() == ast_node_type.AST_SENTBLOCK)
 			body.reproduce(0);
 		else {
 			Out.pushIndent();

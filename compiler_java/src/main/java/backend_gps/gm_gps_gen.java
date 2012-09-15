@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -62,7 +62,7 @@ import ast.ast_vardecl;
 import ast.ast_while;
 import backend_cpp.gm_cpp_opt_defer;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply_compiler_stage;
 import common.gm_error;
 import common.gm_main;
@@ -133,7 +133,7 @@ public class gm_gps_gen extends BackendGenerator {
 		// currently, there should be one and only one top-level procedure
 		// -----------------------------------
 		if (gm_main.FE.get_num_procs() != 1) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NUM_PROCS, "");
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_NUM_PROCS, "");
 			return false;
 		}
 
@@ -160,7 +160,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 		// Check whether procedure name is the same as the filename
 		if (!proc.get_procname().get_genname().equals(fname)) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
 			return false;
 		}
 
@@ -279,7 +279,7 @@ public class gm_gps_gen extends BackendGenerator {
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			ps_body = new PrintStream(bos);
 		} catch (FileNotFoundException e) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
 		Body.setOutputFile(ps_body);
@@ -599,7 +599,7 @@ public class gm_gps_gen extends BackendGenerator {
 			// generate sentences
 			ast_sent s = b.get_1st_sent();
 			assert s != null;
-			assert s.get_nodetype() == AST_NODE_TYPE.AST_IF;
+			assert s.get_nodetype() == ast_node_type.AST_IF;
 			ast_if i = (ast_if) s;
 			generate_expr(i.get_cond());
 			Body.pushln(";");
@@ -610,7 +610,7 @@ public class gm_gps_gen extends BackendGenerator {
 		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND) {
 			ast_sent s = b.get_1st_sent();
 			assert s != null;
-			assert s.get_nodetype() == AST_NODE_TYPE.AST_WHILE;
+			assert s.get_nodetype() == ast_node_type.AST_WHILE;
 			ast_while i = (ast_while) s;
 			if (i.is_do_while())
 				Body.pushln("// Do-While(...)");
@@ -1003,7 +1003,7 @@ public class gm_gps_gen extends BackendGenerator {
 					Body.pushln("-----*/");
 					get_lib().generate_message_receive_begin(fe, Body, b, R.size() == 1);
 
-					if (fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+					if (fe.get_body().get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 						generate_sent_block((ast_sentblock) fe.get_body(), false);
 					} else {
 						generate_sent(fe.get_body());
@@ -1065,7 +1065,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 			int cnt = 0;
 			for (ast_sent s : sents) {
-				assert s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH;
+				assert s.get_nodetype() == ast_node_type.AST_FOREACH;
 				ast_foreach fe = (ast_foreach) s;
 				ast_sent body = fe.get_body();
 				if (cnt != 0)
@@ -1074,7 +1074,7 @@ public class gm_gps_gen extends BackendGenerator {
 				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 					temp = String.format("if (!%s)", cond_var);
 					Body.push(temp);
-					if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+					if (body.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 						Body.pushln(" {");
 					else
 						Body.NL();
@@ -1083,7 +1083,7 @@ public class gm_gps_gen extends BackendGenerator {
 				generate_sent(body);
 
 				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-					if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+					if (body.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 						Body.pushln("}");
 				}
 
@@ -1466,7 +1466,7 @@ public class gm_gps_gen extends BackendGenerator {
 			Iterator<ast_expr> J;
 			J = rhs_list.iterator();
 			for (ast_node n : lhs_list) {
-				if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+				if (n.get_nodetype() == ast_node_type.AST_ID) {
 					generate_lhs_id((ast_id) n);
 				} else {
 					generate_lhs_field((ast_field) n);

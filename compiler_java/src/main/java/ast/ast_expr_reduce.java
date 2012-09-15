@@ -23,7 +23,7 @@ public class ast_expr_reduce extends ast_expr {
 		super();
 		this.reduce_type = GM_REDUCE_T.GMREDUCE_NULL;
 		this.iter_type = GMTYPE_T.GMTYPE_INVALID;
-		set_nodetype(AST_NODE_TYPE.AST_EXPR_RDC);
+		set_nodetype(ast_node_type.AST_EXPR_RDC);
 		create_symtabs();
 	}
 

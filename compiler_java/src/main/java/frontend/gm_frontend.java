@@ -1,15 +1,15 @@
 package frontend;
 
-import static ast.AST_NODE_TYPE.AST_ARGDECL;
-import static ast.AST_NODE_TYPE.AST_EXPR;
-import static ast.AST_NODE_TYPE.AST_EXPR_BUILTIN;
-import static ast.AST_NODE_TYPE.AST_EXPR_FOREIGN;
-import static ast.AST_NODE_TYPE.AST_FIELD;
-import static ast.AST_NODE_TYPE.AST_ID;
-import static ast.AST_NODE_TYPE.AST_IDLIST;
-import static ast.AST_NODE_TYPE.AST_MAPACCESS;
-import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
-import static ast.AST_NODE_TYPE.AST_TYPEDECL;
+import static ast.ast_node_type.AST_ARGDECL;
+import static ast.ast_node_type.AST_EXPR;
+import static ast.ast_node_type.AST_EXPR_BUILTIN;
+import static ast.ast_node_type.AST_EXPR_FOREIGN;
+import static ast.ast_node_type.AST_FIELD;
+import static ast.ast_node_type.AST_ID;
+import static ast.ast_node_type.AST_IDLIST;
+import static ast.ast_node_type.AST_MAPACCESS;
+import static ast.ast_node_type.AST_SENTBLOCK;
+import static ast.ast_node_type.AST_TYPEDECL;
 import inc.GMTYPE_T;
 import inc.GM_OPS_T;
 import inc.GM_REDUCE_T;

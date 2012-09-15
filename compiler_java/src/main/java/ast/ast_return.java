@@ -8,7 +8,7 @@ public class ast_return extends ast_sent {
 	protected ast_expr expr = null;
 
 	protected ast_return() {
-		super(AST_NODE_TYPE.AST_RETURN);
+		super(ast_node_type.AST_RETURN);
 	}
 
 	public static ast_return new_return(ast_expr e) {

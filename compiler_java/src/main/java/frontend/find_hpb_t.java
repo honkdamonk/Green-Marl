@@ -2,7 +2,7 @@ package frontend;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_foreach;
@@ -10,7 +10,7 @@ import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_error;
 import common.gm_transform_helper;
 import common.gm_apply;
@@ -51,14 +51,14 @@ public class find_hpb_t extends gm_apply {
 		curr_T.is_boundary = false;
 		curr_T.iter = null;
 
-		if (t.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (t.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) t;
 			curr_T.is_boundary = true;
 			curr_T.iter = fe.get_iterator().getSymInfo();
 			if (fe.is_parallel()) {
 				curr_T.is_par = true;
 			}
-		} else if (t.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		} else if (t.get_nodetype() == ast_node_type.AST_BFS) {
 			ast_bfs fe = (ast_bfs) t;
 			curr_T.is_boundary = true;
 			curr_T.iter = fe.get_iterator().getSymInfo();
@@ -152,7 +152,7 @@ public class find_hpb_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+		if (s.get_nodetype() != ast_node_type.AST_ASSIGN)
 			return true;
 		ast_assign a = (ast_assign) s;
 
@@ -160,7 +160,7 @@ public class find_hpb_t extends gm_apply {
 			if (a.get_bound() == null) {
 				gm_symtab_entry bound = find_closest_any_boundary_iterator();
 				if (bound == null) {
-					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_UNBOUND_REDUCE, a.get_line(), a.get_col());
+					gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_UNBOUND_REDUCE, a.get_line(), a.get_col());
 					return false;
 				}
 

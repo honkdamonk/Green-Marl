@@ -1,6 +1,6 @@
 package backend_gps;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_foreach;
@@ -23,7 +23,7 @@ public class gps_check_reverse_edge_t extends gm_apply
 	}
 	public final boolean apply(ast_sent s)
 	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH)
 		{
 			ast_foreach fe = (ast_foreach) s;
 			if (fe.get_iter_type().is_iteration_use_reverse())

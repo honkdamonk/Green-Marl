@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_extra_info;
@@ -54,7 +54,7 @@ class opt_scalar_reduction_t extends gm_apply {
 
 		// check only for foreach
 		// todo: do similar thing for BFS
-		if (sent.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)
+		if (sent.get_nodetype() != ast_node_type.AST_FOREACH)
 			return true;
 
 		ast_foreach fe = (ast_foreach) sent;
@@ -83,7 +83,7 @@ class opt_scalar_reduction_t extends gm_apply {
 		Iterator<ast_sent> I;
 		for (I = _targets.iterator(); I.hasNext();) {
 			ast_sent s = I.next();
-			assert s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH;
+			assert s.get_nodetype() == ast_node_type.AST_FOREACH;
 			ast_foreach fe = (ast_foreach) s;
 			apply_transform(fe);
 		}
@@ -108,7 +108,7 @@ class opt_scalar_reduction_t extends gm_apply {
 
 		// make scope
 		gm_transform_helper.gm_make_it_belong_to_sentblock_nested(fe);
-		assert fe.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+		assert fe.get_parent().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 		ast_sentblock se = (ast_sentblock) fe.get_parent();
 
 		// set scope parallel

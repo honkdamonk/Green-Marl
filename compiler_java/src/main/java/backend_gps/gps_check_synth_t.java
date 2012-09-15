@@ -2,15 +2,15 @@ package backend_gps;
 
 import static backend_gps.GPSConstants.GPS_FLAG_USE_EDGE_PROP;
 import inc.GMTYPE_T;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_sent;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_error;
 import common.gm_apply;
 
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab_entry;
 
 //------------------------------------------------
@@ -49,19 +49,19 @@ public class gps_check_synth_t extends gm_apply {
 	// pre apply
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "BFS or DFS");
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "BFS or DFS");
 			_error = true;
 		}
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_RETURN) {
+		if (s.get_nodetype() == ast_node_type.AST_RETURN) {
 			if (foreach_depth > 0) {
-				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "Return inside foreach");
+				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_UNSUPPORTED_OP, s.get_line(), s.get_col(), "Return inside foreach");
 				_error = true;
 			}
 		}
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			foreach_depth++;
 		}
 
@@ -70,7 +70,7 @@ public class gps_check_synth_t extends gm_apply {
 
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			foreach_depth--;
 		}
 		return true;
@@ -78,10 +78,10 @@ public class gps_check_synth_t extends gm_apply {
 
 	// visit entry
 	@Override
-	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
+	public boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
 		GMTYPE_T type_id = e.getType().get_typeid();
 		if (type_id.is_collection_type()) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_COLLECTION, e.getId().get_line(), e.getId().get_col(), e
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_UNSUPPORTED_COLLECTION, e.getId().get_line(), e.getId().get_col(), e
 					.getId().get_orgname());
 			_error = true;
 		}
@@ -97,7 +97,7 @@ public class gps_check_synth_t extends gm_apply {
 
 		else if (type_id.is_graph_type()) {
 			if (_graph_defined) {
-				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_MULTIPLE_GRAPH, e.getId().get_line(), e.getId().get_col(), e.getId()
+				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_MULTIPLE_GRAPH, e.getId().get_line(), e.getId().get_col(), e.getId()
 						.get_orgname());
 				_error = true;
 			}

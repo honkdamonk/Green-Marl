@@ -5,14 +5,14 @@ import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_OUTER_LOOP;
 import static backend_gps.GPSConstants.GPS_INT_SYMBOL_SCOPE;
 import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_error;
 import common.gm_apply;
 
@@ -34,7 +34,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply {
 
 	// write to OUT_SCOPE in INNER_LOOP is an error
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			int context = s.find_info_int(GPS_INT_SYNTAX_CONTEXT);
 			gm_gps_new_scope_analysis_t scope;
@@ -47,7 +47,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply {
 			if (a.has_lhs_list()) {
 				for (ast_node n : a.get_lhs_list()) {
 					gm_gps_new_scope_analysis_t scope2;
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+					if (n.get_nodetype() == ast_node_type.AST_ID) {
 						scope2 = get_scope_from_id(((ast_id) n).getSymInfo());
 					} else {
 						scope2 = get_scope_from_driver(((ast_field) n).get_first().getSymInfo());
@@ -59,12 +59,12 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply {
 
 			// writing to out-scope inside inner-loop.
 			if ((context == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue()) && (scope == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT)) {
-				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PULL_SYNTAX, s.get_line(), s.get_col());
+				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_PULL_SYNTAX, s.get_line(), s.get_col());
 				_error = true;
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_CALL) {
+		} else if (s.get_nodetype() == ast_node_type.AST_CALL) {
 			assert false;
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREIGN) {
+		} else if (s.get_nodetype() == ast_node_type.AST_FOREIGN) {
 			assert false;
 			// should check out-scope is modified
 		}

@@ -7,7 +7,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_if;
 import ast.ast_sent;
@@ -24,7 +24,7 @@ class cpp_opt_common_nbr_t extends gm_apply {
 	public boolean apply(ast_sent sent) {
 		// check only for foreach
 		// todo: do similar thing for BFS
-		if (sent.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)
+		if (sent.get_nodetype() != ast_node_type.AST_FOREACH)
 			return true;
 
 		ast_foreach fe = (ast_foreach) sent;
@@ -34,7 +34,7 @@ class cpp_opt_common_nbr_t extends gm_apply {
 
 		ast_sent fe_body = gm_transform_helper.gm_get_sentence_if_trivial_sentblock(fe.get_body());
 
-		if (fe_body.get_nodetype() != AST_NODE_TYPE.AST_IF)
+		if (fe_body.get_nodetype() != ast_node_type.AST_IF)
 			return true;
 
 		ast_if iff = (ast_if) fe_body;
@@ -52,7 +52,7 @@ class cpp_opt_common_nbr_t extends gm_apply {
 			_targets.addLast(T);
 		} else {
 			ast_sent iff_body = gm_transform_helper.gm_get_sentence_if_trivial_sentblock(iff.get_then());
-			if (iff_body.get_nodetype() != AST_NODE_TYPE.AST_IF)
+			if (iff_body.get_nodetype() != ast_node_type.AST_IF)
 				return true;
 
 			ast_if iff2 = (ast_if) iff_body;

@@ -11,7 +11,7 @@ import static backend_gps.GPSConstants.GPS_LIST_INTRA_MERGED_CONDITIONAL;
 import static backend_gps.GPSConstants.GPS_PREPARE_STEP1;
 import static backend_gps.GPSConstants.GPS_RET_VALUE;
 import static backend_gps.GPSConstants.GPS_REV_NODE_ID;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME;
+import static common.gm_errors_and_warnings.GM_ERROR_GPS_PROC_NAME;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_if;
 import ast.ast_procdef;
@@ -499,7 +499,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			// generate sentences
 			ast_sent s = b.get_1st_sent();
 			assert s != null;
-			assert s.get_nodetype() == AST_NODE_TYPE.AST_IF;
+			assert s.get_nodetype() == ast_node_type.AST_IF;
 			ast_if i = (ast_if) s;
 			generate_expr(i.get_cond());
 			Body.pushln(";");
@@ -510,7 +510,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND) {
 			ast_sent s = b.get_1st_sent();
 			assert s != null;
-			assert s.get_nodetype() == AST_NODE_TYPE.AST_WHILE;
+			assert s.get_nodetype() == ast_node_type.AST_WHILE;
 			ast_while i = (ast_while) s;
 			if (i.is_do_while())
 				Body.pushln("// Do-While(...)");
@@ -870,7 +870,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 					Body.pushln("-----*/");
 					get_lib().generate_message_receive_begin(fe, Body, b, R.size() == 1);
 
-					if (fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+					if (fe.get_body().get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 						generate_sent_block((ast_sentblock) fe.get_body(), false);
 					} else {
 						generate_sent(fe.get_body());
@@ -930,7 +930,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			LinkedList<ast_sent> sents = b.get_sents();
 			int cnt = 0;
 			for (ast_sent s : sents) {
-				assert s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH;
+				assert s.get_nodetype() == ast_node_type.AST_FOREACH;
 				ast_foreach fe = (ast_foreach) s;
 				ast_sent body = fe.get_body();
 				if (cnt != 0)
@@ -939,7 +939,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 					temp = String.format("if (!%s)", cond_var);
 					Body.push(temp);
-					if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+					if (body.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 						Body.pushln(" {");
 					else
 						Body.NL();
@@ -948,7 +948,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 				generate_sent(body);
 
 				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-					if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+					if (body.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 						Body.pushln("}");
 				}
 

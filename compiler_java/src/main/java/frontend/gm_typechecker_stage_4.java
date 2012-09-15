@@ -8,7 +8,7 @@ import inc.GMTYPE_T;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_call;
@@ -38,7 +38,7 @@ public class gm_typechecker_stage_4 extends gm_apply {
 
 	@Override
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			GMTYPE_T lhs_type;
 			if (a.is_target_scalar()) {
@@ -53,27 +53,27 @@ public class gm_typechecker_stage_4 extends gm_apply {
 			ast_expr e = a.get_rhs();
 
 			gm_resolve_size_of_inf_expr(e, lhs_type);
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_RETURN) {
+		} else if (s.get_nodetype() == ast_node_type.AST_RETURN) {
 			ast_expr e = ((ast_return) s).get_expr();
 			if (e != null) {
 				gm_resolve_size_of_inf_expr(e, ret_type.getTypeSummary());
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_CALL) {
+		} else if (s.get_nodetype() == ast_node_type.AST_CALL) {
 			ast_expr e = ((ast_call) s).get_builtin();
 			if (e != null) {
 				gm_resolve_size_of_inf_expr(e, GMTYPE_INT);
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_IF) {
+		} else if (s.get_nodetype() == ast_node_type.AST_IF) {
 			ast_expr e = ((ast_if) s).get_cond();
 			gm_resolve_size_of_inf_expr(e, GMTYPE_BOOL);
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		} else if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_expr e = ((ast_foreach) s).get_filter();
 			if (e != null)
 				gm_resolve_size_of_inf_expr(e, GMTYPE_BOOL);
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_WHILE) {
+		} else if (s.get_nodetype() == ast_node_type.AST_WHILE) {
 			ast_expr e = ((ast_while) s).get_cond();
 			gm_resolve_size_of_inf_expr(e, GMTYPE_BOOL);
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		} else if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			ast_expr e;
 			e = ((ast_bfs) s).get_f_filter();
 			if (e != null)

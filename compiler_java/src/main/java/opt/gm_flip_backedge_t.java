@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -59,7 +59,7 @@ public class gm_flip_backedge_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent sent) {
-		if (sent.get_nodetype() != AST_NODE_TYPE.AST_BFS)
+		if (sent.get_nodetype() != ast_node_type.AST_BFS)
 			return true;
 		ast_bfs bfs = (ast_bfs) sent;
 
@@ -83,7 +83,7 @@ public class gm_flip_backedge_t extends gm_apply {
 		// check if bodies are all assignments
 		// --------------------------------------
 		for (ast_sent s : S) {
-			if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+			if (s.get_nodetype() != ast_node_type.AST_ASSIGN)
 				return true;
 
 			ast_assign a = (ast_assign) s;
@@ -100,7 +100,7 @@ public class gm_flip_backedge_t extends gm_apply {
 				return true;
 
 			ast_expr r = a.get_rhs();
-			if (r.get_nodetype() != AST_NODE_TYPE.AST_EXPR_RDC)
+			if (r.get_nodetype() != ast_node_type.AST_EXPR_RDC)
 				return true;
 			ast_expr_reduce D = (ast_expr_reduce) r;
 			GMTYPE_T iter_type = D.get_iter_type();
@@ -118,7 +118,7 @@ public class gm_flip_backedge_t extends gm_apply {
 		// --------------------------------------
 		ast_node up = bfs.get_parent();
 		assert up != null;
-		if (up.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+		if (up.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 			return true;
 		ast_sentblock sb = (ast_sentblock) up;
 
@@ -189,12 +189,12 @@ public class gm_flip_backedge_t extends gm_apply {
 	}
 
 	public final void flip_edges(ast_assign a, ast_sentblock p) {
-		assert p.get_parent().get_nodetype() == AST_NODE_TYPE.AST_BFS;
+		assert p.get_parent().get_nodetype() == ast_node_type.AST_BFS;
 
 		ast_bfs bfs = (ast_bfs) p.get_parent();
 
 		assert !a.is_target_scalar();
-		assert a.get_rhs().get_nodetype() == AST_NODE_TYPE.AST_EXPR_RDC;
+		assert a.get_rhs().get_nodetype() == ast_node_type.AST_EXPR_RDC;
 		ast_field old_lhs = a.get_lhs_field();
 		ast_expr_reduce old_rhs = (ast_expr_reduce) a.get_rhs();
 

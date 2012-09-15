@@ -26,7 +26,7 @@ public class ast_bfs extends ast_sent {
 	private boolean _bfs = true;
 
 	protected ast_bfs() {
-		super(AST_NODE_TYPE.AST_BFS);
+		super(ast_node_type.AST_BFS);
 		create_symtabs();
 	}
 

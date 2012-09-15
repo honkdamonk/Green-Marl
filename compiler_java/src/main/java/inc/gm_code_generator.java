@@ -3,7 +3,7 @@ package inc;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_call;
@@ -58,9 +58,9 @@ public abstract class gm_code_generator {
 			ast_node n = I.next();
 			if (n == null)
 				continue;
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			if (n.get_nodetype() == ast_node_type.AST_ID) {
 				generate_rhs_id((ast_id) n);
-			} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+			} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 				generate_rhs_field((ast_field) n);
 			}
 		}
@@ -382,13 +382,13 @@ public abstract class gm_code_generator {
 
 		_Body.pushln(")");
 		ast_sent s = i.get_then();
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (s.get_nodetype() != ast_node_type.AST_SENTBLOCK) {
 			_Body.pushIndent();
 		}
 
 		generate_sent(s);
 
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (s.get_nodetype() != ast_node_type.AST_SENTBLOCK) {
 			_Body.popIndent();
 		}
 
@@ -397,13 +397,13 @@ public abstract class gm_code_generator {
 			return;
 
 		_Body.pushln("else");
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (s.get_nodetype() != ast_node_type.AST_SENTBLOCK) {
 			_Body.pushIndent();
 		}
 
 		generate_sent(s);
 
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (s.get_nodetype() != ast_node_type.AST_SENTBLOCK) {
 			_Body.popIndent();
 		}
 
@@ -411,7 +411,7 @@ public abstract class gm_code_generator {
 
 	protected void generate_sent_while(ast_while w) {
 		ast_sent b = w.get_body();
-		assert b.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+		assert b.get_nodetype() == ast_node_type.AST_SENTBLOCK;
 
 		if (w.is_do_while()) {
 			_Body.pushln("do");

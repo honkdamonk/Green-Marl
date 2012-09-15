@@ -1,6 +1,6 @@
 package frontend;
 
-import static ast.AST_NODE_TYPE.AST_ASSIGN;
+import static ast.ast_node_type.AST_ASSIGN;
 import static inc.GMTYPE_T.GMTYPE_EDGE;
 import static inc.GMTYPE_T.GMTYPE_EDGEITER_ALL;
 import static inc.GMTYPE_T.GMTYPE_NODE;

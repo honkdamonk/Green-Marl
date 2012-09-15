@@ -4,7 +4,7 @@ import inc.GM_REDUCE_T;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_procdef;
 import ast.ast_sent;
@@ -55,7 +55,7 @@ class gm_defer_write extends gm_apply {
 	@Override
 	public final boolean apply(ast_sent s) {
 		
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)
+		if (s.get_nodetype() != ast_node_type.AST_FOREACH)
 			return true;
 		ast_foreach fe = (ast_foreach) s;
 

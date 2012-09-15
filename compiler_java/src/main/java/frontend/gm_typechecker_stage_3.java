@@ -1,13 +1,13 @@
 package frontend;
 
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN_ARG_TYPE;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_KEY_MISSMATCH;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_BOOLEAN;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_OPERATOR_MISMATCH2;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TYPE_CONVERSION;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TYPE_CONVERSION_BOOL_NUM;
+import static common.gm_errors_and_warnings.GM_ERROR_INVALID_BUILTIN_ARG_TYPE;
+import static common.gm_errors_and_warnings.GM_ERROR_KEY_MISSMATCH;
+import static common.gm_errors_and_warnings.GM_ERROR_NEED_BOOLEAN;
+import static common.gm_errors_and_warnings.GM_ERROR_OPERATOR_MISMATCH;
+import static common.gm_errors_and_warnings.GM_ERROR_OPERATOR_MISMATCH2;
+import static common.gm_errors_and_warnings.GM_ERROR_TARGET_MISMATCH;
+import static common.gm_errors_and_warnings.GM_ERROR_TYPE_CONVERSION;
+import static common.gm_errors_and_warnings.GM_ERROR_TYPE_CONVERSION_BOOL_NUM;
 import static inc.GMTYPE_T.GMTYPE_GENERIC;
 import static inc.GMTYPE_T.GMTYPE_MAP;
 import static inc.GMTYPE_T.GMTYPE_NORDER;
@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -58,7 +58,7 @@ public class gm_typechecker_stage_3 extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			if (a.is_map_entry_assign()) {
 				ast_mapaccess mapAccess = a.to_assign_mapentry().get_lhs_mapaccess();

@@ -1,7 +1,7 @@
 package backend_cpp;
 
 import inc.GMTYPE_T;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -66,7 +66,7 @@ class cpp_check_reverse_edge_t extends gm_apply {
 
 	@Override
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			ast_bfs bfs = (ast_bfs) s;
 			if (bfs.is_transpose()) {
 				ast_id G = bfs.get_source();
@@ -77,7 +77,7 @@ class cpp_check_reverse_edge_t extends gm_apply {
 			}
 		}
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			GMTYPE_T iter_type = fe.get_iter_type();
 			if (iter_type.is_iteration_use_reverse()) {

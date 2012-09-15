@@ -15,7 +15,7 @@ import java.util.LinkedList;
 
 import tangible.RefObject;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
@@ -317,12 +317,12 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		if (myself == seq_loop) // not modified elsewhere then my-self
 			return false;
 
-		assert myself.get_nodetype() != AST_NODE_TYPE.AST_IF;
+		assert myself.get_nodetype() != ast_node_type.AST_IF;
 
 		ast_sent up = (ast_sent) myself.get_parent();
 		assert up != null;
 		assert up.is_sentence();
-		if (up.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (up.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 			// todo
 			ast_sentblock sb = (ast_sentblock) up;
 			LinkedList<ast_sent> sents = sb.get_sents();

@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_argdecl;
 import ast.ast_assign;
 import ast.ast_assign_mapentry;
@@ -53,7 +53,7 @@ import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_vardecl;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply_compiler_stage;
 import common.gm_builtin_def;
 import common.gm_error;
@@ -338,7 +338,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			ps_header = new PrintStream(bos);
 		} catch (FileNotFoundException e1) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
 		Header.setOutputFile(ps_header);
@@ -350,7 +350,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			ps_body = new PrintStream(bos);
 		} catch (FileNotFoundException e) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
 		_Body.setOutputFile(ps_body);
@@ -795,7 +795,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		boolean need_init_before = get_lib().need_up_initializer(f);
 
 		if (need_init_before) {
-			assert f.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+			assert f.get_parent().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 			get_lib().generate_up_initializer(f, _Body);
 		}
 
@@ -810,7 +810,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			_Body.pushln("{");
 			get_lib().generate_down_initializer(f, _Body);
 
-			if (f.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
+			if (f.get_body().get_nodetype() != ast_node_type.AST_SENTBLOCK) {
 				generate_sent(f.get_body());
 			} else {
 				// '{' '} already handled
@@ -818,7 +818,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			}
 			_Body.pushln("}");
 
-		} else if (f.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		} else if (f.get_body().get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 			generate_sent(f.get_body());
 		} else {
 			_Body.pushIndent();
@@ -909,11 +909,11 @@ public class gm_cpp_gen extends BackendGenerator {
 		for (ast_sent s : sents) {
 			// insert newline after end of VARDECL
 			if (!vardecl_started) {
-				if (s.get_nodetype() == AST_NODE_TYPE.AST_VARDECL)
+				if (s.get_nodetype() == ast_node_type.AST_VARDECL)
 					vardecl_started = true;
 			} else {
 				if (other_started == false) {
-					if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL) {
+					if (s.get_nodetype() != ast_node_type.AST_VARDECL) {
 						_Body.NL();
 						other_started = true;
 					}
@@ -1305,11 +1305,11 @@ public class gm_cpp_gen extends BackendGenerator {
 		for (ast_node n : L) {
 			ast_id id;
 			GMTYPE_T type;
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			if (n.get_nodetype() == ast_node_type.AST_ID) {
 				id = (ast_id) n;
 				type = id.getTypeSummary();
 			} else {
-				assert n.get_nodetype() == AST_NODE_TYPE.AST_FIELD;
+				assert n.get_nodetype() == ast_node_type.AST_FIELD;
 				ast_field f = (ast_field) n;
 				id = f.get_second();
 				type = id.getTargetTypeSummary();
@@ -1380,7 +1380,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		i = 0;
 		for (ast_node n : L) {
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			if (n.get_nodetype() == ast_node_type.AST_ID) {
 				generate_lhs_id((ast_id) n);
 			} else {
 				generate_lhs_field((ast_field) n);

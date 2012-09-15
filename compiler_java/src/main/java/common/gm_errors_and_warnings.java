@@ -1,6 +1,6 @@
 package common;
 
-public enum GM_ERRORS_AND_WARNINGS {
+public enum gm_errors_and_warnings {
 	GM_ERROR_UNKNOWN, //
 	GM_ERROR_UNDEFINED, //
 	GM_ERROR_UNDEFINED_FIELD, //

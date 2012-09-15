@@ -10,7 +10,7 @@ public class ast_if extends ast_sent {
 	private ast_expr cond = null;
 
 	private ast_if() {
-		super(AST_NODE_TYPE.AST_IF);
+		super(ast_node_type.AST_IF);
 	}
 
 	public static ast_if new_if(ast_expr c, ast_sent t, ast_sent e) {
@@ -31,7 +31,7 @@ public class ast_if extends ast_sent {
 		cond.reproduce(0);
 		Out.pushln(")");
 
-		if (then_part.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (then_part.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 			then_part.reproduce(ind_level);
 		} else {
 			Out.pushIndent();
@@ -42,7 +42,7 @@ public class ast_if extends ast_sent {
 		if (else_part != null) {
 			Out.pushln("Else");
 
-			if (then_part.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+			if (then_part.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 				else_part.reproduce(ind_level);
 			} else {
 				Out.pushIndent();

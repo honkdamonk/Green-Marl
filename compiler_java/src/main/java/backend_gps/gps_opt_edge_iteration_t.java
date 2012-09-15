@@ -2,7 +2,7 @@ package backend_gps;
 
 import frontend.gm_symtab_entry;
 import inc.GMTYPE_T;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -49,7 +49,7 @@ public class gps_opt_edge_iteration_t extends gm_apply
 	@Override
 	public boolean apply(ast_sent s)
 	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH)
 		{
 			// check iteratation type
 			ast_foreach fe = (ast_foreach) s;
@@ -94,11 +94,11 @@ public class gps_opt_edge_iteration_t extends gm_apply
 			gm_transform_helper.gm_reconstruct_scope(outer_fe);
 
 			// (4) create new symbol entry in the body
-			if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+			if (body.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 			{
 				gm_transform_helper.gm_make_it_belong_to_sentblock(body);
 				body = (ast_sentblock) body.get_parent();
-				assert body.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+				assert body.get_nodetype() == ast_node_type.AST_SENTBLOCK;
 			}
 			ast_sentblock sb2 = (ast_sentblock) body;
 			gm_symtab_entry old_edge_symbol = fe.get_iterator().getSymInfo();

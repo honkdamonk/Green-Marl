@@ -8,7 +8,7 @@ import static backend_gps.gps_gps_sentence_t.GPS_TYPE_SEQ;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_if;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -32,7 +32,7 @@ public class gm_stage_create_pre_process_t extends gm_apply {
 	// pre-apply
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			master_context_stack.addFirst(master_context);
 			master_context = false;
 		}
@@ -41,7 +41,7 @@ public class gm_stage_create_pre_process_t extends gm_apply {
 
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			master_context = master_context_stack.getFirst();
 			master_context_stack.removeFirst();
 		}
@@ -55,9 +55,9 @@ public class gm_stage_create_pre_process_t extends gm_apply {
 
 	public void master_mode_post(ast_sent s) {
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			s_mark.put(s, GPS_TYPE_BEGIN_VERTEX);
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_IF) {
+		} else if (s.get_nodetype() == ast_node_type.AST_IF) {
 			ast_if i = (ast_if) s;
 			ast_sent thenp = i.get_then();
 			assert (s_mark.containsKey(thenp));
@@ -70,14 +70,14 @@ public class gm_stage_create_pre_process_t extends gm_apply {
 			boolean seq = seq1 && seq2;
 
 			s_mark.put(s, (seq) ? GPS_TYPE_SEQ : GPS_TYPE_CANBE_VERTEX);
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_WHILE) {
+		} else if (s.get_nodetype() == ast_node_type.AST_WHILE) {
 			ast_while w = (ast_while) s;
 			ast_sent body = w.get_body();
 			assert (s_mark.containsKey(body));
 			boolean seq = (s_mark.get(body) == GPS_TYPE_SEQ);
 
 			s_mark.put(s, (seq) ? GPS_TYPE_SEQ : GPS_TYPE_CANBE_VERTEX);
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		} else if (s.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 			// seq if every body sentence is sequential
 			LinkedList<ast_sent> L = ((ast_sentblock) s).get_sents();
 			boolean seq = true;

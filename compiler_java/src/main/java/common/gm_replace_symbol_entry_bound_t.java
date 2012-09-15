@@ -1,6 +1,6 @@
 package common;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_id;
 import ast.ast_node;
@@ -18,7 +18,7 @@ public class gm_replace_symbol_entry_bound_t extends gm_apply {
 		assert _src != null;
 		assert _target != null;
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			if (a.get_bound() != null) {
 				ast_id i = a.get_bound();

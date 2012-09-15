@@ -2,7 +2,7 @@ package frontend;
 
 import inc.GM_REDUCE_T;
 import inc.gm_assignment_t;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;
@@ -17,7 +17,7 @@ public class gm_ss1_initial_expr extends gm_apply {
 	
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL)
+		if (s.get_nodetype() != ast_node_type.AST_VARDECL)
 			return true;
 
 		// if it has an initializer, create new sentence

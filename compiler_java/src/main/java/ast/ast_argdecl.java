@@ -9,7 +9,7 @@ public class ast_argdecl extends ast_node {
 	private boolean tc_finished = false; // is typecheck finished?
 
 	private ast_argdecl() {
-		super(AST_NODE_TYPE.AST_ARGDECL);
+		super(ast_node_type.AST_ARGDECL);
 	}
 
 	public static ast_argdecl new_argdecl(ast_idlist id, ast_typedecl type) {

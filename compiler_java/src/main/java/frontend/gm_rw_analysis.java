@@ -14,7 +14,7 @@ import inc.gm_assignment_location_t;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_call;
@@ -39,7 +39,7 @@ import ast.ast_while;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_error;
@@ -218,12 +218,12 @@ public class gm_rw_analysis extends gm_apply {
 				gm_symtab_entry org_sym = target_sym;
 				LinkedList<ast_node> L = a.get_lhs_list();
 				for (ast_node n : L) {
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+					if (n.get_nodetype() == ast_node_type.AST_ID) {
 						ast_id id = (ast_id) n;
 						target_sym = id.getSymInfo();
 						new_entry = gm_rwinfo.new_scala_inst(id, bound_op, bound_sym, true, org_sym);
 					} else {
-						assert n.get_nodetype() == AST_NODE_TYPE.AST_FIELD;
+						assert n.get_nodetype() == ast_node_type.AST_FIELD;
 						ast_field f = (ast_field) n;
 						target_sym = f.get_second().getSymInfo();
 						gm_symtab_entry driver_sym = f.get_first().getSymInfo();
@@ -501,12 +501,12 @@ public class gm_rw_analysis extends gm_apply {
 		LinkedList<ast_node> L = f.get_modified();
 		gm_rwinfo new_entry = null;
 		for (ast_node node : L) {
-			if (node.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			if (node.get_nodetype() == ast_node_type.AST_ID) {
 				ast_id id = (ast_id) node;
 				target_sym = id.getSymInfo();
 				assert target_sym != null;
 				new_entry = gm_rwinfo.new_scala_inst(id, GM_REDUCE_T.GMREDUCE_NULL, null);
-			} else if (node.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+			} else if (node.get_nodetype() == ast_node_type.AST_FIELD) {
 				ast_field fld = (ast_field) node;
 				target_sym = fld.get_second().getSymInfo();
 				gm_symtab_entry iter_sym = fld.get_first().getSymInfo();
@@ -836,7 +836,7 @@ public class gm_rw_analysis extends gm_apply {
 			assert neo.location != null;
 			// assert(neo->driver->getId() != NULL);
 
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_OP, neo.location.get_line(), neo.location.get_col(),
+			gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_DOUBLE_BOUND_OP, neo.location.get_line(), neo.location.get_col(),
 					old.reduce_op.get_reduce_string());
 			return true;
 		}
@@ -844,7 +844,7 @@ public class gm_rw_analysis extends gm_apply {
 		// check if they are bound to the same symbol
 		if (old.bound_symbol != neo.bound_symbol) {
 			// generate error message
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_DOUBLE_BOUND_ITOR, neo.location.get_line(), neo.location.get_col(), old.bound_symbol.getId()
+			gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_DOUBLE_BOUND_ITOR, neo.location.get_line(), neo.location.get_col(), old.bound_symbol.getId()
 					.get_orgname());
 			return true;
 		}
@@ -958,13 +958,13 @@ public class gm_rw_analysis extends gm_apply {
 		for (ast_node n : N) {
 			if (n == null)
 				continue;
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			if (n.get_nodetype() == ast_node_type.AST_ID) {
 				ast_id id = (ast_id) n;
 				new_entry = gm_rwinfo.new_scala_inst(id);
 				gm_symtab_entry sym = id.getSymInfo();
 				assert sym != null;
 				gm_add_rwinfo_to_set(rset, sym, new_entry, false);
-			} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+			} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 				ast_field f1 = (ast_field) n;
 				gm_symtab_entry iter_sym = f1.get_first().getSymInfo();
 				gm_symtab_entry field_sym = f1.get_second().getSymInfo();

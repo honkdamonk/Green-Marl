@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
@@ -36,7 +36,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	}
 
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			if (s.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
 				current_fe = (ast_foreach) s;
 				HashSet<ast_expr> empty = new HashSet<ast_expr>();
@@ -80,7 +80,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 		ast_sentblock sb = (ast_sentblock) (fe.get_body());
 		// printf("(2)fe = %p, sb = %p\n", fe, sb);
-		assert sb.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+		assert sb.get_nodetype() == ast_node_type.AST_SENTBLOCK;
 
 		gm_symtab_entry out_iter = null;
 

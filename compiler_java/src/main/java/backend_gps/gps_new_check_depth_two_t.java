@@ -3,11 +3,11 @@ package backend_gps;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_OUTER_LOOP;
 import inc.GMTYPE_T;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_sent;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_error;
 import common.gm_apply;
 
@@ -38,7 +38,7 @@ public class gps_new_check_depth_two_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)
+		if (s.get_nodetype() != ast_node_type.AST_FOREACH)
 			return true;
 
 		foreach_depth++;
@@ -47,12 +47,12 @@ public class gps_new_check_depth_two_t extends gm_apply {
 		if (foreach_depth == 1) {
 			// check if node-wide foreach
 			if (fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_ALL) {
-				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_RANGE_MASTER, s.get_line(), s.get_col(), "");
+				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_UNSUPPORTED_RANGE_MASTER, s.get_line(), s.get_col(), "");
 				_error = true;
 			}
 
 			if (fe.is_sequential()) {
-				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NEED_PARALLEL, s.get_line(), s.get_col(), "");
+				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_NEED_PARALLEL, s.get_line(), s.get_col(), "");
 				_error = true;
 			}
 
@@ -63,11 +63,11 @@ public class gps_new_check_depth_two_t extends gm_apply {
 		else if (foreach_depth == 2) {
 			// check if out-nbr iteration
 			if ((fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_NBRS) && (fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_IN_NBRS)) {
-				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_RANGE_VERTEX, s.get_line(), s.get_col(), "");
+				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_UNSUPPORTED_RANGE_VERTEX, s.get_line(), s.get_col(), "");
 				_error = true;
 			}
 			if (fe.is_sequential()) {
-				gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NEED_PARALLEL, s.get_line(), s.get_col(), "");
+				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_NEED_PARALLEL, s.get_line(), s.get_col(), "");
 				_error = true;
 			}
 
@@ -76,7 +76,7 @@ public class gps_new_check_depth_two_t extends gm_apply {
 		} // (depth > 3)
 		else {
 			_error = true;
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NBR_LOOP_TOO_DEEP, s.get_line(), s.get_col(), "");
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_NBR_LOOP_TOO_DEEP, s.get_line(), s.get_col(), "");
 		}
 
 		return true;
@@ -85,7 +85,7 @@ public class gps_new_check_depth_two_t extends gm_apply {
 
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH)
 			foreach_depth--;
 
 		return true;

@@ -38,7 +38,7 @@ public class ast_expr extends ast_node {
 	protected gm_symtab_entry bound_graph_sym = null;
 
 	protected ast_expr() {
-		super(AST_NODE_TYPE.AST_EXPR);
+		super(ast_node_type.AST_EXPR);
 	}
 
 	public void reproduce(int ind_level) {

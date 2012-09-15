@@ -25,7 +25,7 @@ import inc.gm_graph_library;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -1152,7 +1152,7 @@ public class gm_gpslib extends gm_graph_library {
 
 			for (Object obj : L) {
 				ast_sent s = (ast_sent) obj;
-				assert s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN;
+				assert s.get_nodetype() == ast_node_type.AST_ASSIGN;
 				ast_assign a = (ast_assign) s;
 				assert !a.is_target_scalar();
 				gm_symtab_entry e = a.get_lhs_field().get_second().getSymInfo();
@@ -1178,7 +1178,7 @@ public class gm_gpslib extends gm_graph_library {
 		// create message variables
 		// ------------------------------------------------------------
 		if (fe != null) {
-			assert fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+			assert fe.get_body().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 			ast_sentblock sb = (ast_sentblock) fe.get_body();
 			for (ast_sent s : sb.get_sents()) {
 				if (s.find_info_bool(GPS_FLAG_COMM_DEF_ASSIGN)) {

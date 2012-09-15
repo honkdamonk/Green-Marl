@@ -9,7 +9,7 @@ import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
 import frontend.gm_symtab_entry;
 import inc.GM_REDUCE_T;
 import inc.gps_apply_bb_ast;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_extra_info;
@@ -47,7 +47,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 		is_random_write_target = false;
 		is_message_write_target = false;
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			gm_gps_symbol_usage_location_t context = get_current_context(); // GPS_CONTEXT_
 																			// (MASTER,
 																			// VERTEX,
@@ -93,7 +93,7 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 			update_access_information(target, is_scalar, lhs_reduce, context, r_type);
 		}
 
-		else if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		else if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (fe.find_info_bool(GPS_FLAG_IS_INNER_LOOP))
 				in_loop = fe;

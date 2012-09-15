@@ -2,7 +2,7 @@ package backend_cpp;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_sent;
 
@@ -25,15 +25,15 @@ class cpp_gen_regular_1_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_RETURN) {
+		if (s.get_nodetype() == ast_node_type.AST_RETURN) {
 			targets.addLast(s);
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		} else if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (gm_main.CPP_BE.get_lib().need_up_initializer(fe)) {
 				targets.addLast(fe);
 			}
 
-			if ((fe.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) && gm_main.CPP_BE.get_lib().need_down_initializer(fe)) {
+			if ((fe.get_body().get_nodetype() != ast_node_type.AST_SENTBLOCK) && gm_main.CPP_BE.get_lib().need_down_initializer(fe)) {
 				targets.addLast(fe.get_body());
 			}
 		}

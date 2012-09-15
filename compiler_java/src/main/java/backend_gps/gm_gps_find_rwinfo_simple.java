@@ -4,13 +4,13 @@ import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINED_INNER;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_OUTER_LOOP;
 import frontend.gm_rw_analysis;
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
 import inc.gps_apply_bb_ast;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_expr_builtin;
 import ast.ast_field;
 import ast.ast_foreach;
@@ -41,7 +41,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			if (s.find_info_bool(GPS_FLAG_IS_OUTER_LOOP)) {
 				outer_loop = (ast_foreach) s;
 			} else if (s.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
@@ -55,7 +55,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			if (s.find_info_bool(GPS_FLAG_IS_OUTER_LOOP)) {
 				outer_loop = null;
 			} else if (s.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
@@ -242,7 +242,7 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 	}
 
 	@Override
-	public boolean apply2(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
+	public boolean apply2(gm_symtab_entry e, symtab_types symtab_type) {
 		// remove from S
 		return true;
 	}

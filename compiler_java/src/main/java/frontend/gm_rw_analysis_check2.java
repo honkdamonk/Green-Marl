@@ -1,6 +1,6 @@
 package frontend;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.gm_rwinfo_map;
 
@@ -77,7 +77,7 @@ public class gm_rw_analysis_check2 {
 	}
 
 	public static boolean gm_has_dependency(ast_sent P, ast_sent Q) {
-		assert P.get_nodetype() != AST_NODE_TYPE.AST_VARDECL; // temporary hack
+		assert P.get_nodetype() != ast_node_type.AST_VARDECL; // temporary hack
 
 		// ---------------------------------------------------------
 		// note: reduced set does not make dependency! (how great!)

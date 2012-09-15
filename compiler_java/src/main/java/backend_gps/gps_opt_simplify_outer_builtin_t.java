@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.Pair;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr_builtin;
 import ast.ast_foreach;
@@ -37,7 +37,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			depth++;
 			if (depth == 1) {
 				outer_iter = ((ast_foreach) s).get_iterator().getSymInfo();
@@ -53,7 +53,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			depth--;
 		}
 		return true;
@@ -71,7 +71,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 
 			// make the sentence belong to a sent-block
 			gm_transform_helper.gm_make_it_belong_to_sentblock(s);
-			assert s.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+			assert s.get_parent().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 
 			ast_sentblock sb = (ast_sentblock) s.get_parent();
 			if (sent_block_driver_map.containsKey(sb)) {

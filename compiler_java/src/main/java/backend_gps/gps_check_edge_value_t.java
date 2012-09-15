@@ -7,11 +7,11 @@ import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
 import static backend_gps.GPSConstants.GPS_LIST_EDGE_PROP_WRITE;
 import static backend_gps.GPSConstants.GPS_MAP_EDGE_PROP_ACCESS;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_READ_RANDOM;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_SEND_VERSIONS;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_WRITE_CONDITIONAL;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_EDGE_WRITE_RHS;
-import ast.AST_NODE_TYPE;
+import static common.gm_errors_and_warnings.GM_ERROR_GPS_EDGE_READ_RANDOM;
+import static common.gm_errors_and_warnings.GM_ERROR_GPS_EDGE_SEND_VERSIONS;
+import static common.gm_errors_and_warnings.GM_ERROR_GPS_EDGE_WRITE_CONDITIONAL;
+import static common.gm_errors_and_warnings.GM_ERROR_GPS_EDGE_WRITE_RHS;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -24,7 +24,7 @@ import common.gm_error;
 import common.gm_apply;
 import common.gm_method_id_t;
 
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab_entry;
 
 public class gps_check_edge_value_t extends gm_apply {
@@ -52,7 +52,7 @@ public class gps_check_edge_value_t extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES type) {
+	public boolean apply(gm_symtab_entry e, symtab_types type) {
 		if (e.getType().is_edge() && (inner_loop != null)) {
 			e.add_info_bool(GPS_FLAG_EDGE_DEFINED_INNER, true);
 			inner_loop.add_info_bool(GPS_FLAG_EDGE_DEFINING_INNER, true);
@@ -62,12 +62,12 @@ public class gps_check_edge_value_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (fe.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
 				inner_loop = fe;
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		} else if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			if (!a.is_target_scalar()) {
 				gm_symtab_entry sym = a.get_lhs_field().get_first().getSymInfo();
@@ -82,8 +82,8 @@ public class gps_check_edge_value_t extends gm_apply {
 							if (parent == inner_loop)
 								break;
 
-							if ((parent.get_nodetype() == AST_NODE_TYPE.AST_WHILE) || (parent.get_nodetype() == AST_NODE_TYPE.AST_IF)
-									|| (parent.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)) {
+							if ((parent.get_nodetype() == ast_node_type.AST_WHILE) || (parent.get_nodetype() == ast_node_type.AST_IF)
+									|| (parent.get_nodetype() == ast_node_type.AST_FOREACH)) {
 								conditional = true;
 								break;
 							}
@@ -207,11 +207,11 @@ public class gps_check_edge_value_t extends gm_apply {
 
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			if (((ast_foreach) s) == inner_loop) {
 				inner_loop = null;
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		} else if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			target_is_edge_prop = false;
 		}
 		return true;

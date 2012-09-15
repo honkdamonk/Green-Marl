@@ -469,8 +469,6 @@ public class gm_giraphlib extends gm_gpslib {
 		}
 	}
 
-	// virtual void generate_message_class_details(gm_gps_beinfo info,
-	// gm_code_writer Body);
 	@Override
 	public void generate_vertex_prop_access_lhs(ast_id id, gm_code_writer Body) {
 		Body.pushf("%s.%s", STATE_SHORT_CUT, id.get_genname());
@@ -545,19 +543,6 @@ public class gm_giraphlib extends gm_gpslib {
 		return String.format("%c%d", str.charAt(0), index);
 	}
 
-	// virtual void generate_message_send(ast_foreach fe, gm_code_writer Body);
-
-	// virtual void generate_message_receive_begin(ast_foreach fe,
-	// gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm);
-	// virtual void generate_message_receive_begin(ast_sentblock sb,
-	// gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean
-	// is_only_comm);
-	// virtual void generate_message_receive_begin(gm_gps_comm_unit U,
-	// gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm);
-
-	// virtual void generate_message_receive_end(gm_code_writer Body, boolean
-	// is_only_comm);
-
 	// random write
 	@Override
 	public void generate_message_send_for_random_write(ast_sentblock sb, gm_symtab_entry sym, gm_code_writer Body) {
@@ -565,9 +550,6 @@ public class gm_giraphlib extends gm_gpslib {
 		get_main().generate_rhs_id(sym.getId());
 		Body.pushlnf("), %s);", get_random_write_message_name(sym));
 	}
-
-	// virtual void generate_expr_builtin(ast_expr_builtin e, gm_code_writer
-	// Body, boolean is_master);
 
 	/* TODO: added methods from GlobalMembersGm_giraph_lib.java, clean up */
 

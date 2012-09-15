@@ -9,12 +9,4 @@ public enum gm_conflict {
 	RM_CONFLICT, // Read-Mutate (warning)
 	WM_CONFLICT, // Write-Mutate
 	MM_CONFLICT; // Mutate-Mutate (warning)
-
-	public int getValue() {
-		return this.ordinal();
-	}
-
-	public static gm_conflict forValue(int value) {
-		return values()[value];
-	}
 }

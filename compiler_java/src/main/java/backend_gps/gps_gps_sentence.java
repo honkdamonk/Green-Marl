@@ -12,14 +12,4 @@ public enum gps_gps_sentence //TODO new name?
 	GPS_TYPE_CANBE_VERTEX, //
 	GPS_TYPE_BEGIN_VERTEX, //
 	GPS_TYPE_IN_VERTEX;
-
-	public int getValue()
-	{
-		return this.ordinal();
-	}
-
-	public static gps_gps_sentence forValue(int value)
-	{
-		return values()[value];
-	}
 }

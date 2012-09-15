@@ -500,18 +500,18 @@ public class gm_gpslib extends gm_graph_library {
 		return get_type_size(t.getTypeSummary());
 	}
 
-	public int get_type_size(gm_type gm_type) {
-		if (gm_type == gm_type.GMTYPE_NODE) {
+	public int get_type_size(gm_type type) {
+		if (type == gm_type.GMTYPE_NODE) {
 			if (this.is_node_type_int())
 				return 4;
 			else
 				return 8;
-		} else if (gm_type == gm_type.GMTYPE_EDGE) {
+		} else if (type == gm_type.GMTYPE_EDGE) {
 			assert false;
 			return 0;
 		}
 
-		return get_java_type_size(gm_type);
+		return get_java_type_size(type);
 	}
 
 	// caller should delete var_name later
@@ -619,15 +619,15 @@ public class gm_gpslib extends gm_graph_library {
 		}
 	}
 
-	public static void genPutIOB(String name, gm_type gm_type, gm_code_writer Body, gm_gpslib lib) {
-		if (gm_type.is_node_compatible_type())
-			gm_type = gm_type.GMTYPE_NODE; // TODO setting input var?
-		if (gm_type.is_edge_compatible_type())
-			gm_type = gm_type.GMTYPE_EDGE; // TODO setting input var?
+	public static void genPutIOB(String name, gm_type type, gm_code_writer Body, gm_gpslib lib) {
+		if (type.is_node_compatible_type())
+			type = gm_type.GMTYPE_NODE; // TODO setting input var?
+		if (type.is_edge_compatible_type())
+			type = gm_type.GMTYPE_EDGE; // TODO setting input var?
 
 		// assumtion: IOB name is IOB
 		Body.push("IOB.");
-		switch (gm_type) {
+		switch (type) {
 		case GMTYPE_INT:
 			Body.push("putInt");
 			break;
@@ -664,7 +664,7 @@ public class gm_gpslib extends gm_graph_library {
 			break;
 		}
 		Body.push("(");
-		if (gm_type == gm_type.GMTYPE_BOOL) {
+		if (type == gm_type.GMTYPE_BOOL) {
 			Body.push(name);
 			Body.push("?(byte)1:(byte)0");
 		} else {
@@ -673,16 +673,16 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln(");");
 	}
 
-	public static void genGetIOB(String name, gm_type gm_type, gm_code_writer Body, gm_gpslib lib) {
-		if (gm_type.is_node_compatible_type())
-			gm_type = gm_type.GMTYPE_NODE;
-		if (gm_type.is_edge_compatible_type())
-			gm_type = gm_type.GMTYPE_EDGE;
+	public static void genGetIOB(String name, gm_type type, gm_code_writer Body, gm_gpslib lib) {
+		if (type.is_node_compatible_type())
+			type = gm_type.GMTYPE_NODE;
+		if (type.is_edge_compatible_type())
+			type = gm_type.GMTYPE_EDGE;
 
 		// assumtion: IOB name is IOB
 		Body.push(name);
 		Body.push("= IOB.");
-		switch (gm_type) {
+		switch (type) {
 		case GMTYPE_INT:
 			Body.push("getInt()");
 			break;
@@ -721,14 +721,14 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln(";");
 	}
 
-	public static void genReadByte(String name, gm_type gm_type, int offset, gm_code_writer Body, gm_gpslib lib) {
-		if (gm_type.is_node_compatible_type()) {
-			gm_type = (lib.is_node_type_int()) ? gm_type.GMTYPE_INT : gm_type.GMTYPE_LONG;
+	public static void genReadByte(String name, gm_type type, int offset, gm_code_writer Body, gm_gpslib lib) {
+		if (type.is_node_compatible_type()) {
+			type = (lib.is_node_type_int()) ? gm_type.GMTYPE_INT : gm_type.GMTYPE_LONG;
 		}
 		// assumption: "byte[] _BA, int _idx"
 		Body.push(name);
 		Body.push("= Utils.");
-		switch (gm_type) {
+		switch (type) {
 		case GMTYPE_INT:
 			Body.push("byteArrayToIntBigEndian(");
 			break;

@@ -6,14 +6,4 @@ public enum gm_gps_scope
 	GPS_SCOPE_GLOBAL,
 	GPS_SCOPE_OUTER,
 	GPS_SCOPE_INNER;
-
-	public int getValue()
-	{
-		return this.ordinal();
-	}
-
-	public static gm_gps_scope forValue(int value)
-	{
-		return values()[value];
-	}
 }

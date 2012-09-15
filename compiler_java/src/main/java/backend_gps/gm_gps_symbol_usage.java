@@ -6,14 +6,4 @@ public enum gm_gps_symbol_usage
 	GPS_SYM_USED_AS_RHS,
 	GPS_SYM_USED_AS_LHS,
 	GPS_SYM_USED_AS_REDUCE;
-
-	public int getValue()
-	{
-		return this.ordinal();
-	}
-
-	public static gm_gps_symbol_usage forValue(int value)
-	{
-		return values()[value];
-	}
 }

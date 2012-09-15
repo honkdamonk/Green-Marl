@@ -6,14 +6,4 @@ public enum gm_gps_symbol_usage_location
 	GPS_CONTEXT_MASTER,
 	GPS_CONTEXT_VERTEX,
 	GPS_CONTEXT_RECEIVER;
-
-	public int getValue()
-	{
-		return this.ordinal();
-	}
-
-	public static gm_gps_symbol_usage_location forValue(int value)
-	{
-		return values()[value];
-	}
 }

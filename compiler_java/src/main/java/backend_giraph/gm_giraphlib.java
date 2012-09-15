@@ -523,18 +523,18 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	@Override
-	public int get_type_size(gm_type gm_type) {
-		if (gm_type == gm_type.GMTYPE_NODE) {
+	public int get_type_size(gm_type type) {
+		if (type == gm_type.GMTYPE_NODE) {
 			if (this.is_node_type_int())
 				return 4;
 			else
 				return 8;
-		} else if (gm_type == gm_type.GMTYPE_EDGE) {
+		} else if (type == gm_type.GMTYPE_EDGE) {
 			assert false;
 			return 0;
 		}
 
-		return get_java_type_size(gm_type);
+		return get_java_type_size(type);
 	}
 
 	// caller should delete var_name later
@@ -590,14 +590,14 @@ public class gm_giraphlib extends gm_gpslib {
 		}
 	}
 
-	public static void genPutIOB(String name, gm_type gm_type, gm_code_writer Body, gm_giraphlib lib) {
-		if (gm_type.is_node_compatible_type())
-			gm_type = gm_type.GMTYPE_NODE; // TODO setting input var?
-		if (gm_type.is_edge_compatible_type())
-			gm_type = gm_type.GMTYPE_EDGE; // TODO setting input var?
+	public static void genPutIOB(String name, gm_type type, gm_code_writer Body, gm_giraphlib lib) {
+		if (type.is_node_compatible_type())
+			type = gm_type.GMTYPE_NODE; // TODO setting input var?
+		if (type.is_edge_compatible_type())
+			type = gm_type.GMTYPE_EDGE; // TODO setting input var?
 
 		Body.push("out.");
-		switch (gm_type) {
+		switch (type) {
 		case GMTYPE_INT:
 			Body.push("writeInt");
 			break;
@@ -638,15 +638,15 @@ public class gm_giraphlib extends gm_gpslib {
 		Body.pushln(");");
 	}
 
-	public static void genGetIOB(String name, gm_type gm_type, gm_code_writer Body, gm_giraphlib lib) {
-		if (gm_type.is_node_compatible_type())
-			gm_type = gm_type.GMTYPE_NODE;
-		if (gm_type.is_edge_compatible_type())
-			gm_type = gm_type.GMTYPE_EDGE;
+	public static void genGetIOB(String name, gm_type type, gm_code_writer Body, gm_giraphlib lib) {
+		if (type.is_node_compatible_type())
+			type = gm_type.GMTYPE_NODE;
+		if (type.is_edge_compatible_type())
+			type = gm_type.GMTYPE_EDGE;
 
 		Body.push(name);
 		Body.push(" = in.");
-		switch (gm_type) {
+		switch (type) {
 		case GMTYPE_INT:
 			Body.push("readInt()");
 			break;

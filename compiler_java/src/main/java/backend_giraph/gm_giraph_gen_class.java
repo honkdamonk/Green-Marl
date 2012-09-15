@@ -4,14 +4,14 @@ import inc.gm_compile_step;
 import ast.ast_procdef;
 
 import common.gm_main;
+
 //-------------------------------------------
 // [Step 1]
 // Add delaration here
 // declaration of optimization steps
 //-------------------------------------------
-
 public class gm_giraph_gen_class extends gm_compile_step {
-	
+
 	private gm_giraph_gen_class() {
 		set_description("Generate Code");
 	}

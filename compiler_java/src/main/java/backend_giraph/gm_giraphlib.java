@@ -49,10 +49,10 @@ import backend_gps.gps_syminfo;
 import common.gm_argopts;
 import common.gm_builtin_def;
 import common.gm_main;
+
 //-----------------------------------------------------------------
 // interface for graph library Layer
 //-----------------------------------------------------------------
-
 // Nothing happens in this class
 public class gm_giraphlib extends gm_gpslib {
 

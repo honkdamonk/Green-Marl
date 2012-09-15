@@ -67,11 +67,10 @@ import common.gm_reproduce;
 // is parallel
 public class gm_giraph_gen extends gm_gps_gen {
 
-	private gm_giraphlib glib; // graph library
+	private final gm_giraphlib glib = new gm_giraphlib(this); // graph library
 
 	public gm_giraph_gen() {
 		super();
-		glib = new gm_giraphlib(this);
 	}
 
 	@Override

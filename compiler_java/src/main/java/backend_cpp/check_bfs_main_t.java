@@ -13,8 +13,8 @@ import ast.ast_sent;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.gm_main;
 import common.gm_apply;
+import common.gm_main;
 
 import frontend.gm_rw_analysis;
 import frontend.gm_rwinfo;

@@ -2,14 +2,14 @@ package backend_gps;
 
 import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_OUTER_LOOP;
-import inc.GMTYPE_T;
-import ast.ast_node_type;
+import inc.gm_type;
 import ast.ast_foreach;
+import ast.ast_node_type;
 import ast.ast_sent;
 
-import common.gm_errors_and_warnings;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
+import common.gm_errors_and_warnings;
 
 //------------------------------------------------------------------------
 //  Check if maximum two depth of Foreach
@@ -23,10 +23,10 @@ import common.gm_apply;
 //    GPS_FLAG_IS_OUTER_LOOP: <to:>foreach or symbol of iterator <what:>if inner loop
 //------------------------------------------------------------------------
 public class gps_new_check_depth_two_t extends gm_apply {
-	
+
 	private boolean _error = false;
 	private int foreach_depth = 0;
-	
+
 	public gps_new_check_depth_two_t() {
 		set_separate_post_apply(true);
 		set_for_sent(true);
@@ -46,7 +46,7 @@ public class gps_new_check_depth_two_t extends gm_apply {
 
 		if (foreach_depth == 1) {
 			// check if node-wide foreach
-			if (fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_ALL) {
+			if (fe.get_iter_type() != gm_type.GMTYPE_NODEITER_ALL) {
 				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_UNSUPPORTED_RANGE_MASTER, s.get_line(), s.get_col(), "");
 				_error = true;
 			}
@@ -62,7 +62,7 @@ public class gps_new_check_depth_two_t extends gm_apply {
 
 		else if (foreach_depth == 2) {
 			// check if out-nbr iteration
-			if ((fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_NBRS) && (fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_IN_NBRS)) {
+			if ((fe.get_iter_type() != gm_type.GMTYPE_NODEITER_NBRS) && (fe.get_iter_type() != gm_type.GMTYPE_NODEITER_IN_NBRS)) {
 				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_UNSUPPORTED_RANGE_VERTEX, s.get_line(), s.get_col(), "");
 				_error = true;
 			}

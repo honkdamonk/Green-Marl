@@ -1,7 +1,7 @@
 package backend_gps;
 
-import ast.ast_sent;
 import inc.gps_apply_bb;
+import ast.ast_sent;
 
 //------------------------------------------------------------------
 // Merge simple basic blocks
@@ -24,7 +24,7 @@ public class gps_merge_simple_t extends gps_apply_bb
 
 				if (B.get_type() != C.get_type())
 					return;
-				if (B.get_type() != gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ)
+				if (B.get_type() != gm_gps_bbtype.GM_GPS_BBTYPE_SEQ)
 					return;
 
 				// merge two BB

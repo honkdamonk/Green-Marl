@@ -1,6 +1,6 @@
 package backend_cpp;
 
-import inc.GM_REDUCE_T;
+import inc.gm_reduce;
 
 import java.util.LinkedList;
 
@@ -11,11 +11,11 @@ import ast.ast_sent;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.gm_traverse;
 import common.gm_apply;
+import common.gm_traverse;
 
-import frontend.gm_rw_analysis;
 import frontend.gm_bound_set_info;
+import frontend.gm_rw_analysis;
 import frontend.gm_rwinfo;
 import frontend.gm_symtab_entry;
 
@@ -70,7 +70,7 @@ class gm_defer_write extends gm_apply {
 			assert l != null;
 			boolean is_deferred = false;
 			for (gm_rwinfo I : l) {
-				if (I.reduce_op == GM_REDUCE_T.GMREDUCE_DEFER) {
+				if (I.reduce_op == gm_reduce.GMREDUCE_DEFER) {
 					is_deferred = true;
 					has_found = true;
 					break; // no need to iterate j

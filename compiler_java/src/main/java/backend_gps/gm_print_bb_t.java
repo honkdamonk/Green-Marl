@@ -1,7 +1,7 @@
 package backend_gps;
 
-import ast.ast_procdef;
 import inc.gm_compile_step;
+import ast.ast_procdef;
 
 import common.gm_main;
 

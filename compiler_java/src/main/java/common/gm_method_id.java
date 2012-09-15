@@ -1,6 +1,6 @@
 package common;
 
-public enum gm_method_id_t {
+public enum gm_method_id {
 	GM_BLTIN_GRAPH_NUM_NODES, // number of nodes in graph
 	GM_BLTIN_GRAPH_NUM_EDGES, // number of edges in graph
 	GM_BLTIN_GRAPH_RAND_NODE, // pick random node in the graph.

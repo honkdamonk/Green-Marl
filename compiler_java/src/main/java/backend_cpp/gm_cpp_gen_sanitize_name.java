@@ -1,7 +1,7 @@
 package backend_cpp;
 
-import ast.ast_procdef;
 import inc.gm_compile_step;
+import ast.ast_procdef;
 
 import common.gm_main;
 import common.gm_prepare_genname;

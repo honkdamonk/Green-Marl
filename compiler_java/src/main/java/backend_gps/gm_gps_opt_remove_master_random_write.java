@@ -1,8 +1,8 @@
 package backend_gps;
 
+import frontend.gm_rw_analysis;
 import inc.gm_compile_step;
 import ast.ast_procdef;
-import frontend.gm_rw_analysis;
 
 public class gm_gps_opt_remove_master_random_write extends gm_compile_step
 {

@@ -5,7 +5,7 @@ import java.util.HashMap;
 import tangible.RefObject;
 import frontend.Oprules;
 
-public enum GMTYPE_T {
+public enum gm_type {
 	GMTYPE_GRAPH(0), //
 	GMTYPE_UGRAPH(1), //
 	GMTYPE_NODEPROP(2), //
@@ -90,32 +90,32 @@ public enum GMTYPE_T {
 	GMTYPE_INVALID(99999); //
 
 	private int intValue;
-	private static HashMap<Integer, GMTYPE_T> mappings;
+	private static HashMap<Integer, gm_type> mappings;
 
-	private static HashMap<Integer, GMTYPE_T> getMappings() {
+	private static HashMap<Integer, gm_type> getMappings() {
 		if (mappings == null) {
-			synchronized (GMTYPE_T.class) {
+			synchronized (gm_type.class) {
 				if (mappings == null) {
-					mappings = new HashMap<Integer, GMTYPE_T>();
+					mappings = new HashMap<Integer, gm_type>();
 				}
 			}
 		}
 		return mappings;
 	}
 
-	public boolean isSmallerThan(GMTYPE_T other) {
+	public boolean isSmallerThan(gm_type other) {
 		return getValue() < other.getValue();
 	}
 
-	public boolean isGreaterThan(GMTYPE_T other) {
+	public boolean isGreaterThan(gm_type other) {
 		return getValue() > other.getValue();
 	}
 
-	public int subtract(GMTYPE_T other) {
+	public int subtract(gm_type other) {
 		return getValue() - other.getValue();
 	}
 
-	private GMTYPE_T(int value) {
+	private gm_type(int value) {
 		intValue = value;
 		getMappings().put(value, this);
 	}
@@ -124,7 +124,7 @@ public enum GMTYPE_T {
 		return intValue;
 	}
 
-	public static GMTYPE_T forValue(int value) {
+	public static gm_type forValue(int value) {
 		return getMappings().get(value);
 	}
 
@@ -258,7 +258,7 @@ public enum GMTYPE_T {
 
 	// node set -> nodeset iter
 	// edge set -> edgeset iter ...
-	public GMTYPE_T get_natural_collection_iterator() {
+	public gm_type get_natural_collection_iterator() {
 		if (this == GMTYPE_NSET)
 			return GMTYPE_NODEITER_SET;
 		else if (this == GMTYPE_NSEQ)
@@ -279,7 +279,7 @@ public enum GMTYPE_T {
 		}
 	}
 
-	public GMTYPE_T get_specified_collection_iterator() {
+	public gm_type get_specified_collection_iterator() {
 		switch (this) {
 		case GMTYPE_NSET:
 		case GMTYPE_ESET:
@@ -306,15 +306,15 @@ public enum GMTYPE_T {
 		return is_node_compatible_type() || is_edge_compatible_type();
 	}
 
-	public boolean equals(GMTYPE_T other) {
+	public boolean equals(gm_type other) {
 		return this == other;
 	}
 
-	public static boolean is_same_node_or_edge_compatible_type(GMTYPE_T i1, GMTYPE_T i2) {
+	public static boolean is_same_node_or_edge_compatible_type(gm_type i1, gm_type i2) {
 		return (i1.is_node_compatible_type() && i2.is_node_compatible_type()) || (i1.is_edge_compatible_type() && i2.is_edge_compatible_type());
 	}
 
-	public static boolean collection_of_collection_compatible_type(GMTYPE_T def_src, GMTYPE_T source_type) {
+	public static boolean collection_of_collection_compatible_type(gm_type def_src, gm_type source_type) {
 		return def_src.is_order_collection_type() && source_type.is_collection_of_collection_type();
 	}
 
@@ -430,7 +430,7 @@ public enum GMTYPE_T {
 		return is_inf_type() && !is_inf_type_unsized();
 	}
 
-	public GMTYPE_T get_sized_inf_type() {
+	public gm_type get_sized_inf_type() {
 		switch (this) {
 		case GMTYPE_INT:
 			return GMTYPE_INF_INT;
@@ -535,14 +535,14 @@ public enum GMTYPE_T {
 	 * RefObject<int> t2_coerced, RefObject<boolean> t1_coerced_lost_precision,
 	 * RefObject<boolean> t2_coerced_lost_precision);
 	 */
-	public static boolean gm_is_compatible_type_for_assign(GMTYPE_T t_lhs, GMTYPE_T t_rhs, RefObject<GMTYPE_T> t_new_rhs, RefObject<Boolean> warning) {
-		RefObject<GMTYPE_T> tempRef_dummy1 = new RefObject<GMTYPE_T>(GMTYPE_INVALID);
-		RefObject<GMTYPE_T> tempRef_dummy2 = new RefObject<GMTYPE_T>(GMTYPE_INVALID);
+	public static boolean gm_is_compatible_type_for_assign(gm_type t_lhs, gm_type t_rhs, RefObject<gm_type> t_new_rhs, RefObject<Boolean> warning) {
+		RefObject<gm_type> tempRef_dummy1 = new RefObject<gm_type>(GMTYPE_INVALID);
+		RefObject<gm_type> tempRef_dummy2 = new RefObject<gm_type>(GMTYPE_INVALID);
 		RefObject<Boolean> tempRef_dummy_b = new RefObject<Boolean>(true);
-		return Oprules.gm_is_compatible_type(GM_OPS_T.GMOP_ASSIGN, t_lhs, t_rhs, tempRef_dummy1, tempRef_dummy2, t_new_rhs, tempRef_dummy_b, warning);
+		return Oprules.gm_is_compatible_type(gm_ops.GMOP_ASSIGN, t_lhs, t_rhs, tempRef_dummy1, tempRef_dummy2, t_new_rhs, tempRef_dummy_b, warning);
 	}
 
-	public static boolean is_t2_larger_than_t1(GMTYPE_T t1, GMTYPE_T t2) {
+	public static boolean is_t2_larger_than_t1(gm_type t1, gm_type t2) {
 		if ((t1 == GMTYPE_INT) && (t2 == GMTYPE_LONG))
 			return true;
 		if ((t1 == GMTYPE_FLOAT) && (t2 == GMTYPE_DOUBLE))
@@ -550,7 +550,7 @@ public enum GMTYPE_T {
 		return false;
 	}
 
-	public static GMTYPE_T get_iter_type_from_set_type(GMTYPE_T set_type) {
+	public static gm_type get_iter_type_from_set_type(gm_type set_type) {
 		switch (set_type) {
 		case GMTYPE_NSET:
 			return GMTYPE_NODEITER_SET;
@@ -682,7 +682,7 @@ public enum GMTYPE_T {
 		}
 	}
 
-	public static GMTYPE_T gm_get_type_from_string(String s) {
+	public static gm_type gm_get_type_from_string(String s) {
 		assert s != null;
 		if (s.equals("Graph"))
 			return GMTYPE_GRAPH;

@@ -1,13 +1,13 @@
 package frontend;
 
-import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
+import ast.ast_node_type;
 import ast.ast_sent;
 
-import common.gm_errors_and_warnings;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
+import common.gm_errors_and_warnings;
 
 //--------------------------------------------
 // Additional rules

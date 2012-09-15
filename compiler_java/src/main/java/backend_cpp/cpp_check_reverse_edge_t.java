@@ -1,6 +1,6 @@
 package backend_cpp;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -22,7 +22,7 @@ import frontend.gm_symtab_entry;
 //   (3) Mark graph symbols if it uses from/to
 //-------------------------------------------------------------
 class cpp_check_reverse_edge_t extends gm_apply {
-	
+
 	cpp_check_reverse_edge_t() {
 		set_for_sent(true);
 		set_for_expr(true);
@@ -79,7 +79,7 @@ class cpp_check_reverse_edge_t extends gm_apply {
 
 		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
-			GMTYPE_T iter_type = fe.get_iter_type();
+			gm_type iter_type = fe.get_iter_type();
 			if (iter_type.is_iteration_use_reverse()) {
 				ast_id G = fe.get_source().getTypeInfo().get_target_graph_id();
 				if (G != null) {

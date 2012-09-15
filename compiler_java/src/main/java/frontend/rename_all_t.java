@@ -3,8 +3,8 @@ package frontend;
 import ast.ast_id;
 import ast.ast_procdef;
 
-import common.gm_main;
 import common.gm_apply;
+import common.gm_main;
 
 //---------------------------------------------------
 // rename all potential name conflicts

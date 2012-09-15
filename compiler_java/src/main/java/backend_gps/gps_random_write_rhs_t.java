@@ -1,12 +1,13 @@
 package backend_gps;
 
+import inc.gm_code_writer;
 import ast.ast_expr;
 import ast.ast_sentblock;
-import frontend.gm_symtab_entry;
-import inc.gm_code_writer;
 
-import common.gm_main;
 import common.gm_apply;
+import common.gm_main;
+
+import frontend.gm_symtab_entry;
 
 public class gps_random_write_rhs_t extends gm_apply {
 	
@@ -23,7 +24,7 @@ public class gps_random_write_rhs_t extends gm_apply {
 		lib = l;
 		Body = b;
 		set_for_expr(true);
-		U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_RANDOM_WRITE, sb, sym);
+		U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_RANDOM_WRITE, sb, sym);
 		INFO = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 	}
 

@@ -1,16 +1,16 @@
 package backend_gps;
 
+import frontend.gm_symtab_entry;
+import inc.gm_compile_step;
+
 import java.util.HashMap;
 
 import tangible.Pair;
-
-import common.gm_method_id_t;
-
-import frontend.gm_symtab_entry;
-import inc.gm_compile_step;
 import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
+
+import common.gm_method_id;
 
 public class gm_gps_opt_simplify_expr1 extends gm_compile_step {
 	private gm_gps_opt_simplify_expr1() {
@@ -46,7 +46,7 @@ public class gm_gps_opt_simplify_expr1 extends gm_compile_step {
 	}
 
 	public static void replace_built_in(ast_sent s, gm_symtab_entry e, ast_sentblock scope,
-			HashMap<Pair<ast_sentblock, gm_method_id_t>, gm_symtab_entry> already_defined_map) {
+			HashMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry> already_defined_map) {
 		gps_opt_replace_builtin_t T = new gps_opt_replace_builtin_t(e, scope, already_defined_map);
 		s.traverse_post(T);
 

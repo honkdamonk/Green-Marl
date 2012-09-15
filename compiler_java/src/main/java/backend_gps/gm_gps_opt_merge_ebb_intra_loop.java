@@ -101,7 +101,7 @@ public class gm_gps_opt_merge_ebb_intra_loop extends gm_compile_step {
 
 		// create new state
 		gm_gps_beinfo BEINFO = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
-		gm_gps_basic_block TAIL2 = new gm_gps_basic_block(BEINFO.issue_basicblock_id(), gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL);
+		gm_gps_basic_block TAIL2 = new gm_gps_basic_block(BEINFO.issue_basicblock_id(), gm_gps_bbtype.GM_GPS_BBTYPE_MERGED_TAIL);
 
 		// add tag that this is merged conditional
 		TAIL2.add_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO, while_cond.get_id());

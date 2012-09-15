@@ -1,11 +1,10 @@
 package backend_cpp;
 
-import ast.ast_procdef;
+import frontend.gm_rw_analysis;
 import inc.gm_compile_step;
+import ast.ast_procdef;
 
 import common.gm_traverse;
-
-import frontend.gm_rw_analysis;
 
 class gm_cpp_opt_reduce_scalar extends gm_compile_step {
 	

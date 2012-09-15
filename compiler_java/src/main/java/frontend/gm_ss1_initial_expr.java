@@ -1,17 +1,17 @@
 package frontend;
 
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
-import ast.ast_node_type;
+import inc.gm_assignment;
+import inc.gm_reduce;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;
 import ast.ast_idlist;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_vardecl;
 
-import common.gm_transform_helper;
 import common.gm_apply;
+import common.gm_transform_helper;
 
 public class gm_ss1_initial_expr extends gm_apply {
 	
@@ -35,7 +35,7 @@ public class gm_ss1_initial_expr extends gm_apply {
 		ast_id id = idl.get_item(0).copy();
 
 		// new assign statement
-		ast_assign a = ast_assign.new_assign_scala(id, e, gm_assignment_t.GMASSIGN_NORMAL, null, GM_REDUCE_T.GMREDUCE_NULL);
+		ast_assign a = ast_assign.new_assign_scala(id, e, gm_assignment.GMASSIGN_NORMAL, null, gm_reduce.GMREDUCE_NULL);
 
 		// add this sententence next to current statement
 		gm_transform_helper.gm_add_sent_after(v, a, false); // no fix symtab

@@ -1,8 +1,8 @@
 package frontend;
 
-import static frontend.gm_range_type_t.GM_RANGE_INVALID;
-import static inc.GM_REDUCE_T.GMREDUCE_NULL;
-import inc.GM_REDUCE_T;
+import static frontend.gm_range_type.GM_RANGE_INVALID;
+import static inc.gm_reduce.GMREDUCE_NULL;
+import inc.gm_reduce;
 
 // returns true if the symbol is modified in ths sentence subtree S.
 public class gm_rwinfo_query {
@@ -12,13 +12,13 @@ public class gm_rwinfo_query {
 	public boolean _check_always = false;
 	public boolean _check_reduceop = false;
 	public boolean _check_bound = false;
-	public gm_range_type_t range = GM_RANGE_INVALID;
-	public GM_REDUCE_T reduce_op = GMREDUCE_NULL;
+	public gm_range_type range = GM_RANGE_INVALID;
+	public gm_reduce reduce_op = GMREDUCE_NULL;
 	public gm_symtab_entry driver = null;
 	public gm_symtab_entry bound = null;
 	public boolean always = true;
 	
-	public final void check_range(gm_range_type_t r) {
+	public final void check_range(gm_range_type r) {
 		_check_range = true;
 		range = r;
 	}
@@ -33,7 +33,7 @@ public class gm_rwinfo_query {
 		always = a;
 	}
 
-	public final void check_reduce_op(GM_REDUCE_T o) {
+	public final void check_reduce_op(gm_reduce o) {
 		_check_reduceop = true;
 		reduce_op = o;
 	}

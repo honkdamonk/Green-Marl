@@ -1,8 +1,8 @@
 package inc;
 
-import ast.ast_procdef;
 import opt.gm_flip_edges;
 import opt.gm_flip_find_candidate;
+import ast.ast_procdef;
 
 import common.gm_argopts;
 import common.gm_main;

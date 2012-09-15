@@ -1,20 +1,19 @@
 package frontend;
 
-import static frontend.gm_range_type_t.GM_RANGE_LEVEL;
-import static frontend.gm_range_type_t.GM_RANGE_LEVEL_DOWN;
-import static frontend.gm_range_type_t.GM_RANGE_LEVEL_UP;
-import static frontend.gm_range_type_t.GM_RANGE_LINEAR;
-import static frontend.gm_range_type_t.GM_RANGE_RANDOM;
-import static frontend.gm_range_type_t.GM_RANGE_SINGLE;
-import static inc.gm_assignment_location_t.GMASSIGN_LHS_MAP;
-import inc.GMTYPE_T;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_location_t;
+import static frontend.gm_range_type.GM_RANGE_LEVEL;
+import static frontend.gm_range_type.GM_RANGE_LEVEL_DOWN;
+import static frontend.gm_range_type.GM_RANGE_LEVEL_UP;
+import static frontend.gm_range_type.GM_RANGE_LINEAR;
+import static frontend.gm_range_type.GM_RANGE_RANDOM;
+import static frontend.gm_range_type.GM_RANGE_SINGLE;
+import static inc.gm_assignment_location.GMASSIGN_LHS_MAP;
+import inc.gm_assignment_location;
+import inc.gm_reduce;
+import inc.gm_type;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_call;
@@ -31,6 +30,7 @@ import ast.ast_id;
 import ast.ast_if;
 import ast.ast_mapaccess;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_nop;
 import ast.ast_return;
 import ast.ast_sent;
@@ -39,16 +39,16 @@ import ast.ast_while;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 import common.gm_traverse;
+
 //----------------------------------------------------
 // Traverse for Analysis
 // (Should be 'post-applying')
 //----------------------------------------------------
-
 public class gm_rw_analysis extends gm_apply {
 
 	private static final int GM_BLTIN_MUTATE_GROW = 1;
@@ -166,7 +166,7 @@ public class gm_rw_analysis extends gm_apply {
 		// (1) LHS
 		boolean is_reduce = (a.is_reduce_assign() || a.is_defer_assign()) && !a.is_map_entry_assign();
 		gm_symtab_entry bound_sym = null;
-		GM_REDUCE_T bound_op = GM_REDUCE_T.GMREDUCE_NULL;
+		gm_reduce bound_op = gm_reduce.GMREDUCE_NULL;
 		if (is_reduce) {
 			assert a.get_bound() != null;
 			bound_sym = a.get_bound().getSymInfo();
@@ -178,7 +178,7 @@ public class gm_rw_analysis extends gm_apply {
 		gm_symtab_entry graph_sym;
 		gm_rwinfo new_entry;
 		boolean is_group_assign = false;
-		if (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) {
+		if (a.get_lhs_type() == gm_assignment_location.GMASSIGN_LHS_SCALA) {
 			target_sym = a.get_lhs_scala().getSymInfo();
 			new_entry = gm_rwinfo.new_scala_inst(a.get_lhs_scala(), bound_op, bound_sym);
 		} else if (a.get_lhs_type() == GMASSIGN_LHS_MAP) {
@@ -195,7 +195,7 @@ public class gm_rw_analysis extends gm_apply {
 				assert !is_reduce;
 				is_group_assign = true;
 				graph_sym = a.get_lhs_field().get_first().getSymInfo();
-				new_entry = gm_rwinfo.new_range_inst(gm_range_type_t.GM_RANGE_LINEAR, true, a.get_lhs_field().get_first());
+				new_entry = gm_rwinfo.new_range_inst(gm_range_type.GM_RANGE_LINEAR, true, a.get_lhs_field().get_first());
 			} else {
 				new_entry = gm_rwinfo.new_field_inst(iter_sym, a.get_lhs_field().get_first(), bound_op, bound_sym);
 
@@ -381,14 +381,14 @@ public class gm_rw_analysis extends gm_apply {
 		gm_rwinfo_map D_temp2 = new gm_rwinfo_map();
 		gm_rwinfo_map M_temp = new gm_rwinfo_map();
 
-		GMTYPE_T iter_type = a.get_iter_type(); // should be GMTYPE_NODEITER_BFS
+		gm_type iter_type = a.get_iter_type(); // should be GMTYPE_NODEITER_BFS
 												// ||
 		// GMTYPE_NODEIER_DFS
 		gm_symtab_entry it = a.get_iterator().getSymInfo();
 		assert it != null;
 
 		if (a.get_navigator() != null) {
-			range_cond_t R_alt = new range_cond_t(gm_range_type_t.GM_RANGE_LEVEL_DOWN, true);
+			range_cond_t R_alt = new range_cond_t(gm_range_type.GM_RANGE_LEVEL_DOWN, true);
 			Default_DriverMap.put(it, R_alt);
 			traverse_expr_for_readset_adding(a.get_navigator(), R_temp);
 			Default_DriverMap.remove(it);
@@ -492,7 +492,7 @@ public class gm_rw_analysis extends gm_apply {
 
 		gm_symtab_entry bound_sym = null;
 		gm_symtab_entry target_sym = null;
-		GM_REDUCE_T bound_op = GM_REDUCE_T.GMREDUCE_NULL;
+		gm_reduce bound_op = gm_reduce.GMREDUCE_NULL;
 		boolean is_okay = true;
 
 		// -----------------------------------------
@@ -505,7 +505,7 @@ public class gm_rw_analysis extends gm_apply {
 				ast_id id = (ast_id) node;
 				target_sym = id.getSymInfo();
 				assert target_sym != null;
-				new_entry = gm_rwinfo.new_scala_inst(id, GM_REDUCE_T.GMREDUCE_NULL, null);
+				new_entry = gm_rwinfo.new_scala_inst(id, gm_reduce.GMREDUCE_NULL, null);
 			} else if (node.get_nodetype() == ast_node_type.AST_FIELD) {
 				ast_field fld = (ast_field) node;
 				target_sym = fld.get_second().getSymInfo();
@@ -528,7 +528,7 @@ public class gm_rw_analysis extends gm_apply {
 
 	}
 
-	public static gm_range_type_t gm_get_range_from_itertype(GMTYPE_T itype) {
+	public static gm_range_type gm_get_range_from_itertype(gm_type itype) {
 		switch (itype) {
 		case GMTYPE_NODEITER_ALL:
 		case GMTYPE_EDGEITER_ALL:
@@ -775,7 +775,7 @@ public class gm_rw_analysis extends gm_apply {
 		return is_okay; // returns is_okay
 	}
 
-	public static String gm_get_range_string(gm_range_type_t access_range) {
+	public static String gm_get_range_string(gm_range_type access_range) {
 		return (access_range == GM_RANGE_LINEAR) ? "LINEAR" : (access_range == GM_RANGE_RANDOM) ? "RANDOM" : (access_range == GM_RANGE_LEVEL) ? "LEVEL"
 				: (access_range == GM_RANGE_LEVEL_UP) ? "LEVEL_UP" : (access_range == GM_RANGE_LEVEL_DOWN) ? "LEVEL_DOWN" : "???";
 	}
@@ -935,7 +935,7 @@ public class gm_rw_analysis extends gm_apply {
 
 		} // temporary driver or vector driver
 		else {
-			gm_range_type_t range_type = DrvMap.get(iter_sym).range_type;
+			gm_range_type range_type = DrvMap.get(iter_sym).range_type;
 			boolean always = DrvMap.get(iter_sym).is_always;
 			new_entry = gm_rwinfo.new_range_inst(range_type, always, e.get_field().get_first());
 		}
@@ -973,7 +973,7 @@ public class gm_rw_analysis extends gm_apply {
 					new_entry = gm_rwinfo.new_field_inst(iter_sym, f1.get_first());
 				} // temporary driver or vector driver
 				else {
-					gm_range_type_t range_type = DrvMap.get(iter_sym).range_type;
+					gm_range_type range_type = DrvMap.get(iter_sym).range_type;
 					boolean always = DrvMap.get(iter_sym).is_always;
 					new_entry = gm_rwinfo.new_range_inst(range_type, always, f1.get_first());
 				}
@@ -984,7 +984,7 @@ public class gm_rw_analysis extends gm_apply {
 
 	public static void traverse_expr_for_readset_adding_reduce(ast_expr_reduce e2, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
 		gm_symtab_entry it = e2.get_iterator().getSymInfo();
-		GMTYPE_T iter_type = e2.get_iter_type();
+		gm_type iter_type = e2.get_iter_type();
 		ast_expr f = e2.get_filter();
 		ast_expr b = e2.get_body();
 		boolean is_conditional = (f != null) || iter_type.is_collection_iter_type();
@@ -1136,12 +1136,12 @@ public class gm_rw_analysis extends gm_apply {
 	 * = x ==> read<br>
 	 * } }
 	 */
-	public static boolean cleanup_iterator_access(ast_id iter, gm_rwinfo_map T_temp, gm_rwinfo_map T, GMTYPE_T iter_type, boolean is_parallel) {
+	public static boolean cleanup_iterator_access(ast_id iter, gm_rwinfo_map T_temp, gm_rwinfo_map T, gm_type iter_type, boolean is_parallel) {
 
 		boolean is_okay = true;
 
 		gm_symtab_entry iter_sym = iter.getSymInfo();
-		gm_range_type_t range = gm_get_range_from_itertype(iter_type);
+		gm_range_type range = gm_get_range_from_itertype(iter_type);
 
 		for (gm_symtab_entry sym : T_temp.keySet()) {
 			gm_rwinfo_list l = T_temp.get(sym);
@@ -1182,9 +1182,9 @@ public class gm_rw_analysis extends gm_apply {
 	public static void cleanup_iterator_access_bfs(gm_rwinfo_map T) {
 		// bfs iter ==> conditional, linear iteration
 		boolean new_always = false;
-		gm_range_type_t new_range = GM_RANGE_LINEAR; // G.Nodes
-														// or
-														// G.Edges
+		gm_range_type new_range = GM_RANGE_LINEAR; // G.Nodes
+													// or
+													// G.Edges
 
 		for (gm_symtab_entry key : T.keySet()) {
 			boolean is_target = false;
@@ -1214,10 +1214,10 @@ public class gm_rw_analysis extends gm_apply {
 	 * Foreach-statement - reduce map of the body
 	 */
 	public static boolean cleanup_iterator_access_reduce(ast_id iter, gm_rwinfo_map D_temp, gm_rwinfo_map D, gm_rwinfo_map W, gm_rwinfo_map B,
-			GMTYPE_T iter_type, boolean is_parallel) {
+			gm_type iter_type, boolean is_parallel) {
 		boolean is_okay = true;
 		gm_symtab_entry iter_sym = iter.getSymInfo();
-		gm_range_type_t range = gm_get_range_from_itertype(iter_type);
+		gm_range_type range = gm_get_range_from_itertype(iter_type);
 
 		for (gm_symtab_entry sym : D_temp.keySet()) {
 			gm_rwinfo_list l = D_temp.get(sym);
@@ -1251,7 +1251,7 @@ public class gm_rw_analysis extends gm_apply {
 				if (cp.bound_symbol == iter_sym) {
 					// change to write
 					cp.bound_symbol = null;
-					cp.reduce_op = GM_REDUCE_T.GMREDUCE_NULL;
+					cp.reduce_op = gm_reduce.GMREDUCE_NULL;
 
 					// -------------------------------
 					// add to my 'bound' set

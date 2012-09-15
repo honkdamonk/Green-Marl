@@ -7,9 +7,9 @@ import ast.ast_foreach;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
+import common.gm_apply;
 import common.gm_merge_sentblock;
 import common.gm_transform_helper;
-import common.gm_apply;
 
 import frontend.gm_rw_analysis;
 

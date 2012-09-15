@@ -7,7 +7,7 @@ import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN;
 import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
 import frontend.gm_symtab_entry;
-import inc.GM_REDUCE_T;
+import inc.gm_reduce;
 import inc.gps_apply_bb_ast;
 import ast.ast_node_type;
 import ast.ast_assign;
@@ -48,10 +48,8 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 		is_message_write_target = false;
 
 		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
-			gm_gps_symbol_usage_location_t context = get_current_context(); // GPS_CONTEXT_
-																			// (MASTER,
-																			// VERTEX,
-																			// RECEIVER)
+			// GPS_CONTEXT_ (MASTER, VERTEX, RECEIVER)
+			gm_gps_symbol_usage_location context = get_current_context();
 
 			ast_assign a = (ast_assign) s;
 
@@ -72,13 +70,13 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 			 */
 			ast_id target = (a.is_target_scalar()) ? a.get_lhs_scala() : a.get_lhs_field().get_second();
 			boolean is_scalar = (a.is_target_scalar()) ? IS_SCALAR : IS_FIELD;
-			gm_gps_symbol_usage_t lhs_reduce = a.is_reduce_assign() ? gm_gps_symbol_usage_t.GPS_SYM_USED_AS_REDUCE : gm_gps_symbol_usage_t.GPS_SYM_USED_AS_LHS;
-			GM_REDUCE_T r_type = a.is_reduce_assign() ? a.get_reduce_type() : GM_REDUCE_T.GMREDUCE_NULL;
+			gm_gps_symbol_usage lhs_reduce = a.is_reduce_assign() ? gm_gps_symbol_usage.GPS_SYM_USED_AS_REDUCE : gm_gps_symbol_usage.GPS_SYM_USED_AS_LHS;
+			gm_reduce r_type = a.is_reduce_assign() ? a.get_reduce_type() : gm_reduce.GMREDUCE_NULL;
 
 			if (is_scalar == false && a.get_lhs_field().get_first().getSymInfo().find_info_bool(GPS_FLAG_EDGE_DEFINED_INNER))
 				is_edge_prop_write_target = true;
 
-			if (context == gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER) {
+			if (context == gm_gps_symbol_usage_location.GPS_CONTEXT_RECEIVER) {
 				if (is_message_write_target || is_edge_prop_write_target || is_random_write_target)
 					return true;
 			}
@@ -117,23 +115,23 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 		// int syntax_scope =
 		// get_current_sent()->find_info_int(GPS_INT_SYNTAX_CONTEXT);
 		int expr_scope = e.find_info_int(GPS_INT_EXPR_SCOPE);
-		gm_gps_symbol_usage_location_t context = get_current_context();
-		gm_gps_symbol_usage_t used_type = gm_gps_symbol_usage_t.GPS_SYM_USED_AS_RHS;
+		gm_gps_symbol_usage_location context = get_current_context();
+		gm_gps_symbol_usage used_type = gm_gps_symbol_usage.GPS_SYM_USED_AS_RHS;
 		boolean is_id = e.is_id();
 		boolean sc_type = is_id ? IS_SCALAR : IS_FIELD;
 		ast_id tg = is_id ? e.get_id() : e.get_field().get_second();
 
 		boolean comm_symbol = false; // is this symbol used in communication?
 
-		if (context == gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER) {
+		if (context == gm_gps_symbol_usage_location.GPS_CONTEXT_RECEIVER) {
 			// sender context only
 			if (is_message_write_target || is_edge_prop_write_target || is_random_write_target)
 				return true;
 		}
 
 		if (is_random_write_target) {
-			if ((expr_scope != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_RANDOM.getValue())
-					&& (expr_scope != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_GLOBAL.getValue()))
+			if ((expr_scope != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_RANDOM.getValue())
+					&& (expr_scope != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_GLOBAL.getValue()))
 				comm_symbol = true;
 			/*
 			 * if (is_id) { gps_syminfo* syminfo = gps_get_global_syminfo(tg);
@@ -157,28 +155,28 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 		return true;
 	}
 
-	protected final gm_gps_symbol_usage_location_t get_current_context() {
-		gm_gps_symbol_usage_location_t context;
+	protected final gm_gps_symbol_usage_location get_current_context() {
+		gm_gps_symbol_usage_location context;
 		if (!get_curr_BB().is_vertex()) {
 			// master context
-			context = gm_gps_symbol_usage_location_t.GPS_CONTEXT_MASTER;
+			context = gm_gps_symbol_usage_location.GPS_CONTEXT_MASTER;
 		} else {
 			// sender/recevier
 			if (is_under_receiver_traverse())
-				context = gm_gps_symbol_usage_location_t.GPS_CONTEXT_RECEIVER;
+				context = gm_gps_symbol_usage_location.GPS_CONTEXT_RECEIVER;
 			else
-				context = gm_gps_symbol_usage_location_t.GPS_CONTEXT_VERTEX;
+				context = gm_gps_symbol_usage_location.GPS_CONTEXT_VERTEX;
 		}
 
 		return context;
 	}
 
-	protected final void update_access_information(ast_id i, boolean is_scalar, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context) {
-		update_access_information(i, is_scalar, usage, context, GM_REDUCE_T.GMREDUCE_NULL);
+	protected final void update_access_information(ast_id i, boolean is_scalar, gm_gps_symbol_usage usage, gm_gps_symbol_usage_location context) {
+		update_access_information(i, is_scalar, usage, context, gm_reduce.GMREDUCE_NULL);
 	}
 
-	protected final void update_access_information(ast_id i, boolean is_scalar, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context,
-			GM_REDUCE_T r_type) {
+	protected final void update_access_information(ast_id i, boolean is_scalar, gm_gps_symbol_usage usage, gm_gps_symbol_usage_location context,
+			gm_reduce r_type) {
 		// update global information
 		gps_syminfo syminfo = get_or_create_global_syminfo(i, is_scalar);
 

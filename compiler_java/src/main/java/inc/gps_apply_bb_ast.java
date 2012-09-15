@@ -1,15 +1,15 @@
 package inc;
 
-import static backend_gps.gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX;
-import static backend_gps.gm_gps_bbtype_t.GM_GPS_BBTYPE_IF_COND;
-import static backend_gps.gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_IF;
-import static backend_gps.gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL;
-import static backend_gps.gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1;
-import static backend_gps.gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2;
-import static backend_gps.gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ;
-import static backend_gps.gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND;
-import static backend_gps.gm_gps_comm_t.GPS_COMM_NESTED;
-import static backend_gps.gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
+import static backend_gps.gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX;
+import static backend_gps.gm_gps_bbtype.GM_GPS_BBTYPE_IF_COND;
+import static backend_gps.gm_gps_bbtype.GM_GPS_BBTYPE_MERGED_IF;
+import static backend_gps.gm_gps_bbtype.GM_GPS_BBTYPE_MERGED_TAIL;
+import static backend_gps.gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE1;
+import static backend_gps.gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE2;
+import static backend_gps.gm_gps_bbtype.GM_GPS_BBTYPE_SEQ;
+import static backend_gps.gm_gps_bbtype.GM_GPS_BBTYPE_WHILE_COND;
+import static backend_gps.gm_gps_comm.GPS_COMM_NESTED;
+import static backend_gps.gm_gps_comm.GPS_COMM_RANDOM_WRITE;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -21,9 +21,9 @@ import ast.ast_if;
 import ast.ast_sent;
 import ast.ast_while;
 import backend_gps.gm_gps_basic_block;
-import backend_gps.gm_gps_bbtype_t;
+import backend_gps.gm_gps_bbtype;
 import backend_gps.gm_gps_beinfo;
-import backend_gps.gm_gps_comm_t;
+import backend_gps.gm_gps_comm;
 import backend_gps.gm_gps_comm_unit;
 
 import common.gm_main;
@@ -36,7 +36,7 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 	protected boolean _is_post;
 	protected boolean _is_pre;
 	protected boolean _check_receiver;
-	protected gm_gps_comm_t _receiver_type; // GPS_COMM_NESTED, COMM_RAND_WRITE
+	protected gm_gps_comm _receiver_type; // GPS_COMM_NESTED, COMM_RAND_WRITE
 
 	public gps_apply_bb_ast() {
 		_curr = null;
@@ -49,7 +49,7 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 
 	public void apply(gm_gps_basic_block b) {
 		_curr = b;
-		gm_gps_bbtype_t type = _curr.get_type();
+		gm_gps_bbtype type = _curr.get_type();
 		// printf("visiting :%d\n", _curr->get_id());
 		if (type == GM_GPS_BBTYPE_SEQ) {
 			// traverse sentence block and apply this
@@ -164,11 +164,11 @@ public class gps_apply_bb_ast extends gps_apply_bb {
 		_under_receiver = b;
 	}
 
-	protected final gm_gps_comm_t get_receiver_type() {
+	protected final gm_gps_comm get_receiver_type() {
 		return _receiver_type;
 	}
 
-	protected final void set_receiver_type(gm_gps_comm_t i) {
+	protected final void set_receiver_type(gm_gps_comm i) {
 		_receiver_type = i;
 	}
 

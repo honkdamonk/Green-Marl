@@ -1,6 +1,6 @@
 package backend_gps;
 
-public enum gm_gps_new_scope_analysis_t {
+public enum gm_gps_new_scope_analysis {
 	
 	GPS_NEW_SCOPE_GLOBAL, // <-- least restricted
 	GPS_NEW_SCOPE_OUT, //
@@ -13,12 +13,12 @@ public enum gm_gps_new_scope_analysis_t {
 		return this.ordinal();
 	}
 
-	public static gm_gps_new_scope_analysis_t forValue(int value)
+	public static gm_gps_new_scope_analysis forValue(int value)
 	{
 		return values()[value];
 	}
 	
-	public static gm_gps_new_scope_analysis_t get_more_restricted_scope(gm_gps_new_scope_analysis_t t, gm_gps_new_scope_analysis_t j) {
+	public static gm_gps_new_scope_analysis get_more_restricted_scope(gm_gps_new_scope_analysis t, gm_gps_new_scope_analysis j) {
 		return t.getValue() > j.getValue() ? t : j;
 	}
 }

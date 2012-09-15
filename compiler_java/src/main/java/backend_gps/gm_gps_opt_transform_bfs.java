@@ -1,12 +1,14 @@
 package backend_gps;
 
 import static backend_gps.GPSConstants.GPS_FLAG_HAS_DOWN_NBRS;
-import tangible.RefObject;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
+import frontend.gm_rw_analysis;
+import frontend.gm_symtab_entry;
+import inc.gm_type;
+import inc.gm_ops;
+import inc.gm_reduce;
+import inc.gm_assignment;
 import inc.gm_compile_step;
+import tangible.RefObject;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -25,9 +27,6 @@ import common.gm_main;
 import common.gm_new_sents_after_tc;
 import common.gm_resolve_nc;
 import common.gm_transform_helper;
-
-import frontend.gm_rw_analysis;
-import frontend.gm_symtab_entry;
 
 //-------------------------------------------
 // [Step 1]
@@ -91,18 +90,18 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		ast_sentblock inner_sb = ast_sentblock.new_sentblock();
 		String i_name = gm_main.FE.voca_temp_name_and_add("i", null, true);
 		ast_id it = ast_id.new_id(i_name, bfs.get_iterator().get_line(), bfs.get_iterator().get_col());
-		ast_foreach fe = gm_new_sents_after_tc.gm_new_foreach_after_tc(it, bfs.get_source().copy(true), inner_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
+		ast_foreach fe = gm_new_sents_after_tc.gm_new_foreach_after_tc(it, bfs.get_source().copy(true), inner_sb, gm_type.GMTYPE_NODEITER_ALL);
 
 		sb.add_sent(fe);
 		sb.add_sent(a_curr);
 		sb.add_sent(a_fin);
 
 		ast_expr rhs_inf = ast_expr.new_inf_expr(true);
-		rhs_inf.set_type_summary(GMTYPE_T.GMTYPE_INT);
+		rhs_inf.set_type_summary(gm_type.GMTYPE_INT);
 		ast_expr rhs_zero = ast_expr.new_ival_expr(0);
 		ast_expr rhs_i = ast_expr.new_id_expr(fe.get_iterator().copy(true));
 		ast_expr rhs_root = ast_expr.new_id_expr(bfs.get_root().copy(true));
-		ast_expr rhs_eq = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ, rhs_i, rhs_root);
+		ast_expr rhs_eq = ast_expr.new_comp_expr(gm_ops.GMOP_EQ, rhs_i, rhs_root);
 		ast_expr rhs_tri = ast_expr.new_ternary_expr(rhs_eq, rhs_zero, rhs_inf);
 		ast_field lhs_lev = ast_field.new_field(fe.get_iterator().copy(true), lev_sym.getId().copy(true));
 		ast_assign init_a = ast_assign.new_assign_field(lhs_lev, rhs_tri);
@@ -113,11 +112,11 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		// outer loop
 		ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
 		ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
-				foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
+				foreach_sb, gm_type.GMTYPE_NODEITER_ALL);
 		while_sb.add_sent(foreach_out);
 
 		// outer if
-		ast_expr lev_check_out_c = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ,
+		ast_expr lev_check_out_c = ast_expr.new_comp_expr(gm_ops.GMOP_EQ,
 				ast_expr.new_field_expr(ast_field.new_field(foreach_out.get_iterator().copy(true), lev_sym.getId().copy(true))),
 				ast_expr.new_id_expr(curr_sym.getId().copy(true)));
 		ast_sentblock lev_check_out_sb = ast_sentblock.new_sentblock();
@@ -182,7 +181,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		ast_sentblock while_sb = ast_sentblock.new_sentblock();
 		ast_expr check_l = ast_expr.new_id_expr(fin_sym.getId().copy(true));
 		ast_expr check_r = ast_expr.new_bval_expr(true);
-		ast_expr check_op = ast_expr.new_comp_expr(GM_OPS_T.GMOP_NEQ, check_l, check_r);
+		ast_expr check_op = ast_expr.new_comp_expr(gm_ops.GMOP_NEQ, check_l, check_r);
 		ast_sent fw_while = ast_while.new_while(check_op, while_sb);
 		sb.add_sent(fw_while);
 
@@ -192,17 +191,17 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		while_sb.add_sent(true_a);
 
 		// increase level
-		ast_expr inc_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_ADD, ast_expr.new_id_expr(curr_sym.getId().copy(true)), ast_expr.new_ival_expr(1));
+		ast_expr inc_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_ADD, ast_expr.new_id_expr(curr_sym.getId().copy(true)), ast_expr.new_ival_expr(1));
 		ast_assign inc_a = ast_assign.new_assign_scala(curr_sym.getId().copy(true), inc_rhs);
 		while_sb.add_sent(inc_a);
 
 		// outer loop
 		ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
 		ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
-				foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
+				foreach_sb, gm_type.GMTYPE_NODEITER_ALL);
 		while_sb.add_sent(foreach_out);
 
-		ast_expr lev_check_out_c = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ,
+		ast_expr lev_check_out_c = ast_expr.new_comp_expr(gm_ops.GMOP_EQ,
 				ast_expr.new_field_expr(ast_field.new_field(foreach_out.get_iterator().copy(true), lev_sym.getId().copy(true))),
 				ast_expr.new_id_expr(curr_sym.getId().copy(true)));
 		ast_sentblock lev_check_out_sb = ast_sentblock.new_sentblock();
@@ -214,13 +213,13 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		String inner_name = gm_main.FE.voca_temp_name_and_add("_t", null, true);
 		ast_id inner_id = ast_id.new_id(inner_name, 0, 0);
 		ast_foreach foreach_in = gm_new_sents_after_tc.gm_new_foreach_after_tc(inner_id, foreach_out.get_iterator().copy(true), inner_sb,
-				GMTYPE_T.GMTYPE_NODEITER_NBRS);
+				gm_type.GMTYPE_NODEITER_NBRS);
 		lev_check_out_sb.add_sent(foreach_in);
 
 		// inner level_check
 		ast_expr inf = ast_expr.new_inf_expr(true);
-		inf.set_type_summary(GMTYPE_T.GMTYPE_INT);
-		ast_expr lev_check_in_c = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ,
+		inf.set_type_summary(gm_type.GMTYPE_INT);
+		ast_expr lev_check_in_c = ast_expr.new_comp_expr(gm_ops.GMOP_EQ,
 				ast_expr.new_field_expr(ast_field.new_field(foreach_in.get_iterator().copy(true), lev_sym.getId().copy(true))), inf);
 		ast_sentblock lev_check_in_sb = ast_sentblock.new_sentblock();
 		ast_if lev_check_in_if;
@@ -232,7 +231,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 			gm_resolve_nc.gm_replace_symbol_entry(bfs.get_iterator().getSymInfo(), foreach_in.get_iterator().getSymInfo(), navi);
 
 			// check with navigator
-			ast_expr new_top = ast_expr.new_lbiop_expr(GM_OPS_T.GMOP_AND, lev_check_in_c, navi);
+			ast_expr new_top = ast_expr.new_lbiop_expr(gm_ops.GMOP_AND, lev_check_in_c, navi);
 			lev_check_in_if = ast_if.new_if(new_top, lev_check_in_sb, null);
 		} else {
 			lev_check_in_if = ast_if.new_if(lev_check_in_c, lev_check_in_sb, null);
@@ -240,14 +239,14 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		inner_sb.add_sent(lev_check_in_if);
 
 		// increase level
-		ast_expr inc_lev_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_ADD, ast_expr.new_id_expr(curr_sym.getId().copy(true)), ast_expr.new_ival_expr(1));
+		ast_expr inc_lev_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_ADD, ast_expr.new_id_expr(curr_sym.getId().copy(true)), ast_expr.new_ival_expr(1));
 		ast_assign inc_level = ast_assign.new_assign_field(ast_field.new_field(foreach_in.get_iterator().copy(true), lev_sym.getId().copy(true)), inc_lev_rhs);
 		lev_check_in_sb.add_sent(inc_level);
 
 		// set not finished
 		ast_expr update_fin_rhs = ast_expr.new_bval_expr(false);
-		ast_assign update_fin = ast_assign.new_assign_scala(fin_sym.getId().copy(true), update_fin_rhs, gm_assignment_t.GMASSIGN_REDUCE, foreach_out
-				.get_iterator().copy(true), GM_REDUCE_T.GMREDUCE_AND);
+		ast_assign update_fin = ast_assign.new_assign_scala(fin_sym.getId().copy(true), update_fin_rhs, gm_assignment.GMASSIGN_REDUCE, foreach_out
+				.get_iterator().copy(true), gm_reduce.GMREDUCE_AND);
 		lev_check_in_sb.add_sent(update_fin);
 
 		// create user body
@@ -283,18 +282,18 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		ast_sentblock while_sb = ast_sentblock.new_sentblock();
 		ast_expr check_l = ast_expr.new_id_expr(curr_sym.getId().copy(true));
 		ast_expr check_r = ast_expr.new_ival_expr(0);
-		ast_expr check_op = ast_expr.new_comp_expr(GM_OPS_T.GMOP_GE, check_l, check_r);
+		ast_expr check_op = ast_expr.new_comp_expr(gm_ops.GMOP_GE, check_l, check_r);
 		ast_sent fw_while = ast_while.new_while(check_op, while_sb);
 		sb.add_sent(fw_while);
 
 		// outer loop
 		ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
 		ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(bfs.get_iterator().copy(false), bfs.get_source().copy(true),
-				foreach_sb, GMTYPE_T.GMTYPE_NODEITER_ALL);
+				foreach_sb, gm_type.GMTYPE_NODEITER_ALL);
 		while_sb.add_sent(foreach_out);
 
 		// level check
-		ast_expr lev_check_out_c = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ,
+		ast_expr lev_check_out_c = ast_expr.new_comp_expr(gm_ops.GMOP_EQ,
 				ast_expr.new_field_expr(ast_field.new_field(foreach_out.get_iterator().copy(true), lev_sym.getId().copy(true))),
 				ast_expr.new_id_expr(curr_sym.getId().copy(true)));
 		ast_sentblock lev_check_out_sb = ast_sentblock.new_sentblock();
@@ -304,7 +303,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		create_user_body_main(lev_check_out_sb, bfs, foreach_out, lev_sym, curr_sym, false);
 
 		// decrease curr level
-		ast_expr dec_lev_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_SUB, ast_expr.new_id_expr(curr_sym.getId().copy(true)), ast_expr.new_ival_expr(1));
+		ast_expr dec_lev_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_SUB, ast_expr.new_id_expr(curr_sym.getId().copy(true)), ast_expr.new_ival_expr(1));
 		ast_assign dec_level = ast_assign.new_assign_scala(curr_sym.getId().copy(true), dec_lev_rhs);
 		while_sb.add_sent(dec_level);
 	}
@@ -336,10 +335,10 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 		String lev_name = gm_main.FE.voca_temp_name_and_add("level", null, true);
 		String curr_name = gm_main.FE.voca_temp_name_and_add("curr_level", null, true);
 		String fin_name = gm_main.FE.voca_temp_name_and_add("bfs_finished", null, true);
-		gm_symtab_entry lev_sym = gm_add_symbol.gm_add_new_symbol_property(sb, GMTYPE_T.GMTYPE_INT, true, b.get_source().getSymInfo(),
+		gm_symtab_entry lev_sym = gm_add_symbol.gm_add_new_symbol_property(sb, gm_type.GMTYPE_INT, true, b.get_source().getSymInfo(),
 				lev_name);
-		gm_symtab_entry curr_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_INT, curr_name);
-		gm_symtab_entry fin_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, GMTYPE_T.GMTYPE_BOOL, fin_name);
+		gm_symtab_entry curr_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, gm_type.GMTYPE_INT, curr_name);
+		gm_symtab_entry fin_sym = gm_add_symbol.gm_add_new_symbol_primtype(sb, gm_type.GMTYPE_BOOL, fin_name);
 
 		create_initializer(sb, b, lev_sym, curr_sym, fin_sym);
 

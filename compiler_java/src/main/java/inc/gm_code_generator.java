@@ -92,7 +92,7 @@ public abstract class gm_code_generator {
 			_Body.push(RP);
 	}
 
-	protected abstract String get_type_string(GMTYPE_T gmtype_T);
+	protected abstract String get_type_string(gm_type gmtype_T);
 
 	public void generate_expr_list(LinkedList<ast_expr> L) {
 		int i = 0;
@@ -109,7 +109,7 @@ public abstract class gm_code_generator {
 		ast_mapaccess mapAccess = e.get_mapaccess();
 		ast_id map = mapAccess.get_map_id();
 		ast_expr key = mapAccess.get_key_expr();
-		_Body.push(String.format("%s.getValue(", map.get_genname()));
+		_Body.pushf("%s.getValue(", map.get_genname());
 		generate_expr(key);
 		_Body.push(")");
 	}
@@ -130,7 +130,7 @@ public abstract class gm_code_generator {
 		else if (e.is_uop())
 			generate_expr_uop(e);
 		else if (e.is_biop()) {
-			if ((e.get_optype() == GM_OPS_T.GMOP_MIN) || (e.get_optype() == GM_OPS_T.GMOP_MAX))
+			if ((e.get_optype() == gm_ops.GMOP_MIN) || (e.get_optype() == gm_ops.GMOP_MAX))
 				generate_expr_minmax(e);
 			else
 				generate_expr_bin(e);
@@ -159,7 +159,7 @@ public abstract class gm_code_generator {
 			_Body.push(temp);
 			return;
 		case GMEXPR_FVAL:
-			if (e.get_type_summary() == GMTYPE_T.GMTYPE_FLOAT) {
+			if (e.get_type_summary() == gm_type.GMTYPE_FLOAT) {
 				temp = String.format("(float)(%f)", e.get_fval()); // to be
 																	// changed
 				_Body.push(temp);
@@ -181,8 +181,8 @@ public abstract class gm_code_generator {
 
 	protected void generate_expr_inf(ast_expr e) {
 		String temp;
-		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
-		GMTYPE_T t = e.get_type_summary();
+		assert e.get_opclass() == gm_expr_class.GMEXPR_INF;
+		gm_type t = e.get_type_summary();
 		switch (t) {
 		case GMTYPE_INF:
 		case GMTYPE_INF_INT:
@@ -209,14 +209,14 @@ public abstract class gm_code_generator {
 		// char* temp = temp_str;
 		switch (e.get_opclass()) {
 		case GMEXPR_UOP:
-			if (e.get_optype() == GM_OPS_T.GMOP_NEG) {
+			if (e.get_optype() == gm_ops.GMOP_NEG) {
 				_Body.push(" -");
 				generate_expr(e.get_left_op());
 				return;
-			} else if (e.get_optype() == GM_OPS_T.GMOP_ABS) {
+			} else if (e.get_optype() == gm_ops.GMOP_ABS) {
 				generate_expr_abs(e);
 				return;
-			} else if (e.get_optype() == GM_OPS_T.GMOP_TYPECONVERSION) {
+			} else if (e.get_optype() == gm_ops.GMOP_TYPECONVERSION) {
 				generate_expr_type_conversion(e);
 				return;
 			} else {
@@ -292,7 +292,7 @@ public abstract class gm_code_generator {
 			_Body.push(")");
 	}
 
-	protected boolean check_need_para(GM_OPS_T optype, GM_OPS_T up_optype, boolean is_right) {
+	protected boolean check_need_para(gm_ops optype, gm_ops up_optype, boolean is_right) {
 		return optype.gm_need_paranthesis(up_optype, is_right);
 	}
 

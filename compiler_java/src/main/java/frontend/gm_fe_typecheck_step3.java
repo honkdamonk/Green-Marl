@@ -1,6 +1,6 @@
 package frontend;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 import inc.gm_compile_step;
 
 import java.util.HashMap;
@@ -39,9 +39,9 @@ public class gm_fe_typecheck_step3 extends gm_compile_step {
 		return new gm_fe_typecheck_step3();
 	}
 
-	private static void insert_explicit_type_conversion_for_op(HashMap<ast_expr, GMTYPE_T> coercion_targets) {
+	private static void insert_explicit_type_conversion_for_op(HashMap<ast_expr, gm_type> coercion_targets) {
 		for (ast_expr t : coercion_targets.keySet()) {
-			GMTYPE_T dest_type = coercion_targets.get(t);
+			gm_type dest_type = coercion_targets.get(t);
 
 			ast_expr up = t.get_up_op();
 			assert up != null;

@@ -2,22 +2,21 @@ package frontend;
 
 import static common.gm_errors_and_warnings.GM_ERROR_DOUBLE_BOUND_ITOR;
 import static common.gm_errors_and_warnings.GM_ERROR_DOUBLE_BOUND_OP;
-import inc.GM_REDUCE_T;
+import inc.gm_reduce;
 
 import java.util.LinkedList;
 
 import tangible.RefObject;
-
-import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 
 public class gm_check_reduce_error_t extends gm_apply {
 
@@ -86,7 +85,7 @@ public class gm_check_reduce_error_t extends gm_apply {
 		}
 	}
 
-	private static void add_bound(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type) {
+	private static void add_bound(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, gm_reduce r_type) {
 		bound_info_t T = new bound_info_t();
 		T.target = t;
 		T.bound = b;
@@ -94,7 +93,7 @@ public class gm_check_reduce_error_t extends gm_apply {
 		L.addLast(T);
 	}
 
-	private static void remove_bound(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type) {
+	private static void remove_bound(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, gm_reduce r_type) {
 		for (bound_info_t db : L) {
 			if ((db.target == t) && (db.reduce_type == r_type) && (db.bound == b)) {
 				L.remove(db);
@@ -103,7 +102,7 @@ public class gm_check_reduce_error_t extends gm_apply {
 		}
 	}
 
-	private static boolean is_conflict(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, GM_REDUCE_T r_type, RefObject<Boolean> is_bound_error,
+	private static boolean is_conflict(LinkedList<bound_info_t> L, gm_symtab_entry t, gm_symtab_entry b, gm_reduce r_type, RefObject<Boolean> is_bound_error,
 			RefObject<Boolean> is_type_error) {
 		is_type_error.argvalue = false;
 		is_bound_error.argvalue = false;
@@ -129,7 +128,7 @@ public class gm_check_reduce_error_t extends gm_apply {
 				boolean is_bound_error = false;
 				boolean is_type_error = false;
 				assert jj.bound_symbol != null;
-				assert jj.reduce_op != GM_REDUCE_T.GMREDUCE_NULL;
+				assert jj.reduce_op != gm_reduce.GMREDUCE_NULL;
 				RefObject<Boolean> tempRef_is_bound_error = new RefObject<Boolean>(is_bound_error);
 				RefObject<Boolean> tempRef_is_type_error = new RefObject<Boolean>(is_type_error);
 				boolean tempVar = is_conflict(L, e, jj.bound_symbol, jj.reduce_op, tempRef_is_bound_error, tempRef_is_type_error);

@@ -1,7 +1,7 @@
 package backend_cpp;
 
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -29,7 +29,7 @@ class cpp_opt_common_nbr_t extends gm_apply {
 
 		ast_foreach fe = (ast_foreach) sent;
 
-		if (fe.get_iter_type() != GMTYPE_T.GMTYPE_NODEITER_NBRS)
+		if (fe.get_iter_type() != gm_type.GMTYPE_NODEITER_NBRS)
 			return true;
 
 		ast_sent fe_body = gm_transform_helper.gm_get_sentence_if_trivial_sentblock(fe.get_body());
@@ -133,8 +133,8 @@ class cpp_opt_common_nbr_t extends gm_apply {
 		}
 
 		// set new iterator
-		fe.set_iter_type(GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS);
-		fe.get_iterator().getSymInfo().getType().set_typeid(GMTYPE_T.GMTYPE_NODEITER_COMMON_NBRS);
+		fe.set_iter_type(gm_type.GMTYPE_NODEITER_COMMON_NBRS);
+		fe.get_iterator().getSymInfo().getType().set_typeid(gm_type.GMTYPE_NODEITER_COMMON_NBRS);
 		fe.set_source2(common_sym.getId().copy());
 
 		// adjust scope information of fe and below

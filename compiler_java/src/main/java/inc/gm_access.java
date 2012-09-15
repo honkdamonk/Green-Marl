@@ -1,7 +1,7 @@
 package inc;
 
 
-public enum GM_ACCESS_T { // 16 bit bitmap
+public enum gm_access { // 16 bit bitmap
 	GMACCESS_NONE, //
 	GMACCESS_EMPTY, //
 	GMACCESS_SHRINK, //
@@ -11,6 +11,6 @@ public enum GM_ACCESS_T { // 16 bit bitmap
 	GMACCESS_COPY;//
 
 	public boolean is_collection_access_none() {
-		return (this == GM_ACCESS_T.GMACCESS_NONE);
+		return (this == gm_access.GMACCESS_NONE);
 	}
 }

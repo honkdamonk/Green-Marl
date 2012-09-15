@@ -1,9 +1,9 @@
 package backend_gps;
 
-import static backend_gps.gps_gps_sentence_t.GPS_TYPE_BEGIN_VERTEX;
-import static backend_gps.gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX;
-import static backend_gps.gps_gps_sentence_t.GPS_TYPE_IN_VERTEX;
-import static backend_gps.gps_gps_sentence_t.GPS_TYPE_SEQ;
+import static backend_gps.gps_gps_sentence.GPS_TYPE_BEGIN_VERTEX;
+import static backend_gps.gps_gps_sentence.GPS_TYPE_CANBE_VERTEX;
+import static backend_gps.gps_gps_sentence.GPS_TYPE_IN_VERTEX;
+import static backend_gps.gps_gps_sentence.GPS_TYPE_SEQ;
 
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -22,9 +22,9 @@ public class gm_stage_create_pre_process_t extends gm_apply {
 
 	private boolean master_context;
 	private LinkedList<Boolean> master_context_stack = new LinkedList<Boolean>();
-	private HashMap<ast_sent, gps_gps_sentence_t> s_mark;
+	private HashMap<ast_sent, gps_gps_sentence> s_mark;
 
-	public gm_stage_create_pre_process_t(HashMap<ast_sent, gps_gps_sentence_t> mk) {
+	public gm_stage_create_pre_process_t(HashMap<ast_sent, gps_gps_sentence> mk) {
 		s_mark = mk;
 		master_context = true;
 	}

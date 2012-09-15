@@ -1,10 +1,10 @@
 package opt;
 
+import inc.gm_type;
+import inc.gm_ops;
+import inc.gm_reduce;
+import inc.gm_assignment;
 import tangible.RefObject;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_reduce;
@@ -12,8 +12,8 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.gm_add_symbol;
+import common.gm_method_id;
 import common.gm_transform_helper;
-import common.gm_method_id_t;
 
 import frontend.gm_symtab_entry;
 
@@ -26,7 +26,7 @@ public class gm_syntax_sugar2 {
 
 	// ====================================================================
 	// static functions in this file
-	public static gm_symtab_entry insert_def_and_init_before(String vname, GMTYPE_T prim_type, ast_sent curr, ast_expr default_val) {
+	public static gm_symtab_entry insert_def_and_init_before(String vname, gm_type prim_type, ast_sent curr, ast_expr default_val) {
 		// -------------------------------------------------------------
 		// assumption:
 		// A. vname does not conflict upward or downward
@@ -53,7 +53,7 @@ public class gm_syntax_sugar2 {
 			// prinf("def_val = %p, new_id = %p\n", default_val, new_id);
 			// assert(gm_is_compatible_type_for_assign(prim_type,
 			// default_val->get_type_summary()));
-			ast_assign init_a = ast_assign.new_assign_scala(e.getId().copy(true), default_val, gm_assignment_t.GMASSIGN_NORMAL);
+			ast_assign init_a = ast_assign.new_assign_scala(e.getId().copy(true), default_val, gm_assignment.GMASSIGN_NORMAL);
 			gm_transform_helper.gm_add_sent_before(curr, init_a);
 		}
 
@@ -72,25 +72,25 @@ public class gm_syntax_sugar2 {
 	public static String OPT_SYM_NESTED_REDUCTION_BOUND = "OPT_SYM_NESTED_REDUCTION_BOUND";
 	public static String OPT_SB_NESTED_REDUCTION_SCOPE = "OPT_SB_NESTED_REDUCTION_SCOPE";
 
-	public static gm_method_id_t find_count_function(GMTYPE_T source_type, GMTYPE_T iter_type) {
+	public static gm_method_id find_count_function(gm_type source_type, gm_type iter_type) {
 		if (source_type.is_graph_type()) {
 			if (iter_type.is_all_graph_node_iter_type()) {
-				return gm_method_id_t.GM_BLTIN_GRAPH_NUM_NODES;
+				return gm_method_id.GM_BLTIN_GRAPH_NUM_NODES;
 			} else if (iter_type.is_all_graph_node_iter_type()) {
-				return gm_method_id_t.GM_BLTIN_GRAPH_NUM_EDGES;
+				return gm_method_id.GM_BLTIN_GRAPH_NUM_EDGES;
 			}
 		} else if (source_type.is_node_compatible_type()) {
-			if (iter_type == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS) {
-				return gm_method_id_t.GM_BLTIN_NODE_IN_DEGREE;
-			} else if (iter_type == GMTYPE_T.GMTYPE_NODEITER_NBRS) {
-				return gm_method_id_t.GM_BLTIN_NODE_DEGREE;
+			if (iter_type == gm_type.GMTYPE_NODEITER_IN_NBRS) {
+				return gm_method_id.GM_BLTIN_NODE_IN_DEGREE;
+			} else if (iter_type == gm_type.GMTYPE_NODEITER_NBRS) {
+				return gm_method_id.GM_BLTIN_NODE_DEGREE;
 			}
 		} else if (source_type.is_collection_type()) {
 			if (iter_type.is_collection_iter_type())
-				return gm_method_id_t.GM_BLTIN_SET_SIZE;
+				return gm_method_id.GM_BLTIN_SET_SIZE;
 		}
 
-		return gm_method_id_t.GM_BLTIN_END;
+		return gm_method_id.GM_BLTIN_END;
 	}
 
 	// ------------------------------------------------------------------------------
@@ -133,28 +133,28 @@ public class gm_syntax_sugar2 {
 	// _S0 += c; @x
 	// }
 
-	public static boolean check_is_reduce_op(GM_REDUCE_T rtype, GM_OPS_T op) {
-		if ((rtype == GM_REDUCE_T.GMREDUCE_PLUS) && (op == GM_OPS_T.GMOP_ADD))
+	public static boolean check_is_reduce_op(gm_reduce rtype, gm_ops op) {
+		if ((rtype == gm_reduce.GMREDUCE_PLUS) && (op == gm_ops.GMOP_ADD))
 			return true;
-		else if ((rtype == GM_REDUCE_T.GMREDUCE_MULT) && (op == GM_OPS_T.GMOP_MULT))
+		else if ((rtype == gm_reduce.GMREDUCE_MULT) && (op == gm_ops.GMOP_MULT))
 			return true;
-		else if ((rtype == GM_REDUCE_T.GMREDUCE_MIN) && (op == GM_OPS_T.GMOP_MIN))
+		else if ((rtype == gm_reduce.GMREDUCE_MIN) && (op == gm_ops.GMOP_MIN))
 			return true;
-		else if ((rtype == GM_REDUCE_T.GMREDUCE_MAX) && (op == GM_OPS_T.GMOP_MAX))
+		else if ((rtype == gm_reduce.GMREDUCE_MAX) && (op == gm_ops.GMOP_MAX))
 			return true;
-		else if ((rtype == GM_REDUCE_T.GMREDUCE_OR) && (op == GM_OPS_T.GMOP_OR))
+		else if ((rtype == gm_reduce.GMREDUCE_OR) && (op == gm_ops.GMOP_OR))
 			return true;
-		else if ((rtype == GM_REDUCE_T.GMREDUCE_AND) && (op == GM_OPS_T.GMOP_AND))
+		else if ((rtype == gm_reduce.GMREDUCE_AND) && (op == gm_ops.GMOP_AND))
 			return true;
 		return false;
 	}
 
-	public static boolean check_has_nested(ast_expr body, GM_REDUCE_T rtype, RefObject<Boolean> has_other_rhs, RefObject<ast_expr_reduce> b1_ref,
+	public static boolean check_has_nested(ast_expr body, gm_reduce rtype, RefObject<Boolean> has_other_rhs, RefObject<ast_expr_reduce> b1_ref,
 			RefObject<ast_expr_reduce> b2_ref) {
 		ast_expr_reduce b1 = null;
 		ast_expr_reduce b2 = null;
 		try {
-			if (rtype == GM_REDUCE_T.GMREDUCE_AVG)
+			if (rtype == gm_reduce.GMREDUCE_AVG)
 				return false;
 
 			// ---------------------------------
@@ -171,7 +171,7 @@ public class gm_syntax_sugar2 {
 				b1 = (ast_expr_reduce) body;
 				return true;
 			} else if (body.is_biop()) {
-				GM_OPS_T op = body.get_optype();
+				gm_ops op = body.get_optype();
 				if (gm_syntax_sugar2.check_is_reduce_op(rtype, op)) {
 					// check each argument
 					if (((body.get_left_op()).is_reduction() && (((ast_expr_reduce) (body.get_left_op())).get_reduce_type() == rtype))) {

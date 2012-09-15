@@ -21,8 +21,8 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.gm_add_symbol;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
 
 import frontend.gm_symtab_entry;
 
@@ -43,7 +43,7 @@ public class gps_check_random_access_t2 extends gm_apply {
 		gm_symtab_entry sym = i.getSymInfo();
 
 		if (sym.getType().is_node()
-				&& (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue())) {
+				&& (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue())) {
 			// redefined;
 			if (is_defined(sym)) {
 				gm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_REDEF, i.get_line(), i.get_col());
@@ -64,8 +64,8 @@ public class gps_check_random_access_t2 extends gm_apply {
 			if (sym.find_info_bool(GPS_FLAG_IS_INNER_LOOP)
 					|| sym.find_info_bool(GPS_FLAG_IS_OUTER_LOOP)) {
 				// non random write
-			} else if (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue()) {
-				if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue()) {
+			} else if (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue()) {
+				if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue()) {
 					_error = true;
 					gm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_USE_SCOPE, f.get_line(), f.get_col());
 				} else if (check_if_met_conditional_before(s, sym)) {

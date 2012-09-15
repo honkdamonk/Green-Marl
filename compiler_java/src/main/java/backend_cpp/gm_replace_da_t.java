@@ -1,15 +1,16 @@
 package backend_cpp;
 
-import ast.ast_node_type;
+import inc.gm_assignment;
+import inc.gm_reduce;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
-import frontend.gm_symtab_entry;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
 
 import common.gm_apply;
+
+import frontend.gm_symtab_entry;
 
 //---------------------------------------------------
 // replace  a.X <= <expr> 
@@ -36,8 +37,8 @@ class gm_replace_da_t extends gm_apply {
 
 					ast_id bound = a.get_bound();
 					a.set_bound(null);
-					a.set_assign_type(gm_assignment_t.GMASSIGN_NORMAL);
-					a.set_reduce_type(GM_REDUCE_T.GMREDUCE_NULL);
+					a.set_assign_type(gm_assignment.GMASSIGN_NORMAL);
+					a.set_reduce_type(gm_reduce.GMREDUCE_NULL);
 					if (bound != null)
 						bound.dispose();
 				}

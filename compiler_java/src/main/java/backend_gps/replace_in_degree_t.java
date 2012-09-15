@@ -4,10 +4,11 @@ import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_field;
 import ast.ast_id;
-import frontend.gm_symtab_entry;
 
 import common.gm_expr_replacement_t;
-import common.gm_method_id_t;
+import common.gm_method_id;
+
+import frontend.gm_symtab_entry;
 
 public class replace_in_degree_t extends gm_expr_replacement_t
 {
@@ -17,7 +18,7 @@ public class replace_in_degree_t extends gm_expr_replacement_t
 		if (e.is_builtin())
 		{
 			ast_expr_builtin b = (ast_expr_builtin) e;
-			if (b.get_builtin_def().get_method_id() == gm_method_id_t.GM_BLTIN_NODE_IN_DEGREE)
+			if (b.get_builtin_def().get_method_id() == gm_method_id.GM_BLTIN_NODE_IN_DEGREE)
 			{
 				return true;
 			}

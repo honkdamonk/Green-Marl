@@ -1,6 +1,6 @@
 package inc;
 
-public enum GM_REDUCE_T {
+public enum gm_reduce {
 
 	GMREDUCE_INVALID, //
 	GMREDUCE_PLUS, //
@@ -37,7 +37,7 @@ public enum GM_REDUCE_T {
 				: (this == GMREDUCE_AND) ? "&=" : (this == GMREDUCE_OR) ? "|=" : (this == GMREDUCE_DEFER) ? "<=" : "??";
 	}
 
-	public String get_reduce_base_value(GMTYPE_T gm_type) {
+	public String get_reduce_base_value(gm_type gm_type) {
 		switch (this) {
 		case GMREDUCE_PLUS:
 			return "0";

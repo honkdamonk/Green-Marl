@@ -1,6 +1,6 @@
 package opt;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
@@ -41,7 +41,7 @@ public class gm_flip_find_candidate extends gm_apply {
 				return true;
 
 			if (avoid_reverse) {
-				if (in.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS) {
+				if (in.get_iter_type() == gm_type.GMTYPE_NODEITER_IN_NBRS) {
 					target.addLast(fe);
 					return true; // do ont push it twice
 				}

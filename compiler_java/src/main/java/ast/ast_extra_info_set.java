@@ -15,7 +15,7 @@ public class ast_extra_info_set extends ast_extra_info {
 		return null;
 	}
 
-	public final java.util.HashSet<Object> get_set() {
+	public final HashSet<Object> get_set() {
 		return set;
 	}
 }

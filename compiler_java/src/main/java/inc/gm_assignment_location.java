@@ -1,6 +1,6 @@
 package inc;
 
-public enum gm_assignment_location_t {
+public enum gm_assignment_location {
 	
 	GMASSIGN_LHS_SCALA, //
 	GMASSIGN_LHS_FIELD, //
@@ -11,7 +11,7 @@ public enum gm_assignment_location_t {
 		return this.ordinal();
 	}
 
-	public static gm_assignment_location_t forValue(int value) {
+	public static gm_assignment_location forValue(int value) {
 		return values()[value];
 	}
 }

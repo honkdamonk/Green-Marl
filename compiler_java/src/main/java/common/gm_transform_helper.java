@@ -1,5 +1,7 @@
 package common;
 
+import java.util.LinkedList;
+
 import tangible.RefObject;
 import ast.ast_node_type;
 import ast.ast_bfs;
@@ -76,7 +78,7 @@ public class gm_transform_helper {
 			gm_transform_helper.gm_ripoff_upper_scope(target);
 		}
 
-		java.util.LinkedList<ast_sent> sents = sb.get_sents();
+		LinkedList<ast_sent> sents = sb.get_sents();
 
 		target.set_parent(null);
 
@@ -92,7 +94,7 @@ public class gm_transform_helper {
 	}
 
 	public static void gm_add_sent_begin(ast_sent current, ast_sent target, boolean need_fix_symtab) {
-		gm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_BEGIN, need_fix_symtab);
+		gm_transform_helper.gm_add_sent(current, target, gm_insert_location.GM_INSERT_BEGIN, need_fix_symtab);
 	}
 
 	public static void gm_add_sent_end(ast_sent current, ast_sent target) {
@@ -100,7 +102,7 @@ public class gm_transform_helper {
 	}
 
 	public static void gm_add_sent_end(ast_sent current, ast_sent target, boolean need_fix_symtab) {
-		gm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_BEGIN, need_fix_symtab);
+		gm_transform_helper.gm_add_sent(current, target, gm_insert_location.GM_INSERT_BEGIN, need_fix_symtab);
 	}
 
 
@@ -112,7 +114,7 @@ public class gm_transform_helper {
 	}
 
 	public static void gm_add_sent_before(ast_sent current, ast_sent target, boolean need_fix_symtab) {
-		gm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_BEFORE, need_fix_symtab);
+		gm_transform_helper.gm_add_sent(current, target, gm_insert_location.GM_INSERT_BEFORE, need_fix_symtab);
 	}
 
 	public static void gm_add_sent_after(ast_sent current, ast_sent target) {
@@ -120,7 +122,7 @@ public class gm_transform_helper {
 	}
 
 	public static void gm_add_sent_after(ast_sent current, ast_sent target, boolean need_fix_symtab) {
-		gm_transform_helper.gm_add_sent(current, target, gm_insert_location_t.GM_INSERT_AFTER, need_fix_symtab);
+		gm_transform_helper.gm_add_sent(current, target, gm_insert_location.GM_INSERT_AFTER, need_fix_symtab);
 	}
 
 	public static void gm_replace_sent(ast_sent current, ast_sent target) {
@@ -140,7 +142,7 @@ public class gm_transform_helper {
 	}
 
 	public static void gm_insert_sent_begin_of_sb(ast_sentblock sb, ast_sent target, boolean need_fix_symtab) {
-		gm_transform_helper.gm_insert_sent_in_sb(sb, target, gm_insert_location_t.GM_INSERT_BEGIN, need_fix_symtab);
+		gm_transform_helper.gm_insert_sent_in_sb(sb, target, gm_insert_location.GM_INSERT_BEGIN, need_fix_symtab);
 	}
 
 	public static void gm_insert_sent_end_of_sb(ast_sentblock sb, ast_sent target) {
@@ -148,7 +150,7 @@ public class gm_transform_helper {
 	}
 
 	public static void gm_insert_sent_end_of_sb(ast_sentblock sb, ast_sent target, boolean need_fix_symtab) {
-		gm_transform_helper.gm_insert_sent_in_sb(sb, target, gm_insert_location_t.GM_INSERT_END, need_fix_symtab);
+		gm_transform_helper.gm_insert_sent_in_sb(sb, target, gm_insert_location.GM_INSERT_END, need_fix_symtab);
 	}
 
 	public static void gm_insert_sent_body_begin(ast_foreach fe, ast_sent target) {
@@ -234,14 +236,14 @@ public class gm_transform_helper {
 	// ------------------------------------------------------------
 	// Is the sentence block empty? (nothing in there)
 	public static boolean gm_is_sentblock_empty(ast_sentblock sb) {
-		java.util.LinkedList<ast_sent> L = sb.get_sents();
+		LinkedList<ast_sent> L = sb.get_sents();
 		return (L.size() == 0);
 	}
 
 	// Is the sentence block trivial? (only one sentence, no definition)-- also
 	// returns the only sentence
 	public static boolean gm_is_sentblock_trivial(ast_sentblock sb, RefObject<ast_sent> s) {
-		java.util.LinkedList<ast_sent> L = sb.get_sents();
+		LinkedList<ast_sent> L = sb.get_sents();
 		if (L.size() != 1)
 			return false;
 
@@ -318,7 +320,7 @@ public class gm_transform_helper {
 
 	// remove set of symbols definitions in the given AST
 	// caller should make sure that deleted symbols are not used anymore
-	// void gm_remove_symbols(ast_node top, java.util.HashSet<gm_symtab_entry> S);
+	// void gm_remove_symbols(ast_node top, HashSet<gm_symtab_entry> S);
 	// void gm_remove_symbol(ast_node top, gm_symtab_entry sym);
 
 	// ------------------------------------------------------------
@@ -587,7 +589,7 @@ public class gm_transform_helper {
 			ast_sentblock old_sb = (ast_sentblock) up;
 
 			// replace old sentence (s) into new one (sb) in old sb
-			java.util.LinkedList<ast_sent> Sents = old_sb.get_sents();
+			LinkedList<ast_sent> Sents = old_sb.get_sents();
 			while (Sents.contains(s)) {
 				int index = Sents.indexOf(s);
 				Sents.set(index, sb);
@@ -613,11 +615,11 @@ public class gm_transform_helper {
 	// add target to the location, at the same level ast current
 	// [assert] target is already 'ripped off' correctly (i.e. has NULL enclosing scope)
 	// (i.e. the top-most symtab in the target subtree has no predecessor.)
-	public static void gm_add_sent(ast_sent current, ast_sent target, gm_insert_location_t gmInsertBegin) {
+	public static void gm_add_sent(ast_sent current, ast_sent target, gm_insert_location gmInsertBegin) {
 		gm_add_sent(current, target, gmInsertBegin, true);
 	}
 
-	public static void gm_add_sent(ast_sent current, ast_sent target, gm_insert_location_t gmInsertBegin, boolean need_fix_symtab) {
+	public static void gm_add_sent(ast_sent current, ast_sent target, gm_insert_location gmInsertBegin, boolean need_fix_symtab) {
 		// make sure that current belongs to a sent block
 		gm_transform_helper.gm_make_it_belong_to_sentblock(current, need_fix_symtab);
 
@@ -632,7 +634,7 @@ public class gm_transform_helper {
 			gm_transform_helper.gm_put_new_upper_scope_on_null(target, S);
 		}
 
-		java.util.LinkedList<ast_sent> sents = sb.get_sents();
+		LinkedList<ast_sent> sents = sb.get_sents();
 
 		target.set_parent(sb);
 		switch (gmInsertBegin) {
@@ -646,14 +648,14 @@ public class gm_transform_helper {
 		case GM_INSERT_AFTER:
 			// TODO not tested!
 			int i = sents.indexOf(current);
-			if (gmInsertBegin == gm_insert_location_t.GM_INSERT_AFTER)
+			if (gmInsertBegin == gm_insert_location.GM_INSERT_AFTER)
 				i++;
 			sents.add(i, target);
 			break;
 		}
 	}
 
-	public static void gm_insert_sent_in_sb(ast_sentblock sb, ast_sent target, gm_insert_location_t gmInsertBegin, boolean need_fix_symtab) {
+	public static void gm_insert_sent_in_sb(ast_sentblock sb, ast_sent target, gm_insert_location gmInsertBegin, boolean need_fix_symtab) {
 		// assumption: target has NULL enclosing scope
 		if (need_fix_symtab) {
 			gm_scope S = new gm_scope();
@@ -662,7 +664,7 @@ public class gm_transform_helper {
 			gm_transform_helper.gm_put_new_upper_scope_on_null(target, S);
 		}
 
-		java.util.LinkedList<ast_sent> sents = sb.get_sents();
+		LinkedList<ast_sent> sents = sb.get_sents();
 		target.set_parent(sb);
 		switch (gmInsertBegin) {
 		case GM_INSERT_BEGIN:

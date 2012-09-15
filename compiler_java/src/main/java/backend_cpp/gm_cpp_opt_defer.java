@@ -1,27 +1,26 @@
 package backend_cpp;
 
+import frontend.gm_range_type;
 import frontend.gm_rw_analysis;
 import frontend.gm_rw_analysis_check2;
-import frontend.gm_range_type_t;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
 import inc.gm_compile_step;
+import inc.gm_type;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_if;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -35,7 +34,7 @@ import common.gm_new_sents_after_tc;
 import common.gm_transform_helper;
 
 public class gm_cpp_opt_defer extends gm_compile_step {
-	
+
 	private gm_cpp_opt_defer() {
 		set_description("Handle deferred writes");
 	}
@@ -45,7 +44,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		LinkedList<gm_symtab_entry> S = new LinkedList<gm_symtab_entry>();
 		LinkedList<ast_foreach> F = new LinkedList<ast_foreach>();
 		// return found defer
-		boolean b = find_deferred_writes(proc, S, F); 
+		boolean b = find_deferred_writes(proc, S, F);
 		if (b) {
 			post_process_deferred_writes(S, F);
 			gm_rw_analysis.gm_redo_rw_analysis(proc.get_body());
@@ -71,12 +70,10 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 	}
 
 	/**
-	* process deferred writes in following ways.
-	* <li>add symbol-def for A_new
-	* <li>add initializer<br>
-	* (apply optimization: conditional initializer)
-	* <li>add updater
-	*/
+	 * process deferred writes in following ways. <li>add symbol-def for A_new
+	 * <li>add initializer<br>
+	 * (apply optimization: conditional initializer) <li>add updater
+	 */
 	private static void post_process_deferred_writes(LinkedList<gm_symtab_entry> target_syms, LinkedList<ast_foreach> target_foreach) {
 		assert target_syms.size() == target_foreach.size();
 		Iterator<gm_symtab_entry> i = target_syms.iterator();
@@ -97,7 +94,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 			// [todo] check name conflict
 			// ---------------------------------------
 			boolean is_nodeprop = type.is_node_property();
-			GMTYPE_T target_type = type.getTargetTypeSummary();
+			gm_type target_type = type.getTargetTypeSummary();
 			assert target_type.is_prim_type();
 			ast_sentblock scope = gm_add_symbol.gm_find_upscope(fe);
 			gm_symtab_entry target_graph = type.get_target_graph_sym();
@@ -124,7 +121,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 				assert W.containsKey(old_dest);
 				gm_rwinfo_list L = W.get(old_dest);
 				for (gm_rwinfo info : L) {
-					if ((info.access_range == gm_range_type_t.GM_RANGE_LINEAR) && (info.always)) {
+					if ((info.access_range == gm_range_type.GM_RANGE_LINEAR) && (info.always)) {
 						need_initializer = false;
 						break;
 					}
@@ -233,7 +230,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// --------------------------------------------
 		upup.get_symtab_var(); // to assert it has scope
 		String flag_name = gm_main.FE.voca_temp_name_and_add("is_first");
-		gm_symtab_entry flag_sym = gm_add_symbol.gm_add_new_symbol_primtype(upup, GMTYPE_T.GMTYPE_BOOL, flag_name); // symbol
+		gm_symtab_entry flag_sym = gm_add_symbol.gm_add_new_symbol_primtype(upup, gm_type.GMTYPE_BOOL, flag_name); // symbol
 		ast_id lhs = flag_sym.getId().copy(true);
 		ast_expr rhs = ast_expr.new_bval_expr(true);
 		ast_assign a_init = ast_assign.new_assign_scala(lhs, rhs); // "is_first = true"
@@ -297,7 +294,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// ------------------------------
 		String iter_name = gm_main.FE.voca_temp_name_and_add("i");
 		ast_id itor = ast_id.new_id(iter_name, 0, 0);
-		GMTYPE_T iter_type = is_nodeprop ? GMTYPE_T.GMTYPE_NODEITER_ALL : GMTYPE_T.GMTYPE_EDGEITER_ALL;
+		gm_type iter_type = is_nodeprop ? gm_type.GMTYPE_NODEITER_ALL : gm_type.GMTYPE_EDGEITER_ALL;
 		ast_foreach fe = gm_new_sents_after_tc.gm_new_foreach_after_tc(itor, src, a, iter_type);
 		assert itor.getSymInfo() != null;
 		iter_name = null;
@@ -336,7 +333,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// move up one level
 		return check_if_modified_elsewhere(e, up, seq_loop);
 	}
-	
+
 	private static boolean is_modified(ast_sent S, gm_symtab_entry e) {
 
 		gm_rwinfo_map W = gm_rw_analysis_check2.gm_get_write_set(S);

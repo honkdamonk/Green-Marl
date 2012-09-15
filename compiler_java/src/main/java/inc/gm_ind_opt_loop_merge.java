@@ -1,7 +1,7 @@
 package inc;
 
-import ast.ast_procdef;
 import opt.gm_merge_loop_t;
+import ast.ast_procdef;
 import frontend.gm_rw_analysis;
 
 public class gm_ind_opt_loop_merge extends gm_compile_step

@@ -21,8 +21,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
-import common.gm_traverse;
 import common.gm_apply;
+import common.gm_traverse;
 
 public abstract class ast_node {
 	

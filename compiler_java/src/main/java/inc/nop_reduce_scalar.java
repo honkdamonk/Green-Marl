@@ -18,7 +18,7 @@ public class nop_reduce_scalar extends ast_nop {
 
 	private List<gm_symtab_entry> old_s = new LinkedList<gm_symtab_entry>();
 	private List<gm_symtab_entry> new_s = new LinkedList<gm_symtab_entry>();
-	private List<GM_REDUCE_T> reduce_op = new LinkedList<GM_REDUCE_T>();
+	private List<gm_reduce> reduce_op = new LinkedList<gm_reduce>();
 	// supplimental lhs for argmin/argmax
 	private List<LinkedList<gm_symtab_entry>> old_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
 	private List<LinkedList<gm_symtab_entry>> new_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
@@ -27,7 +27,7 @@ public class nop_reduce_scalar extends ast_nop {
 		super(nop_enum_cpp.NOP_REDUCE_SCALAR);
 	}
 
-	public void set_symbols(List<gm_symtab_entry> O, List<gm_symtab_entry> N, List<GM_REDUCE_T> R, List<LinkedList<gm_symtab_entry>> O_S,
+	public void set_symbols(List<gm_symtab_entry> O, List<gm_symtab_entry> N, List<gm_reduce> R, List<LinkedList<gm_symtab_entry>> O_S,
 			List<LinkedList<gm_symtab_entry>> N_S) {
 		// shallow copy the whole list
 		old_s = O;
@@ -76,7 +76,7 @@ public class nop_reduce_scalar extends ast_nop {
 		for (int i = 0; i < old_s.size(); i++) {
 			gm_symtab_entry old_sym = old_s.get(i);
 			gm_symtab_entry new_sym = new_s.get(i);
-			GM_REDUCE_T r_type = reduce_op.get(i);
+			gm_reduce r_type = reduce_op.get(i);
 			// supple old
 			LinkedList<gm_symtab_entry> OLD_LIST = old_supple.get(0);
 			// supple new
@@ -86,7 +86,7 @@ public class nop_reduce_scalar extends ast_nop {
 			ast_id rhs_s = new_sym.getId().copy(true);
 			ast_expr rhs = ast_expr.new_id_expr(rhs_s);
 
-			ast_assign new_assign = ast_assign.new_assign_scala(lhs, rhs, gm_assignment_t.GMASSIGN_REDUCE, null, r_type);
+			ast_assign new_assign = ast_assign.new_assign_scala(lhs, rhs, gm_assignment.GMASSIGN_REDUCE, null, r_type);
 
 			if (OLD_LIST.size() > 0) {
 				assert OLD_LIST.size() == NEW_LIST.size();

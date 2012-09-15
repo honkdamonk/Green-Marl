@@ -1,9 +1,10 @@
 package backend_gps;
 
 import ast.ast_expr;
-import frontend.gm_symtab_entry;
 
 import common.gm_expr_replacement_t;
+
+import frontend.gm_symtab_entry;
 
 public class gm_replace_simple_props_t extends gm_expr_replacement_t
 {

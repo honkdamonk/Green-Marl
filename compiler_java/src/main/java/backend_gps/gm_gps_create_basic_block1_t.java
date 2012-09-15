@@ -6,18 +6,18 @@ import static backend_gps.GPSConstants.GPS_FLAG_WHILE_TAIL;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_if;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_while;
 
 import common.gm_apply;
 
 public class gm_gps_create_basic_block1_t extends gm_apply {
-	
+
 	private final HashMap<ast_sent, gm_gps_basic_block> prev_map = new HashMap<ast_sent, gm_gps_basic_block>();
 	private final HashMap<ast_sent, gm_gps_basic_block> next_map = new HashMap<ast_sent, gm_gps_basic_block>();
-	private HashMap<ast_sent, gps_gps_sentence_t> s_mark;
+	private HashMap<ast_sent, gps_gps_sentence> s_mark;
 
 	private gm_gps_basic_block prev;
 	private gm_gps_basic_block entry;
@@ -30,8 +30,8 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 	private boolean already_added = false;
 	private int added_depth = 0;
 	private gm_gps_beinfo gen;
-	
-	public gm_gps_create_basic_block1_t(HashMap<ast_sent, gps_gps_sentence_t> s, gm_gps_beinfo _gen) {
+
+	public gm_gps_create_basic_block1_t(HashMap<ast_sent, gps_gps_sentence> s, gm_gps_beinfo _gen) {
 		s_mark = s;
 		gen = _gen;
 		entry = prev = newBB(); // entry
@@ -39,7 +39,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 
 		entry.add_exit(exit);
 	}
-	
+
 	@Override
 	public boolean apply(ast_sent s) {
 		if (already_added) {
@@ -62,7 +62,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 		 */
 		assert (s_mark.containsKey(s));
 
-		if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_SEQ)) {
+		if ((s_mark.get(s) == gps_gps_sentence.GPS_TYPE_SEQ)) {
 			// add this sentence to the basic block
 			prev.add_sent(s);
 			already_added = true;
@@ -70,8 +70,8 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 			return true;
 		}
 
-		else if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_BEGIN_VERTEX)) {
-			gm_gps_basic_block bb1 = newBB(gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX);
+		else if ((s_mark.get(s) == gps_gps_sentence.GPS_TYPE_BEGIN_VERTEX)) {
+			gm_gps_basic_block bb1 = newBB(gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX);
 			gm_gps_basic_block bb2 = newBB();
 			bb1.add_exit(bb2);
 			insert_between_prev_next(bb1, bb2);
@@ -84,7 +84,8 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 			return true;
 		}
 
-		else if ((s_mark.get(s) == gps_gps_sentence_t.GPS_TYPE_CANBE_VERTEX)) {
+		else if ((s_mark.get(s) == gps_gps_sentence.GPS_TYPE_CANBE_VERTEX)) {
+
 			if (s.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 				// do nothing but recurse
 			} else if (s.get_nodetype() == ast_node_type.AST_IF) {
@@ -92,7 +93,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 				boolean has_else = (i.get_else() != null);
 
 				// create new basic blocks
-				gm_gps_basic_block cond = newBB(gm_gps_bbtype_t.GM_GPS_BBTYPE_IF_COND);
+				gm_gps_basic_block cond = newBB(gm_gps_bbtype.GM_GPS_BBTYPE_IF_COND);
 				gm_gps_basic_block fin = newBB();
 
 				insert_between_prev_next(cond, fin);
@@ -128,7 +129,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 				ast_while w = (ast_while) s;
 
 				// create new basic blocks
-				gm_gps_basic_block cond = newBB(gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND);
+				gm_gps_basic_block cond = newBB(gm_gps_bbtype.GM_GPS_BBTYPE_WHILE_COND);
 				cond.add_sent(w);
 
 				gm_gps_basic_block body_begin = newBB();
@@ -226,10 +227,10 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 	}
 
 	private gm_gps_basic_block newBB() {
-		return newBB(gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ);
+		return newBB(gm_gps_bbtype.GM_GPS_BBTYPE_SEQ);
 	}
 
-	private gm_gps_basic_block newBB(gm_gps_bbtype_t gmGpsBbtypeSeq) {
+	private gm_gps_basic_block newBB(gm_gps_bbtype gmGpsBbtypeSeq) {
 		assert gen != null;
 		gm_gps_basic_block bb = new gm_gps_basic_block(gen.issue_basicblock_id(), gmGpsBbtypeSeq);
 		return bb;

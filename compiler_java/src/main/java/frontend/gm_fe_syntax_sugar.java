@@ -1,8 +1,9 @@
 package frontend;
 
+import inc.gm_compile_step;
+
 import java.util.LinkedList;
 
-import inc.gm_compile_step;
 import ast.ast_argdecl;
 import ast.ast_id;
 import ast.ast_idlist;

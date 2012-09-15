@@ -7,7 +7,7 @@ import ast.ast_foreach;
 import ast.ast_sent;
 
 import common.gm_apply;
-import common.gm_method_id_t;
+import common.gm_method_id;
 
 import frontend.gm_symtab_entry;
 
@@ -39,7 +39,7 @@ public class gps_check_reverse_edge_t extends gm_apply
 		if (e.is_builtin())
 		{
 			ast_expr_builtin b = (ast_expr_builtin) e;
-			if (b.get_builtin_def().get_method_id() == gm_method_id_t.GM_BLTIN_NODE_IN_DEGREE)
+			if (b.get_builtin_def().get_method_id() == gm_method_id.GM_BLTIN_NODE_IN_DEGREE)
 			{
 				target_graph = b.get_driver().getTypeInfo().get_target_graph_sym();
 				r_degree = true;

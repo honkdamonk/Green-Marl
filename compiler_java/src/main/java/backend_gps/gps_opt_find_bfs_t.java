@@ -1,7 +1,7 @@
 package backend_gps;
 
 import static backend_gps.GPSConstants.GPS_FLAG_HAS_DOWN_NBRS;
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
@@ -37,7 +37,7 @@ public class gps_opt_find_bfs_t extends gm_apply {
 		else if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (in_bfs) {
-				GMTYPE_T itt = fe.get_iter_type();
+				gm_type itt = fe.get_iter_type();
 				if (itt.is_iteration_on_down_neighbors()) {
 					// check if this is forward bfs
 					ast_node current = fe;

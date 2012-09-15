@@ -1,7 +1,7 @@
 package ast;
 
-import static inc.GMTYPE_T.GMTYPE_MAP;
-import inc.GMTYPE_T;
+import static inc.gm_type.GMTYPE_MAP;
+import inc.gm_type;
 
 public class ast_maptypedecl extends ast_typedecl {
 
@@ -58,21 +58,21 @@ public class ast_maptypedecl extends ast_typedecl {
 	}
 
 	@Override
-	public GMTYPE_T get_typeid() {
+	public gm_type get_typeid() {
 		return GMTYPE_MAP;
 	}
 
 	@Override
-	public GMTYPE_T getTypeSummary() {
+	public gm_type getTypeSummary() {
 		return get_typeid();
 	}
 
-	public GMTYPE_T getKeyTypeSummary() {
+	public gm_type getKeyTypeSummary() {
 		assert (keyType != null);
 		return keyType.getTypeSummary();
 	}
 
-	public GMTYPE_T getValueTypeSummary() {
+	public gm_type getValueTypeSummary() {
 		assert (valueType != null);
 		return valueType.getTypeSummary();
 	}

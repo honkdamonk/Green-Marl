@@ -2,10 +2,10 @@ package tangible;
 
 import frontend.gm_rwinfo;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
+import inc.gm_type;
+import inc.gm_ops;
+import inc.gm_reduce;
+import inc.gm_assignment;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;
@@ -36,16 +36,16 @@ public class ProbablyUnused {
 		ast_expr new_rhs = null;
 		switch (a.get_reduce_type()) {
 		case GMREDUCE_PLUS:
-			new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_ADD, base, org_rhs);
+			new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_ADD, base, org_rhs);
 			break;
 		case GMREDUCE_MULT:
-			new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_MULT, base, org_rhs);
+			new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_MULT, base, org_rhs);
 			break;
 		case GMREDUCE_MIN:
-			new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_MIN, base, org_rhs);
+			new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_MIN, base, org_rhs);
 			break;
 		case GMREDUCE_MAX:
-			new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_MAX, base, org_rhs);
+			new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_MAX, base, org_rhs);
 			break;
 		default:
 			assert false;
@@ -53,8 +53,8 @@ public class ProbablyUnused {
 		}
 
 		a.set_rhs(new_rhs);
-		a.set_assign_type(gm_assignment_t.GMASSIGN_NORMAL);
-		a.set_reduce_type(GM_REDUCE_T.GMREDUCE_NULL);
+		a.set_assign_type(gm_assignment.GMASSIGN_NORMAL);
+		a.set_reduce_type(gm_reduce.GMREDUCE_NULL);
 		ast_id old_iter = a.get_bound(); // assert(old_iter != NULL);
 		a.set_bound(null);
 		if (old_iter != null)
@@ -65,13 +65,13 @@ public class ProbablyUnused {
 	// From gm_typecheck
 	// ----------------------------------------------------------------------------------------------------------------
 	/** check the byte size of two numeric type */
-	public static int gm_compare_numeric_type_size(GMTYPE_T t1, GMTYPE_T t2) {
+	public static int gm_compare_numeric_type_size(gm_type t1, gm_type t2) {
 		// GMTYPE_... is defined as small to larger
 		return t1.subtract(t2); // +:t1 > t2 , 0:t2==t2, -:t1 < t2
 	}
 
 	/** check the size (in Bytes) of two numeric types */
-	public static GMTYPE_T gm_get_larger_type(GMTYPE_T t1, GMTYPE_T t2) {
+	public static gm_type gm_get_larger_type(gm_type t1, gm_type t2) {
 		if (gm_compare_numeric_type_size(t1, t2) > 0)
 			return t1;
 		else
@@ -79,7 +79,7 @@ public class ProbablyUnused {
 	}
 
 	/** determine resulting type of numeric operation A (+,-,*,/) B */
-	public static GMTYPE_T gm_determine_result_type(GMTYPE_T t1, GMTYPE_T t2) {
+	public static gm_type gm_determine_result_type(gm_type t1, gm_type t2) {
 		// assumption. t1/t2 is compatible
 		if (t1 == t2)
 			return t1;
@@ -100,7 +100,7 @@ public class ProbablyUnused {
 			return t1;
 		else {
 			assert false;
-			return GMTYPE_T.GMTYPE_INVALID;
+			return gm_type.GMTYPE_INVALID;
 		}
 	}
 

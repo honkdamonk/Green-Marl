@@ -6,7 +6,7 @@ package frontend;
 // assumption: target graph check is separately done.
 // assumption: write-protection check is separately done. (i.e. preventing write to node iterator)
 //-----------------------------------------------------------
-public enum gm_type_compatible_t {
+public enum gm_type_compatible {
 	FOR_ASSIGN, //
 	FOR_EQ, //
 	FOR_LESS, //

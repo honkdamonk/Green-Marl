@@ -13,11 +13,11 @@ import ast.ast_id;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
-import common.gm_main;
-import common.gm_transform_helper;
 import common.gm_apply;
 import common.gm_builtin_def;
-import common.gm_method_id_t;
+import common.gm_main;
+import common.gm_method_id;
+import common.gm_transform_helper;
 
 import frontend.gm_symtab_entry;
 
@@ -62,7 +62,7 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 	public final void post_process() {
 		Iterator<ast_sent> I = L1.iterator();
 		Iterator<gm_symtab_entry> J = L2.iterator();
-		HashMap<Pair<ast_sentblock, gm_method_id_t>, gm_symtab_entry> already_defined_map = new HashMap<Pair<ast_sentblock, gm_method_id_t>, gm_symtab_entry>();
+		HashMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry> already_defined_map = new HashMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry>();
 		HashMap<ast_sentblock, gm_symtab_entry> sent_block_driver_map = new HashMap<ast_sentblock, gm_symtab_entry>(); // sentblock
 																														// <->
 		while (I.hasNext()) { // driver
@@ -82,9 +82,9 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 			gm_gps_opt_simplify_expr1.replace_built_in(s, drv, sb, already_defined_map);
 		}
 
-		for (Pair<ast_sentblock, gm_method_id_t> key : already_defined_map.keySet()) {
+		for (Pair<ast_sentblock, gm_method_id> key : already_defined_map.keySet()) {
 			ast_sentblock sb = key.first;
-			gm_method_id_t method_id = key.second;
+			gm_method_id method_id = key.second;
 			gm_symtab_entry target = already_defined_map.get(key);
 
 			gm_symtab_entry drv = sent_block_driver_map.get(sb);

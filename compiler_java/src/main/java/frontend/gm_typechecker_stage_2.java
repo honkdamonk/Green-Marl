@@ -1,21 +1,24 @@
 package frontend;
 
-import inc.GMTYPE_T;
-import ast.ast_node_type;
+import inc.gm_type;
+
+import java.util.LinkedList;
+
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_builtin_field;
 import ast.ast_field;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_typedecl;
 
-import common.gm_errors_and_warnings;
-import common.gm_error;
-import common.gm_main;
 import common.gm_apply;
 import common.gm_builtin_def;
+import common.gm_error;
+import common.gm_errors_and_warnings;
+import common.gm_main;
 
 //----------------------------------------------------------------
 // Type-Check Step 2:
@@ -103,9 +106,9 @@ public class gm_typechecker_stage_2 extends gm_apply {
 				ast_id id = e.get_id();
 				if (id.getSymInfo() == _group_sym) {
 					if (_is_group_assignment_node_prop)
-						e.set_alternative_type(GMTYPE_T.GMTYPE_NODE);
+						e.set_alternative_type(gm_type.GMTYPE_NODE);
 					else
-						e.set_alternative_type(GMTYPE_T.GMTYPE_EDGE);
+						e.set_alternative_type(gm_type.GMTYPE_EDGE);
 				}
 			}
 			break;
@@ -143,19 +146,19 @@ public class gm_typechecker_stage_2 extends gm_apply {
 	}
 
 	private boolean apply_on_builtin(ast_expr_builtin builtinExpr) {
-		GMTYPE_T sourceType = builtinExpr.get_source_type();
+		gm_type sourceType = builtinExpr.get_source_type();
 		switch (sourceType) {
 		case GMTYPE_PROPERTYITER_SET:
 		case GMTYPE_COLLECTIONITER_SET:
-			sourceType = GMTYPE_T.GMTYPE_NSET;
+			sourceType = gm_type.GMTYPE_NSET;
 			break;
 		case GMTYPE_PROPERTYITER_SEQ:
 		case GMTYPE_COLLECTIONITER_SEQ:
-			sourceType = GMTYPE_T.GMTYPE_NSEQ;
+			sourceType = gm_type.GMTYPE_NSEQ;
 			break;
 		case GMTYPE_PROPERTYITER_ORDER:
 		case GMTYPE_COLLECTIONITER_ORDER:
-			sourceType = GMTYPE_T.GMTYPE_NORDER;
+			sourceType = gm_type.GMTYPE_NORDER;
 			break;
 		default:
 			break;
@@ -163,16 +166,16 @@ public class gm_typechecker_stage_2 extends gm_apply {
 		return set_and_check_builtin_definition(builtinExpr, sourceType);
 	}
 
-	private boolean set_and_check_builtin_definition(ast_expr_builtin builtinExpr, GMTYPE_T sourceType) {
+	private boolean set_and_check_builtin_definition(ast_expr_builtin builtinExpr, gm_type sourceType) {
 
 		gm_builtin_def builtinDef = gm_main.BUILT_IN.find_builtin_def(sourceType, builtinExpr.get_callname());
 
 		if (builtinDef == null) {
 			if (_is_group_assignment && (sourceType.is_graph_type() || sourceType.is_collection_type())) {
 				if (_is_group_assignment_node_prop)
-					sourceType = GMTYPE_T.GMTYPE_NODE;
+					sourceType = gm_type.GMTYPE_NODE;
 				else
-					sourceType = GMTYPE_T.GMTYPE_EDGE;
+					sourceType = gm_type.GMTYPE_EDGE;
 
 				builtinDef = gm_main.BUILT_IN.find_builtin_def(sourceType, builtinExpr.get_callname());
 			}
@@ -186,7 +189,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 		builtinExpr.set_builtin_def(builtinDef);
 
 		if (isOkay) {
-			java.util.LinkedList<ast_expr> arguments = builtinExpr.get_args();
+			LinkedList<ast_expr> arguments = builtinExpr.get_args();
 
 			int argCount = arguments.size();
 			if (argCount != builtinDef.get_num_args()) {

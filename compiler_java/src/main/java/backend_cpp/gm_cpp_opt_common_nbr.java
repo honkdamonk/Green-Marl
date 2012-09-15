@@ -1,16 +1,19 @@
 package backend_cpp;
 
-import tangible.RefObject;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
+import inc.gm_type;
+import inc.gm_ops;
 import inc.gm_compile_step;
+
+import java.util.LinkedList;
+
+import tangible.RefObject;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_id;
 import ast.ast_procdef;
 
-import common.gm_method_id_t;
+import common.gm_method_id;
 import common.gm_traverse;
 
 class gm_cpp_opt_common_nbr extends gm_compile_step {
@@ -59,10 +62,10 @@ class gm_cpp_opt_common_nbr extends gm_compile_step {
 		// all right. Just be practical and check only two cases:
 		// t.IsNbrFrom(y)
 		// t.IsNbrFrom(y) == True
-		if (e.get_optype() == GM_OPS_T.GMOP_EQ) {
+		if (e.get_optype() == gm_ops.GMOP_EQ) {
 			ast_expr l = e.get_left_op();
 			ast_expr r = e.get_right_op();
-			if (r.is_literal() && (r.get_type_summary() == GMTYPE_T.GMTYPE_BOOL) && (r.get_bval() == true)) {
+			if (r.is_literal() && (r.get_type_summary() == gm_type.GMTYPE_BOOL) && (r.get_bval() == true)) {
 				e = l;
 			} else
 				return false;
@@ -79,8 +82,8 @@ class gm_cpp_opt_common_nbr extends gm_compile_step {
 			if (!driver.getTypeInfo().is_node_compatible())
 				return false;
 
-			if (b.get_builtin_def().get_method_id() == gm_method_id_t.GM_BLTIN_NODE_IS_NBR) {
-				java.util.LinkedList<ast_expr> L = b.get_args();
+			if (b.get_builtin_def().get_method_id() == gm_method_id.GM_BLTIN_NODE_IS_NBR) {
+				LinkedList<ast_expr> L = b.get_args();
 				ast_expr arg = L.getFirst();
 				assert arg != null;
 				if (!arg.is_id())

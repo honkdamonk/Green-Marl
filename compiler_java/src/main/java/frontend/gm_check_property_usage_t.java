@@ -1,9 +1,9 @@
 package frontend;
 
-import static inc.GM_PROP_USAGE_T.GMUSAGE_INOUT;
-import static inc.GM_PROP_USAGE_T.GMUSAGE_INVALID;
-import static inc.GM_PROP_USAGE_T.GMUSAGE_OUT;
-import inc.GMTYPE_T;
+import static inc.gm_prop_usage.GMUSAGE_INOUT;
+import static inc.gm_prop_usage.GMUSAGE_INVALID;
+import static inc.gm_prop_usage.GMUSAGE_OUT;
+import inc.gm_type;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -43,7 +43,7 @@ public class gm_check_property_usage_t extends gm_apply {
 			if (is_under_condition() || is_under_random_iterator() || (topmost_iterator != null)) {
 				random_iter_stack.addLast(s);
 			} // TODO remove else if?
-			else if (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_ALL) {
+			else if (fe.get_iter_type() == gm_type.GMTYPE_NODEITER_ALL) {
 				topmost_iterator = fe.get_iterator().getSymInfo();
 			} else {
 				topmost_iterator = fe.get_iterator().getSymInfo();
@@ -59,7 +59,7 @@ public class gm_check_property_usage_t extends gm_apply {
 				if (a.is_reduce_assign()) // this is read & write
 				{
 					property_is_read(f.get_second().getSymInfo(), f.get_first().getSymInfo(), true);
-					java.util.LinkedList<ast_node> L = a.get_lhs_list();
+					LinkedList<ast_node> L = a.get_lhs_list();
 					for (ast_node n : L) {
 						assert n.get_nodetype() == ast_node_type.AST_FIELD;
 						ast_field f2 = (ast_field) n;

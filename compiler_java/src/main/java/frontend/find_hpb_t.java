@@ -2,18 +2,18 @@ package frontend;
 
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 
-import common.gm_errors_and_warnings;
-import common.gm_error;
-import common.gm_transform_helper;
 import common.gm_apply;
+import common.gm_error;
+import common.gm_errors_and_warnings;
+import common.gm_transform_helper;
 
 public class find_hpb_t extends gm_apply {
 

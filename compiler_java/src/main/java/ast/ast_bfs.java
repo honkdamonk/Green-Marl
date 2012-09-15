@@ -1,9 +1,9 @@
 package ast;
 
-import static inc.GMTYPE_T.GMTYPE_NODEITER_BFS;
-import static inc.GMTYPE_T.GMTYPE_NODEITER_IN_NBRS;
-import static inc.GMTYPE_T.GMTYPE_NODEITER_NBRS;
-import inc.GMTYPE_T;
+import static inc.gm_type.GMTYPE_NODEITER_BFS;
+import static inc.gm_type.GMTYPE_NODEITER_IN_NBRS;
+import static inc.gm_type.GMTYPE_NODEITER_NBRS;
+import inc.gm_type;
 
 import common.gm_apply;
 
@@ -266,11 +266,11 @@ public class ast_bfs extends ast_sent {
 		}
 	}
 
-	public final GMTYPE_T get_iter_type() {
+	public final gm_type get_iter_type() {
 		return GMTYPE_NODEITER_BFS;
 	}
 
-	public final GMTYPE_T get_iter_type2() {
+	public final gm_type get_iter_type2() {
 		return is_transpose() ? GMTYPE_NODEITER_IN_NBRS : GMTYPE_NODEITER_NBRS;
 	}
 

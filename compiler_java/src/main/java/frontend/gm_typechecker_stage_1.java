@@ -12,7 +12,7 @@ import static frontend.gm_typecheck.GM_READ_AVAILABLE;
 import static frontend.gm_typecheck.GM_READ_NOT_AVAILABLE;
 import static frontend.gm_typecheck.GM_WRITE_AVAILABLE;
 import static frontend.gm_typecheck.GM_WRITE_NOT_AVAILABLE;
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -182,7 +182,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		}
 		case GMEXPR_REDUCE: {
 			ast_expr_reduce r = (ast_expr_reduce) p;
-			GMTYPE_T iter_type = r.get_iter_type();
+			gm_type iter_type = r.get_iter_type();
 			is_okay = gm_symbol_check_iter_header(r.get_iterator(), r.get_source(), iter_type, r.get_source2());
 			if (iter_type.is_unknown_collection_iter_type()) // resolve unknown
 																// iterator
@@ -196,7 +196,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 				is_okay = find_symbol_id(i);
 			if (is_okay) {
 				@SuppressWarnings("unused")
-				GMTYPE_T source_type = (i == null) ? GMTYPE_T.GMTYPE_VOID : i.getTypeSummary();
+				gm_type source_type = (i == null) ? gm_type.GMTYPE_VOID : i.getTypeSummary();
 			}
 			break;
 		}
@@ -310,7 +310,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		// check bound symbol
 		case AST_FOREACH: {
 			ast_foreach fe = (ast_foreach) s;
-			GMTYPE_T iter_type = adjust_iter_type(fe);
+			gm_type iter_type = adjust_iter_type(fe);
 			is_okay = gm_symbol_check_iter_header(fe.get_iterator(), fe.get_source(), iter_type, fe.get_source2());
 			if (!is_okay)
 				break;
@@ -456,8 +456,8 @@ public class gm_typechecker_stage_1 extends gm_apply {
 			// current edge that goes to n
 
 			if (f.is_rarrow()) {
-				GMTYPE_T type = name_type.getTypeSummary();
-				if (!(type.is_inout_nbr_node_iter_type() || (type == GMTYPE_T.GMTYPE_NODEITER_BFS))) {
+				gm_type type = name_type.getTypeSummary();
+				if (!(type.is_inout_nbr_node_iter_type() || (type == gm_type.GMTYPE_NODEITER_BFS))) {
 					// not BFS, not in-out
 					gm_error.gm_type_error(GM_ERROR_INVALID_ITERATOR_FOR_RARROW, driver);
 					return false;
@@ -507,7 +507,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		return gm_find_and_connect_symbol(id, curr_field);
 	}
 
-	private final boolean gm_symbol_check_iter_header(ast_id it, ast_id src, GMTYPE_T iter_type, ast_id src2) {
+	private final boolean gm_symbol_check_iter_header(ast_id it, ast_id src, gm_type iter_type, ast_id src2) {
 		boolean is_okay = true;
 		// GRAPH
 		if (iter_type.is_iteration_on_all_graph()) {
@@ -595,7 +595,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 	}
 
 	/** symbol checking for foreach and in-place reduction */
-	private final boolean gm_symbol_check_bfs_header(ast_id it, ast_id src, ast_id root, GMTYPE_T iter_type) {
+	private final boolean gm_symbol_check_bfs_header(ast_id it, ast_id src, ast_id root, gm_type iter_type) {
 		// check source: should be a graph
 		boolean is_okay = true;
 		is_okay = gm_check_target_is_defined(src, curr_sym, SHOULD_BE_A_GRAPH);
@@ -632,12 +632,12 @@ public class gm_typechecker_stage_1 extends gm_apply {
 	 * if sourceId is defined as a field variable (= is a property) the iter
 	 * type should be a property iterator
 	 */
-	private GMTYPE_T adjust_iter_type(ast_foreach fe) {
+	private gm_type adjust_iter_type(ast_foreach fe) {
 		if (curr_field.find_symbol(fe.get_source()) != null) {
 			ast_id source = fe.get_source();
 			gm_symtab_entry tabEntry = curr_field.find_symbol(source);
-			GMTYPE_T targetType = tabEntry.getType().getTargetTypeSummary();
-			GMTYPE_T newIterType = mapTargetToIterType(targetType);
+			gm_type targetType = tabEntry.getType().getTargetTypeSummary();
+			gm_type newIterType = mapTargetToIterType(targetType);
 			fe.set_iter_type(newIterType);
 			return newIterType;
 		} else {
@@ -645,20 +645,20 @@ public class gm_typechecker_stage_1 extends gm_apply {
 		}
 	}
 
-	private static GMTYPE_T mapTargetToIterType(GMTYPE_T targetType) {
+	private static gm_type mapTargetToIterType(gm_type targetType) {
 		switch (targetType) {
 		case GMTYPE_NSET:
 		case GMTYPE_ESET:
-			return GMTYPE_T.GMTYPE_PROPERTYITER_SET;
+			return gm_type.GMTYPE_PROPERTYITER_SET;
 		case GMTYPE_NSEQ:
 		case GMTYPE_ESEQ:
-			return GMTYPE_T.GMTYPE_PROPERTYITER_SEQ;
+			return gm_type.GMTYPE_PROPERTYITER_SEQ;
 		case GMTYPE_NORDER:
 		case GMTYPE_EORDER:
-			return GMTYPE_T.GMTYPE_PROPERTYITER_ORDER;
+			return gm_type.GMTYPE_PROPERTYITER_ORDER;
 		default:
 			assert false;
-			return GMTYPE_T.GMTYPE_INVALID;
+			return gm_type.GMTYPE_INVALID;
 		}
 	}
 
@@ -829,10 +829,10 @@ public class gm_typechecker_stage_1 extends gm_apply {
 	 * graph_id from collection_id<br>
 	 */
 	public static boolean gm_check_type_is_well_defined(ast_typedecl type, gm_symtab SYM_V) {
-		return gm_check_type_is_well_defined(type, SYM_V, GMTYPE_T.GMTYPE_INVALID);
+		return gm_check_type_is_well_defined(type, SYM_V, gm_type.GMTYPE_INVALID);
 	}
 
-	public static boolean gm_check_type_is_well_defined(ast_typedecl type, gm_symtab SYM_V, GMTYPE_T targetType) {
+	public static boolean gm_check_type_is_well_defined(ast_typedecl type, gm_symtab SYM_V, gm_type targetType) {
 		if (type.is_primitive() || type.is_void()) {
 			// nothing to do
 		} else if (type.is_graph()) {
@@ -868,9 +868,9 @@ public class gm_typechecker_stage_1 extends gm_apply {
 
 			// update collection iter type
 			if (type.is_unknown_collection_iterator()) {
-				GMTYPE_T iterType = col.getTypeSummary().get_natural_collection_iterator();
+				gm_type iterType = col.getTypeSummary().get_natural_collection_iterator();
 
-				if (iterType == GMTYPE_T.GMTYPE_ITER_UNDERSPECIFIED && targetType != GMTYPE_T.GMTYPE_INVALID) {
+				if (iterType == gm_type.GMTYPE_ITER_UNDERSPECIFIED && targetType != gm_type.GMTYPE_INVALID) {
 					iterType = targetType.get_specified_collection_iterator();
 				}
 
@@ -923,7 +923,7 @@ public class gm_typechecker_stage_1 extends gm_apply {
 	 * The name is added to the current procedure vocaburary
 	 */
 	public static boolean gm_declare_symbol(gm_symtab SYM, ast_id id, ast_typedecl type, boolean is_readable, boolean is_writeable, gm_symtab SYM_ALT,
-			GMTYPE_T targetType) {
+			gm_type targetType) {
 
 		if (!type.is_well_defined()) {
 			assert !type.is_property();
@@ -949,11 +949,11 @@ public class gm_typechecker_stage_1 extends gm_apply {
 	}
 
 	public static boolean gm_declare_symbol(gm_symtab SYM, ast_id id, ast_typedecl type, boolean is_readable, boolean is_writeable, gm_symtab SYM_ALT) {
-		return gm_declare_symbol(SYM, id, type, is_readable, is_writeable, SYM_ALT, GMTYPE_T.GMTYPE_INVALID);
+		return gm_declare_symbol(SYM, id, type, is_readable, is_writeable, SYM_ALT, gm_type.GMTYPE_INVALID);
 	}
 
 	public static boolean gm_declare_symbol(gm_symtab SYM, ast_id id, ast_typedecl type, boolean is_readable, boolean is_writeable) {
-		return gm_declare_symbol(SYM, id, type, is_readable, is_writeable, null, GMTYPE_T.GMTYPE_INVALID);
+		return gm_declare_symbol(SYM, id, type, is_readable, is_writeable, null, gm_type.GMTYPE_INVALID);
 	}
 
 }

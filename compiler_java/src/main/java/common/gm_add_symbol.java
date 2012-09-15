@@ -1,9 +1,12 @@
 package common;
 
-import inc.GMTYPE_T;
-import ast.ast_node_type;
+import inc.gm_type;
+
+import java.util.HashSet;
+
 import ast.ast_id;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
@@ -31,7 +34,7 @@ public class gm_add_symbol {
 	 * add a new symbol of primitive type into given sentence block<br>
 	 * assumption: newname does not have any name-conflicts
 	 */
-	public static gm_symtab_entry gm_add_new_symbol_primtype(ast_sentblock sb, GMTYPE_T primtype, String newname) {
+	public static gm_symtab_entry gm_add_new_symbol_primtype(ast_sentblock sb, gm_type primtype, String newname) {
 		assert sb != null;
 
 		gm_symtab target_syms;
@@ -62,7 +65,7 @@ public class gm_add_symbol {
 		return e;
 	}
 
-	public static gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, GMTYPE_T nodeedge_type, gm_symtab_entry graph_sym, String newname) {
+	public static gm_symtab_entry gm_add_new_symbol_nodeedge_type(ast_sentblock sb, gm_type nodeedge_type, gm_symtab_entry graph_sym, String newname) {
 		assert sb != null;
 
 		gm_symtab target_syms;
@@ -71,9 +74,9 @@ public class gm_add_symbol {
 
 		// create type object and check
 		ast_typedecl type;
-		if (nodeedge_type == GMTYPE_T.GMTYPE_NODE)
+		if (nodeedge_type == gm_type.GMTYPE_NODE)
 			type = ast_typedecl.new_nodetype(graph_sym.getId().copy(true));
-		else if (nodeedge_type == GMTYPE_T.GMTYPE_EDGE)
+		else if (nodeedge_type == gm_type.GMTYPE_EDGE)
 			type = ast_typedecl.new_edgetype(graph_sym.getId().copy(true));
 		else {
 			assert false;
@@ -105,7 +108,7 @@ public class gm_add_symbol {
 	 * add a new symbol of node(edge) property type into given sentence block<br>
 	 * assumption: newname does not have any name-conflicts
 	 */
-	public static gm_symtab_entry gm_add_new_symbol_property(ast_sentblock sb, GMTYPE_T primtype, boolean is_nodeprop, gm_symtab_entry target_graph,
+	public static gm_symtab_entry gm_add_new_symbol_property(ast_sentblock sb, gm_type primtype, boolean is_nodeprop, gm_symtab_entry target_graph,
 			String newname) // assumtpion: no name-conflict.
 	{
 		ast_id target_graph_id = target_graph.getId().copy();
@@ -193,13 +196,13 @@ public class gm_add_symbol {
 		return sb;
 	}
 
-	public static void gm_remove_symbols(ast_node top, java.util.HashSet<gm_symtab_entry> S) {
+	public static void gm_remove_symbols(ast_node top, HashSet<gm_symtab_entry> S) {
 		gm_remove_symbols_t T = new gm_remove_symbols_t(S);
 		top.traverse_pre(T);
 	}
 
 	public static void gm_remove_symbol(ast_node top, gm_symtab_entry e) {
-		java.util.HashSet<gm_symtab_entry> S = new java.util.HashSet<gm_symtab_entry>();
+		HashSet<gm_symtab_entry> S = new HashSet<gm_symtab_entry>();
 		S.add(e);
 
 		gm_remove_symbols_t T = new gm_remove_symbols_t(S);

@@ -1,6 +1,6 @@
 package inc;
 
-public enum GM_PROP_USAGE_T {
+public enum gm_prop_usage {
 	GMUSAGE_UNUSED, //
 	GMUSAGE_IN, // Read only
 	GMUSAGE_OUT, // Write all, then optionally read
@@ -11,7 +11,7 @@ public enum GM_PROP_USAGE_T {
 		return ordinal();
 	}
 
-	public static GM_PROP_USAGE_T forValue(int value) {
+	public static gm_prop_usage forValue(int value) {
 		return values()[value];
 	}
 }

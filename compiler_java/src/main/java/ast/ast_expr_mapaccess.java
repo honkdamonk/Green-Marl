@@ -1,10 +1,10 @@
 package ast;
 
 import static ast.ast_node_type.AST_EXPR_MAPACCESS;
-import inc.GMEXPR_CLASS;
-import inc.GM_OPS_T;
-import static inc.GMEXPR_CLASS.GMEXPR_MAPACCESS;
-import static inc.GM_OPS_T.GMOP_MAPACCESS;
+import static inc.gm_expr_class.GMEXPR_MAPACCESS;
+import static inc.gm_ops.GMOP_MAPACCESS;
+import inc.gm_expr_class;
+import inc.gm_ops;
 
 public class ast_expr_mapaccess extends ast_expr {
 
@@ -38,12 +38,12 @@ public class ast_expr_mapaccess extends ast_expr {
 	}
 
 	@Override
-	public GM_OPS_T get_optype() {
+	public gm_ops get_optype() {
 		return GMOP_MAPACCESS;
 	}
 
 	@Override
-	public GMEXPR_CLASS get_opclass() {
+	public gm_expr_class get_opclass() {
 		return GMEXPR_MAPACCESS;
 	}
 

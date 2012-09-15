@@ -1,7 +1,7 @@
 package ast;
 
-import inc.GMEXPR_CLASS;
-import inc.GMTYPE_T;
+import inc.gm_expr_class;
+import inc.gm_type;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,10 +23,10 @@ public class ast_expr_foreign extends ast_expr {
 
 	public static ast_expr_foreign new_expr_foreign(String text) {
 		ast_expr_foreign aef = new ast_expr_foreign();
-		aef.expr_class = GMEXPR_CLASS.GMEXPR_FOREIGN;
+		aef.expr_class = gm_expr_class.GMEXPR_FOREIGN;
 		assert text != null;
 		aef.orig_text = text;
-		aef.type_of_expression = GMTYPE_T.GMTYPE_FOREIGN_EXPR;
+		aef.type_of_expression = gm_type.GMTYPE_FOREIGN_EXPR;
 		return aef;
 	}
 

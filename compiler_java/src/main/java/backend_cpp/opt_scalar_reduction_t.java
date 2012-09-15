@@ -1,8 +1,8 @@
 package backend_cpp;
 
-import inc.GMTYPE_T;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
+import inc.gm_type;
+import inc.gm_reduce;
+import inc.gm_assignment;
 import inc.nop_reduce_scalar;
 
 import java.util.HashMap;
@@ -19,11 +19,11 @@ import ast.ast_sentblock;
 import ast.gm_rwinfo_map;
 
 import common.gm_add_symbol;
+import common.gm_apply;
 import common.gm_main;
 import common.gm_new_sents_after_tc;
 import common.gm_transform_helper;
 import common.gm_traverse;
-import common.gm_apply;
 
 import frontend.gm_rw_analysis;
 import frontend.gm_symtab_entry;
@@ -100,7 +100,7 @@ class opt_scalar_reduction_t extends gm_apply {
 		HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map = new HashMap<gm_symtab_entry, gm_symtab_entry>();
 		LinkedList<gm_symtab_entry> old_s = new LinkedList<gm_symtab_entry>();
 		LinkedList<gm_symtab_entry> new_s = new LinkedList<gm_symtab_entry>();
-		LinkedList<GM_REDUCE_T> reduce_op = new LinkedList<GM_REDUCE_T>();
+		LinkedList<gm_reduce> reduce_op = new LinkedList<gm_reduce>();
 		HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>> old_supple_map = new HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>>();
 		HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>> new_supple_map = new HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>>();
 		LinkedList<LinkedList<gm_symtab_entry>> old_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
@@ -120,14 +120,14 @@ class opt_scalar_reduction_t extends gm_apply {
 			if (e.getType().is_property())
 				continue;
 
-			GM_REDUCE_T reduce_type = B.get(e).getFirst().reduce_op;
-			GMTYPE_T e_type = e.getType().getTypeSummary();
+			gm_reduce reduce_type = B.get(e).getFirst().reduce_op;
+			gm_type e_type = e.getType().getTypeSummary();
 			boolean is_supple = B.get(e).getFirst().is_supplement;
 			gm_symtab_entry org_target = B.get(e).getFirst().org_lhs;
 
 			if (!e_type.is_prim_type()) {
 				assert e.getType().is_node_compatible() || e.getType().is_edge_compatible();
-				assert (reduce_type == GM_REDUCE_T.GMREDUCE_MAX) || (reduce_type == GM_REDUCE_T.GMREDUCE_MIN);
+				assert (reduce_type == gm_reduce.GMREDUCE_MAX) || (reduce_type == gm_reduce.GMREDUCE_MIN);
 			}
 			String new_name = gm_main.FE.voca_temp_name_and_add(e.getId().get_genname(), "_prv");
 
@@ -136,10 +136,10 @@ class opt_scalar_reduction_t extends gm_apply {
 			if (e_type.is_prim_type()) {
 				_thread_local = gm_add_symbol.gm_add_new_symbol_primtype(se, e_type, new_name);
 			} else if (e_type.is_node_compatible_type()) {
-				_thread_local = gm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_NODE, e.getType().get_target_graph_sym(),
+				_thread_local = gm_add_symbol.gm_add_new_symbol_nodeedge_type(se, gm_type.GMTYPE_NODE, e.getType().get_target_graph_sym(),
 						new_name);
 			} else if (e_type.is_edge_compatible_type()) {
-				_thread_local = gm_add_symbol.gm_add_new_symbol_nodeedge_type(se, GMTYPE_T.GMTYPE_EDGE, e.getType().get_target_graph_sym(),
+				_thread_local = gm_add_symbol.gm_add_new_symbol_nodeedge_type(se, gm_type.GMTYPE_EDGE, e.getType().get_target_graph_sym(),
 						new_name);
 			} else {
 				_thread_local = null;
@@ -169,14 +169,14 @@ class opt_scalar_reduction_t extends gm_apply {
 
 			// add intializer
 			if (!is_supple) {
-				GMTYPE_T expr_type = e.getType().getTypeSummary();
+				gm_type expr_type = e.getType().getTypeSummary();
 				ast_expr init_val;
-				if ((reduce_type == GM_REDUCE_T.GMREDUCE_MIN) || (reduce_type == GM_REDUCE_T.GMREDUCE_MAX)) {
+				if ((reduce_type == gm_reduce.GMREDUCE_MIN) || (reduce_type == gm_reduce.GMREDUCE_MAX)) {
 					init_val = ast_expr.new_id_expr(e.getId().copy(true));
 				} else {
 					init_val = gm_new_sents_after_tc.gm_new_bottom_symbol(reduce_type, expr_type);
 				}
-				ast_assign init_a = ast_assign.new_assign_scala(_thread_local.getId().copy(true), init_val, gm_assignment_t.GMASSIGN_NORMAL);
+				ast_assign init_a = ast_assign.new_assign_scala(_thread_local.getId().copy(true), init_val, gm_assignment.GMASSIGN_NORMAL);
 
 				gm_transform_helper.gm_add_sent_before(fe, init_a);
 			}

@@ -2,27 +2,27 @@ package opt;
 
 import static common.gm_errors_and_warnings.GM_ERROR_DUPLICATE;
 import static common.gm_errors_and_warnings.GM_ERROR_UNDEFINED;
-import frontend.gm_typecheck;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
+import frontend.gm_typecheck;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
 
+import common.gm_apply;
 import common.gm_error;
 import common.gm_main;
-import common.gm_apply;
 
 public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 
@@ -30,7 +30,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 		this.newIteratorName = null;
 		this.oldIteratorName = null;
 		this.fe = null;
-		this.iterType = GMTYPE_T.GMTYPE_INVALID;
+		this.iterType = gm_type.GMTYPE_INVALID;
 		set_for_sent(true);
 	}
 
@@ -48,7 +48,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 	private String newIteratorName;
 	private String oldIteratorName;
 	private ast_foreach fe;
-	private GMTYPE_T iterType;
+	private gm_type iterType;
 
 	// For(s: prop.Items) -> For(n: G.Nodes) {Set s = n.prop
 	private boolean changeForeach() {
@@ -74,19 +74,18 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 		iterType = getNewIterType();
 		ast_id sourceGraph = fe.get_source().getTargetTypeInfo().get_target_graph_id();
 		ast_typedecl type = ast_typedecl.new_nodeedge_iterator(sourceGraph.copy(true), iterType);
-		if (!declare_symbol(fe.get_symtab_var(), newIterator, type, gm_typecheck.GM_READ_AVAILABLE,
-				gm_typecheck.GM_WRITE_NOT_AVAILABLE))
+		if (!declare_symbol(fe.get_symtab_var(), newIterator, type, gm_typecheck.GM_READ_AVAILABLE, gm_typecheck.GM_WRITE_NOT_AVAILABLE))
 			assert false;
 
 		return newIterator;
 	}
 
-	private GMTYPE_T getNewIterType() {
-		GMTYPE_T sourceType = fe.get_source().getTypeSummary();
+	private gm_type getNewIterType() {
+		gm_type sourceType = fe.get_source().getTypeSummary();
 		if (sourceType.is_node_property_type())
-			return GMTYPE_T.GMTYPE_NODEITER_ALL;
+			return gm_type.GMTYPE_NODEITER_ALL;
 		else if (sourceType.is_edge_property_type())
-			return GMTYPE_T.GMTYPE_EDGEITER_ALL;
+			return gm_type.GMTYPE_EDGEITER_ALL;
 		else {
 			assert false;
 			throw new AssertionError();
@@ -132,7 +131,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 		return leftHandSide;
 	}
 
-	private GMTYPE_T getTypeOfSourceItems() {
+	private gm_type getTypeOfSourceItems() {
 		ast_id source = fe.get_source();
 		assert source.getTargetTypeSummary().is_collection_type();
 		return source.getTargetTypeSummary();

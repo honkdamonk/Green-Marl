@@ -1,9 +1,9 @@
 package ast;
 
-import static inc.gm_assignment_location_t.GMASSIGN_LHS_MAP;
-import static inc.gm_assignment_t.GMASSIGN_REDUCE;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_location_t;
+import static inc.gm_assignment_location.GMASSIGN_LHS_MAP;
+import static inc.gm_assignment.GMASSIGN_REDUCE;
+import inc.gm_reduce;
+import inc.gm_assignment_location;
 
 import common.gm_apply;
 
@@ -17,7 +17,7 @@ public class ast_assign_mapentry extends ast_assign {
 		this.rhs = rhs;
 	}
 
-	private ast_assign_mapentry(ast_mapaccess lhs, ast_expr rhs, GM_REDUCE_T reduceType) {
+	private ast_assign_mapentry(ast_mapaccess lhs, ast_expr rhs, gm_reduce reduceType) {
 		super();
 		this.rhs = rhs;
 		this.lhs = lhs;
@@ -67,7 +67,7 @@ public class ast_assign_mapentry extends ast_assign {
 	}
 
 	@Override
-	public gm_assignment_location_t get_lhs_type() {
+	public gm_assignment_location get_lhs_type() {
 		return GMASSIGN_LHS_MAP;
 	}
 
@@ -85,7 +85,7 @@ public class ast_assign_mapentry extends ast_assign {
 		return newAssign;
 	}
 
-	public static ast_assign_mapentry new_mapentry_reduce_assign(ast_mapaccess lhs, ast_expr rhs, GM_REDUCE_T reduceType) {
+	public static ast_assign_mapentry new_mapentry_reduce_assign(ast_mapaccess lhs, ast_expr rhs, gm_reduce reduceType) {
 		ast_assign_mapentry newAssign = new ast_assign_mapentry(lhs, rhs, reduceType);
 		return newAssign;
 	}

@@ -1,6 +1,6 @@
 package frontend;
 
-import inc.GM_REDUCE_T;
+import inc.gm_reduce;
 
 //--------------------------------------------
 // Avoid same report
@@ -8,5 +8,5 @@ import inc.GM_REDUCE_T;
 public class bound_info_t {
 	public gm_symtab_entry target; // target
 	public gm_symtab_entry bound;
-	public GM_REDUCE_T reduce_type;
+	public gm_reduce reduce_type;
 }

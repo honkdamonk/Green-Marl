@@ -1,13 +1,14 @@
 package frontend;
 
+import inc.gm_compile_step;
+import inc.gm_type;
+
 import java.util.HashMap;
 
-import inc.GMTYPE_T;
-import inc.gm_compile_step;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_return;
 
@@ -41,9 +42,9 @@ public class gm_fe_typecheck_step5 extends gm_compile_step {
 		return new gm_fe_typecheck_step5();
 	}
 
-	private static void insert_explicit_type_conversion_for_assign_or_return(HashMap<ast_expr, GMTYPE_T> coercion_targets) {
+	private static void insert_explicit_type_conversion_for_assign_or_return(HashMap<ast_expr, gm_type> coercion_targets) {
 		for (ast_expr t : coercion_targets.keySet()) {
-			GMTYPE_T dest_type = coercion_targets.get(t);
+			gm_type dest_type = coercion_targets.get(t);
 
 			assert t.get_up_op() == null;
 			ast_node n = t.get_parent();

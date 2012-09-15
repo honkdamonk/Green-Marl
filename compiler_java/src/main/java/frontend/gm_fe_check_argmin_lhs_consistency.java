@@ -1,14 +1,16 @@
 package frontend;
 
-import ast.ast_node_type;
+import java.util.LinkedList;
+
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 
-import common.gm_errors_and_warnings;
-import common.gm_error;
 import common.gm_apply;
+import common.gm_error;
+import common.gm_errors_and_warnings;
 
 public class gm_fe_check_argmin_lhs_consistency extends gm_apply {
 
@@ -30,7 +32,7 @@ public class gm_fe_check_argmin_lhs_consistency extends gm_apply {
 		if (!a.is_argminmax_assign())
 			return false;
 
-		java.util.LinkedList<ast_node> L = a.get_lhs_list();
+		LinkedList<ast_node> L = a.get_lhs_list();
 		if (a.is_target_scalar()) {
 			for (ast_node n : L) {
 				if (n.get_nodetype() != ast_node_type.AST_ID) {

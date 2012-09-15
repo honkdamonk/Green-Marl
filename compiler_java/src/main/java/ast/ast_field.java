@@ -1,6 +1,6 @@
 package ast;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import common.gm_dumptree;
 
@@ -76,7 +76,7 @@ public class ast_field extends ast_node {
 	}
 
 	// type information about source (node/edge/graph)
-	public final GMTYPE_T getSourceTypeSummary() {
+	public final gm_type getSourceTypeSummary() {
 		return first.getTypeSummary();
 	}
 
@@ -85,7 +85,7 @@ public class ast_field extends ast_node {
 	}
 
 	// type information about field (nodeprop/edgeprop)
-	public final GMTYPE_T getTypeSummary() {
+	public final gm_type getTypeSummary() {
 		return second.getTypeSummary();
 	}
 
@@ -94,7 +94,7 @@ public class ast_field extends ast_node {
 	}
 
 	// type information about target (primitive)
-	public final GMTYPE_T getTargetTypeSummary() {
+	public final gm_type getTargetTypeSummary() {
 		return second.getTargetTypeSummary();
 	}
 

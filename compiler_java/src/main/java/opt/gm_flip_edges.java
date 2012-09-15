@@ -1,6 +1,6 @@
 package opt;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
@@ -89,8 +89,8 @@ public class gm_flip_edges {
 			return false;
 		in = (ast_foreach) body1;
 
-		GMTYPE_T iter2 = in.get_iter_type();
-		if ((iter2 != GMTYPE_T.GMTYPE_NODEITER_NBRS) && (iter2 != GMTYPE_T.GMTYPE_NODEITER_IN_NBRS))
+		gm_type iter2 = in.get_iter_type();
+		if ((iter2 != gm_type.GMTYPE_NODEITER_NBRS) && (iter2 != gm_type.GMTYPE_NODEITER_IN_NBRS))
 			return false;
 
 		if (in.get_source().getSymInfo() != out.get_iterator().getSymInfo())
@@ -169,10 +169,10 @@ public class gm_flip_edges {
 			in.get_source().setSymInfo(iter_in);
 
 			// 2) flip inner edge direction
-			if (in.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_NBRS)
-				in.set_iter_type(GMTYPE_T.GMTYPE_NODEITER_IN_NBRS);
-			else if (in.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS)
-				in.set_iter_type(GMTYPE_T.GMTYPE_NODEITER_NBRS);
+			if (in.get_iter_type() == gm_type.GMTYPE_NODEITER_NBRS)
+				in.set_iter_type(gm_type.GMTYPE_NODEITER_IN_NBRS);
+			else if (in.get_iter_type() == gm_type.GMTYPE_NODEITER_IN_NBRS)
+				in.set_iter_type(gm_type.GMTYPE_NODEITER_NBRS);
 			else {
 				assert false;
 			}

@@ -9,8 +9,8 @@ import ast.ast_id;
 import ast.ast_node;
 import ast.ast_sent;
 
-import common.gm_transform_helper;
 import common.gm_apply;
+import common.gm_transform_helper;
 
 import frontend.FrontendGlobal;
 import frontend.gm_symtab_entry;
@@ -20,7 +20,7 @@ public class change_reduction_t extends gm_apply {
 	private HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map;
 	private LinkedList<ast_assign> to_normals = new LinkedList<ast_assign>();
 	
-	public final void set_map(java.util.HashMap<gm_symtab_entry, gm_symtab_entry> m) {
+	public final void set_map(HashMap<gm_symtab_entry, gm_symtab_entry> m) {
 		symbol_map = m;
 	}
 
@@ -44,7 +44,7 @@ public class change_reduction_t extends gm_apply {
 		// change lhs symbol
 		lhs.setSymInfo(new_target);
 		if (a.is_argminmax_assign()) {
-			java.util.LinkedList<ast_node> L_old = a.get_lhs_list();
+			LinkedList<ast_node> L_old = a.get_lhs_list();
 			for (ast_node n : L_old) {
 				assert n.get_nodetype() == ast_node_type.AST_ID;
 				ast_id id = (ast_id) n;

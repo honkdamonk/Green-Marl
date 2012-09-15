@@ -20,9 +20,9 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_sent;
 
-import common.gm_error;
 import common.gm_apply;
-import common.gm_method_id_t;
+import common.gm_error;
+import common.gm_method_id;
 
 import frontend.symtab_types;
 import frontend.gm_symtab_entry;
@@ -127,8 +127,8 @@ public class gps_check_edge_value_t extends gm_apply {
 						ast_expr rhs = a.get_rhs();
 						if (rhs.is_builtin()) {
 							ast_expr_builtin b_rhs = (ast_expr_builtin) rhs;
-							gm_method_id_t f_id = b_rhs.get_builtin_def().get_method_id();
-							if (f_id == gm_method_id_t.GM_BLTIN_NODE_TO_EDGE) {
+							gm_method_id f_id = b_rhs.get_builtin_def().get_method_id();
+							if (f_id == gm_method_id.GM_BLTIN_NODE_TO_EDGE) {
 								a.add_info_bool(GPS_FLAG_EDGE_DEFINING_WRITE, true);
 							}
 						}
@@ -169,8 +169,8 @@ public class gps_check_edge_value_t extends gm_apply {
 
 		// checking of (case 2)
 		if (target_is_edge_prop) {
-			if ((e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue())
-					|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_RANDOM.getValue())) {
+			if ((e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN.getValue())
+					|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_RANDOM.getValue())) {
 				if (e.is_field()) {
 					ast_field f = e.get_field();
 					gm_error.gm_backend_error(GM_ERROR_GPS_EDGE_WRITE_RHS, f.get_line(), f.get_col(), f.get_first().get_orgname());
@@ -221,38 +221,38 @@ public class gps_check_edge_value_t extends gm_apply {
 	private static boolean manage_edge_prop_access_state(ast_foreach fe, gm_symtab_entry e, int op) {
 
 		assert (op == SENDING) || (op == WRITING);
-		gm_gps_edge_access_t curr_state = (gm_gps_edge_access_t) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
+		gm_gps_edge_access curr_state = (gm_gps_edge_access) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
 
 		// first access
 		if (curr_state == null) {
-			gm_gps_edge_access_t new_state = (op == SENDING) ? gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_SENT : gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_WRITE;
+			gm_gps_edge_access new_state = (op == SENDING) ? gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_SENT : gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_WRITE;
 
 			fe.add_info_map_key_value(GPS_MAP_EDGE_PROP_ACCESS, e, new_state);
 		} else {
-			gm_gps_edge_access_t curr_state_val = curr_state;
+			gm_gps_edge_access curr_state_val = curr_state;
 			switch (curr_state_val) {
 			case GPS_ENUM_EDGE_VALUE_ERROR: // already error
 				return false;
 
 			case GPS_ENUM_EDGE_VALUE_WRITE:
 				if (op == SENDING)
-					curr_state = gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_WRITE_SENT;
+					curr_state = gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_WRITE_SENT;
 				return false; // no error
 
 			case GPS_ENUM_EDGE_VALUE_SENT:
 				if (op == WRITING)
-					curr_state = gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_SENT_WRITE;
+					curr_state = gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_SENT_WRITE;
 				return false; // no error
 
 			case GPS_ENUM_EDGE_VALUE_WRITE_SENT:
 				if (op == WRITING)
-					curr_state = gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_SENT_WRITE;
+					curr_state = gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_SENT_WRITE;
 				return false;
 
 			case GPS_ENUM_EDGE_VALUE_SENT_WRITE:
 				// sending two versions!
 				if (op == SENDING) {
-					curr_state = gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_ERROR;
+					curr_state = gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_ERROR;
 					return true; // ERROR
 				} else
 					return false;

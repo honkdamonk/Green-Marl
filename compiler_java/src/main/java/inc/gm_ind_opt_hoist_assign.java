@@ -1,7 +1,7 @@
 package inc;
 
-import ast.ast_procdef;
 import opt.gm_hoist_assign_up_t;
+import ast.ast_procdef;
 
 import common.gm_traverse;
 

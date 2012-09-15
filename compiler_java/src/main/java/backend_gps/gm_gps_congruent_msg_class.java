@@ -1,11 +1,13 @@
 package backend_gps;
 
+import java.util.HashSet;
+
 
 public class gm_gps_congruent_msg_class
 {
 	public int id;
 	public gm_gps_communication_size_info sz_info;
-	public java.util.HashSet<gm_gps_basic_block> recv_bb = new java.util.HashSet<gm_gps_basic_block>();
+	public HashSet<gm_gps_basic_block> recv_bb = new HashSet<gm_gps_basic_block>();
 
 	public final void add_receiving_basic_block(gm_gps_basic_block b)
 	{

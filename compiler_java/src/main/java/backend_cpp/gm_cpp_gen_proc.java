@@ -1,7 +1,8 @@
 package backend_cpp;
 
-import ast.ast_procdef;
 import inc.gm_compile_step;
+import ast.ast_procdef;
+
 import common.gm_main;
 
 class gm_cpp_gen_proc extends gm_compile_step {

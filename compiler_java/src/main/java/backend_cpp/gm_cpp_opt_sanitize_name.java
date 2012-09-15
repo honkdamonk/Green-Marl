@@ -1,7 +1,7 @@
 package backend_cpp;
 
-import ast.ast_procdef;
 import inc.gm_compile_step;
+import ast.ast_procdef;
 
 class gm_cpp_opt_sanitize_name extends gm_compile_step {
 	

@@ -1,10 +1,10 @@
 package frontend;
 
-import static inc.GMTYPE_T.GMTYPE_BOOL;
-import static inc.GMTYPE_T.GMTYPE_INT;
-import static inc.GMTYPE_T.GMTYPE_NIL_EDGE;
-import static inc.GMTYPE_T.GMTYPE_NIL_NODE;
-import inc.GMTYPE_T;
+import static inc.gm_type.GMTYPE_BOOL;
+import static inc.gm_type.GMTYPE_INT;
+import static inc.gm_type.GMTYPE_NIL_EDGE;
+import static inc.gm_type.GMTYPE_NIL_NODE;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
@@ -40,7 +40,7 @@ public class gm_typechecker_stage_4 extends gm_apply {
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
-			GMTYPE_T lhs_type;
+			gm_type lhs_type;
 			if (a.is_target_scalar()) {
 				lhs_type = a.get_lhs_scala().getTypeSummary();
 			} else if (a.is_target_map_entry()) {
@@ -89,7 +89,7 @@ public class gm_typechecker_stage_4 extends gm_apply {
 		return true;
 	}
 
-	private static boolean gm_resolve_size_of_inf_expr(ast_expr e, GMTYPE_T dest_type) {
+	private static boolean gm_resolve_size_of_inf_expr(ast_expr e, gm_type dest_type) {
 		if (e.get_type_summary().is_inf_type()) {
 			e.set_type_summary(dest_type.get_sized_inf_type());
 		} else if (e.get_type_summary().is_nil_type()) {
@@ -150,7 +150,7 @@ public class gm_typechecker_stage_4 extends gm_apply {
 			LinkedList<ast_expr> ARGS = r.get_args();
 			int i = 0;
 			for (ast_expr e_arg : ARGS) {
-				GMTYPE_T arg_type = def.get_arg_type(i);
+				gm_type arg_type = def.get_arg_type(i);
 				gm_resolve_size_of_inf_expr(e_arg, arg_type);
 				i++;
 			}
@@ -158,8 +158,8 @@ public class gm_typechecker_stage_4 extends gm_apply {
 		}
 		case GMEXPR_COMP: {
 			// check left and right
-			GMTYPE_T l_type = e.get_left_op().get_type_summary();
-			GMTYPE_T r_type = e.get_right_op().get_type_summary();
+			gm_type l_type = e.get_left_op().get_type_summary();
+			gm_type r_type = e.get_right_op().get_type_summary();
 
 			if (l_type.is_inf_type() && r_type.is_inf_type()) {
 				l_type = GMTYPE_INT;

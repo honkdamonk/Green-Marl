@@ -5,7 +5,7 @@ import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINING_WRITE;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
 import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -21,9 +21,9 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.gm_add_symbol;
+import common.gm_apply;
 import common.gm_main;
 import common.gm_transform_helper;
-import common.gm_apply;
 
 import frontend.gm_symtab_entry;
 
@@ -49,11 +49,11 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 	public final boolean apply(ast_expr e) {
 		ast_sent s = get_current_sent();
-		if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue())
+		if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN.getValue())
 			return true;
 
-		if ((e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue())
-				|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_EDGE.getValue())) {
+		if ((e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue())
+				|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_EDGE.getValue())) {
 			// (current traversal engine does not support pruning, so should
 			// look at parents
 			//
@@ -173,16 +173,16 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	private HashMap<ast_foreach, HashSet<ast_expr>> sub_exprs = new HashMap<ast_foreach, HashSet<ast_expr>>();
 	private ast_foreach current_fe;
 
-	private gm_symtab_entry define_temp(GMTYPE_T type, ast_sentblock sb, gm_symtab_entry graph) {
+	private gm_symtab_entry define_temp(gm_type type, ast_sentblock sb, gm_symtab_entry graph) {
 		String temp_name = gm_main.FE.voca_temp_name_and_add("_m");
 		gm_symtab_entry target;
 		if (type.is_prim_type()) {
 			target = gm_add_symbol.gm_add_new_symbol_primtype(sb, type, temp_name);
 		} else if (type.is_node_edge_compatible_type()) {
 			if (type.is_node_compatible_type()) {
-				type = GMTYPE_T.GMTYPE_NODE;
+				type = gm_type.GMTYPE_NODE;
 			} else if (type.is_edge_compatible_type()) {
-				type = GMTYPE_T.GMTYPE_EDGE;
+				type = gm_type.GMTYPE_EDGE;
 			}
 			target = gm_add_symbol.gm_add_new_symbol_nodeedge_type(sb, type, graph, temp_name);
 		} else {

@@ -1,8 +1,8 @@
 package opt;
 
-import static inc.GMTYPE_T.GMTYPE_DOUBLE;
-import static inc.GMTYPE_T.GMTYPE_FLOAT;
-import static inc.GMTYPE_T.GMTYPE_LONG;
+import static inc.gm_type.GMTYPE_DOUBLE;
+import static inc.gm_type.GMTYPE_FLOAT;
+import static inc.gm_type.GMTYPE_LONG;
 import static opt.gm_syntax_sugar2.OPT_FLAG_NESTED_REDUCTION;
 import static opt.gm_syntax_sugar2.OPT_SB_NESTED_REDUCTION_SCOPE;
 import static opt.gm_syntax_sugar2.OPT_SYM_NESTED_REDUCTION_BOUND;
@@ -12,10 +12,10 @@ import static opt.gm_syntax_sugar2.find_count_function;
 import static opt.gm_syntax_sugar2.insert_def_and_init_before;
 import static opt.gm_syntax_sugar2.replace_avg_to_varaible;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
+import inc.gm_type;
+import inc.gm_ops;
+import inc.gm_reduce;
+import inc.gm_assignment;
 
 import java.util.LinkedList;
 
@@ -32,13 +32,13 @@ import ast.ast_sent;
 import ast.ast_sentblock;
 
 import common.gm_add_symbol;
+import common.gm_apply;
+import common.gm_builtin_def;
 import common.gm_main;
+import common.gm_method_id;
 import common.gm_new_sents_after_tc;
 import common.gm_resolve_nc;
 import common.gm_transform_helper;
-import common.gm_apply;
-import common.gm_builtin_def;
-import common.gm_method_id_t;
 
 /**
  * --------------------------------------------------- reduction_op =>
@@ -76,11 +76,11 @@ public class ss2_reduce_op extends gm_apply {
 	// replace selected expressions.
 	protected final void post_process_body(ast_expr_reduce target) {
 
-		GMTYPE_T expr_type = target.get_body().get_type_summary();
+		gm_type expr_type = target.get_body().get_type_summary();
 		// true if nested
 		boolean is_nested = target.find_info_bool(OPT_FLAG_NESTED_REDUCTION);
-		GM_REDUCE_T rtype = target.get_reduce_type();
-		boolean is_avg = (rtype == GM_REDUCE_T.GMREDUCE_AVG);
+		gm_reduce rtype = target.get_reduce_type();
+		boolean is_avg = (rtype == gm_reduce.GMREDUCE_AVG);
 
 		RefObject<ast_expr_reduce> left_nested_ref = new RefObject<ast_expr_reduce>(null);
 		RefObject<ast_expr_reduce> right_nested_ref = new RefObject<ast_expr_reduce>(null);
@@ -162,13 +162,13 @@ public class ss2_reduce_op extends gm_apply {
 			}
 
 			if (is_avg) {
-				rtype = GM_REDUCE_T.GMREDUCE_PLUS; // Need sum
+				rtype = gm_reduce.GMREDUCE_PLUS; // Need sum
 
 				need_count_for_avg = true;
 				if (target.get_filter() == null) {
-					GMTYPE_T iter_type = target.get_iter_type();
-					GMTYPE_T src_type = target.get_source().getTypeInfo().getTypeSummary();
-					if (find_count_function(src_type, iter_type) == gm_method_id_t.GM_BLTIN_END)
+					gm_type iter_type = target.get_iter_type();
+					gm_type src_type = target.get_source().getTypeInfo().getTypeSummary();
+					if (find_count_function(src_type, iter_type) == gm_method_id.GM_BLTIN_END)
 						need_count_for_avg = true;
 					else
 						need_count_for_avg = false;
@@ -226,7 +226,7 @@ public class ss2_reduce_op extends gm_apply {
 		}
 
 		if (!has_nested) {
-			r_assign = ast_assign.new_assign_scala(lhs_id, body, gm_assignment_t.GMASSIGN_REDUCE, bound_id, rtype);
+			r_assign = ast_assign.new_assign_scala(lhs_id, body, gm_assignment.GMASSIGN_REDUCE, bound_id, rtype);
 			foreach_body = r_assign;
 
 			if (need_count_for_avg) {
@@ -235,8 +235,8 @@ public class ss2_reduce_op extends gm_apply {
 				// FIXME: was lhs_id - seems to be a bug in the cpp gm-compiler
 				ast_id lhs_id1 = cnt_symbol.getId().copy(true);
 				bound_id2 = old_iter.copy(false); // symInfo not available yet
-				ast_assign r_assign2 = ast_assign.new_assign_scala(lhs_id1, ast_expr.new_ival_expr(1), gm_assignment_t.GMASSIGN_REDUCE, bound_id2,
-						GM_REDUCE_T.GMREDUCE_PLUS);
+				ast_assign r_assign2 = ast_assign.new_assign_scala(lhs_id1, ast_expr.new_ival_expr(1), gm_assignment.GMASSIGN_REDUCE, bound_id2,
+						gm_reduce.GMREDUCE_PLUS);
 
 				gm_transform_helper.gm_insert_sent_end_of_sb(sb, r_assign);
 				gm_transform_helper.gm_insert_sent_end_of_sb(sb, r_assign2);
@@ -252,7 +252,7 @@ public class ss2_reduce_op extends gm_apply {
 				ast_expr right = body.get_right_op();
 				ast_expr r_assign_body = (left_nested == left) ? right : left;
 				r_assign_body.set_up_op(null);
-				r_assign = ast_assign.new_assign_scala(lhs_id, r_assign_body, gm_assignment_t.GMASSIGN_REDUCE, bound_id, rtype);
+				r_assign = ast_assign.new_assign_scala(lhs_id, r_assign_body, gm_assignment.GMASSIGN_REDUCE, bound_id, rtype);
 				gm_transform_helper.gm_insert_sent_end_of_sb(nested_sentblock, r_assign);
 			}
 		}
@@ -278,7 +278,7 @@ public class ss2_reduce_op extends gm_apply {
 		if (foreach_src2 != null)
 			foreach_src2 = foreach_src2.copy(true);
 
-		GMTYPE_T iter_type = target.get_iter_type();
+		gm_type iter_type = target.get_iter_type();
 
 		// see common/new_sent_after_tc.cc
 		ast_foreach fe_new = gm_new_sents_after_tc.gm_new_foreach_after_tc(foreach_it, foreach_src, foreach_body, iter_type);
@@ -322,16 +322,16 @@ public class ss2_reduce_op extends gm_apply {
 		// ----------------------------------------------
 		if (is_avg) {
 
-			GMTYPE_T result_type = (expr_type == GMTYPE_FLOAT) ? GMTYPE_FLOAT : GMTYPE_DOUBLE;
+			gm_type result_type = (expr_type == GMTYPE_FLOAT) ? GMTYPE_FLOAT : GMTYPE_DOUBLE;
 			// (cnt_symbol == 0)? 0 : sum_val / (float) cnt_symbol
 			ast_expr zero1 = ast_expr.new_ival_expr(0);
 			ast_expr zero2 = ast_expr.new_fval_expr(0);
 			ast_expr cnt1 = ast_expr.new_id_expr(cnt_symbol.getId().copy(true));
 			ast_expr cnt2 = ast_expr.new_id_expr(cnt_symbol.getId().copy(true));
 			ast_expr sum = ast_expr.new_id_expr(lhs_symbol.getId().copy(true));
-			ast_expr comp = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ, zero1, cnt1);
+			ast_expr comp = ast_expr.new_comp_expr(gm_ops.GMOP_EQ, zero1, cnt1);
 			ast_expr t_conv = ast_expr.new_typeconv_expr(result_type, cnt2);
-			ast_expr div = ast_expr.new_biop_expr(GM_OPS_T.GMOP_DIV, sum, t_conv);
+			ast_expr div = ast_expr.new_biop_expr(gm_ops.GMOP_DIV, sum, t_conv);
 			div.set_type_summary(result_type);
 			ast_expr ter = ast_expr.new_ternary_expr(comp, zero2, div);
 
@@ -340,10 +340,10 @@ public class ss2_reduce_op extends gm_apply {
 			gm_transform_helper.gm_add_sent_after(fe_new, a);
 
 			if (!need_count_for_avg) {
-				GMTYPE_T iter_type1 = target.get_iter_type();
-				GMTYPE_T src_type = target.get_source().getTypeSummary();
-				gm_method_id_t method_id = find_count_function(src_type, iter_type1);
-				assert method_id != gm_method_id_t.GM_BLTIN_END;
+				gm_type iter_type1 = target.get_iter_type();
+				gm_type src_type = target.get_source().getTypeSummary();
+				gm_method_id method_id = find_count_function(src_type, iter_type1);
+				assert method_id != gm_method_id.GM_BLTIN_END;
 
 				// make a call to built-in funciton
 				gm_builtin_def def = gm_main.BUILT_IN.find_builtin_def(src_type, method_id);

@@ -1,8 +1,8 @@
 package ast;
 
-import static ast.AST_NODE_TYPE.AST_EXPR_BUILTIN;
-import inc.GMEXPR_CLASS;
-import inc.GMTYPE_T;
+import static ast.ast_node_type.AST_EXPR_BUILTIN;
+import inc.gm_expr_class;
+import inc.gm_type;
 import inc.expr_list;
 
 import java.util.LinkedList;
@@ -28,7 +28,7 @@ public class ast_expr_builtin extends ast_expr {
 
 	@Override
 	public void reproduce(int ind_level) {
-		if (this.get_opclass() == GMEXPR_CLASS.GMEXPR_ID) {
+		if (this.get_opclass() == gm_expr_class.GMEXPR_ID) {
 			id1.reproduce(0);
 			return;
 		}
@@ -141,13 +141,13 @@ public class ast_expr_builtin extends ast_expr {
 		return false;
 	}
 
-	public GMTYPE_T get_source_type() {
-		return (driver == null) ? GMTYPE_T.GMTYPE_VOID : driver.getTypeSummary();
+	public gm_type get_source_type() {
+		return (driver == null) ? gm_type.GMTYPE_VOID : driver.getTypeSummary();
 	}
 
 	public static ast_expr_builtin new_builtin_expr(ast_id id, String orgname, expr_list t) {
 		ast_expr_builtin E = new ast_expr_builtin();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_BUILTIN;
+		E.expr_class = gm_expr_class.GMEXPR_BUILTIN;
 		E.driver = id;
 		if (id != null) // type unknown yet.
 			id.set_parent(E);
@@ -165,7 +165,7 @@ public class ast_expr_builtin extends ast_expr {
 
 	public static ast_expr_builtin new_builtin_expr(ast_id id, gm_builtin_def d, expr_list t) {
 		ast_expr_builtin E = new ast_expr_builtin();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_BUILTIN;
+		E.expr_class = gm_expr_class.GMEXPR_BUILTIN;
 		E.driver = id;
 		if (id != null) // type unknown yet.
 			id.set_parent(E);

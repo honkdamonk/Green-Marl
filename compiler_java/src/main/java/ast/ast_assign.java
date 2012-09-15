@@ -1,18 +1,18 @@
 package ast;
 
-import static ast.AST_NODE_TYPE.AST_ASSIGN;
-import static ast.AST_NODE_TYPE.AST_FIELD;
-import static ast.AST_NODE_TYPE.AST_ID;
-import static inc.GM_REDUCE_T.GMREDUCE_INVALID;
-import static inc.GM_REDUCE_T.GMREDUCE_NULL;
-import static inc.gm_assignment_location_t.GMASSIGN_LHS_FIELD;
-import static inc.gm_assignment_location_t.GMASSIGN_LHS_SCALA;
-import static inc.gm_assignment_t.GMASSIGN_DEFER;
-import static inc.gm_assignment_t.GMASSIGN_NORMAL;
-import static inc.gm_assignment_t.GMASSIGN_REDUCE;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_location_t;
-import inc.gm_assignment_t;
+import static ast.ast_node_type.AST_ASSIGN;
+import static ast.ast_node_type.AST_FIELD;
+import static ast.ast_node_type.AST_ID;
+import static inc.gm_reduce.GMREDUCE_INVALID;
+import static inc.gm_reduce.GMREDUCE_NULL;
+import static inc.gm_assignment_location.GMASSIGN_LHS_FIELD;
+import static inc.gm_assignment_location.GMASSIGN_LHS_SCALA;
+import static inc.gm_assignment.GMASSIGN_DEFER;
+import static inc.gm_assignment.GMASSIGN_NORMAL;
+import static inc.gm_assignment.GMASSIGN_REDUCE;
+import inc.gm_reduce;
+import inc.gm_assignment_location;
+import inc.gm_assignment;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -22,9 +22,9 @@ import common.gm_dumptree;
 
 public class ast_assign extends ast_sent {
 
-	private gm_assignment_t assign_type; // normal, deferred, reduce
-	private gm_assignment_location_t lhs_type; // scalar, field
-	private GM_REDUCE_T reduce_type; // add, mult, min, max
+	private gm_assignment assign_type; // normal, deferred, reduce
+	private gm_assignment_location lhs_type; // scalar, field
+	private gm_reduce reduce_type; // add, mult, min, max
 	private ast_id lhs_scala;
 	private ast_field lhs_field;
 	protected ast_expr rhs;
@@ -43,11 +43,11 @@ public class ast_assign extends ast_sent {
 		reduce_type = GMREDUCE_INVALID;
 	}
 
-	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type, ast_id itor) {
+	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment assign_type, ast_id itor) {
 		return new_assign_scala(id, r, assign_type, itor, GMREDUCE_NULL);
 	}
 
-	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type) {
+	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment assign_type) {
 		return new_assign_scala(id, r, assign_type, null, GMREDUCE_NULL);
 	}
 
@@ -55,7 +55,7 @@ public class ast_assign extends ast_sent {
 		return new_assign_scala(id, r, GMASSIGN_NORMAL, null, GMREDUCE_NULL);
 	}
 
-	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment_t assign_type, ast_id itor, GM_REDUCE_T reduce_type) {
+	public static ast_assign new_assign_scala(ast_id id, ast_expr r, gm_assignment assign_type, ast_id itor, gm_reduce reduce_type) {
 		// assign to scala
 		ast_assign A = new ast_assign();
 		A.lhs_scala = id;
@@ -72,11 +72,11 @@ public class ast_assign extends ast_sent {
 		return A;
 	}
 
-	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment_t assign_type, ast_id itor) {
+	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment assign_type, ast_id itor) {
 		return new_assign_field(id, r, assign_type, itor, GMREDUCE_NULL);
 	}
 
-	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment_t assign_type) {
+	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment assign_type) {
 		return new_assign_field(id, r, assign_type, null, GMREDUCE_NULL);
 	}
 
@@ -84,7 +84,7 @@ public class ast_assign extends ast_sent {
 		return new_assign_field(id, r, GMASSIGN_NORMAL, null, GMREDUCE_NULL);
 	}
 
-	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment_t assign_type, ast_id itor, GM_REDUCE_T reduce_type) {
+	public static ast_assign new_assign_field(ast_field id, ast_expr r, gm_assignment assign_type, ast_id itor, gm_reduce reduce_type) {
 		// assign to property
 		ast_assign A = new ast_assign();
 		A.lhs_field = id;
@@ -365,23 +365,23 @@ public class ast_assign extends ast_sent {
 		System.out.print("]");
 	}
 
-	public final gm_assignment_t get_assign_type() {
+	public final gm_assignment get_assign_type() {
 		return assign_type;
 	}
 
-	public gm_assignment_location_t get_lhs_type() {
+	public gm_assignment_location get_lhs_type() {
 		return lhs_type;
 	}
 
-	public final GM_REDUCE_T get_reduce_type() {
+	public final gm_reduce get_reduce_type() {
 		return reduce_type;
 	}
 
-	public final void set_assign_type(gm_assignment_t a) {
+	public final void set_assign_type(gm_assignment a) {
 		assign_type = a;
 	}
 
-	public final void set_reduce_type(GM_REDUCE_T a) {
+	public final void set_reduce_type(gm_reduce a) {
 		reduce_type = a;
 	}
 

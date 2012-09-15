@@ -1,7 +1,7 @@
 package frontend;
 
 // Type of conflicts
-public enum gm_conflict_t {
+public enum gm_conflict {
 	RW_CONFLICT, // Read-Write conflict (warning)
 	WW_CONFLICT, // Write-Write conflict (warning)
 	RD_CONFLICT, // Read-Reduce
@@ -14,7 +14,7 @@ public enum gm_conflict_t {
 		return this.ordinal();
 	}
 
-	public static gm_conflict_t forValue(int value) {
+	public static gm_conflict forValue(int value) {
 		return values()[value];
 	}
 }

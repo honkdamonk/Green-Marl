@@ -2,7 +2,7 @@ package backend_cpp;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -80,7 +80,7 @@ class check_bfs_main_t extends gm_apply {
 	}
 
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			ast_extra_info_list syms = new ast_extra_info_list();
 			LinkedList<Object> L = syms.get_list();
 
@@ -137,7 +137,7 @@ class check_bfs_main_t extends gm_apply {
 	}
 
 	public final boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			in_bfs = false;
 		}
 		return true;

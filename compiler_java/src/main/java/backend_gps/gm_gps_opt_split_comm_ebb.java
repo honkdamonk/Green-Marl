@@ -66,7 +66,7 @@ public class gm_gps_opt_split_comm_ebb extends gm_compile_step {
 		gm_gps_basic_block new_seq = new gm_gps_basic_block(gen.issue_basicblock_id());
 		new_seq.set_after_vertex(true);
 
-		gm_gps_basic_block new_BB = new gm_gps_basic_block(gen.issue_basicblock_id(), gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX);
+		gm_gps_basic_block new_BB = new gm_gps_basic_block(gen.issue_basicblock_id(), gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX);
 
 		// --------------------------------------
 		// migrate receiver list to new_BB

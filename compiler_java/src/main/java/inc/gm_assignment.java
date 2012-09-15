@@ -3,7 +3,7 @@ package inc;
 //-------------------------------------------------------
 // Assignments
 //-------------------------------------------------------
-public enum gm_assignment_t {
+public enum gm_assignment {
 	GMASSIGN_NORMAL, //
 	GMASSIGN_REDUCE, //
 	GMASSIGN_DEFER, //

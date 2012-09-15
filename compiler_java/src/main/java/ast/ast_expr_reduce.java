@@ -1,8 +1,8 @@
 package ast;
 
-import inc.GMEXPR_CLASS;
-import inc.GMTYPE_T;
-import inc.GM_REDUCE_T;
+import inc.gm_expr_class;
+import inc.gm_type;
+import inc.gm_reduce;
 
 import common.gm_apply;
 import common.gm_dumptree;
@@ -16,28 +16,28 @@ public class ast_expr_reduce extends ast_expr {
 	private ast_id src2 = null;
 	private ast_expr body = null;
 	private ast_expr filter = null;
-	private GM_REDUCE_T reduce_type;
-	private GMTYPE_T iter_type;
+	private gm_reduce reduce_type;
+	private gm_type iter_type;
 
 	private ast_expr_reduce() {
 		super();
-		this.reduce_type = GM_REDUCE_T.GMREDUCE_NULL;
-		this.iter_type = GMTYPE_T.GMTYPE_INVALID;
-		set_nodetype(AST_NODE_TYPE.AST_EXPR_RDC);
+		this.reduce_type = gm_reduce.GMREDUCE_NULL;
+		this.iter_type = gm_type.GMTYPE_INVALID;
+		set_nodetype(ast_node_type.AST_EXPR_RDC);
 		create_symtabs();
 	}
 
-	public static ast_expr_reduce new_reduce_expr(GM_REDUCE_T optype, ast_id iter, ast_id src, GMTYPE_T iter_op, ast_expr body) {
+	public static ast_expr_reduce new_reduce_expr(gm_reduce optype, ast_id iter, ast_id src, gm_type iter_op, ast_expr body) {
 		return new_reduce_expr(optype, iter, src, iter_op, body, null);
 	}
 
-	public static ast_expr_reduce new_reduce_expr(GM_REDUCE_T optype, ast_id iter, ast_id src, GMTYPE_T iter_op, ast_expr body, ast_expr filter) {
+	public static ast_expr_reduce new_reduce_expr(gm_reduce optype, ast_id iter, ast_id src, gm_type iter_op, ast_expr body, ast_expr filter) {
 		ast_expr_reduce e = new ast_expr_reduce();
 		e.iter = iter;
 		e.body = body;
 		e.filter = filter;
 		e.src = src;
-		e.expr_class = GMEXPR_CLASS.GMEXPR_REDUCE;
+		e.expr_class = gm_expr_class.GMEXPR_REDUCE;
 		e.reduce_type = optype;
 		e.iter_type = iter_op;
 
@@ -196,15 +196,15 @@ public class ast_expr_reduce extends ast_expr {
 	}
 
 	// [xxx] should it be getIterator()->getTypeSummary()?
-	public final GMTYPE_T get_iter_type() {
+	public final gm_type get_iter_type() {
 		return iter_type;
 	}
 
-	public final void set_iter_type(GMTYPE_T i) {
+	public final void set_iter_type(gm_type i) {
 		iter_type = i;
 	}
 
-	public final GM_REDUCE_T get_reduce_type() {
+	public final gm_reduce get_reduce_type() {
 		return reduce_type;
 	}
 

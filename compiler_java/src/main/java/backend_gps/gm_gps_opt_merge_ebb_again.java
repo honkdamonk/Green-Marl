@@ -159,7 +159,7 @@ public class gm_gps_opt_merge_ebb_again extends gm_compile_step {
 			assert curr.get_num_entries() <= 1;
 			assert curr.get_num_exits() <= 1;
 			if (seq2 == null) {
-				if (curr.get_type() != gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ) {
+				if (curr.get_type() != gm_gps_bbtype.GM_GPS_BBTYPE_SEQ) {
 					continue;
 				} else {
 					seq2 = curr;
@@ -168,10 +168,10 @@ public class gm_gps_opt_merge_ebb_again extends gm_compile_step {
 			}
 
 			else if (par2 == null) {
-				if (curr.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) {
+				if (curr.get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX) {
 					par2 = curr;
 					continue;
-				} else if (curr.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ) {
+				} else if (curr.get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_SEQ) {
 					seq2 = curr;
 					par2 = null;
 					continue;
@@ -180,7 +180,7 @@ public class gm_gps_opt_merge_ebb_again extends gm_compile_step {
 					continue;
 				}
 			} else if (seq1 == null) {
-				if (curr.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ) {
+				if (curr.get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_SEQ) {
 					seq1 = curr;
 					continue;
 				} else {
@@ -188,9 +188,9 @@ public class gm_gps_opt_merge_ebb_again extends gm_compile_step {
 					continue;
 				}
 			} else if (par1 == null) {
-				if (curr.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) {
+				if (curr.get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX) {
 					par1 = curr; // go through
-				} else if (curr.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ) {
+				} else if (curr.get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_SEQ) {
 					seq2 = curr;
 					par1 = par2 = seq1 = null;
 					continue;

@@ -1,8 +1,8 @@
 package frontend;
 
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
-import ast.AST_NODE_TYPE;
+import inc.gm_reduce;
+import inc.gm_assignment;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;
@@ -17,7 +17,7 @@ public class gm_ss1_initial_expr extends gm_apply {
 	
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL)
+		if (s.get_nodetype() != ast_node_type.AST_VARDECL)
 			return true;
 
 		// if it has an initializer, create new sentence
@@ -35,7 +35,7 @@ public class gm_ss1_initial_expr extends gm_apply {
 		ast_id id = idl.get_item(0).copy();
 
 		// new assign statement
-		ast_assign a = ast_assign.new_assign_scala(id, e, gm_assignment_t.GMASSIGN_NORMAL, null, GM_REDUCE_T.GMREDUCE_NULL);
+		ast_assign a = ast_assign.new_assign_scala(id, e, gm_assignment.GMASSIGN_NORMAL, null, gm_reduce.GMREDUCE_NULL);
 
 		// add this sententence next to current statement
 		gm_transform_helper.gm_add_sent_after(v, a, false); // no fix symtab

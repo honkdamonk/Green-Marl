@@ -1,17 +1,17 @@
 package opt;
 
-import static inc.GMTYPE_T.GMTYPE_EDGEITER_ALL;
-import static inc.GMTYPE_T.GMTYPE_EDGEITER_ORDER;
-import static inc.GMTYPE_T.GMTYPE_EDGEITER_SET;
-import static inc.GMTYPE_T.GMTYPE_NODEITER_ALL;
-import static inc.GMTYPE_T.GMTYPE_NODEITER_ORDER;
-import static inc.GMTYPE_T.GMTYPE_NODEITER_SET;
-import inc.GMTYPE_T;
+import static inc.gm_type.GMTYPE_EDGEITER_ALL;
+import static inc.gm_type.GMTYPE_EDGEITER_ORDER;
+import static inc.gm_type.GMTYPE_EDGEITER_SET;
+import static inc.gm_type.GMTYPE_NODEITER_ALL;
+import static inc.gm_type.GMTYPE_NODEITER_ORDER;
+import static inc.gm_type.GMTYPE_NODEITER_SET;
+import inc.gm_type;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_foreach;
@@ -42,7 +42,7 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 	}
 
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+		if (s.get_nodetype() != ast_node_type.AST_ASSIGN)
 			return true;
 		ast_assign a = (ast_assign) s;
 		if (!a.is_reduce_assign())
@@ -116,13 +116,13 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 			ast_node n = a.get_parent();
 			while (true) {
 				assert n != null;
-				if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+				if (n.get_nodetype() == ast_node_type.AST_FOREACH) {
 					ast_foreach fe = (ast_foreach) n;
 					if (fe.get_iterator().getSymInfo() != bound) {
 						if (!fe.is_sequential())
 							return false;
 					} else {
-						GMTYPE_T iter_type = fe.get_iter_type();
+						gm_type iter_type = fe.get_iter_type();
 						if ((iter_type == GMTYPE_NODEITER_ALL) || (iter_type == GMTYPE_EDGEITER_ALL) || (iter_type == GMTYPE_NODEITER_SET)
 								|| (iter_type == GMTYPE_EDGEITER_SET) || (iter_type == GMTYPE_NODEITER_ORDER) || (iter_type == GMTYPE_EDGEITER_ORDER)) {
 							break;
@@ -131,7 +131,7 @@ public class gm_reduce_opt_linear_t extends gm_apply {
 						}
 					}
 				}
-				if (n.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+				if (n.get_nodetype() == ast_node_type.AST_BFS) {
 					ast_bfs bfs = (ast_bfs) n;
 					if ((bfs.get_iterator().getSymInfo() == bound) || (bfs.get_iterator2().getSymInfo() == bound)) {
 						break;

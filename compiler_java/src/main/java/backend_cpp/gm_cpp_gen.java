@@ -1,16 +1,16 @@
 package backend_cpp;
 
-import static inc.GM_REDUCE_T.GMREDUCE_PLUS;
+import static inc.gm_reduce.GMREDUCE_PLUS;
 import frontend.gm_fe_fixup_bound_symbol;
 import frontend.gm_fe_restore_vardecl;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import inc.BackendGenerator;
-import inc.GMEXPR_CLASS;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_location_t;
+import inc.gm_expr_class;
+import inc.gm_type;
+import inc.gm_ops;
+import inc.gm_reduce;
+import inc.gm_assignment_location;
 import inc.gm_code_writer;
 import inc.gm_compile_step;
 import inc.gm_ind_opt_move_propdecl;
@@ -28,7 +28,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_argdecl;
 import ast.ast_assign;
 import ast.ast_assign_mapentry;
@@ -53,12 +53,12 @@ import ast.ast_sentblock;
 import ast.ast_typedecl;
 import ast.ast_vardecl;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply_compiler_stage;
 import common.gm_builtin_def;
 import common.gm_error;
 import common.gm_main;
-import common.gm_method_id_t;
+import common.gm_method_id;
 import common.gm_transform_helper;
 import common.gm_vocabulary;
 
@@ -338,7 +338,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			ps_header = new PrintStream(bos);
 		} catch (FileNotFoundException e1) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
 		Header.setOutputFile(ps_header);
@@ -350,7 +350,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			ps_body = new PrintStream(bos);
 		} catch (FileNotFoundException e) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
 		_Body.setOutputFile(ps_body);
@@ -430,7 +430,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			driver = e.get_driver();
 
 		assert def != null;
-		gm_method_id_t method_id = def.get_method_id();
+		gm_method_id method_id = def.get_method_id();
 		if (driver == null) {
 			boolean add_thread_id = false;
 			String func_name = get_function_name(method_id, new RefObject<Boolean>(add_thread_id));
@@ -450,7 +450,7 @@ public class gm_cpp_gen extends BackendGenerator {
 	}
 
 	public void generate_expr_minmax(ast_expr e) {
-		if (e.get_optype() == GM_OPS_T.GMOP_MIN) {
+		if (e.get_optype() == gm_ops.GMOP_MIN) {
 			_Body.push(" std::min(");
 		} else {
 			_Body.push(" std::max(");
@@ -470,8 +470,8 @@ public class gm_cpp_gen extends BackendGenerator {
 	@Override
 	public void generate_expr_inf(ast_expr e) {
 		String temp;
-		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
-		GMTYPE_T t = e.get_type_summary();
+		assert e.get_opclass() == gm_expr_class.GMEXPR_INF;
+		gm_type t = e.get_type_summary();
 		switch (t) {
 		case GMTYPE_INF:
 		case GMTYPE_INF_INT:
@@ -500,7 +500,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		get_lib().generate_expr_nil(ee, _Body);
 	}
 
-	public String get_type_string(GMTYPE_T type_id) {
+	public String get_type_string(gm_type type_id) {
 
 		if (type_id.is_prim_type()) {
 			switch (type_id) {
@@ -614,7 +614,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			return;
 		}
 
-		else if ((a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_AND) || (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_OR)) {
+		else if ((a.get_reduce_type() == gm_reduce.GMREDUCE_AND) || (a.get_reduce_type() == gm_reduce.GMREDUCE_OR)) {
 			generate_sent_reduce_assign_boolean(a);
 			return;
 		}
@@ -630,17 +630,17 @@ public class gm_cpp_gen extends BackendGenerator {
 		// } while (!_bool_comp_swap(&LHS, OLD, NEW))
 		// }
 		// ---------------------------------------
-		ast_typedecl lhs_target_type = (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) ? a.get_lhs_scala().getTypeInfo() : a.get_lhs_field()
+		ast_typedecl lhs_target_type = (a.get_lhs_type() == gm_assignment_location.GMASSIGN_LHS_SCALA) ? a.get_lhs_scala().getTypeInfo() : a.get_lhs_field()
 				.getTypeInfo().get_target_type();
 
-		String temp_var_base = (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) ? a.get_lhs_scala().get_orgname() : a.get_lhs_field()
+		String temp_var_base = (a.get_lhs_type() == gm_assignment_location.GMASSIGN_LHS_SCALA) ? a.get_lhs_scala().get_orgname() : a.get_lhs_field()
 				.get_second().get_orgname();
 
-		GM_REDUCE_T r_type = a.get_reduce_type();
+		gm_reduce r_type = a.get_reduce_type();
 
 		String temp_var_old;
 		String temp_var_new;
-		boolean is_scalar = (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA);
+		boolean is_scalar = (a.get_lhs_type() == gm_assignment_location.GMASSIGN_LHS_SCALA);
 
 		temp_var_old = gm_main.FE.voca_temp_name_and_add(temp_var_base, "_old");
 		temp_var_new = gm_main.FE.voca_temp_name_and_add(temp_var_base, "_new");
@@ -660,22 +660,22 @@ public class gm_cpp_gen extends BackendGenerator {
 			generate_rhs_field(a.get_lhs_field());
 
 		_Body.pushln(";");
-		if (r_type == GM_REDUCE_T.GMREDUCE_PLUS) {
+		if (r_type == gm_reduce.GMREDUCE_PLUS) {
 			temp = String.format("%s = %s + (", temp_var_new, temp_var_old);
 			_Body.push(temp);
-		} else if (r_type == GM_REDUCE_T.GMREDUCE_MULT) {
+		} else if (r_type == gm_reduce.GMREDUCE_MULT) {
 			temp = String.format("%s = %s * (", temp_var_new, temp_var_old);
 			_Body.push(temp);
-		} else if (r_type == GM_REDUCE_T.GMREDUCE_MAX) {
+		} else if (r_type == gm_reduce.GMREDUCE_MAX) {
 			temp = String.format("%s = std::max (%s, ", temp_var_new, temp_var_old);
 			_Body.push(temp);
-		} else if (r_type == GM_REDUCE_T.GMREDUCE_OR) {
+		} else if (r_type == gm_reduce.GMREDUCE_OR) {
 			temp = String.format("%s = %s || (", temp_var_new, temp_var_old);
 			_Body.push(temp);
-		} else if (r_type == GM_REDUCE_T.GMREDUCE_AND) {
+		} else if (r_type == gm_reduce.GMREDUCE_AND) {
 			temp = String.format("%s = %s && (", temp_var_new, temp_var_old);
 			_Body.push(temp);
-		} else if (r_type == GM_REDUCE_T.GMREDUCE_MIN) {
+		} else if (r_type == gm_reduce.GMREDUCE_MIN) {
 			temp = String.format("%s = std::min (%s, ", temp_var_new, temp_var_old);
 			_Body.push(temp);
 		} else {
@@ -684,7 +684,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		generate_expr(a.get_rhs());
 		_Body.pushln(");");
-		if ((r_type == GM_REDUCE_T.GMREDUCE_MAX) || (r_type == GM_REDUCE_T.GMREDUCE_MIN)) {
+		if ((r_type == gm_reduce.GMREDUCE_MAX) || (r_type == gm_reduce.GMREDUCE_MIN)) {
 			temp = String.format("if (%s == %s) break;", temp_var_old, temp_var_new);
 			_Body.pushln(temp);
 		}
@@ -753,7 +753,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		}
 	}
 
-	private String get_function_name_map_reduce_assign(GM_REDUCE_T reduceType) {
+	private String get_function_name_map_reduce_assign(gm_reduce reduceType) {
 		switch (reduceType) {
 		case GMREDUCE_PLUS:
 			return "changeValueAtomicAdd";
@@ -795,7 +795,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		boolean need_init_before = get_lib().need_up_initializer(f);
 
 		if (need_init_before) {
-			assert f.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+			assert f.get_parent().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 			get_lib().generate_up_initializer(f, _Body);
 		}
 
@@ -810,7 +810,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			_Body.pushln("{");
 			get_lib().generate_down_initializer(f, _Body);
 
-			if (f.get_body().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK) {
+			if (f.get_body().get_nodetype() != ast_node_type.AST_SENTBLOCK) {
 				generate_sent(f.get_body());
 			} else {
 				// '{' '} already handled
@@ -818,7 +818,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			}
 			_Body.pushln("}");
 
-		} else if (f.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		} else if (f.get_body().get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 			generate_sent(f.get_body());
 		} else {
 			_Body.pushIndent();
@@ -909,11 +909,11 @@ public class gm_cpp_gen extends BackendGenerator {
 		for (ast_sent s : sents) {
 			// insert newline after end of VARDECL
 			if (!vardecl_started) {
-				if (s.get_nodetype() == AST_NODE_TYPE.AST_VARDECL)
+				if (s.get_nodetype() == ast_node_type.AST_VARDECL)
 					vardecl_started = true;
 			} else {
 				if (other_started == false) {
-					if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL) {
+					if (s.get_nodetype() != ast_node_type.AST_VARDECL) {
 						_Body.NL();
 						other_started = true;
 					}
@@ -1267,7 +1267,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		// -----------------------------------------------
 		_Body.pushln("{ // argmin(argmax) - test and test-and-set");
 		String rhs_temp;
-		GMTYPE_T t;
+		gm_type t;
 		if (a.is_target_scalar()) {
 			t = a.get_lhs_scala().getTypeSummary();
 			rhs_temp = (String) gm_main.FE.voca_temp_name_and_add(a.get_lhs_scala().get_genname(), "_new");
@@ -1288,7 +1288,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		} else {
 			generate_rhs_field(a.get_lhs_field());
 		}
-		if (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MIN) {
+		if (a.get_reduce_type() == gm_reduce.GMREDUCE_MIN) {
 			_Body.push(">");
 		} else {
 			_Body.push("<");
@@ -1304,12 +1304,12 @@ public class gm_cpp_gen extends BackendGenerator {
 		J = R.iterator();
 		for (ast_node n : L) {
 			ast_id id;
-			GMTYPE_T type;
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			gm_type type;
+			if (n.get_nodetype() == ast_node_type.AST_ID) {
 				id = (ast_id) n;
 				type = id.getTypeSummary();
 			} else {
-				assert n.get_nodetype() == AST_NODE_TYPE.AST_FIELD;
+				assert n.get_nodetype() == ast_node_type.AST_FIELD;
 				ast_field f = (ast_field) n;
 				id = f.get_second();
 				type = id.getTargetTypeSummary();
@@ -1360,7 +1360,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		} else {
 			generate_rhs_field(a.get_lhs_field());
 		}
-		if (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MIN) {
+		if (a.get_reduce_type() == gm_reduce.GMREDUCE_MIN) {
 			_Body.push(">");
 		} else {
 			_Body.push("<");
@@ -1380,7 +1380,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		i = 0;
 		for (ast_node n : L) {
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			if (n.get_nodetype() == ast_node_type.AST_ID) {
 				generate_lhs_id((ast_id) n);
 			} else {
 				generate_lhs_field((ast_field) n);
@@ -1423,12 +1423,12 @@ public class gm_cpp_gen extends BackendGenerator {
 		// // for and-reduciton
 		// if (!NEW) LHS = FALSE
 		// ---------------------------------------
-		String temp_var_base = (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA) ? a.get_lhs_scala().get_orgname() : a.get_lhs_field()
+		String temp_var_base = (a.get_lhs_type() == gm_assignment_location.GMASSIGN_LHS_SCALA) ? a.get_lhs_scala().get_orgname() : a.get_lhs_field()
 				.get_second().get_orgname();
 
 		String temp_var_new;
 		temp_var_new = gm_main.FE.voca_temp_name_and_add(temp_var_base, "_new");
-		boolean is_scalar = (a.get_lhs_type() == gm_assignment_location_t.GMASSIGN_LHS_SCALA);
+		boolean is_scalar = (a.get_lhs_type() == gm_assignment_location.GMASSIGN_LHS_SCALA);
 
 		_Body.pushln("// boolean reduction (no need CAS)");
 		_Body.pushln("{ ");
@@ -1440,7 +1440,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		generate_expr(a.get_rhs());
 		_Body.pushln(";");
 
-		if (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_AND) {
+		if (a.get_reduce_type() == gm_reduce.GMREDUCE_AND) {
 			_Body.pushln("// and-reduction");
 			temp = String.format("if ((!%s) ", temp_var_new);
 			_Body.push(temp); // new value is false
@@ -1458,7 +1458,7 @@ public class gm_cpp_gen extends BackendGenerator {
 				generate_rhs_field(a.get_lhs_field());
 			_Body.pushln(" = false;");
 			_Body.popIndent();
-		} else if (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_OR) {
+		} else if (a.get_reduce_type() == gm_reduce.GMREDUCE_OR) {
 			_Body.pushln("// or-reduction");
 			temp = String.format("if ((%s) ", temp_var_new);
 			_Body.push(temp); // new value is true
@@ -1619,7 +1619,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		} else {
 			_Body.push("virtual void visit_pre(");
 		}
-		_Body.push(get_lib().get_type_string(GMTYPE_T.GMTYPE_NODE));
+		_Body.push(get_lib().get_type_string(gm_type.GMTYPE_NODE));
 		_Body.SPC();
 		_Body.push(bfs.get_iterator().get_genname());
 		_Body.push(") ");
@@ -1643,7 +1643,7 @@ public class gm_cpp_gen extends BackendGenerator {
 			_Body.push("virtual void visit_post(");
 		}
 
-		_Body.push(get_lib().get_type_string(GMTYPE_T.GMTYPE_NODE));
+		_Body.push(get_lib().get_type_string(gm_type.GMTYPE_NODE));
 		_Body.SPC();
 		_Body.push(bfs.get_iterator().get_genname());
 		_Body.push(") ");
@@ -1659,11 +1659,11 @@ public class gm_cpp_gen extends BackendGenerator {
 
 	public void generate_bfs_navigator(ast_bfs bfs) {
 		_Body.push("virtual bool check_navigator(");
-		_Body.push(get_lib().get_type_string(GMTYPE_T.GMTYPE_NODE));
+		_Body.push(get_lib().get_type_string(gm_type.GMTYPE_NODE));
 		_Body.SPC();
 		_Body.push(bfs.get_iterator().get_genname());
 		_Body.push(", ");
-		_Body.push(get_lib().get_type_string(GMTYPE_T.GMTYPE_EDGE));
+		_Body.push(get_lib().get_type_string(gm_type.GMTYPE_EDGE));
 		_Body.SPC();
 		String alias_name = bfs.get_iterator().getSymInfo().find_info_string(CPPBE_INFO_NEIGHBOR_ITERATOR);
 		assert alias_name != null;
@@ -1684,7 +1684,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		}
 	}
 
-	public String get_function_name(gm_method_id_t methodId, tangible.RefObject<Boolean> addThreadId) {
+	public String get_function_name(gm_method_id methodId, tangible.RefObject<Boolean> addThreadId) {
 		switch (methodId) {
 		case GM_BLTIN_TOP_DRAND:
 			addThreadId.argvalue = true;
@@ -1715,7 +1715,7 @@ public class gm_cpp_gen extends BackendGenerator {
 		}
 	}
 
-	public void generate_lhs_default(GMTYPE_T type) {
+	public void generate_lhs_default(gm_type type) {
 		switch (type) {
 		case GMTYPE_BYTE:
 		case GMTYPE_SHORT:

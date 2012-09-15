@@ -2,7 +2,7 @@ package opt;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_foreach;
@@ -35,7 +35,7 @@ public class gm_opt_optimize_single_reduction_t extends gm_apply {
 	@Override
 	public boolean apply(ast_sent s) {
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			if (a.is_reduce_assign()) {
 				
@@ -51,13 +51,13 @@ public class gm_opt_optimize_single_reduction_t extends gm_apply {
 				boolean single = true;
 				while (!found && single) {
 					assert n != null;
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+					if (n.get_nodetype() == ast_node_type.AST_FOREACH) {
 						ast_foreach fe = (ast_foreach) n;
 						if (!fe.is_sequential())
 							single = false;
 						if (fe.get_iterator().getSymInfo() == bound)
 							found = true;
-					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+					} else if (n.get_nodetype() == ast_node_type.AST_BFS) {
 						ast_bfs bfs = (ast_bfs) n;
 						if (bfs.is_bfs())
 							single = false;

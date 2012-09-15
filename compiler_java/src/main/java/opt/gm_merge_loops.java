@@ -7,7 +7,7 @@ import ast.gm_rwinfo_map;
 
 import common.gm_resolve_nc;
 
-import frontend.gm_range_type_t;
+import frontend.gm_range_type;
 import frontend.gm_rw_analysis;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
@@ -25,7 +25,7 @@ public class gm_merge_loops {
 		assert L != null;
 		for (gm_rwinfo rw : L) {
 			assert rw != null;
-			if (rw.access_range != gm_range_type_t.GM_RANGE_LINEAR)
+			if (rw.access_range != gm_range_type.GM_RANGE_LINEAR)
 				return false;
 		}
 		return true;

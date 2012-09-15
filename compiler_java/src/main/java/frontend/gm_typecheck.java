@@ -1,7 +1,7 @@
 package frontend;
 
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
+import inc.gm_type;
+import inc.gm_ops;
 import tangible.RefObject;
 
 public class gm_typecheck {
@@ -16,13 +16,13 @@ public class gm_typecheck {
 	// ----------------------------------------------------------------------------------------------------------------
 
 	/** check the byte size of two numeric type */
-	public static int gm_compare_numeric_type_size(GMTYPE_T t1, GMTYPE_T t2) {
+	public static int gm_compare_numeric_type_size(gm_type t1, gm_type t2) {
 		// GMTYPE_... is defined as small to larger
 		return t1.subtract(t2); // +:t1 > t2 , 0:t2==t2, -:t1 < t2
 	}
 
 	/** check the size (in Bytes) of two numeric types */
-	public static GMTYPE_T gm_get_larger_type(GMTYPE_T t1, GMTYPE_T t2) {
+	public static gm_type gm_get_larger_type(gm_type t1, gm_type t2) {
 		if (gm_compare_numeric_type_size(t1, t2) > 0)
 			return t1;
 		else
@@ -30,7 +30,7 @@ public class gm_typecheck {
 	}
 
 	/** determine resulting type of numeric operation A (+,-,*,/) B */
-	public static GMTYPE_T gm_determine_result_type(GMTYPE_T t1, GMTYPE_T t2) {
+	public static gm_type gm_determine_result_type(gm_type t1, gm_type t2) {
 		// assumption. t1/t2 is compatible
 		if (t1 == t2)
 			return t1;
@@ -51,11 +51,11 @@ public class gm_typecheck {
 			return t1;
 		else {
 			assert false;
-			return GMTYPE_T.GMTYPE_INVALID;
+			return gm_type.GMTYPE_INVALID;
 		}
 	}
 
-	public static boolean gm_check_compatible_types(GMTYPE_T t1, GMTYPE_T t2, gm_type_compatible_t for_what) {
+	public static boolean gm_check_compatible_types(gm_type t1, gm_type t2, gm_type_compatible for_what) {
 		if (t1 == t2)
 			return true;
 
@@ -66,28 +66,28 @@ public class gm_typecheck {
 		// gm_frontend_api.h)
 		// ----------------------------------------------------------
 		if (t2.isSmallerThan(t1)) {
-			GMTYPE_T t3;
+			gm_type t3;
 			t3 = t1;
 			t1 = t2;
 			t2 = t3;
 		}
 
 		if (t1.is_node_compatible_type()) {
-			if (for_what == gm_type_compatible_t.FOR_BOP)
+			if (for_what == gm_type_compatible.FOR_BOP)
 				return false;
 			else
 				return t2.is_node_compatible_type();
 		}
 
 		if (t1.is_edge_compatible_type()) {
-			if (for_what == gm_type_compatible_t.FOR_BOP)
+			if (for_what == gm_type_compatible.FOR_BOP)
 				return false;
 			else
 				return t2.is_edge_compatible_type();
 		}
 
 		if (t1.is_numeric_type()) {
-			if (for_what == gm_type_compatible_t.FOR_BOP)
+			if (for_what == gm_type_compatible.FOR_BOP)
 				return t2.is_numeric_type();
 			else {
 				// it is possible to assign INF to numeric
@@ -105,33 +105,33 @@ public class gm_typecheck {
 		return false;
 	}
 
-	public static boolean gm_is_compatible_type(GM_OPS_T op, GMTYPE_T t1, GMTYPE_T t2, RefObject<Integer> op_result_type, RefObject<GMTYPE_T> t1_coerced,
-			RefObject<GMTYPE_T> t2_coerced, RefObject<Boolean> t1_coerced_lost_precision, RefObject<Boolean> t2_coerced_lost_precision) {
+	public static boolean gm_is_compatible_type(gm_ops op, gm_type t1, gm_type t2, RefObject<Integer> op_result_type, RefObject<gm_type> t1_coerced,
+			RefObject<gm_type> t2_coerced, RefObject<Boolean> t1_coerced_lost_precision, RefObject<Boolean> t2_coerced_lost_precision) {
 
 		return false;
 	}
 
-	public static boolean gm_is_compatible_type_for_assign(GMTYPE_T t_lhs, GMTYPE_T t_rhs, RefObject<GMTYPE_T> t_new_rhs, RefObject<Boolean> warn_ref) {
-		RefObject<GMTYPE_T> dummy1 = new RefObject<GMTYPE_T>(null);
-		RefObject<GMTYPE_T> dummy2 = new RefObject<GMTYPE_T>(null);
+	public static boolean gm_is_compatible_type_for_assign(gm_type t_lhs, gm_type t_rhs, RefObject<gm_type> t_new_rhs, RefObject<Boolean> warn_ref) {
+		RefObject<gm_type> dummy1 = new RefObject<gm_type>(null);
+		RefObject<gm_type> dummy2 = new RefObject<gm_type>(null);
 		RefObject<Boolean> dummy3 = new RefObject<Boolean>(null);
-		return Oprules.gm_is_compatible_type(GM_OPS_T.GMOP_ASSIGN, t_lhs, t_rhs, dummy1, dummy2, t_new_rhs, dummy3, warn_ref);
+		return Oprules.gm_is_compatible_type(gm_ops.GMOP_ASSIGN, t_lhs, t_rhs, dummy1, dummy2, t_new_rhs, dummy3, warn_ref);
 	}
 
-	public static boolean gm_is_compatible_type_for_assign(GMTYPE_T lhs, GMTYPE_T rhs) {
-		return gm_check_compatible_types(lhs, rhs, gm_type_compatible_t.FOR_ASSIGN);
+	public static boolean gm_is_compatible_type_for_assign(gm_type lhs, gm_type rhs) {
+		return gm_check_compatible_types(lhs, rhs, gm_type_compatible.FOR_ASSIGN);
 	}
 
-	public static boolean gm_is_compatible_type_for_eq(GMTYPE_T t1, GMTYPE_T t2) {
-		return gm_check_compatible_types(t1, t2, gm_type_compatible_t.FOR_EQ);
+	public static boolean gm_is_compatible_type_for_eq(gm_type t1, gm_type t2) {
+		return gm_check_compatible_types(t1, t2, gm_type_compatible.FOR_EQ);
 	}
 
-	public static boolean gm_is_compatible_type_for_less(GMTYPE_T t1, GMTYPE_T t2) {
-		return gm_check_compatible_types(t1, t2, gm_type_compatible_t.FOR_LESS);
+	public static boolean gm_is_compatible_type_for_less(gm_type t1, gm_type t2) {
+		return gm_check_compatible_types(t1, t2, gm_type_compatible.FOR_LESS);
 	}
 
-	public static boolean gm_is_compatible_type_for_biop(GMTYPE_T t1, GMTYPE_T t2) {
-		return gm_check_compatible_types(t1, t2, gm_type_compatible_t.FOR_BOP);
+	public static boolean gm_is_compatible_type_for_biop(gm_type t1, gm_type t2) {
+		return gm_check_compatible_types(t1, t2, gm_type_compatible.FOR_BOP);
 	}
 
 }

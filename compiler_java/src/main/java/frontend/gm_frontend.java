@@ -1,20 +1,20 @@
 package frontend;
 
-import static ast.AST_NODE_TYPE.AST_ARGDECL;
-import static ast.AST_NODE_TYPE.AST_EXPR;
-import static ast.AST_NODE_TYPE.AST_EXPR_BUILTIN;
-import static ast.AST_NODE_TYPE.AST_EXPR_FOREIGN;
-import static ast.AST_NODE_TYPE.AST_FIELD;
-import static ast.AST_NODE_TYPE.AST_ID;
-import static ast.AST_NODE_TYPE.AST_IDLIST;
-import static ast.AST_NODE_TYPE.AST_MAPACCESS;
-import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
-import static ast.AST_NODE_TYPE.AST_TYPEDECL;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
+import static ast.ast_node_type.AST_ARGDECL;
+import static ast.ast_node_type.AST_EXPR;
+import static ast.ast_node_type.AST_EXPR_BUILTIN;
+import static ast.ast_node_type.AST_EXPR_FOREIGN;
+import static ast.ast_node_type.AST_FIELD;
+import static ast.ast_node_type.AST_ID;
+import static ast.ast_node_type.AST_IDLIST;
+import static ast.ast_node_type.AST_MAPACCESS;
+import static ast.ast_node_type.AST_SENTBLOCK;
+import static ast.ast_node_type.AST_TYPEDECL;
+import inc.gm_type;
+import inc.gm_ops;
+import inc.gm_reduce;
 import inc.expr_list;
-import inc.gm_assignment_t;
+import inc.gm_assignment;
 import inc.gm_backend_info;
 import inc.gm_compile_step;
 import inc.gm_procinfo;
@@ -424,35 +424,35 @@ public class gm_frontend {
 		return n;
 	}
 
-	public static ast_node GM_expr_biop(ast_node left, ast_node right, GM_OPS_T op, int l, int c) {
+	public static ast_node GM_expr_biop(ast_node left, ast_node right, gm_ops op, int l, int c) {
 		ast_node n = ast_expr.new_biop_expr(op, (ast_expr) left, (ast_expr) right);
 		n.set_line(l);
 		n.set_col(c);
 		return n;
 	}
 
-	public static ast_node GM_expr_uop(ast_node left, GM_OPS_T op, int l, int c) {
+	public static ast_node GM_expr_uop(ast_node left, gm_ops op, int l, int c) {
 		ast_node n = ast_expr.new_uop_expr(op, (ast_expr) left);
 		n.set_line(l);
 		n.set_col(c);
 		return n;
 	}
 
-	public static ast_node GM_expr_lbiop(ast_node left, ast_node right, GM_OPS_T op, int l, int c) {
+	public static ast_node GM_expr_lbiop(ast_node left, ast_node right, gm_ops op, int l, int c) {
 		ast_node n = ast_expr.new_lbiop_expr(op, (ast_expr) left, (ast_expr) right);
 		n.set_line(l);
 		n.set_col(c);
 		return n;
 	}
 
-	public static ast_node GM_expr_luop(ast_node left, GM_OPS_T op, int l, int c) {
+	public static ast_node GM_expr_luop(ast_node left, gm_ops op, int l, int c) {
 		ast_node n = ast_expr.new_luop_expr(op, (ast_expr) left);
 		n.set_line(l);
 		n.set_col(c);
 		return n;
 	}
 
-	public static ast_node GM_expr_comp(ast_node left, ast_node right, GM_OPS_T op, int l, int c) {
+	public static ast_node GM_expr_comp(ast_node left, ast_node right, gm_ops op, int l, int c) {
 		assert op.is_eq_or_less_op();
 		ast_node n = ast_expr.new_comp_expr(op, (ast_expr) left, (ast_expr) right);
 		n.set_line(l);
@@ -462,14 +462,14 @@ public class gm_frontend {
 
 	public static ast_node GM_expr_conversion(ast_node left, ast_node type, int l, int c) {
 		assert ((ast_typedecl) type).is_primitive();
-		GMTYPE_T target_type = ((ast_typedecl) type).get_typeid();
+		gm_type target_type = ((ast_typedecl) type).get_typeid();
 		ast_node n = ast_expr.new_typeconv_expr(target_type, (ast_expr) left);
 		n.set_line(l);
 		n.set_col(c);
 		return n;
 	}
 
-	public static ast_node GM_expr_reduceop(GM_REDUCE_T op, ast_node iter, ast_node src, GMTYPE_T iter_op, ast_node body, ast_node filter, ast_node src2,
+	public static ast_node GM_expr_reduceop(gm_reduce op, ast_node iter, ast_node src, gm_type iter_op, ast_node body, ast_node filter, ast_node src2,
 			int l, int c) {
 		assert iter.get_nodetype() == AST_ID;
 		assert src.get_nodetype() == AST_ID;
@@ -481,8 +481,8 @@ public class gm_frontend {
 		if (src2 != null)
 			assert src2.get_nodetype() == AST_ID;
 		assert iter_op.is_iter_type();
-		assert (op == GM_REDUCE_T.GMREDUCE_MAX) || (op == GM_REDUCE_T.GMREDUCE_MIN) || (op == GM_REDUCE_T.GMREDUCE_PLUS) || (op == GM_REDUCE_T.GMREDUCE_MULT)
-				|| (op == GM_REDUCE_T.GMREDUCE_AND) || (op == GM_REDUCE_T.GMREDUCE_OR) || (op == GM_REDUCE_T.GMREDUCE_AVG);
+		assert (op == gm_reduce.GMREDUCE_MAX) || (op == gm_reduce.GMREDUCE_MIN) || (op == gm_reduce.GMREDUCE_PLUS) || (op == gm_reduce.GMREDUCE_MULT)
+				|| (op == gm_reduce.GMREDUCE_AND) || (op == gm_reduce.GMREDUCE_OR) || (op == gm_reduce.GMREDUCE_AVG);
 
 		ast_expr_reduce n = ast_expr_reduce.new_reduce_expr(op, (ast_id) iter, (ast_id) src, iter_op, (ast_expr) body, (ast_expr) filter);
 
@@ -547,15 +547,15 @@ public class gm_frontend {
 	}
 
 	// type declarations
-	public static ast_node GM_graphtype_ref(GMTYPE_T graph_type_id) {
+	public static ast_node GM_graphtype_ref(gm_type graph_type_id) {
 		return ast_typedecl.new_graphtype(graph_type_id);
 	}
 
-	public static ast_node GM_primtype_ref(GMTYPE_T prim_type_id) {
+	public static ast_node GM_primtype_ref(gm_type prim_type_id) {
 		return ast_typedecl.new_primtype(prim_type_id);
 	}
 
-	public static ast_node GM_settype_ref(GMTYPE_T set_type_id, ast_node id) {
+	public static ast_node GM_settype_ref(gm_type set_type_id, ast_node id) {
 		if (id != null)
 			assert id.get_nodetype() == AST_ID;
 		return ast_typedecl.new_set((ast_id) id, set_type_id);
@@ -669,10 +669,10 @@ public class gm_frontend {
 		assert rhs.is_expr();
 
 		if (lhs.get_nodetype() == AST_ID) {
-			return ast_assign.new_assign_scala((ast_id) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_NORMAL, null, GM_REDUCE_T.GMREDUCE_NULL);
+			return ast_assign.new_assign_scala((ast_id) lhs, (ast_expr) rhs, gm_assignment.GMASSIGN_NORMAL, null, gm_reduce.GMREDUCE_NULL);
 
 		} else if (lhs.get_nodetype() == AST_FIELD) {
-			return ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_NORMAL, null, GM_REDUCE_T.GMREDUCE_NULL);
+			return ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment.GMASSIGN_NORMAL, null, gm_reduce.GMREDUCE_NULL);
 		} else if (lhs.get_nodetype() == AST_MAPACCESS) {
 			return ast_assign_mapentry.new_mapentry_assign((ast_mapaccess) lhs, (ast_expr) rhs);
 		}
@@ -680,33 +680,33 @@ public class gm_frontend {
 		return null;
 	}
 
-	public static ast_node GM_reduce_assign(ast_node lhs, ast_node rhs, ast_node id, GM_REDUCE_T reduce_type) {
+	public static ast_node GM_reduce_assign(ast_node lhs, ast_node rhs, ast_node id, gm_reduce reduce_type) {
 		assert rhs.is_expr();
 		if (id != null)
 			assert id.get_nodetype() == AST_ID;
 
 		if (lhs.get_nodetype() == AST_ID) {
-			return ast_assign.new_assign_scala((ast_id) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_REDUCE, (ast_id) id, reduce_type);
+			return ast_assign.new_assign_scala((ast_id) lhs, (ast_expr) rhs, gm_assignment.GMASSIGN_REDUCE, (ast_id) id, reduce_type);
 
 		} else if (lhs.get_nodetype() == AST_FIELD) {
-			return ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_REDUCE, (ast_id) id, reduce_type);
+			return ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment.GMASSIGN_REDUCE, (ast_id) id, reduce_type);
 		} else {
 			assert false;
 			return null;
 		}
 	}
 
-	public static ast_node GM_argminmax_assign(ast_node lhs, ast_node rhs, ast_node id, GM_REDUCE_T reduce_type, lhs_list l_list, expr_list r_list) {
+	public static ast_node GM_argminmax_assign(ast_node lhs, ast_node rhs, ast_node id, gm_reduce reduce_type, lhs_list l_list, expr_list r_list) {
 		assert rhs.is_expr();
 		if (id != null)
 			assert id.get_nodetype() == AST_ID;
 		ast_assign a;
 
 		if (lhs.get_nodetype() == AST_ID) {
-			a = ast_assign.new_assign_scala((ast_id) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_REDUCE, (ast_id) id, reduce_type);
+			a = ast_assign.new_assign_scala((ast_id) lhs, (ast_expr) rhs, gm_assignment.GMASSIGN_REDUCE, (ast_id) id, reduce_type);
 
 		} else if (lhs.get_nodetype() == AST_FIELD) {
-			a = ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_REDUCE, (ast_id) id, reduce_type);
+			a = ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment.GMASSIGN_REDUCE, (ast_id) id, reduce_type);
 		} else if (lhs.get_nodetype() == AST_MAPACCESS) {
 			return ast_assign_mapentry.new_mapentry_reduce_assign((ast_mapaccess) lhs, (ast_expr) rhs, reduce_type);
 		} else {
@@ -733,17 +733,17 @@ public class gm_frontend {
 			assert id.get_nodetype() == AST_ID;
 
 		if (lhs.get_nodetype() == AST_ID) {
-			return ast_assign.new_assign_scala((ast_id) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_DEFER, (ast_id) id, GM_REDUCE_T.GMREDUCE_DEFER);
+			return ast_assign.new_assign_scala((ast_id) lhs, (ast_expr) rhs, gm_assignment.GMASSIGN_DEFER, (ast_id) id, gm_reduce.GMREDUCE_DEFER);
 
 		} else if (lhs.get_nodetype() == AST_FIELD) {
-			return ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment_t.GMASSIGN_DEFER, (ast_id) id, GM_REDUCE_T.GMREDUCE_DEFER);
+			return ast_assign.new_assign_field((ast_field) lhs, (ast_expr) rhs, gm_assignment.GMASSIGN_DEFER, (ast_id) id, gm_reduce.GMREDUCE_DEFER);
 		}
 
 		assert false;
 		return null;
 	}
 
-	public static ast_node GM_foreach(ast_node id, ast_node source, GMTYPE_T iter_typ, ast_node sent, ast_node filter, boolean is_seq, boolean is_backward,
+	public static ast_node GM_foreach(ast_node id, ast_node source, gm_type iter_typ, ast_node sent, ast_node filter, boolean is_seq, boolean is_backward,
 			ast_node source2) {
 		assert id.get_nodetype() == AST_ID;
 		assert source.get_nodetype() == AST_ID;

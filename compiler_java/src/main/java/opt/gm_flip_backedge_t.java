@@ -1,13 +1,13 @@
 package opt;
 
-import inc.GMTYPE_T;
-import inc.gm_assignment_t;
+import inc.gm_type;
+import inc.gm_assignment;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -26,7 +26,7 @@ import common.gm_new_sents_after_tc;
 import common.gm_resolve_nc;
 import common.gm_transform_helper;
 
-import frontend.gm_range_type_t;
+import frontend.gm_range_type;
 import frontend.gm_rw_analysis;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
@@ -59,7 +59,7 @@ public class gm_flip_backedge_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent sent) {
-		if (sent.get_nodetype() != AST_NODE_TYPE.AST_BFS)
+		if (sent.get_nodetype() != ast_node_type.AST_BFS)
 			return true;
 		ast_bfs bfs = (ast_bfs) sent;
 
@@ -83,7 +83,7 @@ public class gm_flip_backedge_t extends gm_apply {
 		// check if bodies are all assignments
 		// --------------------------------------
 		for (ast_sent s : S) {
-			if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+			if (s.get_nodetype() != ast_node_type.AST_ASSIGN)
 				return true;
 
 			ast_assign a = (ast_assign) s;
@@ -100,11 +100,11 @@ public class gm_flip_backedge_t extends gm_apply {
 				return true;
 
 			ast_expr r = a.get_rhs();
-			if (r.get_nodetype() != AST_NODE_TYPE.AST_EXPR_RDC)
+			if (r.get_nodetype() != ast_node_type.AST_EXPR_RDC)
 				return true;
 			ast_expr_reduce D = (ast_expr_reduce) r;
-			GMTYPE_T iter_type = D.get_iter_type();
-			if (iter_type != GMTYPE_T.GMTYPE_NODEITER_UP_NBRS)
+			gm_type iter_type = D.get_iter_type();
+			if (iter_type != gm_type.GMTYPE_NODEITER_UP_NBRS)
 				return true;
 			if (D.get_filter() != null) // todo considering filters
 				return true;
@@ -118,7 +118,7 @@ public class gm_flip_backedge_t extends gm_apply {
 		// --------------------------------------
 		ast_node up = bfs.get_parent();
 		assert up != null;
-		if (up.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+		if (up.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 			return true;
 		ast_sentblock sb = (ast_sentblock) up;
 
@@ -139,7 +139,7 @@ public class gm_flip_backedge_t extends gm_apply {
 							check_init.put(t, false);
 						}
 					} else {
-						if (info.access_range != gm_range_type_t.GM_RANGE_LINEAR) {
+						if (info.access_range != gm_range_type.GM_RANGE_LINEAR) {
 							check_init.put(t, false);
 						} else {
 							check_init.put(t, true);
@@ -189,17 +189,17 @@ public class gm_flip_backedge_t extends gm_apply {
 	}
 
 	public final void flip_edges(ast_assign a, ast_sentblock p) {
-		assert p.get_parent().get_nodetype() == AST_NODE_TYPE.AST_BFS;
+		assert p.get_parent().get_nodetype() == ast_node_type.AST_BFS;
 
 		ast_bfs bfs = (ast_bfs) p.get_parent();
 
 		assert !a.is_target_scalar();
-		assert a.get_rhs().get_nodetype() == AST_NODE_TYPE.AST_EXPR_RDC;
+		assert a.get_rhs().get_nodetype() == ast_node_type.AST_EXPR_RDC;
 		ast_field old_lhs = a.get_lhs_field();
 		ast_expr_reduce old_rhs = (ast_expr_reduce) a.get_rhs();
 
 		ast_id old_iter = old_rhs.get_iterator();
-		assert old_iter.getTypeSummary() == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS;
+		assert old_iter.getTypeSummary() == gm_type.GMTYPE_NODEITER_UP_NBRS;
 
 		// [TODO] considering filters in original RHS.
 		assert old_rhs.get_filter() == null;
@@ -211,7 +211,7 @@ public class gm_flip_backedge_t extends gm_apply {
 																	// foreach
 		ast_id new_iter = old_iter.copy(); // same name, nullify symtab entry
 		ast_id new_source = old_rhs.get_source().copy(true); // same symtab
-		GMTYPE_T new_iter_type = GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS;
+		gm_type new_iter_type = gm_type.GMTYPE_NODEITER_DOWN_NBRS;
 
 		// new_iter has a valid symtab entry, after foreach creating.
 		// foreach_body has correct symtab hierachy
@@ -237,7 +237,7 @@ public class gm_flip_backedge_t extends gm_apply {
 		old_rhs.set_body(null); 
 		new_rhs.set_up_op(null);
 
-		ast_assign new_assign = ast_assign.new_assign_field(new_lhs, new_rhs, gm_assignment_t.GMASSIGN_REDUCE, bfs.get_iterator().copy(true),
+		ast_assign new_assign = ast_assign.new_assign_field(new_lhs, new_rhs, gm_assignment.GMASSIGN_REDUCE, bfs.get_iterator().copy(true),
 				old_rhs.get_reduce_type());
 
 		gm_transform_helper.gm_insert_sent_begin_of_sb(foreach_body, new_assign);

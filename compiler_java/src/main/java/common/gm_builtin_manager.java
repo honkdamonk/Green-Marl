@@ -1,41 +1,41 @@
 package common;
 
-import static common.gm_method_id_t.GM_BLTIN_EDGE_FROM;
-import static common.gm_method_id_t.GM_BLTIN_EDGE_TO;
-import static common.gm_method_id_t.GM_BLTIN_GRAPH_NUM_EDGES;
-import static common.gm_method_id_t.GM_BLTIN_GRAPH_NUM_NODES;
-import static common.gm_method_id_t.GM_BLTIN_GRAPH_RAND_NODE;
-import static common.gm_method_id_t.GM_BLTIN_MAP_CLEAR;
-import static common.gm_method_id_t.GM_BLTIN_MAP_GET_MAX_KEY;
-import static common.gm_method_id_t.GM_BLTIN_MAP_GET_MAX_VALUE;
-import static common.gm_method_id_t.GM_BLTIN_MAP_GET_MIN_KEY;
-import static common.gm_method_id_t.GM_BLTIN_MAP_GET_MIN_VALUE;
-import static common.gm_method_id_t.GM_BLTIN_MAP_HAS_KEY;
-import static common.gm_method_id_t.GM_BLTIN_MAP_HAS_MAX_VALUE;
-import static common.gm_method_id_t.GM_BLTIN_MAP_HAS_MIN_VALUE;
-import static common.gm_method_id_t.GM_BLTIN_MAP_SIZE;
-import static common.gm_method_id_t.GM_BLTIN_NODE_DEGREE;
-import static common.gm_method_id_t.GM_BLTIN_NODE_HAS_EDGE_TO;
-import static common.gm_method_id_t.GM_BLTIN_NODE_IN_DEGREE;
-import static common.gm_method_id_t.GM_BLTIN_NODE_IS_NBR;
-import static common.gm_method_id_t.GM_BLTIN_NODE_RAND_NBR;
-import static common.gm_method_id_t.GM_BLTIN_NODE_TO_EDGE;
-import static common.gm_method_id_t.GM_BLTIN_SET_ADD;
-import static common.gm_method_id_t.GM_BLTIN_SET_ADD_BACK;
-import static common.gm_method_id_t.GM_BLTIN_SET_COMPLEMENT;
-import static common.gm_method_id_t.GM_BLTIN_SET_HAS;
-import static common.gm_method_id_t.GM_BLTIN_SET_INTERSECT;
-import static common.gm_method_id_t.GM_BLTIN_SET_REMOVE;
-import static common.gm_method_id_t.GM_BLTIN_SET_REMOVE_BACK;
-import static common.gm_method_id_t.GM_BLTIN_SET_SIZE;
-import static common.gm_method_id_t.GM_BLTIN_SET_SUBSET;
-import static common.gm_method_id_t.GM_BLTIN_SET_UNION;
-import static common.gm_method_id_t.GM_BLTIN_TOP_DRAND;
-import static common.gm_method_id_t.GM_BLTIN_TOP_EXP;
-import static common.gm_method_id_t.GM_BLTIN_TOP_IRAND;
-import static common.gm_method_id_t.GM_BLTIN_TOP_LOG;
-import static common.gm_method_id_t.GM_BLTIN_TOP_POW;
-import inc.GMTYPE_T;
+import static common.gm_method_id.GM_BLTIN_EDGE_FROM;
+import static common.gm_method_id.GM_BLTIN_EDGE_TO;
+import static common.gm_method_id.GM_BLTIN_GRAPH_NUM_EDGES;
+import static common.gm_method_id.GM_BLTIN_GRAPH_NUM_NODES;
+import static common.gm_method_id.GM_BLTIN_GRAPH_RAND_NODE;
+import static common.gm_method_id.GM_BLTIN_MAP_CLEAR;
+import static common.gm_method_id.GM_BLTIN_MAP_GET_MAX_KEY;
+import static common.gm_method_id.GM_BLTIN_MAP_GET_MAX_VALUE;
+import static common.gm_method_id.GM_BLTIN_MAP_GET_MIN_KEY;
+import static common.gm_method_id.GM_BLTIN_MAP_GET_MIN_VALUE;
+import static common.gm_method_id.GM_BLTIN_MAP_HAS_KEY;
+import static common.gm_method_id.GM_BLTIN_MAP_HAS_MAX_VALUE;
+import static common.gm_method_id.GM_BLTIN_MAP_HAS_MIN_VALUE;
+import static common.gm_method_id.GM_BLTIN_MAP_SIZE;
+import static common.gm_method_id.GM_BLTIN_NODE_DEGREE;
+import static common.gm_method_id.GM_BLTIN_NODE_HAS_EDGE_TO;
+import static common.gm_method_id.GM_BLTIN_NODE_IN_DEGREE;
+import static common.gm_method_id.GM_BLTIN_NODE_IS_NBR;
+import static common.gm_method_id.GM_BLTIN_NODE_RAND_NBR;
+import static common.gm_method_id.GM_BLTIN_NODE_TO_EDGE;
+import static common.gm_method_id.GM_BLTIN_SET_ADD;
+import static common.gm_method_id.GM_BLTIN_SET_ADD_BACK;
+import static common.gm_method_id.GM_BLTIN_SET_COMPLEMENT;
+import static common.gm_method_id.GM_BLTIN_SET_HAS;
+import static common.gm_method_id.GM_BLTIN_SET_INTERSECT;
+import static common.gm_method_id.GM_BLTIN_SET_REMOVE;
+import static common.gm_method_id.GM_BLTIN_SET_REMOVE_BACK;
+import static common.gm_method_id.GM_BLTIN_SET_SIZE;
+import static common.gm_method_id.GM_BLTIN_SET_SUBSET;
+import static common.gm_method_id.GM_BLTIN_SET_UNION;
+import static common.gm_method_id.GM_BLTIN_TOP_DRAND;
+import static common.gm_method_id.GM_BLTIN_TOP_EXP;
+import static common.gm_method_id.GM_BLTIN_TOP_IRAND;
+import static common.gm_method_id.GM_BLTIN_TOP_LOG;
+import static common.gm_method_id.GM_BLTIN_TOP_POW;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
@@ -141,9 +141,9 @@ public class gm_builtin_manager {
 		}
 	}
 
-	public final gm_builtin_def find_builtin_def(GMTYPE_T source_type, String orgname) {
+	public final gm_builtin_def find_builtin_def(gm_type source_type, String orgname) {
 		for (gm_builtin_def d : defs) {
-			GMTYPE_T def_src = d.get_source_type_summary();
+			gm_type def_src = d.get_source_type_summary();
 			if (orgname.equals(d.get_orgname())) {
 				if (def_src == source_type) {
 					if (d.is_synonym_def())
@@ -154,12 +154,12 @@ public class gm_builtin_manager {
 				boolean is_strict = d.need_strict_source_type();
 				if (is_strict)
 					continue;
-				if (def_src == GMTYPE_T.GMTYPE_VOID)
+				if (def_src == gm_type.GMTYPE_VOID)
 					continue;
 				assert (!def_src.is_prim_type());
 
-				if (GMTYPE_T.is_same_node_or_edge_compatible_type(def_src, source_type)
-						|| GMTYPE_T.collection_of_collection_compatible_type(def_src, source_type)) {
+				if (gm_type.is_same_node_or_edge_compatible_type(def_src, source_type)
+						|| gm_type.collection_of_collection_compatible_type(def_src, source_type)) {
 					if (d.is_synonym_def())
 						return d.get_org_def();
 					else
@@ -170,24 +170,24 @@ public class gm_builtin_manager {
 		return null;
 	}
 
-	public final gm_builtin_def find_builtin_def(GMTYPE_T source_type, gm_method_id_t id) {
+	public final gm_builtin_def find_builtin_def(gm_type source_type, gm_method_id id) {
 
 		for (gm_builtin_def d : defs) {
 			if (d.get_method_id() != id)
 				continue;
 
-			GMTYPE_T def_src = d.get_source_type_summary();
+			gm_type def_src = d.get_source_type_summary();
 			if (def_src != source_type) {
 
 				boolean is_strict = d.need_strict_source_type();
 
 				if (is_strict)
 					continue;
-				if (source_type == GMTYPE_T.GMTYPE_VOID)
+				if (source_type == gm_type.GMTYPE_VOID)
 					continue;
 				if (def_src.is_prim_type())
 					continue;
-				if (!GMTYPE_T.is_same_node_or_edge_compatible_type(def_src, source_type))
+				if (!gm_type.is_same_node_or_edge_compatible_type(def_src, source_type))
 					continue;
 			}
 			if (d.is_synonym_def())

@@ -2,7 +2,7 @@ package common;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import frontend.gm_symtab;
@@ -46,7 +46,7 @@ public class gm_merge_sentblock {
 		ast_sent anchor = null;
 		LinkedList<ast_sent> Ps = P.get_sents();
 		for (ast_sent s : Ps) {
-			if (s.get_nodetype() != AST_NODE_TYPE.AST_VARDECL) // stop at the
+			if (s.get_nodetype() != ast_node_type.AST_VARDECL) // stop at the
 																// first
 																// non-decl
 																// sentence
@@ -57,7 +57,7 @@ public class gm_merge_sentblock {
 		LinkedList<ast_sent> Qs = Q.get_sents(); // work on a copy
 		for (ast_sent s : Qs) {
 			gm_transform_helper.gm_ripoff_sent(s);
-			if (s.get_nodetype() == AST_NODE_TYPE.AST_VARDECL) {
+			if (s.get_nodetype() == ast_node_type.AST_VARDECL) {
 				if (anchor == null)
 					gm_transform_helper.gm_insert_sent_begin_of_sb(P, s);
 				else

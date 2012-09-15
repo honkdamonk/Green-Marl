@@ -2,7 +2,7 @@ package frontend;
 
 import java.util.HashMap;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_foreach;
@@ -47,13 +47,13 @@ public class find_hpb_t1 extends gm_apply {
 
 	@Override
 	public final void begin_context(ast_node t) {
-		if (t.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (t.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) t;
 			if (fe.is_parallel()) {
 				current_depth++;
 			}
 			para_iter_map.put(fe.get_iterator().getSymInfo(), fe.is_parallel());
-		} else if (t.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		} else if (t.get_nodetype() == ast_node_type.AST_BFS) {
 			ast_bfs fe = (ast_bfs) t;
 			if (fe.is_parallel())
 				current_depth++;
@@ -63,11 +63,11 @@ public class find_hpb_t1 extends gm_apply {
 
 	@Override
 	public final void end_context(ast_node t) {
-		if (t.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (t.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) t;
 			if (fe.is_parallel())
 				current_depth--;
-		} else if (t.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		} else if (t.get_nodetype() == ast_node_type.AST_BFS) {
 			ast_bfs fe = (ast_bfs) t;
 			if (fe.is_parallel())
 				current_depth--;
@@ -76,7 +76,7 @@ public class find_hpb_t1 extends gm_apply {
 
 	/** phase 1: create depth_map */
 	@Override
-	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
+	public boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
 		depth_map.put(e, current_depth);
 		return true;
 	}
@@ -90,7 +90,7 @@ public class find_hpb_t1 extends gm_apply {
 	 */
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+		if (s.get_nodetype() != ast_node_type.AST_ASSIGN)
 			return true;
 		ast_assign a = (ast_assign) s;
 
@@ -162,7 +162,7 @@ public class find_hpb_t1 extends gm_apply {
 		while (n != null) {
 			// printf("B3 %s\n",
 			// gm_get_nodetype_string(n->get_nodetype()));fflush(stdout);
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+			if (n.get_nodetype() == ast_node_type.AST_FOREACH) {
 				ast_foreach fe = (ast_foreach) n;
 				assert fe.get_iterator().getSymInfo() != null;
 				int iter_depth = depth_map.get(fe.get_iterator().getSymInfo());
@@ -171,7 +171,7 @@ public class find_hpb_t1 extends gm_apply {
 					break;
 				if (fe.is_parallel())
 					HPB = fe.get_iterator().getSymInfo();
-			} else if (n.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+			} else if (n.get_nodetype() == ast_node_type.AST_BFS) {
 				ast_bfs fe = (ast_bfs) n;
 				assert fe.get_iterator().getSymInfo() != null;
 				int iter_depth = depth_map.get(fe.get_iterator().getSymInfo());

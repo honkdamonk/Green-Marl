@@ -5,13 +5,13 @@ import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINING_WRITE;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
 import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
@@ -36,7 +36,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	}
 
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			if (s.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
 				current_fe = (ast_foreach) s;
 				HashSet<ast_expr> empty = new HashSet<ast_expr>();
@@ -49,11 +49,11 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 	public final boolean apply(ast_expr e) {
 		ast_sent s = get_current_sent();
-		if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_IN.getValue())
+		if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN.getValue())
 			return true;
 
-		if ((e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue())
-				|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_EDGE.getValue())) {
+		if ((e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue())
+				|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_EDGE.getValue())) {
 			// (current traversal engine does not support pruning, so should
 			// look at parents
 			//
@@ -80,7 +80,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 
 		ast_sentblock sb = (ast_sentblock) (fe.get_body());
 		// printf("(2)fe = %p, sb = %p\n", fe, sb);
-		assert sb.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+		assert sb.get_nodetype() == ast_node_type.AST_SENTBLOCK;
 
 		gm_symtab_entry out_iter = null;
 
@@ -173,16 +173,16 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	private HashMap<ast_foreach, HashSet<ast_expr>> sub_exprs = new HashMap<ast_foreach, HashSet<ast_expr>>();
 	private ast_foreach current_fe;
 
-	private gm_symtab_entry define_temp(GMTYPE_T type, ast_sentblock sb, gm_symtab_entry graph) {
+	private gm_symtab_entry define_temp(gm_type type, ast_sentblock sb, gm_symtab_entry graph) {
 		String temp_name = gm_main.FE.voca_temp_name_and_add("_m");
 		gm_symtab_entry target;
 		if (type.is_prim_type()) {
 			target = gm_add_symbol.gm_add_new_symbol_primtype(sb, type, temp_name);
 		} else if (type.is_node_edge_compatible_type()) {
 			if (type.is_node_compatible_type()) {
-				type = GMTYPE_T.GMTYPE_NODE;
+				type = gm_type.GMTYPE_NODE;
 			} else if (type.is_edge_compatible_type()) {
-				type = GMTYPE_T.GMTYPE_EDGE;
+				type = gm_type.GMTYPE_EDGE;
 			}
 			target = gm_add_symbol.gm_add_new_symbol_nodeedge_type(sb, type, graph, temp_name);
 		} else {

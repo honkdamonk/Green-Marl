@@ -1,7 +1,7 @@
 package backend_gps;
 
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
+import inc.gm_type;
 import inc.gm_backend_info;
 
 import java.util.HashMap;
@@ -73,17 +73,17 @@ public class gm_gps_beinfo extends gm_backend_info {
 	}
 
 	public final void add_communication_unit_nested(ast_foreach fe) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_NESTED, fe);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_NESTED, fe);
 		add_communication_unit(U);
 	}
 
 	public final void add_communication_unit_initializer() {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_INIT, null);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_INIT, null);
 		add_communication_unit(U);
 	}
 
 	public final void add_communication_unit_random_write(ast_sentblock sb, gm_symtab_entry drv) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_RANDOM_WRITE, sb, drv);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_RANDOM_WRITE, sb, drv);
 		add_communication_unit(U);
 	}
 
@@ -120,17 +120,17 @@ public class gm_gps_beinfo extends gm_backend_info {
 	}
 
 	public final void add_communication_symbol_nested(ast_foreach fe, gm_symtab_entry sym) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_NESTED, fe);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_NESTED, fe);
 		add_communication_symbol(U, sym);
 	}
 
 	public final void add_communication_symbol_initializer(gm_symtab_entry sym) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_INIT, null);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_INIT, null);
 		add_communication_symbol(U, sym);
 	}
 
 	public final void add_communication_symbol_random_write(ast_sentblock sb, gm_symtab_entry drv, gm_symtab_entry sym) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_RANDOM_WRITE, sb, drv);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_RANDOM_WRITE, sb, drv);
 		add_communication_symbol(U, sym);
 	}
 
@@ -141,16 +141,16 @@ public class gm_gps_beinfo extends gm_backend_info {
 		LinkedList<gm_gps_communication_symbol_info> sym_info = comm_symbol_info.get(C);
 		gm_gps_communication_size_info size_info = comm_size_info.get(C);
 
-		GMTYPE_T target_type;
+		gm_type target_type;
 		if (sym.getType().is_property()) {
 			target_type = sym.getType().getTargetTypeSummary();
 		} else if (sym.getType().is_primitive()) {
 			target_type = sym.getType().getTypeSummary();
 		} else if (sym.getType().is_node_compatible()) {
 			if (gm_main.PREGEL_BE.get_lib().is_node_type_int())
-				target_type = GMTYPE_T.GMTYPE_INT;
+				target_type = gm_type.GMTYPE_INT;
 			else
-				target_type = GMTYPE_T.GMTYPE_LONG;
+				target_type = gm_type.GMTYPE_LONG;
 		} else {
 			assert false;
 			throw new AssertionError();
@@ -172,15 +172,15 @@ public class gm_gps_beinfo extends gm_backend_info {
 		sym_info.addLast(II); // add by copy
 
 		// update size-info
-		if (target_type == GMTYPE_T.GMTYPE_INT)
+		if (target_type == gm_type.GMTYPE_INT)
 			size_info.num_int = (idx + 1);
-		else if (target_type == GMTYPE_T.GMTYPE_BOOL)
+		else if (target_type == gm_type.GMTYPE_BOOL)
 			size_info.num_bool = (idx + 1);
-		else if (target_type == GMTYPE_T.GMTYPE_LONG)
+		else if (target_type == gm_type.GMTYPE_LONG)
 			size_info.num_long = (idx + 1);
-		else if (target_type == GMTYPE_T.GMTYPE_FLOAT)
+		else if (target_type == gm_type.GMTYPE_FLOAT)
 			size_info.num_float = (idx + 1);
-		else if (target_type == GMTYPE_T.GMTYPE_DOUBLE)
+		else if (target_type == gm_type.GMTYPE_DOUBLE)
 			size_info.num_double = (idx + 1);
 		else {
 			System.out.printf("symbol = %s, target type = %d\n", sym.getId().get_genname(), target_type);
@@ -190,7 +190,7 @@ public class gm_gps_beinfo extends gm_backend_info {
 	}
 
 	public final LinkedList<gm_gps_communication_symbol_info> get_all_communication_symbols_nested(ast_foreach fe, int comm_type) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_NESTED, fe);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_NESTED, fe);
 		return get_all_communication_symbols(U);
 	}
 
@@ -207,7 +207,7 @@ public class gm_gps_beinfo extends gm_backend_info {
 	}
 
 	public final LinkedList<ast_sent> get_random_write_sents(ast_sentblock sb, gm_symtab_entry sym) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_RANDOM_WRITE, sb, sym);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_RANDOM_WRITE, sb, sym);
 		return get_random_write_sents(U);
 	}
 
@@ -217,12 +217,12 @@ public class gm_gps_beinfo extends gm_backend_info {
 	}
 
 	public final void add_random_write_sent(ast_sentblock sb, gm_symtab_entry sym, ast_sent s) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_RANDOM_WRITE, sb, sym);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_RANDOM_WRITE, sb, sym);
 		add_random_write_sent(U, s);
 	}
 
 	public final gm_gps_communication_size_info find_communication_size_info_nested(ast_foreach fe, int comm_type) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_NESTED, fe);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_NESTED, fe);
 		return find_communication_size_info(U);
 	}
 

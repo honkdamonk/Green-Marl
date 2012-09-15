@@ -3,7 +3,7 @@ package inc;
 //-------------------------------------------------------
 // Class of Expressions
 //-------------------------------------------------------
-public enum GMEXPR_CLASS {
+public enum gm_expr_class {
 	GMEXPR_IVAL, // integer literal
 	GMEXPR_FVAL, // floating literal
 	GMEXPR_BVAL, // boolean literal

@@ -1,7 +1,7 @@
 package backend_gps;
 
 
-public enum gm_gps_comm_t
+public enum gm_gps_comm
 {
 	GPS_COMM_NESTED,       // communication for nested loop
 	GPS_COMM_RANDOM_WRITE, // communication due to random write
@@ -12,7 +12,7 @@ public enum gm_gps_comm_t
 		return this.ordinal();
 	}
 
-	public static gm_gps_comm_t forValue(int value)
+	public static gm_gps_comm forValue(int value)
 	{
 		return values()[value];
 	}

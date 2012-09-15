@@ -10,7 +10,7 @@ import inc.gps_apply_bb_ast;
 
 import java.util.HashSet;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_foreach;
@@ -45,7 +45,7 @@ public class gps_find_comm_vertex_bb extends gps_apply_bb_ast {
 			return true;
 
 		// neighborhood looking foreach statement is a communicating bb
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (fe.find_info_bool(GPS_FLAG_IS_OUTER_LOOP)) {
 				current_outer_loop = fe;
@@ -72,7 +72,7 @@ public class gps_find_comm_vertex_bb extends gps_apply_bb_ast {
 
 			// curr->set_has_sender(true);
 
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		} else if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			if (s.find_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN) != null) {
 				ast_assign a = (ast_assign) s;
 				ast_sentblock sb = (ast_sentblock) (s.find_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN));

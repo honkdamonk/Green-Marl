@@ -1,6 +1,6 @@
 package inc;
 
-public enum GM_OPS_T { // list of operators
+public enum gm_ops { // list of operators
 	GMOP_ABS, //
 	GMOP_NEG, //
 	GMOP_MULT, //
@@ -62,7 +62,7 @@ public enum GM_OPS_T { // list of operators
 		return GM_OPPRED_LEVEL[getValue()];
 	}
 
-	public boolean gm_need_paranthesis(GM_OPS_T up_op, boolean is_right) {
+	public boolean gm_need_paranthesis(gm_ops up_op, boolean is_right) {
 		if (up_op == GMOP_TERNARY) {
 			// for clarity I prefer adding ()s, except chained ternary-ops.
 			// example (A+B>C) ? (D+1) : (A+C>D) ? (E+1) : (F+1)

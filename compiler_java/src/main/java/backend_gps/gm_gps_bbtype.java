@@ -1,7 +1,7 @@
 package backend_gps;
 
 
-public enum gm_gps_bbtype_t
+public enum gm_gps_bbtype
 {
 	GM_GPS_BBTYPE_SEQ,
 	GM_GPS_BBTYPE_IF_COND,
@@ -17,7 +17,7 @@ public enum gm_gps_bbtype_t
 		return this.ordinal();
 	}
 
-	public static gm_gps_bbtype_t forValue(int value)
+	public static gm_gps_bbtype forValue(int value)
 	{
 		return values()[value];
 	}

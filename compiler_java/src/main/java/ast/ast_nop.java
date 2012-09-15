@@ -12,12 +12,12 @@ public class ast_nop extends ast_sent {
 	private nop_enum_cpp subtype;
 
 	protected ast_nop() {
-		super(AST_NODE_TYPE.AST_NOP);
+		super(ast_node_type.AST_NOP);
 		subtype = nop_enum_cpp.NOP_REDUCE_SCALAR;
 	}
 
 	protected ast_nop(nop_enum_cpp nopReduceScalar) {
-		super(AST_NODE_TYPE.AST_NOP);
+		super(ast_node_type.AST_NOP);
 		set_subtype(nopReduceScalar);
 	}
 

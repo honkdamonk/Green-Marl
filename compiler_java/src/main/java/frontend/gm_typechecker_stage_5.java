@@ -1,20 +1,20 @@
 package frontend;
 
-import static ast.AST_NODE_TYPE.AST_MAPACCESS;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_KEY_MISSMATCH;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_TARGET_MISMATCH;
-import static inc.GMTYPE_T.GMTYPE_NORDER;
-import static inc.GMTYPE_T.GMTYPE_NSEQ;
-import static inc.GMTYPE_T.GMTYPE_NSET;
-import inc.GMTYPE_T;
-import inc.GM_REDUCE_T;
+import static ast.ast_node_type.AST_MAPACCESS;
+import static common.gm_errors_and_warnings.GM_ERROR_KEY_MISSMATCH;
+import static common.gm_errors_and_warnings.GM_ERROR_TARGET_MISMATCH;
+import static inc.gm_type.GMTYPE_NORDER;
+import static inc.gm_type.GMTYPE_NSEQ;
+import static inc.gm_type.GMTYPE_NSET;
+import inc.gm_type;
+import inc.gm_reduce;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -31,7 +31,7 @@ import ast.ast_sent;
 import ast.ast_typedecl;
 import ast.ast_while;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
 
@@ -47,7 +47,7 @@ import common.gm_error;
 // resolve type of every sub-expression
 public class gm_typechecker_stage_5 extends gm_apply {
 
-	public final HashMap<ast_expr, GMTYPE_T> coercion_targets = new HashMap<ast_expr, GMTYPE_T>();
+	public final HashMap<ast_expr, gm_type> coercion_targets = new HashMap<ast_expr, gm_type>();
 
 	private boolean _is_okay = true;
 	private ast_typedecl ret = null;
@@ -98,24 +98,24 @@ public class gm_typechecker_stage_5 extends gm_apply {
 
 		case AST_RETURN: {
 			ast_return r = (ast_return) s;
-			GMTYPE_T summary_lhs = ret.getTypeSummary();
+			gm_type summary_lhs = ret.getTypeSummary();
 			if (summary_lhs.is_void_type())
 				break;
 
 			if (r.get_expr() == null) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
-						GMTYPE_T.GMTYPE_VOID.get_type_string());
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
+						gm_type.GMTYPE_VOID.get_type_string());
 				break;
 			}
 
-			GMTYPE_T summary_rhs = r.get_expr().get_type_summary();
+			gm_type summary_rhs = r.get_expr().get_type_summary();
 
-			RefObject<GMTYPE_T> coed_ref = new RefObject<GMTYPE_T>(null);
+			RefObject<gm_type> coed_ref = new RefObject<gm_type>(null);
 			RefObject<Boolean> warn_ref = new RefObject<Boolean>(null);
 			boolean test = gm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 			boolean warn = warn_ref.argvalue;
 			if (!test) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_RETURN_MISMATCH, r.get_line(), r.get_col(), summary_lhs.get_type_string(),
 						summary_rhs.get_type_string());
 
 				okay = false;
@@ -141,7 +141,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		return okay;
 	}
 
-	private GMTYPE_T tryResolveIfUnknown(GMTYPE_T type) {
+	private gm_type tryResolveIfUnknown(gm_type type) {
 		switch (type) {
 		case GMTYPE_PROPERTYITER_SET:
 			return GMTYPE_NSET;
@@ -156,11 +156,11 @@ public class gm_typechecker_stage_5 extends gm_apply {
 	}
 
 	public final boolean check_assign_lhs_rhs(ast_node lhs, ast_expr rhs, int l, int c) {
-		GMTYPE_T summary_lhs;
-		GMTYPE_T summary_rhs;
+		gm_type summary_lhs;
+		gm_type summary_rhs;
 		gm_symtab_entry l_sym = null;
 
-		if (lhs.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+		if (lhs.get_nodetype() == ast_node_type.AST_ID) {
 			ast_id l2 = (ast_id) lhs;
 			summary_lhs = l2.getTypeSummary();
 
@@ -169,7 +169,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			}
 
 			if (!l2.getSymInfo().isWriteable()) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_READONLY, l2);
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_READONLY, l2);
 				return false;
 			}
 		} else if (lhs.get_nodetype() == AST_MAPACCESS) {
@@ -178,10 +178,10 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			l_sym = mapAccess.get_bound_graph_for_value();
 			summary_lhs = mapDecl.getValueTypeSummary();
 
-			GMTYPE_T keyType = mapDecl.getKeyTypeSummary();
-			GMTYPE_T keyExprType = mapAccess.get_key_expr().get_type_summary();
+			gm_type keyType = mapDecl.getKeyTypeSummary();
+			gm_type keyExprType = mapAccess.get_key_expr().get_type_summary();
 			RefObject<Boolean> warningRef = new RefObject<Boolean>(false);
-			boolean isOkay = GMTYPE_T.gm_is_compatible_type_for_assign(keyType, keyExprType, new RefObject<GMTYPE_T>(null), warningRef);
+			boolean isOkay = gm_type.gm_is_compatible_type_for_assign(keyType, keyExprType, new RefObject<gm_type>(null), warningRef);
 			if (!isOkay) {
 				gm_error.gm_type_error(GM_ERROR_KEY_MISSMATCH, l, c, keyType.get_type_string(), keyExprType.get_type_string());
 				return false;
@@ -202,12 +202,12 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		summary_rhs = rhs.get_type_summary();
 		summary_rhs = tryResolveIfUnknown(summary_rhs);
 
-		RefObject<GMTYPE_T> coed_ref = new RefObject<GMTYPE_T>(null);
+		RefObject<gm_type> coed_ref = new RefObject<gm_type>(null);
 		RefObject<Boolean> warn_ref = new RefObject<Boolean>(null);
 		boolean test = gm_typecheck.gm_is_compatible_type_for_assign(summary_lhs, summary_rhs, coed_ref, warn_ref);
 		boolean warn = warn_ref.argvalue;
 		if (!test) {
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(), summary_rhs.get_type_string());
+			gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_ASSIGN_TYPE_MISMATCH, l, c, summary_lhs.get_type_string(), summary_rhs.get_type_string());
 			return false;
 		}
 		if (warn && summary_lhs.is_prim_type()) {
@@ -229,7 +229,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		return true;
 	}
 
-	private boolean checkGraphs(gm_symtab_entry l_sym, gm_symtab_entry r_sym, GMTYPE_T summary_rhs, int line, int column) {
+	private boolean checkGraphs(gm_symtab_entry l_sym, gm_symtab_entry r_sym, gm_type summary_rhs, int line, int column) {
 		assert (l_sym != null);
 		if (r_sym == null) {
 			assert (summary_rhs.is_nil_type() || summary_rhs.is_foreign_expr_type());
@@ -246,7 +246,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 		boolean okay;
 		int l = a.get_line();
 		int c = a.get_col();
-		GMTYPE_T summary_lhs;
+		gm_type summary_lhs;
 		if (a.is_target_scalar()) {
 			okay = check_assign_lhs_rhs(a.get_lhs_scala(), a.get_rhs(), l, c);
 			summary_lhs = a.get_lhs_scala().getTypeSummary();
@@ -266,15 +266,15 @@ public class gm_typechecker_stage_5 extends gm_apply {
 			a.get_rhs().get_type_summary();
 			// SUM/MULT/MAX/MIN ==> numeirc
 			// AND/OR ==> boolean
-			GM_REDUCE_T reduce_op = a.get_reduce_type();
+			gm_reduce reduce_op = a.get_reduce_type();
 			if (reduce_op.is_numeric_reduce_op()) {
 				if (!summary_lhs.is_numeric_type()) {
-					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_NUMERIC_REDUCE, l, c);
+					gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_REQUIRE_NUMERIC_REDUCE, l, c);
 					return false;
 				}
 			} else if (reduce_op.is_boolean_reduce_op()) {
 				if (!summary_lhs.is_boolean_type()) {
-					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_REQUIRE_BOOLEAN_REDUCE, l, c);
+					gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_REQUIRE_BOOLEAN_REDUCE, l, c);
 					return false;
 				}
 			}
@@ -303,7 +303,7 @@ public class gm_typechecker_stage_5 extends gm_apply {
 
 	public final boolean should_be_boolean(ast_expr e) {
 		if (!e.get_type_summary().is_boolean_type()) {
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NEED_BOOLEAN, e.get_line(), e.get_col());
+			gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_NEED_BOOLEAN, e.get_line(), e.get_col());
 			return false;
 		}
 		return true;

@@ -6,7 +6,7 @@ import ast.ast_expr;
 import ast.ast_node;
 import ast.ast_procdef;
 import ast.ast_sent;
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
@@ -139,7 +139,7 @@ public class gm_traverse {
 		return gm_traverse.gm_traverse_up_sent(n.get_parent(), a);
 	}
 
-	public static void apply_symtab_each(gm_apply a, gm_symtab s, SYMTAB_TYPES symtab_type, boolean is_post) {
+	public static void apply_symtab_each(gm_apply a, gm_symtab s, symtab_types symtab_type, boolean is_post) {
 		HashSet<gm_symtab_entry> v = s.get_entries();
 		for (gm_symtab_entry entry : v) {
 			if (is_post && a.has_separate_post_apply()) {

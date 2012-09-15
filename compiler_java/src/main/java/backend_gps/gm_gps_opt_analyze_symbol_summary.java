@@ -4,7 +4,7 @@ import static backend_gps.GPSConstants.GPS_FLAG_NODE_VALUE_INIT;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_frontend;
 import frontend.gm_symtab_entry;
-import inc.GM_PROP_USAGE_T;
+import inc.gm_prop_usage;
 import inc.gm_compile_step;
 
 import java.util.HashSet;
@@ -53,8 +53,8 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 		// --------------------------------------------------------
 		boolean need_node_prop_init = false;
 		for (gm_symtab_entry e : prop) {
-			if ((e.find_info_int(gm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
-					|| (e.find_info_int(gm_frontend.GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue())) {
+			if ((e.find_info_int(gm_frontend.GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN.getValue())
+					|| (e.find_info_int(gm_frontend.GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_INOUT.getValue())) {
 				/*
 				 * printf("in/inout -> %s :%d\n", e->getId()->get_genname(),
 				 * e->find_info_int(GMUSAGE_PROPERTY) );

@@ -1,12 +1,12 @@
 package frontend;
 
-import inc.GM_REDUCE_T;
+import inc.gm_reduce;
 import ast.ast_id;
 
 public class gm_rwinfo {
 	
 	// RANGE_LINEAR, RANGE_RANDOM, RANGE_SINGLE
-	public gm_range_type_t access_range;
+	public gm_range_type access_range;
 	public gm_symtab_entry driver; // N.F --> N is the driver
 
 	// if this destination always accessed
@@ -16,7 +16,7 @@ public class gm_rwinfo {
 
 	// for reduce/defer access
 	// GMREDUCE_* (defined in gm_frontend_api.h)
-	public GM_REDUCE_T reduce_op;
+	public gm_reduce reduce_op;
 	public gm_symtab_entry bound_symbol;
 
 	public boolean is_supplement; // is-supplement LHS
@@ -33,31 +33,31 @@ public class gm_rwinfo {
 		bound_symbol = null;
 		location = null;
 		always = true;
-		reduce_op = GM_REDUCE_T.GMREDUCE_NULL;
+		reduce_op = gm_reduce.GMREDUCE_NULL;
 		// default is single access
-		access_range = gm_range_type_t.GM_RANGE_SINGLE; 
+		access_range = gm_range_type.GM_RANGE_SINGLE; 
 		mutate_direction = -1;
 		org_lhs = null;
 		is_supplement = false;
 	}
 
-	public static gm_rwinfo new_scala_inst(ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple) {
+	public static gm_rwinfo new_scala_inst(ast_id loc, gm_reduce reduce_op, gm_symtab_entry bound_symbol, boolean supple) {
 		return new_scala_inst(loc, reduce_op, bound_symbol, supple, null);
 	}
 
-	public static gm_rwinfo new_scala_inst(ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol) {
+	public static gm_rwinfo new_scala_inst(ast_id loc, gm_reduce reduce_op, gm_symtab_entry bound_symbol) {
 		return new_scala_inst(loc, reduce_op, bound_symbol, false, null);
 	}
 
-	public static gm_rwinfo new_scala_inst(ast_id loc, GM_REDUCE_T reduce_op) {
+	public static gm_rwinfo new_scala_inst(ast_id loc, gm_reduce reduce_op) {
 		return new_scala_inst(loc, reduce_op, null, false, null);
 	}
 
 	public static gm_rwinfo new_scala_inst(ast_id loc) {
-		return new_scala_inst(loc, GM_REDUCE_T.GMREDUCE_NULL, null, false, null);
+		return new_scala_inst(loc, gm_reduce.GMREDUCE_NULL, null, false, null);
 	}
 
-	public static gm_rwinfo new_scala_inst(ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple, gm_symtab_entry org) {
+	public static gm_rwinfo new_scala_inst(ast_id loc, gm_reduce reduce_op, gm_symtab_entry bound_symbol, boolean supple, gm_symtab_entry org) {
 		gm_rwinfo g = new gm_rwinfo();
 		g.location = loc;
 		g.reduce_op = reduce_op;
@@ -74,23 +74,23 @@ public class gm_rwinfo {
 		return g;
 	}
 
-	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple) {
+	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, gm_reduce reduce_op, gm_symtab_entry bound_symbol, boolean supple) {
 		return new_field_inst(driver, loc, reduce_op, bound_symbol, supple, null);
 	}
 
-	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol) {
+	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, gm_reduce reduce_op, gm_symtab_entry bound_symbol) {
 		return new_field_inst(driver, loc, reduce_op, bound_symbol, false, null);
 	}
 
-	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, GM_REDUCE_T reduce_op) {
+	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, gm_reduce reduce_op) {
 		return new_field_inst(driver, loc, reduce_op, null, false, null);
 	}
 
 	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc) {
-		return new_field_inst(driver, loc, GM_REDUCE_T.GMREDUCE_NULL, null, false, null);
+		return new_field_inst(driver, loc, gm_reduce.GMREDUCE_NULL, null, false, null);
 	}
 
-	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, GM_REDUCE_T reduce_op, gm_symtab_entry bound_symbol, boolean supple,
+	public static gm_rwinfo new_field_inst(gm_symtab_entry driver, ast_id loc, gm_reduce reduce_op, gm_symtab_entry bound_symbol, boolean supple,
 			gm_symtab_entry org) {
 		gm_rwinfo g = new gm_rwinfo();
 		g.location = loc;
@@ -102,7 +102,7 @@ public class gm_rwinfo {
 		return g;
 	}
 
-	public static gm_rwinfo new_range_inst(gm_range_type_t range, boolean always, ast_id loc) {
+	public static gm_rwinfo new_range_inst(gm_range_type range, boolean always, ast_id loc) {
 		gm_rwinfo g = new gm_rwinfo();
 		g.always = always;
 		g.location = loc;
@@ -133,7 +133,7 @@ public class gm_rwinfo {
 
 	// print each debug info
 	public final void print() {
-		if (access_range == gm_range_type_t.GM_RANGE_SINGLE) {
+		if (access_range == gm_range_type.GM_RANGE_SINGLE) {
 			if (driver == null)
 				System.out.print("(SCALAR, ");
 			else

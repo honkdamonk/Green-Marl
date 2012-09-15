@@ -1,10 +1,10 @@
 package backend_cpp;
 
-import inc.GM_REDUCE_T;
+import inc.gm_reduce;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_procdef;
 import ast.ast_sent;
@@ -55,7 +55,7 @@ class gm_defer_write extends gm_apply {
 	@Override
 	public final boolean apply(ast_sent s) {
 		
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)
+		if (s.get_nodetype() != ast_node_type.AST_FOREACH)
 			return true;
 		ast_foreach fe = (ast_foreach) s;
 
@@ -70,7 +70,7 @@ class gm_defer_write extends gm_apply {
 			assert l != null;
 			boolean is_deferred = false;
 			for (gm_rwinfo I : l) {
-				if (I.reduce_op == GM_REDUCE_T.GMREDUCE_DEFER) {
+				if (I.reduce_op == gm_reduce.GMREDUCE_DEFER) {
 					is_deferred = true;
 					has_found = true;
 					break; // no need to iterate j

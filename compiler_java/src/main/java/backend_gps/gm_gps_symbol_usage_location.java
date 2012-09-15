@@ -1,7 +1,7 @@
 package backend_gps;
 
 // where the symbols is used 
-public enum gm_gps_symbol_usage_location_t
+public enum gm_gps_symbol_usage_location
 {
 	GPS_CONTEXT_MASTER,
 	GPS_CONTEXT_VERTEX,
@@ -12,7 +12,7 @@ public enum gm_gps_symbol_usage_location_t
 		return this.ordinal();
 	}
 
-	public static gm_gps_symbol_usage_location_t forValue(int value)
+	public static gm_gps_symbol_usage_location forValue(int value)
 	{
 		return values()[value];
 	}

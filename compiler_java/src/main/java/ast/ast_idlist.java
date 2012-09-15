@@ -1,6 +1,6 @@
 package ast;
 
-import static ast.AST_NODE_TYPE.AST_IDLIST;
+import static ast.ast_node_type.AST_IDLIST;
 
 import java.util.ArrayList;
 

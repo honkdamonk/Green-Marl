@@ -16,7 +16,7 @@ public class rename_all_t extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
+	public boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
 		ast_id id = e.getId();
 
 		// if name is already in -> generate-new-name

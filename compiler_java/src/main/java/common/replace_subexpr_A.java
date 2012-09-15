@@ -1,6 +1,6 @@
 package common;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_expr;
 import ast.ast_expr_reduce;
 
@@ -31,7 +31,7 @@ public class replace_subexpr_A extends gm_apply {
 			assert E != null;
 
 			// replace e(==0) with n
-			if (E.get_nodetype() == AST_NODE_TYPE.AST_EXPR_RDC) {
+			if (E.get_nodetype() == ast_node_type.AST_EXPR_RDC) {
 				ast_expr_reduce R = (ast_expr_reduce) E;
 				if (e == R.get_filter()) {
 					R.set_filter(n);

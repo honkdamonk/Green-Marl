@@ -10,15 +10,15 @@ import static backend_gps.GPSConstants.GPS_LIST_EDGE_PROP_WRITE;
 import static backend_gps.GPSConstants.GPS_MAP_EDGE_PROP_ACCESS;
 import static backend_gps.GPSConstants.GPS_REV_NODE_ID;
 import static backend_gps.GPSConstants.STATE_SHORT_CUT;
-import static backend_gps.gm_gps_comm_t.GPS_COMM_INIT;
-import static backend_gps.gm_gps_comm_t.GPS_COMM_NESTED;
-import static backend_gps.gm_gps_comm_t.GPS_COMM_RANDOM_WRITE;
+import static backend_gps.gm_gps_comm.GPS_COMM_INIT;
+import static backend_gps.gm_gps_comm.GPS_COMM_NESTED;
+import static backend_gps.gm_gps_comm.GPS_COMM_RANDOM_WRITE;
 import static frontend.gm_frontend.GMUSAGE_PROPERTY;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
-import inc.GM_PROP_USAGE_T;
-import inc.GM_REDUCE_T;
+import inc.gm_type;
+import inc.gm_prop_usage;
+import inc.gm_reduce;
 import inc.gm_code_writer;
 import inc.gm_graph_library;
 
@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -79,7 +79,7 @@ public class gm_gpslib extends gm_graph_library {
 	// virtual void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block
 	// b);
 
-	public void generate_broadcast_reduce_initialize_master(ast_id id, gm_code_writer Body, GM_REDUCE_T reduce_type, String base_value) {
+	public void generate_broadcast_reduce_initialize_master(ast_id id, gm_code_writer Body, gm_reduce reduce_type, String base_value) {
 		Body.push("getGlobalObjectsMap().putOrUpdateGlobalObject(");
 		Body.push(create_key_string(id));
 		Body.push(",");
@@ -117,11 +117,11 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("));");
 	}
 
-	public void generate_broadcast_variable_type(GMTYPE_T type_id, gm_code_writer Body) {
-		generate_broadcast_variable_type(type_id, Body, GM_REDUCE_T.GMREDUCE_NULL);
+	public void generate_broadcast_variable_type(gm_type type_id, gm_code_writer Body) {
+		generate_broadcast_variable_type(type_id, Body, gm_reduce.GMREDUCE_NULL);
 	}
 
-	public void generate_broadcast_variable_type(GMTYPE_T type_id, gm_code_writer Body, GM_REDUCE_T reduce_op)
+	public void generate_broadcast_variable_type(gm_type type_id, gm_code_writer Body, gm_reduce reduce_op)
 
 	{
 		// --------------------------------------
@@ -134,9 +134,9 @@ public class gm_gpslib extends gm_graph_library {
 		// Type: Long, Int, Double, Float, Bool, NODE,EDGE
 		// ---------------------------------------------------
 		if (type_id.is_node_compatible_type())
-			type_id = GMTYPE_T.GMTYPE_NODE;
+			type_id = gm_type.GMTYPE_NODE;
 		if (type_id.is_edge_compatible_type())
-			type_id = GMTYPE_T.GMTYPE_EDGE;
+			type_id = gm_type.GMTYPE_EDGE;
 
 		switch (type_id) {
 		case GMTYPE_INT:
@@ -218,19 +218,19 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln(");");
 	}
 
-	public void generate_broadcast_receive_master(ast_id id, gm_code_writer Body, GM_REDUCE_T reduce_op_type) {
+	public void generate_broadcast_receive_master(ast_id id, gm_code_writer Body, gm_reduce reduce_op_type) {
 		// Read from BV to local value
 		get_main().generate_lhs_id(id);
 		Body.push(" = ");
 		boolean need_paren = false;
 
-		if (reduce_op_type != GM_REDUCE_T.GMREDUCE_NULL) {
-			if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MIN) {
+		if (reduce_op_type != gm_reduce.GMREDUCE_NULL) {
+			if (reduce_op_type == gm_reduce.GMREDUCE_MIN) {
 				need_paren = true;
 				Body.push("Math.min(");
 				get_main().generate_rhs_id(id);
 				Body.push(",");
-			} else if (reduce_op_type == GM_REDUCE_T.GMREDUCE_MAX) {
+			} else if (reduce_op_type == gm_reduce.GMREDUCE_MAX) {
 				need_paren = true;
 				Body.push("Math.max(");
 				get_main().generate_rhs_id(id);
@@ -283,7 +283,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("import java.lang.Math;");
 	}
 
-	public void generate_reduce_assign_vertex(ast_assign a, gm_code_writer Body, GM_REDUCE_T reduce_op_type) {
+	public void generate_reduce_assign_vertex(ast_assign a, gm_code_writer Body, gm_reduce reduce_op_type) {
 		assert a.is_target_scalar();
 		ast_id id = a.get_lhs_scala();
 
@@ -370,7 +370,7 @@ public class gm_gpslib extends gm_graph_library {
 				continue;
 			}
 			// Used as input only
-			if (sym.find_info_int(GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue()) {
+			if (sym.find_info_int(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN.getValue()) {
 				// printf("used as input only :%s\n",
 				// sym->getId()->get_genname());
 				continue;
@@ -398,16 +398,16 @@ public class gm_gpslib extends gm_graph_library {
 				total_count = prop.size();
 			else {
 				for (gm_symtab_entry e : prop) {
-					if ((e.find_info_int(GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
-							|| (e.find_info_int(GMUSAGE_PROPERTY) == GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
+					if ((e.find_info_int(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN.getValue())
+							|| (e.find_info_int(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_INOUT.getValue()))
 						total_count++;
 				}
 			}
 
 			if (total_count == 1) {
 				for (gm_symtab_entry sym : prop) {
-					if (!is_edge_prop && (sym.find_info_int(GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
-							&& (sym.find_info_int(GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
+					if (!is_edge_prop && (sym.find_info_int(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_IN.getValue())
+							&& (sym.find_info_int(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_INOUT.getValue()))
 						continue;
 					RefObject<String> name1_ref = new RefObject<String>(null);
 					RefObject<String> name2_ref = new RefObject<String>(null);
@@ -420,8 +420,8 @@ public class gm_gpslib extends gm_graph_library {
 				Body.pushln("String[] split = inputString.split(\"###\");");
 				int cnt = 0;
 				for (gm_symtab_entry sym : prop) {
-					if (!is_edge_prop && (sym.find_info_int(GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_IN.getValue())
-							&& (sym.find_info_int(GMUSAGE_PROPERTY) != GM_PROP_USAGE_T.GMUSAGE_INOUT.getValue()))
+					if (!is_edge_prop && (sym.find_info_int(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_IN.getValue())
+							&& (sym.find_info_int(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_INOUT.getValue()))
 						continue;
 					RefObject<String> name1_ref = new RefObject<String>(null);
 					RefObject<String> name2_ref = new RefObject<String>(null);
@@ -447,7 +447,7 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln(")).getValue().getValue();");
 	}
 
-	public void generate_message_fields_define(GMTYPE_T gm_type, int count, gm_code_writer Body) {
+	public void generate_message_fields_define(gm_type gm_type, int count, gm_code_writer Body) {
 		for (int i = 0; i < count; i++) {
 			String str = main.get_type_string(gm_type);
 			String vname = get_message_field_var_name(gm_type, i);
@@ -500,13 +500,13 @@ public class gm_gpslib extends gm_graph_library {
 		return get_type_size(t.getTypeSummary());
 	}
 
-	public int get_type_size(GMTYPE_T gm_type) {
-		if (gm_type == GMTYPE_T.GMTYPE_NODE) {
+	public int get_type_size(gm_type gm_type) {
+		if (gm_type == gm_type.GMTYPE_NODE) {
 			if (this.is_node_type_int())
 				return 4;
 			else
 				return 8;
-		} else if (gm_type == GMTYPE_T.GMTYPE_EDGE) {
+		} else if (gm_type == gm_type.GMTYPE_EDGE) {
 			assert false;
 			return 0;
 		}
@@ -515,7 +515,7 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	// caller should delete var_name later
-	public String get_message_field_var_name(GMTYPE_T gm_type, int index) {
+	public String get_message_field_var_name(gm_type gm_type, int index) {
 
 		String str = main.get_type_string(gm_type);
 		return String.format("%c%d", str.charAt(0), index);
@@ -537,7 +537,7 @@ public class gm_gpslib extends gm_graph_library {
 	// random write
 	public void generate_message_create_for_random_write(ast_sentblock sb, gm_symtab_entry sym, gm_code_writer Body) {
 		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
-		gm_gps_comm_t m_type = GPS_COMM_RANDOM_WRITE;
+		gm_gps_comm m_type = GPS_COMM_RANDOM_WRITE;
 
 		gm_gps_comm_unit U = new gm_gps_comm_unit(m_type, sb, sym);
 
@@ -600,7 +600,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	/* TODO Inserted from gm_gps_lib.java, clean up */
 
-	public static int get_java_type_size(GMTYPE_T gm_type) {
+	public static int get_java_type_size(gm_type gm_type) {
 		switch (gm_type) {
 		case GMTYPE_INT:
 			return 4;
@@ -619,11 +619,11 @@ public class gm_gpslib extends gm_graph_library {
 		}
 	}
 
-	public static void genPutIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_gpslib lib) {
+	public static void genPutIOB(String name, gm_type gm_type, gm_code_writer Body, gm_gpslib lib) {
 		if (gm_type.is_node_compatible_type())
-			gm_type = GMTYPE_T.GMTYPE_NODE; // TODO setting input var?
+			gm_type = gm_type.GMTYPE_NODE; // TODO setting input var?
 		if (gm_type.is_edge_compatible_type())
-			gm_type = GMTYPE_T.GMTYPE_EDGE; // TODO setting input var?
+			gm_type = gm_type.GMTYPE_EDGE; // TODO setting input var?
 
 		// assumtion: IOB name is IOB
 		Body.push("IOB.");
@@ -664,7 +664,7 @@ public class gm_gpslib extends gm_graph_library {
 			break;
 		}
 		Body.push("(");
-		if (gm_type == GMTYPE_T.GMTYPE_BOOL) {
+		if (gm_type == gm_type.GMTYPE_BOOL) {
 			Body.push(name);
 			Body.push("?(byte)1:(byte)0");
 		} else {
@@ -673,11 +673,11 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln(");");
 	}
 
-	public static void genGetIOB(String name, GMTYPE_T gm_type, gm_code_writer Body, gm_gpslib lib) {
+	public static void genGetIOB(String name, gm_type gm_type, gm_code_writer Body, gm_gpslib lib) {
 		if (gm_type.is_node_compatible_type())
-			gm_type = GMTYPE_T.GMTYPE_NODE;
+			gm_type = gm_type.GMTYPE_NODE;
 		if (gm_type.is_edge_compatible_type())
-			gm_type = GMTYPE_T.GMTYPE_EDGE;
+			gm_type = gm_type.GMTYPE_EDGE;
 
 		// assumtion: IOB name is IOB
 		Body.push(name);
@@ -721,9 +721,9 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln(";");
 	}
 
-	public static void genReadByte(String name, GMTYPE_T gm_type, int offset, gm_code_writer Body, gm_gpslib lib) {
+	public static void genReadByte(String name, gm_type gm_type, int offset, gm_code_writer Body, gm_gpslib lib) {
 		if (gm_type.is_node_compatible_type()) {
-			gm_type = (lib.is_node_type_int()) ? GMTYPE_T.GMTYPE_INT : GMTYPE_T.GMTYPE_LONG;
+			gm_type = (lib.is_node_type_int()) ? gm_type.GMTYPE_INT : gm_type.GMTYPE_LONG;
 		}
 		// assumption: "byte[] _BA, int _idx"
 		Body.push(name);
@@ -753,7 +753,7 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	// TODO set output vars?
-	public static void get_java_parse_string(gm_gpslib L, GMTYPE_T gm_type, RefObject<String> name1_ref, RefObject<String> name2_ref) {
+	public static void get_java_parse_string(gm_gpslib L, gm_type gm_type, RefObject<String> name1_ref, RefObject<String> name2_ref) {
 		String name1;
 		String name2;
 
@@ -809,16 +809,16 @@ public class gm_gpslib extends gm_graph_library {
 
 	public static int get_total_size(gm_gps_communication_size_info I) {
 		int sz = 0;
-		sz += get_java_type_size(GMTYPE_T.GMTYPE_INT) * I.num_int;
-		sz += get_java_type_size(GMTYPE_T.GMTYPE_BOOL) * I.num_bool;
-		sz += get_java_type_size(GMTYPE_T.GMTYPE_LONG) * I.num_long;
-		sz += get_java_type_size(GMTYPE_T.GMTYPE_DOUBLE) * I.num_double;
-		sz += get_java_type_size(GMTYPE_T.GMTYPE_FLOAT) * I.num_float;
+		sz += get_java_type_size(gm_type.GMTYPE_INT) * I.num_int;
+		sz += get_java_type_size(gm_type.GMTYPE_BOOL) * I.num_bool;
+		sz += get_java_type_size(gm_type.GMTYPE_LONG) * I.num_long;
+		sz += get_java_type_size(gm_type.GMTYPE_DOUBLE) * I.num_double;
+		sz += get_java_type_size(gm_type.GMTYPE_FLOAT) * I.num_float;
 
 		return sz;
 	}
 
-	public static void generate_message_write_each(gm_gpslib lib, int cnt, GMTYPE_T gm_type, gm_code_writer Body) {
+	public static void generate_message_write_each(gm_gpslib lib, int cnt, gm_type gm_type, gm_code_writer Body) {
 		for (int i = 0; i < cnt; i++) {
 			String vname = lib.get_message_field_var_name(gm_type, i);
 			genPutIOB(vname, gm_type, Body, lib);
@@ -826,7 +826,7 @@ public class gm_gpslib extends gm_graph_library {
 		}
 	}
 
-	public static void generate_message_read1_each(gm_gpslib lib, int cnt, GMTYPE_T gm_type, gm_code_writer Body) {
+	public static void generate_message_read1_each(gm_gpslib lib, int cnt, gm_type gm_type, gm_code_writer Body) {
 		for (int i = 0; i < cnt; i++) {
 			String vname = lib.get_message_field_var_name(gm_type, i);
 			genGetIOB(vname, gm_type, Body, lib);
@@ -834,7 +834,7 @@ public class gm_gpslib extends gm_graph_library {
 		}
 	}
 
-	public static void generate_message_read2_each(gm_gpslib lib, int cnt, GMTYPE_T gm_type, gm_code_writer Body, tangible.RefObject<Integer> offset) {
+	public static void generate_message_read2_each(gm_gpslib lib, int cnt, gm_type gm_type, gm_code_writer Body, tangible.RefObject<Integer> offset) {
 		for (int i = 0; i < cnt; i++) {
 			String vname = lib.get_message_field_var_name(gm_type, i);
 			genReadByte(vname, gm_type, offset.argvalue, Body, lib);
@@ -904,11 +904,11 @@ public class gm_gpslib extends gm_graph_library {
 				Body.pushln("{");
 			if (info.is_single_message() && get_total_size(SYMS) == 0)
 				Body.pushln("IOB.put((byte)0); // empty message");
-			generate_message_write_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
-			generate_message_write_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
-			generate_message_write_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
-			generate_message_write_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
-			generate_message_write_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
+			generate_message_write_each(lib, SYMS.num_int, gm_type.GMTYPE_INT, Body);
+			generate_message_write_each(lib, SYMS.num_long, gm_type.GMTYPE_LONG, Body);
+			generate_message_write_each(lib, SYMS.num_float, gm_type.GMTYPE_FLOAT, Body);
+			generate_message_write_each(lib, SYMS.num_double, gm_type.GMTYPE_DOUBLE, Body);
+			generate_message_write_each(lib, SYMS.num_bool, gm_type.GMTYPE_BOOL, Body);
 			if (!info.is_single_message())
 				Body.pushln("}");
 		}
@@ -940,11 +940,11 @@ public class gm_gpslib extends gm_graph_library {
 				Body.pushln("{");
 			if (info.is_single_message() && get_total_size(SYMS) == 0)
 				Body.pushln("IOB.get(); // consume empty message byte");
-			generate_message_read1_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body);
-			generate_message_read1_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body);
-			generate_message_read1_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body);
-			generate_message_read1_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body);
-			generate_message_read1_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body);
+			generate_message_read1_each(lib, SYMS.num_int, gm_type.GMTYPE_INT, Body);
+			generate_message_read1_each(lib, SYMS.num_long, gm_type.GMTYPE_LONG, Body);
+			generate_message_read1_each(lib, SYMS.num_float, gm_type.GMTYPE_FLOAT, Body);
+			generate_message_read1_each(lib, SYMS.num_double, gm_type.GMTYPE_DOUBLE, Body);
+			generate_message_read1_each(lib, SYMS.num_bool, gm_type.GMTYPE_BOOL, Body);
 			if (!info.is_single_message())
 				Body.pushln("}");
 		}
@@ -982,19 +982,19 @@ public class gm_gpslib extends gm_graph_library {
 			if (info.is_single_message() && (get_total_size(SYMS) == 0))
 				Body.pushln("_idx++; // consume empty message byte");
 			tangible.RefObject<Integer> tempRef_offset = new tangible.RefObject<Integer>(offset);
-			generate_message_read2_each(lib, SYMS.num_int, GMTYPE_T.GMTYPE_INT, Body, tempRef_offset);
+			generate_message_read2_each(lib, SYMS.num_int, gm_type.GMTYPE_INT, Body, tempRef_offset);
 			offset = tempRef_offset.argvalue;
 			tangible.RefObject<Integer> tempRef_offset2 = new tangible.RefObject<Integer>(offset);
-			generate_message_read2_each(lib, SYMS.num_long, GMTYPE_T.GMTYPE_LONG, Body, tempRef_offset2);
+			generate_message_read2_each(lib, SYMS.num_long, gm_type.GMTYPE_LONG, Body, tempRef_offset2);
 			offset = tempRef_offset2.argvalue;
 			tangible.RefObject<Integer> tempRef_offset3 = new tangible.RefObject<Integer>(offset);
-			generate_message_read2_each(lib, SYMS.num_float, GMTYPE_T.GMTYPE_FLOAT, Body, tempRef_offset3);
+			generate_message_read2_each(lib, SYMS.num_float, gm_type.GMTYPE_FLOAT, Body, tempRef_offset3);
 			offset = tempRef_offset3.argvalue;
 			tangible.RefObject<Integer> tempRef_offset4 = new tangible.RefObject<Integer>(offset);
-			generate_message_read2_each(lib, SYMS.num_double, GMTYPE_T.GMTYPE_DOUBLE, Body, tempRef_offset4);
+			generate_message_read2_each(lib, SYMS.num_double, gm_type.GMTYPE_DOUBLE, Body, tempRef_offset4);
 			offset = tempRef_offset4.argvalue;
 			tangible.RefObject<Integer> tempRef_offset5 = new tangible.RefObject<Integer>(offset);
-			generate_message_read2_each(lib, SYMS.num_bool, GMTYPE_T.GMTYPE_BOOL, Body, tempRef_offset5);
+			generate_message_read2_each(lib, SYMS.num_bool, gm_type.GMTYPE_BOOL, Body, tempRef_offset5);
 			offset = tempRef_offset5.argvalue;
 			if (info.is_single_message()) {
 				if (get_total_size(SYMS) == 0)
@@ -1087,11 +1087,11 @@ public class gm_gpslib extends gm_graph_library {
 		Body.pushln("// union of all message fields  ");
 		gm_gps_communication_size_info size_info = info.get_max_communication_size();
 
-		generate_message_fields_define(GMTYPE_T.GMTYPE_INT, size_info.num_int, Body);
-		generate_message_fields_define(GMTYPE_T.GMTYPE_LONG, size_info.num_long, Body);
-		generate_message_fields_define(GMTYPE_T.GMTYPE_FLOAT, size_info.num_float, Body);
-		generate_message_fields_define(GMTYPE_T.GMTYPE_DOUBLE, size_info.num_double, Body);
-		generate_message_fields_define(GMTYPE_T.GMTYPE_BOOL, size_info.num_bool, Body);
+		generate_message_fields_define(gm_type.GMTYPE_INT, size_info.num_int, Body);
+		generate_message_fields_define(gm_type.GMTYPE_LONG, size_info.num_long, Body);
+		generate_message_fields_define(gm_type.GMTYPE_FLOAT, size_info.num_float, Body);
+		generate_message_fields_define(gm_type.GMTYPE_DOUBLE, size_info.num_double, Body);
+		generate_message_fields_define(gm_type.GMTYPE_BOOL, size_info.num_bool, Body);
 		Body.NL();
 
 		generate_message_class_get_size(info, Body);
@@ -1107,7 +1107,7 @@ public class gm_gpslib extends gm_graph_library {
 
 		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 
-		gm_gps_comm_t m_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
+		gm_gps_comm m_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
 
 		gm_gps_comm_unit U = new gm_gps_comm_unit(m_type, fe);
 
@@ -1116,7 +1116,7 @@ public class gm_gpslib extends gm_graph_library {
 		gm_gps_communication_size_info SINFO = info.find_communication_size_info(U);
 
 		boolean need_separate_message = (fe == null) ? false : fe.find_info_bool(GPS_FLAG_EDGE_DEFINING_INNER);
-		boolean is_in_neighbors = (fe != null) && (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS);
+		boolean is_in_neighbors = (fe != null) && (fe.get_iter_type() == gm_type.GMTYPE_NODEITER_IN_NBRS);
 
 		if (!need_separate_message) {
 			Body.pushln("// Sending messages to all neighbors (if there is a neighbor)");
@@ -1126,7 +1126,7 @@ public class gm_gpslib extends gm_graph_library {
 				Body.pushln("if (getNeighborsSize() > 0) {");
 			}
 		} else {
-			assert (fe != null) && (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_NBRS);
+			assert (fe != null) && (fe.get_iter_type() == gm_type.GMTYPE_NODEITER_NBRS);
 			Body.pushln("for (Edge<EdgeData> _outEdge : getOutgoingEdges()) {");
 			Body.pushln("// Sending messages to each neighbor");
 		}
@@ -1139,14 +1139,14 @@ public class gm_gpslib extends gm_graph_library {
 
 			for (Object obj : L) {
 				ast_sent s = (ast_sent) obj;
-				assert s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN;
+				assert s.get_nodetype() == ast_node_type.AST_ASSIGN;
 				ast_assign a = (ast_assign) s;
 				assert !a.is_target_scalar();
 				gm_symtab_entry e = a.get_lhs_field().get_second().getSymInfo();
 				Integer i = (Integer) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
 				assert i != null;
 
-				if (i == gm_gps_edge_access_t.GPS_ENUM_EDGE_VALUE_SENT_WRITE.getValue()) {
+				if (i == gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_SENT_WRITE.getValue()) {
 					sents_after_message.addLast(s);
 				} else {
 					get_main().generate_sent(s);
@@ -1165,7 +1165,7 @@ public class gm_gpslib extends gm_graph_library {
 		// create message variables
 		// ------------------------------------------------------------
 		if (fe != null) {
-			assert fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+			assert fe.get_body().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 			ast_sentblock sb = (ast_sentblock) fe.get_body();
 			for (ast_sent s : sb.get_sents()) {
 				if (s.find_info_bool(GPS_FLAG_COMM_DEF_ASSIGN)) {
@@ -1222,13 +1222,13 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	public void generate_message_receive_begin(ast_foreach fe, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
-		gm_gps_comm_t comm_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
+		gm_gps_comm comm_type = (fe == null) ? GPS_COMM_INIT : GPS_COMM_NESTED;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, fe);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
 
 	public void generate_message_receive_begin(ast_sentblock sb, gm_symtab_entry drv, gm_code_writer Body, gm_gps_basic_block b, boolean is_only_comm) {
-		gm_gps_comm_t comm_type = GPS_COMM_RANDOM_WRITE;
+		gm_gps_comm comm_type = GPS_COMM_RANDOM_WRITE;
 		gm_gps_comm_unit U = new gm_gps_comm_unit(comm_type, sb, drv);
 		generate_message_receive_begin(U, Body, b, is_only_comm);
 	}
@@ -1321,18 +1321,18 @@ public class gm_gpslib extends gm_graph_library {
 
 	public void generate_prepare_bb(gm_code_writer Body, gm_gps_basic_block bb) {
 
-		if (bb.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) {
+		if (bb.get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE1) {
 			Body.pushln("// Preperation: creating reverse edges");
-			Body.pushlnf("%s %s = getId();", main.get_type_string(GMTYPE_T.GMTYPE_NODE), GPS_DUMMY_ID);
+			Body.pushlnf("%s %s = getId();", main.get_type_string(gm_type.GMTYPE_NODE), GPS_DUMMY_ID);
 
 			generate_message_send(null, Body);
 
-		} else if (bb.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2) {
+		} else if (bb.get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE2) {
 			Body.pushln("//Preperation creating reverse edges");
 			Body.pushln("int i = 0; // iterable does not have length(), so we have to count it");
 			Body.pushln("for(MessageData _msg : _msgs) i++;");
 
-			Body.pushlnf("%s.%s = new %s[i];", STATE_SHORT_CUT, GPS_REV_NODE_ID, main.get_type_string(GMTYPE_T.GMTYPE_NODE));
+			Body.pushlnf("%s.%s = new %s[i];", STATE_SHORT_CUT, GPS_REV_NODE_ID, main.get_type_string(gm_type.GMTYPE_NODE));
 			Body.NL();
 
 			Body.pushln("i=0;");

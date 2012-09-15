@@ -1,6 +1,6 @@
 package ast;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import common.gm_apply;
 import common.gm_dumptree;
@@ -11,23 +11,23 @@ public class ast_foreach extends ast_sent {
 	private ast_id iterator = null;
 	private ast_id source = null; // graph
 	private ast_id source2 = null; // common nbr
-	private GMTYPE_T iter_type; // GM_ITERATORS
+	private gm_type iter_type; // GM_ITERATORS
 	private ast_expr cond = null;
 	private boolean seq_exe = false;
 	private boolean use_reverse = false;
 
 	private ast_foreach() {
-		super(AST_NODE_TYPE.AST_FOREACH);
-		iter_type = GMTYPE_T.GMTYPE_GRAPH;
+		super(ast_node_type.AST_FOREACH);
+		iter_type = gm_type.GMTYPE_GRAPH;
 		create_symtabs();
 	}
 
 	// iterate on a graph
-	public static ast_foreach new_foreach(ast_id it, ast_id src, ast_sent b, GMTYPE_T iter_type) {
+	public static ast_foreach new_foreach(ast_id it, ast_id src, ast_sent b, gm_type iter_type) {
 		return new_foreach(it, src, b, iter_type, null);
 	}
 
-	public static ast_foreach new_foreach(ast_id it, ast_id src, ast_sent b, GMTYPE_T iter_type, ast_expr cond) {
+	public static ast_foreach new_foreach(ast_id it, ast_id src, ast_sent b, gm_type iter_type, ast_expr cond) {
 		ast_foreach d = new ast_foreach();
 		d.iterator = it;
 		d.source = src;
@@ -65,7 +65,7 @@ public class ast_foreach extends ast_sent {
 			cond.reproduce(0);
 			Out.pushln(")");
 		}
-		if (body.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK)
+		if (body.get_nodetype() == ast_node_type.AST_SENTBLOCK)
 			body.reproduce(0);
 		else {
 			Out.pushIndent();
@@ -186,11 +186,11 @@ public class ast_foreach extends ast_sent {
 		return cond;
 	}
 
-	public final GMTYPE_T get_iter_type() {
+	public final gm_type get_iter_type() {
 		return iter_type;
 	} // GM_ITERATORS
 
-	public final void set_iter_type(GMTYPE_T i) {
+	public final void set_iter_type(gm_type i) {
 		iter_type = i;
 	} // GM_ITERATORS
 

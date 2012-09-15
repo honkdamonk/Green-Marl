@@ -20,10 +20,10 @@ import frontend.gm_symtab_entry;
 
 public class gm_gps_basic_block {
 	public gm_gps_basic_block(int _id) {
-		this(_id, gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ);
+		this(_id, gm_gps_bbtype.GM_GPS_BBTYPE_SEQ);
 	}
 
-	public gm_gps_basic_block(int _id, gm_gps_bbtype_t _type) // ,_has_sender(false)
+	public gm_gps_basic_block(int _id, gm_gps_bbtype _type) // ,_has_sender(false)
 	{
 		this.id = _id;
 		this.type = _type;
@@ -75,7 +75,7 @@ public class gm_gps_basic_block {
 		return id;
 	}
 
-	public final gm_gps_bbtype_t get_type() {
+	public final gm_gps_bbtype get_type() {
 		return type;
 	}
 
@@ -83,7 +83,7 @@ public class gm_gps_basic_block {
 		return after_vertex;
 	}
 
-	public final void set_type(gm_gps_bbtype_t t) {
+	public final void set_type(gm_gps_bbtype t) {
 		type = t;
 	}
 
@@ -165,8 +165,8 @@ public class gm_gps_basic_block {
 	// for debug
 	public void print() {
 		System.out.print("[--------------------\n");
-		System.out.printf("%d (%s):\n", id, (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ) ? "SEQ" : (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_IF_COND) ? "IF"
-				: (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND) ? "WHILE" : (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) ? "PAR" : "???");
+		System.out.printf("%d (%s):\n", id, (type == gm_gps_bbtype.GM_GPS_BBTYPE_SEQ) ? "SEQ" : (type == gm_gps_bbtype.GM_GPS_BBTYPE_IF_COND) ? "IF"
+				: (type == gm_gps_bbtype.GM_GPS_BBTYPE_WHILE_COND) ? "WHILE" : (type == gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX) ? "PAR" : "???");
 		// printf("\tnum_entries:%d\n", entries.size());
 		System.out.print("\t[ ");
 		for (int i = 0; i < entries.size(); i++) {
@@ -190,7 +190,7 @@ public class gm_gps_basic_block {
 	}
 
 	public void reproduce_sents(boolean reproduce_receiver) {
-		if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_IF_COND) {
+		if (type == gm_gps_bbtype.GM_GPS_BBTYPE_IF_COND) {
 			prepare_iter();
 			ast_sent s = get_next(); // should be only one sentence (if)
 
@@ -199,7 +199,7 @@ public class gm_gps_basic_block {
 
 			gm_reproduce.gm_newline_reproduce();
 			gm_reproduce.gm_flush_reproduce();
-		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND) {
+		} else if (type == gm_gps_bbtype.GM_GPS_BBTYPE_WHILE_COND) {
 			prepare_iter();
 			ast_sent s = get_next(); // should be only one sentence (if)
 
@@ -208,18 +208,18 @@ public class gm_gps_basic_block {
 
 			gm_reproduce.gm_newline_reproduce();
 			gm_reproduce.gm_flush_reproduce();
-		} else if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ)) {
+		} else if ((type == gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX) || (type == gm_gps_bbtype.GM_GPS_BBTYPE_SEQ)) {
 
-			if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) && (has_receiver()) && reproduce_receiver) {
+			if ((type == gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX) && (has_receiver()) && reproduce_receiver) {
 				gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 				LinkedList<gm_gps_comm_unit> L = get_receivers();
 				for (gm_gps_comm_unit U : L) {
-					if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_NESTED) {
+					if (U.type_of_comm == gm_gps_comm.GPS_COMM_NESTED) {
 						gm_reproduce.gm_push_reproduce("//Receive Nested Loop");
 						gm_reproduce.gm_newline_reproduce();
 						ast_foreach fe = U.fe;
 						fe.reproduce(0);
-					} else if (U.type_of_comm == gm_gps_comm_t.GPS_COMM_RANDOM_WRITE) {
+					} else if (U.type_of_comm == gm_gps_comm.GPS_COMM_RANDOM_WRITE) {
 						gm_reproduce.gm_push_reproduce("//Receive Random Write Sent");
 						gm_reproduce.gm_newline_reproduce();
 						LinkedList<ast_sent> LL = info.get_random_write_sents(U);
@@ -237,12 +237,12 @@ public class gm_gps_basic_block {
 			while (s != null) {
 				s.reproduce(0);
 				s = get_next();
-				if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) && (s != null))
+				if ((type == gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX) && (s != null))
 					gm_reproduce.gm_newline_reproduce();
 			}
 			gm_reproduce.gm_flush_reproduce();
-		} else if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2)
-				|| (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_IF)) {
+		} else if ((type == gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE1) || (type == gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE2)
+				|| (type == gm_gps_bbtype.GM_GPS_BBTYPE_MERGED_TAIL) || (type == gm_gps_bbtype.GM_GPS_BBTYPE_MERGED_IF)) {
 			// do nothing;
 		} else {
 			assert false;
@@ -250,22 +250,22 @@ public class gm_gps_basic_block {
 	}
 
 	public final boolean is_vertex() {
-		return (get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX);
+		return (get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX);
 	}
 
 	// bool has_sender() {return _has_sender;}
 	// void set_has_sender(bool b) {_has_sender = b;}
 	public final boolean is_prepare() {
-		return (get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) || (get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2);
+		return (get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE1) || (get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE2);
 	}
 
 	public final void add_nested_receiver(ast_foreach fe) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_NESTED, fe);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_NESTED, fe);
 		add_receiver(U);
 	}
 
 	public final void add_random_write_receiver(ast_sentblock sb, gm_symtab_entry sym) {
-		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_RANDOM_WRITE, sb, sym);
+		gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_RANDOM_WRITE, sb, sym);
 		add_receiver(U);
 	}
 
@@ -294,7 +294,7 @@ public class gm_gps_basic_block {
 	private ArrayList<gm_gps_basic_block> exits = new ArrayList<gm_gps_basic_block>();
 	private ArrayList<gm_gps_basic_block> entries = new ArrayList<gm_gps_basic_block>();
 	private int id;
-	private gm_gps_bbtype_t type;
+	private gm_gps_bbtype type;
 	private boolean after_vertex;
 	// bool _has_sender;
 

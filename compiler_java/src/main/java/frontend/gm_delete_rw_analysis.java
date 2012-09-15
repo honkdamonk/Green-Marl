@@ -1,6 +1,6 @@
 package frontend;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_sent;
@@ -21,12 +21,12 @@ public class gm_delete_rw_analysis extends gm_apply {
 		if (rwi != null) {
 			n.add_info(gm_rw_analysis.GM_INFOKEY_RW, null);
 		}
-		if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (n.get_nodetype() == ast_node_type.AST_FOREACH) {
 			gm_bound_set_info bsi = gm_rw_analysis.gm_get_bound_set_info((ast_foreach) n);
 			if (bsi != null)
 				bsi.dispose();
 			n.add_info(gm_rw_analysis.GM_INFOKEY_BOUND, null);
-		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		} else if (n.get_nodetype() == ast_node_type.AST_BFS) {
 			gm_bound_set_info bsi = gm_rw_analysis.gm_get_bound_set_info((ast_bfs) n);
 			if (bsi != null)
 				bsi.dispose();

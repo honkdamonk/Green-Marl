@@ -1,25 +1,25 @@
 package frontend;
 
-import static frontend.gm_operator_coercion_t.COERCION_ALL;
-import static frontend.gm_operator_coercion_t.COERCION_NO;
-import static frontend.gm_operator_coercion_t.COERCION_RIGHT;
-import static frontend.gm_operator_result_t.RESULT_BOOL;
-import static frontend.gm_operator_result_t.RESULT_COERCION;
-import static frontend.gm_operator_result_t.RESULT_LEFT;
-import static frontend.gm_operator_t.ASSIGN_OP;
-import static frontend.gm_operator_t.BOOL_OP;
-import static frontend.gm_operator_t.COMP_OP;
-import static frontend.gm_operator_t.EQ_OP;
-import static frontend.gm_operator_t.INT_OP;
-import static frontend.gm_operator_t.NUMERIC_OP;
-import static frontend.gm_operator_t.TER_OP;
-import static frontend.gm_operator_type_class_t.T_BOOL;
-import static frontend.gm_operator_type_class_t.T_COMPATIBLE;
-import static frontend.gm_operator_type_class_t.T_INT;
-import static frontend.gm_operator_type_class_t.T_NUMERIC;
-import static frontend.gm_operator_type_class_t.T_NUMERIC_INF;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
+import static frontend.gm_operator_coercion.COERCION_ALL;
+import static frontend.gm_operator_coercion.COERCION_NO;
+import static frontend.gm_operator_coercion.COERCION_RIGHT;
+import static frontend.gm_operator_result.RESULT_BOOL;
+import static frontend.gm_operator_result.RESULT_COERCION;
+import static frontend.gm_operator_result.RESULT_LEFT;
+import static frontend.gm_operator.ASSIGN_OP;
+import static frontend.gm_operator.BOOL_OP;
+import static frontend.gm_operator.COMP_OP;
+import static frontend.gm_operator.EQ_OP;
+import static frontend.gm_operator.INT_OP;
+import static frontend.gm_operator.NUMERIC_OP;
+import static frontend.gm_operator.TER_OP;
+import static frontend.gm_operator_type_class.T_BOOL;
+import static frontend.gm_operator_type_class.T_COMPATIBLE;
+import static frontend.gm_operator_type_class.T_INT;
+import static frontend.gm_operator_type_class.T_NUMERIC;
+import static frontend.gm_operator_type_class.T_NUMERIC_INF;
+import inc.gm_type;
+import inc.gm_ops;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,7 @@ public class Oprules {
 		GM_TYPE_RULES.add(new gm_type_rule(ASSIGN_OP, T_COMPATIBLE, T_COMPATIBLE, RESULT_LEFT, COERCION_RIGHT));
 	}
 	
-	private static boolean in_typeclass(gm_operator_type_class_t type1, GMTYPE_T t1) {
+	private static boolean in_typeclass(gm_operator_type_class type1, gm_type t1) {
 		switch (type1) {
 		case T_INT:
 			return t1.is_long_type() || t1.is_int_type();
@@ -59,10 +59,10 @@ public class Oprules {
 		}
 	}
 
-	private static boolean in_opclass(gm_operator_t opclass, GM_OPS_T op) {
+	private static boolean in_opclass(gm_operator opclass, gm_ops op) {
 		switch (opclass) {
 		case INT_OP:
-			return (op == GM_OPS_T.GMOP_MOD);
+			return (op == gm_ops.GMOP_MOD);
 		case NUMERIC_OP:
 			return op.is_numeric_op();
 		case BOOL_OP:
@@ -74,17 +74,17 @@ public class Oprules {
 		case TER_OP:
 			return op.is_ternary_op();
 		case ASSIGN_OP:
-			return (op == GM_OPS_T.GMOP_ASSIGN);
+			return (op == gm_ops.GMOP_ASSIGN);
 		default:
 			assert false;
 			return false;
 		}
 	}
 
-	private static boolean is_applicable_rule(gm_type_rule R, GM_OPS_T op, GMTYPE_T t1, GMTYPE_T t2) {
+	private static boolean is_applicable_rule(gm_type_rule R, gm_ops op, gm_type t1, gm_type t2) {
 		if (Oprules.in_opclass(R.opclass, op)) {
 			if (R.type1 == T_COMPATIBLE)
-				return t1.equals(t2) || GMTYPE_T.is_same_node_or_edge_compatible_type(t1, t2);
+				return t1.equals(t2) || gm_type.is_same_node_or_edge_compatible_type(t1, t2);
 			else
 				return Oprules.in_typeclass(R.type1, t1) && Oprules.in_typeclass(R.type2, t2);
 		}
@@ -95,7 +95,7 @@ public class Oprules {
 	 * return false if coercion cannot be done. (lose of precision should be
 	 * checked separately)
 	 * */
-	private static void apply_coercion(gm_operator_coercion_t coercion_rule, GMTYPE_T t1, GMTYPE_T t2, RefObject<GMTYPE_T> t1_new, RefObject<GMTYPE_T> t2_new,
+	private static void apply_coercion(gm_operator_coercion coercion_rule, gm_type t1, gm_type t2, RefObject<gm_type> t1_new, RefObject<gm_type> t2_new,
 			RefObject<Boolean> t1_warn, RefObject<Boolean> t2_warn) {
 		t1_new.argvalue = t1;
 		t2_new.argvalue = t2;
@@ -119,11 +119,11 @@ public class Oprules {
 			}
 
 			// type-up. (i.e. INT -> LONG)
-			if (GMTYPE_T.is_t2_larger_than_t1(t1, t2)) {
+			if (gm_type.is_t2_larger_than_t1(t1, t2)) {
 				t1_new.argvalue = t2;
 				return;
 			}
-			if (GMTYPE_T.is_t2_larger_than_t1(t2, t1)) {
+			if (gm_type.is_t2_larger_than_t1(t2, t1)) {
 				t2_new.argvalue = t1;
 				return;
 			}
@@ -151,7 +151,7 @@ public class Oprules {
 
 			t2_new.argvalue = t1;
 
-			if ((t1 != t2) && (!GMTYPE_T.is_t2_larger_than_t1(t2, t1))) {
+			if ((t1 != t2) && (!gm_type.is_t2_larger_than_t1(t2, t1))) {
 				t2_warn.argvalue = true;
 			}
 			return;
@@ -161,8 +161,8 @@ public class Oprules {
 		return;
 	}
 
-	public static boolean gm_is_compatible_type(GM_OPS_T op, GMTYPE_T t1, GMTYPE_T t2, RefObject<GMTYPE_T> op_result_type, RefObject<GMTYPE_T> t1_new,
-			RefObject<GMTYPE_T> t2_new, RefObject<Boolean> t1_warn, RefObject<Boolean> t2_warn) {
+	public static boolean gm_is_compatible_type(gm_ops op, gm_type t1, gm_type t2, RefObject<gm_type> op_result_type, RefObject<gm_type> t1_new,
+			RefObject<gm_type> t2_new, RefObject<Boolean> t1_warn, RefObject<Boolean> t2_warn) {
 		// special case
 		if (t1.is_foreign_expr_type() && t2.is_foreign_expr_type()) {
 			op_result_type.argvalue = t1;
@@ -186,8 +186,8 @@ public class Oprules {
 
 			if (Oprules.is_applicable_rule(R, op, t1, t2)) {
 				// apply coercion
-				RefObject<GMTYPE_T> tempRef_t1_new = t1_new;
-				RefObject<GMTYPE_T> tempRef_t2_new = t2_new;
+				RefObject<gm_type> tempRef_t1_new = t1_new;
+				RefObject<gm_type> tempRef_t2_new = t2_new;
 				RefObject<Boolean> tempRef_t1_warn = t1_warn;
 				RefObject<Boolean> tempRef_t2_warn = t2_warn;
 				Oprules.apply_coercion(R.coercion_rule, t1, t2, tempRef_t1_new, tempRef_t2_new, tempRef_t1_warn, tempRef_t2_warn);
@@ -198,7 +198,7 @@ public class Oprules {
 
 				// get result type
 				if (R.result_type == RESULT_BOOL) {
-					op_result_type.argvalue = GMTYPE_T.GMTYPE_BOOL;
+					op_result_type.argvalue = gm_type.GMTYPE_BOOL;
 				} else {
 					op_result_type.argvalue = t1_new.argvalue; // always LHS
 																// type after

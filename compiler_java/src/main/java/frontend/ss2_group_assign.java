@@ -1,11 +1,11 @@
 package frontend;
 
-import static ast.AST_NODE_TYPE.AST_ASSIGN;
-import static inc.GMTYPE_T.GMTYPE_EDGE;
-import static inc.GMTYPE_T.GMTYPE_EDGEITER_ALL;
-import static inc.GMTYPE_T.GMTYPE_NODE;
-import static inc.GMTYPE_T.GMTYPE_NODEITER_ALL;
-import inc.GMTYPE_T;
+import static ast.ast_node_type.AST_ASSIGN;
+import static inc.gm_type.GMTYPE_EDGE;
+import static inc.gm_type.GMTYPE_EDGEITER_ALL;
+import static inc.gm_type.GMTYPE_NODE;
+import static inc.gm_type.GMTYPE_NODEITER_ALL;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
@@ -167,7 +167,7 @@ public class ss2_group_assign extends gm_apply {
 		ast_id src = first.copy(true);
 		src.set_line(first.get_line());
 		src.set_col(first.get_col());
-		GMTYPE_T iter;
+		gm_type iter;
 		if (second.getTypeSummary().is_node_property_type())
 			iter = GMTYPE_NODEITER_ALL;
 		else if (second.getTypeSummary().is_edge_property_type())

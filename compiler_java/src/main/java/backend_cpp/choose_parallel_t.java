@@ -1,6 +1,6 @@
 package backend_cpp;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_node;
@@ -15,7 +15,7 @@ class choose_parallel_t extends gm_apply {
 	
 	@Override
 	public final void begin_context(ast_node n) {
-		if ((n.get_nodetype() == AST_NODE_TYPE.AST_BFS) && (((ast_bfs) n).is_bfs())) {
+		if ((n.get_nodetype() == ast_node_type.AST_BFS) && (((ast_bfs) n).is_bfs())) {
 			assert _in_bfs == false;
 			_in_bfs = true;
 		}
@@ -23,14 +23,14 @@ class choose_parallel_t extends gm_apply {
 
 	@Override
 	public final void end_context(ast_node n) {
-		if ((n.get_nodetype() == AST_NODE_TYPE.AST_BFS) && (((ast_bfs) n).is_bfs())) {
+		if ((n.get_nodetype() == ast_node_type.AST_BFS) && (((ast_bfs) n).is_bfs())) {
 			_in_bfs = false;
 		}
 	}
 
 	@Override
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (_in_bfs) {
 				fe.set_sequential(true);

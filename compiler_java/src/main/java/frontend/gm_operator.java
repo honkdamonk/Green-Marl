@@ -3,7 +3,7 @@ package frontend;
 //------------------------------------------------------------------------
 // CLASS NUMERIC OP
 //------------------------------------------------------------------------
-public enum gm_operator_t {
+public enum gm_operator {
 	INT_OP, // %
 	NUMERIC_OP, // +,-,*,/, Max, Min
 	BOOL_OP, // And, Or

@@ -34,9 +34,9 @@ public class gm_find_congruent_t extends gps_apply_bb
 		}
 
 		// special case for prepare
-		if (b.get_type() == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1)
+		if (b.get_type() == gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE1)
 		{
-			gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm_t.GPS_COMM_INIT, null);
+			gm_gps_comm_unit U = new gm_gps_comm_unit(gm_gps_comm.GPS_COMM_INIT, null);
 			find_congruent_class_per_loop(U, b);
 		}
 

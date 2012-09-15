@@ -3,8 +3,8 @@ package common;
 import frontend.gm_scope;
 import frontend.gm_symtab;
 import frontend.gm_typechecker_stage_1;
-import inc.GMTYPE_T;
-import inc.GM_REDUCE_T;
+import inc.gm_type;
+import inc.gm_reduce;
 import ast.ast_expr;
 import ast.ast_expr_reduce;
 import ast.ast_foreach;
@@ -40,7 +40,7 @@ public class gm_new_sents_after_tc {
 	// this function.
 	// * They should be adjusted after this function.
 	// ------------------------------------------------------------
-	public static ast_foreach gm_new_foreach_after_tc(ast_id it, ast_id src, ast_sent body, GMTYPE_T iter_type) {
+	public static ast_foreach gm_new_foreach_after_tc(ast_id it, ast_id src, ast_sent body, gm_type iter_type) {
 		assert it.getSymInfo() == null;
 		assert src.getSymInfo() != null;
 		assert iter_type.is_iteration_on_all_graph() || iter_type.is_iteration_on_neighbors_compatible();
@@ -93,7 +93,7 @@ public class gm_new_sents_after_tc {
 	}
 
 	// almost identical to new_foreach_after_tc
-	public static ast_expr_reduce gm_new_expr_reduce_after_tc(ast_id it, ast_id src, ast_expr body, ast_expr filter, GMTYPE_T iter_type, GM_REDUCE_T op_type) {
+	public static ast_expr_reduce gm_new_expr_reduce_after_tc(ast_id it, ast_id src, ast_expr body, ast_expr filter, gm_type iter_type, gm_reduce op_type) {
 		assert it.getSymInfo() == null;
 		assert src.getSymInfo() != null;
 		assert iter_type.is_iteration_on_all_graph() || iter_type.is_iteration_on_neighbors_compatible();
@@ -148,7 +148,7 @@ public class gm_new_sents_after_tc {
 	// --------------------------------------------------------------
 	// Create bottom symbol for reduction
 	// --------------------------------------------------------------
-	public static ast_expr gm_new_bottom_symbol(GM_REDUCE_T reduce_type, GMTYPE_T lhs_type) {
+	public static ast_expr gm_new_bottom_symbol(gm_reduce reduce_type, gm_type lhs_type) {
 		ast_expr init_val;
 		switch (reduce_type) {
 		case GMREDUCE_PLUS: // Sum

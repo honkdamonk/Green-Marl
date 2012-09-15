@@ -1,6 +1,6 @@
 package opt;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_sent;
 
@@ -16,7 +16,7 @@ public class gm_hoist_foreach_t extends gm_hoist_normal_sent_t {
 	// need post apply.
 	@Override
 	protected boolean check_target(ast_sent target) {
-		if (target.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)
+		if (target.get_nodetype() != ast_node_type.AST_FOREACH)
 			return false;
 		else
 			return true;
@@ -24,11 +24,11 @@ public class gm_hoist_foreach_t extends gm_hoist_normal_sent_t {
 
 	@Override
 	protected boolean check_trivial_pred(ast_sent S) {
-		if (S.get_nodetype() == AST_NODE_TYPE.AST_VARDECL)
+		if (S.get_nodetype() == ast_node_type.AST_VARDECL)
 			return true;
-		else if (S.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
+		else if (S.get_nodetype() == ast_node_type.AST_FOREACH)
 			return true;
-		else if (S.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		else if (S.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) S;
 			is_const_check.prepare();
 			a.get_rhs().traverse_pre(is_const_check);

@@ -20,9 +20,9 @@ import static backend_cpp.gm_cpplib_words.R_EDGE_IDX;
 import static backend_cpp.gm_cpplib_words.R_NODE_IDX;
 import static backend_cpp.gm_cpplib_words.SEQ_T;
 import static backend_cpp.gm_cpplib_words.SET_T;
-import static inc.GMTYPE_T.GMTYPE_BOOL;
-import static inc.GMTYPE_T.GMTYPE_INT;
-import inc.GMTYPE_T;
+import static inc.gm_type.GMTYPE_BOOL;
+import static inc.gm_type.GMTYPE_INT;
+import inc.gm_type;
 import inc.gm_code_writer;
 import inc.gm_graph_library;
 import inc.nop_enum_cpp;
@@ -39,7 +39,7 @@ import ast.ast_typedecl;
 
 import common.gm_builtin_def;
 import common.gm_main;
-import common.gm_method_id_t;
+import common.gm_method_id;
 import common.gm_transform_helper;
 import common.gm_vocabulary;
 
@@ -68,7 +68,7 @@ class gm_cpplib extends gm_graph_library {
 		return "gm.h";
 	}
 
-	String get_type_string(GMTYPE_T type) {
+	String get_type_string(gm_type type) {
 		if (type.is_graph_type()) {
 			return GRAPH_T;
 		} else if (type.is_nodeedge_type()) {
@@ -123,7 +123,7 @@ class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	private String getMapDefaultValueForType(GMTYPE_T type) {
+	private String getMapDefaultValueForType(gm_type type) {
 		if (type.is_float_type()) {
 			return "0.0";
 		} else if (type.is_integer_type()) {
@@ -155,8 +155,8 @@ class gm_cpplib extends gm_graph_library {
 
 		int mapType = MEDIUM; // TODO: implement compiler optimization to figure
 								// out what is best here
-		GMTYPE_T keyType = map.getKeyTypeSummary();
-		GMTYPE_T valueType = map.getValueTypeSummary();
+		gm_type keyType = map.getKeyTypeSummary();
+		gm_type valueType = map.getValueTypeSummary();
 		if (valueType == GMTYPE_BOOL) {
 			valueType = GMTYPE_INT;
 		}
@@ -171,11 +171,11 @@ class gm_cpplib extends gm_graph_library {
 		Body.pushln(buffer);
 	}
 
-	private String get_function_name_map(gm_method_id_t methodId) {
+	private String get_function_name_map(gm_method_id methodId) {
 		return get_function_name_map(methodId, false);
 	}
 
-	private String get_function_name_map(gm_method_id_t methodId, boolean in_parallel) {
+	private String get_function_name_map(gm_method_id methodId, boolean in_parallel) {
 
 		switch (methodId) {
 		case GM_BLTIN_MAP_SIZE:
@@ -202,7 +202,7 @@ class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	private String get_function_name_map_seq(gm_method_id_t methodId) {
+	private String get_function_name_map_seq(gm_method_id methodId) {
 		switch (methodId) {
 		case GM_BLTIN_MAP_HAS_MAX_VALUE:
 			return "hasMaxValue";
@@ -224,7 +224,7 @@ class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	private String get_function_name_map_par(gm_method_id_t methodId) {
+	private String get_function_name_map_par(gm_method_id methodId) {
 		switch (methodId) {
 		case GM_BLTIN_MAP_HAS_MAX_VALUE:
 			return "hasMaxValue_par";
@@ -313,8 +313,8 @@ class gm_cpplib extends gm_graph_library {
 		ast_sent s = gm_transform_helper.gm_find_parent_sentence(e);
 		assert def != null;
 		assert s != null;
-		GMTYPE_T src_type = def.get_source_type_summary();
-		gm_method_id_t method_id = def.get_method_id();
+		gm_type src_type = def.get_source_type_summary();
+		gm_method_id method_id = def.get_method_id();
 		boolean under_parallel = s.is_under_parallel_execution();
 		boolean add_thread_id = false;
 
@@ -415,9 +415,9 @@ class gm_cpplib extends gm_graph_library {
 	}
 
 	void generate_expr_nil(ast_expr e, gm_code_writer Body) {
-		if (e.get_type_summary() == GMTYPE_T.GMTYPE_NIL_EDGE) {
+		if (e.get_type_summary() == gm_type.GMTYPE_NIL_EDGE) {
 			Body.push("gm_graph::NIL_EDGE");
-		} else if (e.get_type_summary() == GMTYPE_T.GMTYPE_NIL_NODE) {
+		} else if (e.get_type_summary() == gm_type.GMTYPE_NIL_NODE) {
 			Body.push("gm_graph::NIL_NODE");
 		} else {
 			assert false;
@@ -476,7 +476,7 @@ class gm_cpplib extends gm_graph_library {
 	}
 
 	boolean need_up_initializer(ast_foreach f) {
-		GMTYPE_T iter_type = f.get_iter_type();
+		gm_type iter_type = f.get_iter_type();
 		if (iter_type.is_iteration_on_collection())
 			return true;
 		else if (iter_type.is_common_nbr_iter_type())
@@ -485,7 +485,7 @@ class gm_cpplib extends gm_graph_library {
 	}
 
 	boolean need_down_initializer(ast_foreach f) {
-		GMTYPE_T iter_type = f.get_iter_type();
+		gm_type iter_type = f.get_iter_type();
 
 		if (iter_type.is_iteration_on_collection()) {
 			return true;
@@ -501,7 +501,7 @@ class gm_cpplib extends gm_graph_library {
 	}
 
 	void generate_up_initializer(ast_foreach f, gm_code_writer Body) {
-		GMTYPE_T iter_type = f.get_iter_type();
+		gm_type iter_type = f.get_iter_type();
 		ast_id source = f.get_source();
 		if (iter_type.is_iteration_on_collection()) {
 			assert !f.is_parallel();
@@ -538,7 +538,7 @@ class gm_cpplib extends gm_graph_library {
 	}
 
 	void generate_down_initializer(ast_foreach f, gm_code_writer Body) {
-		GMTYPE_T iter_type = f.get_iter_type();
+		gm_type iter_type = f.get_iter_type();
 		ast_id iter = f.get_iterator();
 		ast_id source = f.get_source();
 
@@ -593,7 +593,7 @@ class gm_cpplib extends gm_graph_library {
 	void generate_foreach_header(ast_foreach fe, gm_code_writer Body) {
 		ast_id source = fe.get_source();
 		ast_id iter = fe.get_iterator();
-		GMTYPE_T type = fe.get_iter_type();
+		gm_type type = fe.get_iter_type();
 
 		if (type.is_iteration_on_all_graph()) {
 			String graph_name;
@@ -668,8 +668,8 @@ class gm_cpplib extends gm_graph_library {
 		assert definition != null;
 		assert sent != null;
 
-		GMTYPE_T sourceType = definition.get_source_type_summary();
-		gm_method_id_t methodId = definition.get_method_id();
+		gm_type sourceType = definition.get_source_type_summary();
+		gm_method_id methodId = definition.get_method_id();
 
 		boolean parallelExecution = sent.is_under_parallel_execution();
 		boolean addThreadId = false;
@@ -699,7 +699,7 @@ class gm_cpplib extends gm_graph_library {
 
 	}
 
-	String get_function_name_graph(gm_method_id_t methodId) {
+	String get_function_name_graph(gm_method_id methodId) {
 		switch (methodId) {
 		case GM_BLTIN_GRAPH_NUM_NODES:
 			return NUM_NODES;
@@ -713,7 +713,7 @@ class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	String get_function_name_nset(gm_method_id_t methodId, boolean in_parallel) {
+	String get_function_name_nset(gm_method_id methodId, boolean in_parallel) {
 		switch (methodId) {
 		case GM_BLTIN_SET_HAS:
 			return "is_in";
@@ -737,7 +737,7 @@ class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	String get_function_name_nseq(gm_method_id_t methodId) {
+	String get_function_name_nseq(gm_method_id methodId) {
 		switch (methodId) {
 		case GM_BLTIN_SET_ADD:
 			return "push_front";
@@ -755,7 +755,7 @@ class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	String get_function_name_norder(gm_method_id_t methodId) {
+	String get_function_name_norder(gm_method_id methodId) {
 		switch (methodId) {
 		case GM_BLTIN_SET_ADD:
 			return "push_front";
@@ -782,7 +782,7 @@ class gm_cpplib extends gm_graph_library {
 		body.push(")");
 	}
 
-	String get_primitive_type_string(GMTYPE_T type_id) {
+	String get_primitive_type_string(gm_type type_id) {
 		switch (type_id) {
 		case GMTYPE_BYTE:
 			return "int8_t";
@@ -804,7 +804,7 @@ class gm_cpplib extends gm_graph_library {
 		}
 	}
 
-	String getTypeString(GMTYPE_T type) {
+	String getTypeString(gm_type type) {
 		if (type.is_prim_type()) {
 			return get_primitive_type_string(type);
 		} else if (type.is_node_type()) {

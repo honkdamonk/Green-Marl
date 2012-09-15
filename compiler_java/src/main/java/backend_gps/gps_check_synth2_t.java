@@ -1,10 +1,10 @@
 package backend_gps;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_error;
@@ -29,7 +29,7 @@ public class gps_check_synth2_t extends gm_apply
 	@Override
 	public boolean apply(ast_expr e)
 	{
-		if (e.get_nodetype() == AST_NODE_TYPE.AST_EXPR_BUILTIN)
+		if (e.get_nodetype() == ast_node_type.AST_EXPR_BUILTIN)
 		{
 			ast_expr_builtin be = (ast_expr_builtin) e;
 			gm_builtin_def def = be.get_builtin_def();
@@ -55,7 +55,7 @@ public class gps_check_synth2_t extends gm_apply
 				case GM_BLTIN_TOP_POW: // pow function
 					break;
 				default:
-					gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_UNSUPPORTED_OP, e.get_line(), e.get_col(), "Builtin (function)");
+					gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_UNSUPPORTED_OP, e.get_line(), e.get_col(), "Builtin (function)");
 					_error = true;
 					break;
 			}

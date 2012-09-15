@@ -2,7 +2,7 @@ package common;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_node;
@@ -39,9 +39,9 @@ public class check_par_exe_t extends gm_apply {
 		_context.addLast(_current_is_par);
 
 		// begin new context
-		if (n.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (n.get_nodetype() == ast_node_type.AST_BFS) {
 			_current_is_par = _current_is_par || ((ast_bfs) n).is_parallel();
-		} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		} else if (n.get_nodetype() == ast_node_type.AST_FOREACH) {
 			_current_is_par = _current_is_par || ((ast_foreach) n).is_parallel();
 		}
 		_current_context = n;

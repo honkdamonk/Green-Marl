@@ -3,7 +3,7 @@ package backend_gps;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_error;
 import common.gm_main;
 
@@ -28,7 +28,7 @@ public class gm_gps_opt_check_synthesizable extends gm_compile_step
     
 		if (!T.is_graph_defined())
 		{
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NO_GRAPH, proc.get_procname().get_line(), proc.get_procname().get_col());
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_NO_GRAPH, proc.get_procname().get_line(), proc.get_procname().get_col());
     
 			set_okay(false);
 			return; // return is_okay

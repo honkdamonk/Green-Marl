@@ -1,7 +1,7 @@
 package frontend;
 
-import static ast.AST_NODE_TYPE.AST_NOP;
-import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
+import static ast.ast_node_type.AST_NOP;
+import static ast.ast_node_type.AST_SENTBLOCK;
 
 import java.util.HashSet;
 import java.util.LinkedList;

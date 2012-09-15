@@ -1,11 +1,11 @@
 package backend_gps;
 
 import static backend_gps.GPSConstants.GPS_FLAG_HAS_DOWN_NBRS;
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_node;
@@ -27,17 +27,17 @@ public class gps_opt_find_bfs_t extends gm_apply {
 	// pre
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			assert !in_bfs; // [XXX] Nested BFS are not allowed (temporary)
 			in_bfs = true;
 			current_bfs = (ast_bfs) s;
 			BFS.addLast(current_bfs);
 		}
 
-		else if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		else if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (in_bfs) {
-				GMTYPE_T itt = fe.get_iter_type();
+				gm_type itt = fe.get_iter_type();
 				if (itt.is_iteration_on_down_neighbors()) {
 					// check if this is forward bfs
 					ast_node current = fe;
@@ -59,7 +59,7 @@ public class gps_opt_find_bfs_t extends gm_apply {
 	// post
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			in_bfs = false;
 			current_bfs = null;
 		}

@@ -1,14 +1,14 @@
 package frontend;
 
-import static inc.GM_PROP_USAGE_T.GMUSAGE_INOUT;
-import static inc.GM_PROP_USAGE_T.GMUSAGE_INVALID;
-import static inc.GM_PROP_USAGE_T.GMUSAGE_OUT;
-import inc.GMTYPE_T;
+import static inc.gm_prop_usage.GMUSAGE_INOUT;
+import static inc.gm_prop_usage.GMUSAGE_INVALID;
+import static inc.gm_prop_usage.GMUSAGE_OUT;
+import inc.gm_type;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
@@ -38,21 +38,21 @@ public class gm_check_property_usage_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (is_under_condition() || is_under_random_iterator() || (topmost_iterator != null)) {
 				random_iter_stack.addLast(s);
 			} // TODO remove else if?
-			else if (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_ALL) {
+			else if (fe.get_iter_type() == gm_type.GMTYPE_NODEITER_ALL) {
 				topmost_iterator = fe.get_iterator().getSymInfo();
 			} else {
 				topmost_iterator = fe.get_iterator().getSymInfo();
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		} else if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			random_iter_stack.addLast(s);
-		} else if ((s.get_nodetype() == AST_NODE_TYPE.AST_WHILE) || (s.get_nodetype() == AST_NODE_TYPE.AST_IF)) {
+		} else if ((s.get_nodetype() == ast_node_type.AST_WHILE) || (s.get_nodetype() == ast_node_type.AST_IF)) {
 			condition_stack.addLast(s);
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		} else if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			if (!a.is_target_scalar() && !a.is_target_map_entry()) {
 				ast_field f = a.get_lhs_field();
@@ -61,7 +61,7 @@ public class gm_check_property_usage_t extends gm_apply {
 					property_is_read(f.get_second().getSymInfo(), f.get_first().getSymInfo(), true);
 					LinkedList<ast_node> L = a.get_lhs_list();
 					for (ast_node n : L) {
-						assert n.get_nodetype() == AST_NODE_TYPE.AST_FIELD;
+						assert n.get_nodetype() == ast_node_type.AST_FIELD;
 						ast_field f2 = (ast_field) n;
 						property_is_read(f2.get_second().getSymInfo(), f2.get_first().getSymInfo(), true);
 					}
@@ -70,7 +70,7 @@ public class gm_check_property_usage_t extends gm_apply {
 					property_is_written(f.get_second().getSymInfo(), f.get_first().getSymInfo());
 				}
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_CALL) {
+		} else if (s.get_nodetype() == ast_node_type.AST_CALL) {
 			// [todo]
 		}
 
@@ -84,7 +84,7 @@ public class gm_check_property_usage_t extends gm_apply {
 		} else if (!random_iter_stack.isEmpty() && s == random_iter_stack.getLast()) {
 			random_iter_stack.removeLast();
 		} else {
-			if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+			if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 				ast_foreach fe = (ast_foreach) s;
 				if (fe.get_iterator().getSymInfo() == topmost_iterator) {
 					topmost_iterator = null;

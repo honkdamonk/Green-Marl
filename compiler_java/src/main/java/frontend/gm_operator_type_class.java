@@ -1,6 +1,6 @@
 package frontend;
 
-public enum gm_operator_type_class_t {
+public enum gm_operator_type_class {
 	T_INT, //
 	T_BOOL, //
 	T_NUMERIC, //
@@ -11,7 +11,7 @@ public enum gm_operator_type_class_t {
 		return ordinal();
 	}
 
-	public static gm_operator_type_class_t forValue(int value) {
+	public static gm_operator_type_class forValue(int value) {
 		return values()[value];
 	}
 }

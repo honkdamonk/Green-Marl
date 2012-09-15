@@ -9,7 +9,7 @@ public abstract class ast_sent extends ast_node {
 	private int eline = 0;
 	private boolean _par = false;
 
-	protected ast_sent(AST_NODE_TYPE y) {
+	protected ast_sent(ast_node_type y) {
 		super(y);
 	}
 

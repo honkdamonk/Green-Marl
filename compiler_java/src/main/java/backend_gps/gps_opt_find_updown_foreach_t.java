@@ -1,11 +1,11 @@
 package backend_gps;
 
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
+import inc.gm_type;
+import inc.gm_ops;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_foreach;
@@ -35,10 +35,10 @@ public class gps_opt_find_updown_foreach_t extends gm_apply
 	@Override
 	public boolean apply(ast_sent s)
 	{
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH)
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH)
 		{
 			ast_foreach fe = (ast_foreach) s;
-			if ((fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS) || (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_DOWN_NBRS))
+			if ((fe.get_iter_type() == gm_type.GMTYPE_NODEITER_UP_NBRS) || (fe.get_iter_type() == gm_type.GMTYPE_NODEITER_DOWN_NBRS))
 			{
 				targets.addLast(fe);
 			}
@@ -58,15 +58,15 @@ public class gps_opt_find_updown_foreach_t extends gm_apply
 			ast_sent body = fe.get_body();
 			gm_transform_helper.gm_ripoff_sent(body);
 
-			GMTYPE_T new_iter_type = (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS) ? GMTYPE_T.GMTYPE_NODEITER_IN_NBRS : GMTYPE_T.GMTYPE_NODEITER_NBRS;
-			GM_OPS_T op_for_check = (fe.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_UP_NBRS) ? GM_OPS_T.GMOP_SUB : GM_OPS_T.GMOP_ADD;
+			gm_type new_iter_type = (fe.get_iter_type() == gm_type.GMTYPE_NODEITER_UP_NBRS) ? gm_type.GMTYPE_NODEITER_IN_NBRS : gm_type.GMTYPE_NODEITER_NBRS;
+			gm_ops op_for_check = (fe.get_iter_type() == gm_type.GMTYPE_NODEITER_UP_NBRS) ? gm_ops.GMOP_SUB : gm_ops.GMOP_ADD;
 
 			// chechge iter type
 			fe.set_iter_type(new_iter_type);
 			fe.get_iterator().getTypeInfo().set_typeid(new_iter_type);
 
 			// if (i.lev == (curr_level -1))
-			ast_expr check_level = ast_expr.new_comp_expr(GM_OPS_T.GMOP_EQ, ast_expr.new_field_expr(ast_field.new_field(fe.get_iterator().copy(true), lev_sym.getId().copy(true))), ast_expr.new_biop_expr(op_for_check, ast_expr.new_id_expr(curr_sym.getId().copy(true)), ast_expr.new_ival_expr(1)));
+			ast_expr check_level = ast_expr.new_comp_expr(gm_ops.GMOP_EQ, ast_expr.new_field_expr(ast_field.new_field(fe.get_iterator().copy(true), lev_sym.getId().copy(true))), ast_expr.new_biop_expr(op_for_check, ast_expr.new_id_expr(curr_sym.getId().copy(true)), ast_expr.new_ival_expr(1)));
 			ast_if check_level_if = ast_if.new_if(check_level, body, null);
 			fe.set_body(check_level_if);
 		}

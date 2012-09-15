@@ -1,7 +1,7 @@
 package backend_gps;
 
 // how the symbols is used (LHS/RHS/REDUCE) 
-public enum gm_gps_symbol_usage_t
+public enum gm_gps_symbol_usage
 {
 	GPS_SYM_USED_AS_RHS,
 	GPS_SYM_USED_AS_LHS,
@@ -12,7 +12,7 @@ public enum gm_gps_symbol_usage_t
 		return this.ordinal();
 	}
 
-	public static gm_gps_symbol_usage_t forValue(int value)
+	public static gm_gps_symbol_usage forValue(int value)
 	{
 		return values()[value];
 	}

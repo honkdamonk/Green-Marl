@@ -4,14 +4,14 @@ import java.util.HashMap;
 import java.util.LinkedList;
 
 import tangible.Pair;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_sent;
 
 import common.gm_apply;
 
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
@@ -97,20 +97,20 @@ public class gm_moveup_propdecl_t extends gm_apply {
 		boolean to_nil = false;
 		boolean to_loop = false;
 		boolean to_top = false;
-		AST_NODE_TYPE nt = s.get_nodetype();
-		if (nt == AST_NODE_TYPE.AST_SENTBLOCK)
+		ast_node_type nt = s.get_nodetype();
+		if (nt == ast_node_type.AST_SENTBLOCK)
 			to_top = true;
-		else if (nt == AST_NODE_TYPE.AST_IF)
+		else if (nt == ast_node_type.AST_IF)
 			to_nil = true;
-		else if (nt == AST_NODE_TYPE.AST_WHILE)
+		else if (nt == ast_node_type.AST_WHILE)
 			to_loop = true;
-		else if (nt == AST_NODE_TYPE.AST_FOREACH) {
+		else if (nt == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (fe.is_parallel())
 				to_nil = true;
 			else
 				to_loop = true;
-		} else if (nt == AST_NODE_TYPE.AST_BFS) {
+		} else if (nt == ast_node_type.AST_BFS) {
 			ast_bfs bfs = (ast_bfs) s;
 			if (bfs.is_parallel())
 				to_nil = true;
@@ -183,16 +183,16 @@ public class gm_moveup_propdecl_t extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab tab, SYMTAB_TYPES type) {
-		if (type != SYMTAB_TYPES.GM_SYMTAB_FIELD)
+	public boolean apply(gm_symtab tab, symtab_types type) {
+		if (type != symtab_types.GM_SYMTAB_FIELD)
 			return true;
 		this_scope = tab;
 		return true;
 	}
 
 	@Override
-	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES type) {
-		if (type != SYMTAB_TYPES.GM_SYMTAB_FIELD)
+	public boolean apply(gm_symtab_entry e, symtab_types type) {
+		if (type != symtab_types.GM_SYMTAB_FIELD)
 			return true;
 		if (curr_state == IN_LOOP) {
 			save_target(e, this_scope, curr_top_scope);

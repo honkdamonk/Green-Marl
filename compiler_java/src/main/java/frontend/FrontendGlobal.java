@@ -1,13 +1,13 @@
 package frontend;
 
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
+import inc.gm_ops;
+import inc.gm_reduce;
+import inc.gm_assignment;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
@@ -34,7 +34,7 @@ public final class FrontendGlobal {
 		assert a.is_reduce_assign();
 
 		// assumption: a belongs to a sentence block
-		assert a.get_parent().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK;
+		assert a.get_parent().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 
 		ast_expr base;
 		if (a.is_target_scalar()) {
@@ -48,28 +48,28 @@ public final class FrontendGlobal {
 		ast_expr new_rhs = null;
 		switch (a.get_reduce_type()) {
 		case GMREDUCE_PLUS:
-			new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_ADD, base, org_rhs);
+			new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_ADD, base, org_rhs);
 			break;
 		case GMREDUCE_MULT:
-			new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_MULT, base, org_rhs);
+			new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_MULT, base, org_rhs);
 			break;
 		case GMREDUCE_AND:
-			new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_AND, base, org_rhs);
+			new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_AND, base, org_rhs);
 			break;
 		case GMREDUCE_OR:
-			new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_OR, base, org_rhs);
+			new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_OR, base, org_rhs);
 			break;
 		case GMREDUCE_MIN:
 			if (a.is_argminmax_assign())
 				new_rhs = org_rhs.copy(true);
 			else
-				new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_MIN, base, org_rhs);
+				new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_MIN, base, org_rhs);
 			break;
 		case GMREDUCE_MAX:
 			if (a.is_argminmax_assign())
 				new_rhs = org_rhs.copy(true);
 			else
-				new_rhs = ast_expr.new_biop_expr(GM_OPS_T.GMOP_MAX, base, org_rhs);
+				new_rhs = ast_expr.new_biop_expr(gm_ops.GMOP_MAX, base, org_rhs);
 			break;
 		default:
 			assert false;
@@ -90,7 +90,7 @@ public final class FrontendGlobal {
 			// }
 
 			// (l>r)
-			GM_OPS_T comp = (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MIN) ? GM_OPS_T.GMOP_GT : GM_OPS_T.GMOP_LT;
+			gm_ops comp = (a.get_reduce_type() == gm_reduce.GMREDUCE_MIN) ? gm_ops.GMOP_GT : gm_ops.GMOP_LT;
 			ast_expr cond = ast_expr.new_comp_expr(comp, base, new_rhs);
 
 			// if (l>r) {}
@@ -113,9 +113,9 @@ public final class FrontendGlobal {
 				ast_node l = I.next();
 				ast_expr r = J.next();
 				ast_assign aa;
-				if (l.get_nodetype() == AST_NODE_TYPE.AST_ID)
+				if (l.get_nodetype() == ast_node_type.AST_ID)
 					aa = ast_assign.new_assign_scala((ast_id) l, r);
-				else if (l.get_nodetype() == AST_NODE_TYPE.AST_FIELD)
+				else if (l.get_nodetype() == ast_node_type.AST_FIELD)
 					aa = ast_assign.new_assign_field((ast_field) l, r);
 				else {
 					assert false;
@@ -125,8 +125,8 @@ public final class FrontendGlobal {
 			}
 		}
 
-		a.set_assign_type(gm_assignment_t.GMASSIGN_NORMAL);
-		a.set_reduce_type(GM_REDUCE_T.GMREDUCE_NULL);
+		a.set_assign_type(gm_assignment.GMASSIGN_NORMAL);
+		a.set_reduce_type(gm_reduce.GMREDUCE_NULL);
 		ast_id old_iter = a.get_bound(); // assert(old_iter != NULL);
 		a.set_bound(null);
 		if (old_iter != null)

@@ -6,7 +6,7 @@ import ast.ast_typedecl;
 import common.gm_apply;
 import common.gm_main;
 
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab_entry;
 
 class rename_prop_name_t extends gm_apply {
@@ -17,7 +17,7 @@ class rename_prop_name_t extends gm_apply {
 
 	public final boolean apply(gm_symtab_entry e, int symtab_type) {
 
-		if (symtab_type != SYMTAB_TYPES.GM_SYMTAB_FIELD.getValue())
+		if (symtab_type != symtab_types.GM_SYMTAB_FIELD.getValue())
 			return true;
 
 		ast_id id = e.getId();

@@ -1,6 +1,6 @@
 package backend_gps;
 
-public enum gm_gps_edge_access_t
+public enum gm_gps_edge_access
 {
 	GPS_ENUM_EDGE_VALUE_WRITE,
 	GPS_ENUM_EDGE_VALUE_SENT,
@@ -13,7 +13,7 @@ public enum gm_gps_edge_access_t
 		return this.ordinal();
 	}
 
-	public static gm_gps_edge_access_t forValue(int value)
+	public static gm_gps_edge_access forValue(int value)
 	{
 		return values()[value];
 	}

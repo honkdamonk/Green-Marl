@@ -2,7 +2,7 @@ package common;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
@@ -18,10 +18,10 @@ public class gm_flat_nested_sentblock_t extends gm_apply {
 	@Override
 	public final boolean apply(ast_sent s) {
 		// parent should be another sentblock
-		if ((s.get_parent() == null) || (s.get_parent().get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK))
+		if ((s.get_parent() == null) || (s.get_parent().get_nodetype() != ast_node_type.AST_SENTBLOCK))
 			return true;
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+		if (s.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 			ast_sentblock sb = (ast_sentblock) s;
 
 			// flat only if no new symbol is defined

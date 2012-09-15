@@ -20,10 +20,10 @@ import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import inc.BackendGenerator;
-import inc.GMEXPR_CLASS;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
-import inc.GM_REDUCE_T;
+import inc.gm_expr_class;
+import inc.gm_type;
+import inc.gm_ops;
+import inc.gm_reduce;
 import inc.gm_code_writer;
 import inc.gm_compile_step;
 import inc.gm_ind_opt_flip_edges;
@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -62,7 +62,7 @@ import ast.ast_vardecl;
 import ast.ast_while;
 import backend_cpp.gm_cpp_opt_defer;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply_compiler_stage;
 import common.gm_builtin_def;
 import common.gm_error;
@@ -133,7 +133,7 @@ public class gm_gps_gen extends BackendGenerator {
 		// currently, there should be one and only one top-level procedure
 		// -----------------------------------
 		if (gm_main.FE.get_num_procs() != 1) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_NUM_PROCS, "");
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_NUM_PROCS, "");
 			return false;
 		}
 
@@ -160,7 +160,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 		// Check whether procedure name is the same as the filename
 		if (!proc.get_procname().get_genname().equals(fname)) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_PROC_NAME, proc.get_procname().get_genname(), fname);
 			return false;
 		}
 
@@ -278,7 +278,7 @@ public class gm_gps_gen extends BackendGenerator {
 			BufferedOutputStream bos = new BufferedOutputStream(fos);
 			ps_body = new PrintStream(bos);
 		} catch (FileNotFoundException e) {
-			gm_error.gm_backend_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_FILEWRITE_ERROR, temp);
+			gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_FILEWRITE_ERROR, temp);
 			return false;
 		}
 		Body.setOutputFile(ps_body);
@@ -501,7 +501,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 	public void do_generate_master_state_body(gm_gps_basic_block b) {
 		int id = b.get_id();
-		gm_gps_bbtype_t type = b.get_type();
+		gm_gps_bbtype type = b.get_type();
 
 		Body.pushlnf("private void _master_state_%d() {", id);
 		Body.pushln("/*------");
@@ -509,7 +509,7 @@ public class gm_gps_gen extends BackendGenerator {
 		b.reproduce_sents();
 		Body.pushln("-----*/");
 		Body.pushlnf("System.out.println(\"Running _master_state %d\");", id);
-		if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX) {
+		if (type == gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX) {
 
 			// generate Broadcast
 			do_generate_scalar_broadcast_send(b);
@@ -526,7 +526,7 @@ public class gm_gps_gen extends BackendGenerator {
 			int n = b.get_nth_exit(0).get_id();
 			Body.pushlnf("_master_state_nxt = %d;", n);
 			Body.pushln("_master_should_start_workers = true;");
-		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_SEQ) {
+		} else if (type == gm_gps_bbtype.GM_GPS_BBTYPE_SEQ) {
 			if (b.is_after_vertex()) {
 				assert b.get_num_entries() == 1;
 				do_generate_scalar_broadcast_receive(b);
@@ -573,24 +573,24 @@ public class gm_gps_gen extends BackendGenerator {
 				int n = b.get_nth_exit(0).get_id();
 				Body.pushlnf("_master_state_nxt = %d;", n);
 			}
-		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_IF_COND) {
+		} else if (type == gm_gps_bbtype.GM_GPS_BBTYPE_IF_COND) {
 
 			Body.push("boolean _expression_result = ");
 
 			// generate sentences
 			ast_sent s = b.get_1st_sent();
 			assert s != null;
-			assert s.get_nodetype() == AST_NODE_TYPE.AST_IF;
+			assert s.get_nodetype() == ast_node_type.AST_IF;
 			ast_if i = (ast_if) s;
 			generate_expr(i.get_cond());
 			Body.pushln(";");
 
 			Body.pushlnf("if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;", b.get_nth_exit(0).get_id(), b.get_nth_exit(1)
 					.get_id());
-		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_WHILE_COND) {
+		} else if (type == gm_gps_bbtype.GM_GPS_BBTYPE_WHILE_COND) {
 			ast_sent s = b.get_1st_sent();
 			assert s != null;
-			assert s.get_nodetype() == AST_NODE_TYPE.AST_WHILE;
+			assert s.get_nodetype() == ast_node_type.AST_WHILE;
 			ast_while i = (ast_while) s;
 			if (i.is_do_while())
 				Body.pushln("// Do-While(...)");
@@ -609,7 +609,7 @@ public class gm_gps_gen extends BackendGenerator {
 				Body.pushlnf("if (!_expression_result) %s%d=true; // reset is_first\n\n", GPS_INTRA_MERGE_IS_FIRST, b.get_id());
 			}
 
-		} else if ((type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1) || (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2)) {
+		} else if ((type == gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE1) || (type == gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE2)) {
 
 			// generate Broadcast
 			do_generate_scalar_broadcast_send(b);
@@ -620,13 +620,13 @@ public class gm_gps_gen extends BackendGenerator {
 			int n = b.get_nth_exit(0).get_id();
 			Body.pushlnf("_master_state_nxt = %d;", n);
 			Body.pushln("_master_should_start_workers = true;");
-		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_TAIL) {
+		} else if (type == gm_gps_bbtype.GM_GPS_BBTYPE_MERGED_TAIL) {
 			Body.pushln("// Intra-Loop Merged (tail)");
 			int source_id = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
 			Body.pushlnf("if (%s%d) _master_state_nxt = %d;", GPS_INTRA_MERGE_IS_FIRST, source_id, b.get_nth_exit(0).get_id());
 			Body.pushlnf("else _master_state_nxt = %d;", b.get_nth_exit(1).get_id());
 			Body.pushlnf("%s%d = false;\n", GPS_INTRA_MERGE_IS_FIRST, source_id);
-		} else if (type == gm_gps_bbtype_t.GM_GPS_BBTYPE_MERGED_IF) {
+		} else if (type == gm_gps_bbtype.GM_GPS_BBTYPE_MERGED_IF) {
 			Body.pushln("// Intra-Loop Merged (head)");
 			int source_id = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
 			Body.pushlnf("if (%s%d) _master_state_nxt = %d;", GPS_INTRA_MERGE_IS_FIRST, source_id, b.get_nth_exit(0).get_id());
@@ -650,7 +650,7 @@ public class gm_gps_gen extends BackendGenerator {
 			if (!global_info.is_scalar())
 				continue;
 			if (local_info.is_used_as_reduce()) {
-				GM_REDUCE_T reduce_type = local_info.get_reduce_type();
+				gm_reduce reduce_type = local_info.get_reduce_type();
 
 				// printf("being used as reduce :%s\n",
 				// I->first->getId()->get_genname());
@@ -905,7 +905,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 	public void do_generate_vertex_state_body(gm_gps_basic_block b) {
 		int id = b.get_id();
-		gm_gps_bbtype_t type = b.get_type();
+		gm_gps_bbtype type = b.get_type();
 
 		Body.pushlnf("private void _vertex_state_%d(Iterable<%s.MessageData> _msgs) {", id, gm_main.FE.get_current_proc().get_procname()
 				.get_genname());
@@ -920,7 +920,7 @@ public class gm_gps_gen extends BackendGenerator {
 			return;
 		}
 
-		assert type == gm_gps_bbtype_t.GM_GPS_BBTYPE_BEGIN_VERTEX;
+		assert type == gm_gps_bbtype.GM_GPS_BBTYPE_BEGIN_VERTEX;
 		boolean is_conditional = b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL);
 		String cond_var = "";
 		if (is_conditional)
@@ -942,7 +942,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 			LinkedList<gm_gps_comm_unit> R = b.get_receivers();
 			for (gm_gps_comm_unit U : R) {
-				if (U.get_type() == gm_gps_comm_t.GPS_COMM_NESTED) {
+				if (U.get_type() == gm_gps_comm.GPS_COMM_NESTED) {
 					ast_foreach fe = U.fe;
 					assert fe != null;
 
@@ -958,7 +958,7 @@ public class gm_gps_gen extends BackendGenerator {
 					Body.pushln("-----*/");
 					get_lib().generate_message_receive_begin(fe, Body, b, R.size() == 1);
 
-					if (fe.get_body().get_nodetype() == AST_NODE_TYPE.AST_SENTBLOCK) {
+					if (fe.get_body().get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 						generate_sent_block((ast_sentblock) fe.get_body(), false);
 					} else {
 						generate_sent(fe.get_body());
@@ -1020,7 +1020,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 			int cnt = 0;
 			for (ast_sent s : sents) {
-				assert s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH;
+				assert s.get_nodetype() == ast_node_type.AST_FOREACH;
 				ast_foreach fe = (ast_foreach) s;
 				ast_sent body = fe.get_body();
 				if (cnt != 0)
@@ -1028,7 +1028,7 @@ public class gm_gps_gen extends BackendGenerator {
 				cnt++;
 				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 					Body.pushf("if (!%s)", cond_var);
-					if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+					if (body.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 						Body.pushln(" {");
 					else
 						Body.NL();
@@ -1037,7 +1037,7 @@ public class gm_gps_gen extends BackendGenerator {
 				generate_sent(body);
 
 				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
-					if (body.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+					if (body.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 						Body.pushln("}");
 				}
 
@@ -1156,7 +1156,7 @@ public class gm_gps_gen extends BackendGenerator {
 
 	// from code generator interface
 	@Override
-	public String get_type_string(GMTYPE_T gm_type) {
+	public String get_type_string(gm_type gm_type) {
 		switch (gm_type) {
 		case GMTYPE_INT:
 			return "int";
@@ -1180,7 +1180,7 @@ public class gm_gps_gen extends BackendGenerator {
 		if (T.is_primitive() || T.is_node()) {
 			return (get_type_string(T.get_typeid()));
 		} else if (T.is_node_compatible()) {
-			return (get_type_string(GMTYPE_T.GMTYPE_NODE));
+			return (get_type_string(gm_type.GMTYPE_NODE));
 		} else {
 			assert false;
 			// to be done
@@ -1268,9 +1268,9 @@ public class gm_gps_gen extends BackendGenerator {
 
 	@Override
 	public void generate_expr_minmax(ast_expr e) {
-		if (e.get_optype() == GM_OPS_T.GMOP_MIN)
+		if (e.get_optype() == gm_ops.GMOP_MIN)
 			Body.push("java.math.min(");
-		else if (e.get_optype() == GM_OPS_T.GMOP_MAX) {
+		else if (e.get_optype() == gm_ops.GMOP_MAX) {
 			Body.push("java.math.max(");
 		} else {
 			assert false;
@@ -1296,8 +1296,8 @@ public class gm_gps_gen extends BackendGenerator {
 
 	@Override
 	public void generate_expr_inf(ast_expr e) {
-		assert e.get_opclass() == GMEXPR_CLASS.GMEXPR_INF;
-		GMTYPE_T t = e.get_type_summary();
+		assert e.get_opclass() == gm_expr_class.GMEXPR_INF;
+		gm_type t = e.get_type_summary();
 		switch (t) {
 		case GMTYPE_INF:
 		case GMTYPE_INF_INT:
@@ -1330,7 +1330,7 @@ public class gm_gps_gen extends BackendGenerator {
 		if (is_master_generate()) {
 			assert false;
 		} else if (is_receiver_generate()) {
-			if (f.getSourceTypeSummary() == GMTYPE_T.GMTYPE_NODEITER_ALL) {
+			if (f.getSourceTypeSummary() == gm_type.GMTYPE_NODEITER_ALL) {
 				get_lib().generate_vertex_prop_access_remote_lhs(prop, Body);
 			} else if (f.get_first().getTypeInfo().is_edge()) {
 				get_lib().generate_vertex_prop_access_remote_lhs_edge(prop, Body);
@@ -1383,7 +1383,7 @@ public class gm_gps_gen extends BackendGenerator {
 		// reduction now became normal read/write
 		// --------------------------------------------------
 		if (a.is_argminmax_assign()) {
-			assert (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MIN) || (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MAX);
+			assert (a.get_reduce_type() == gm_reduce.GMREDUCE_MIN) || (a.get_reduce_type() == gm_reduce.GMREDUCE_MAX);
 
 			Body.push("if (");
 			if (a.is_target_scalar())
@@ -1391,7 +1391,7 @@ public class gm_gps_gen extends BackendGenerator {
 			else
 				generate_rhs_field(a.get_lhs_field());
 
-			if (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MIN)
+			if (a.get_reduce_type() == gm_reduce.GMREDUCE_MIN)
 				Body.push(" > ");
 			else
 				Body.push(" < ");
@@ -1411,7 +1411,7 @@ public class gm_gps_gen extends BackendGenerator {
 			Iterator<ast_expr> J;
 			J = rhs_list.iterator();
 			for (ast_node n : lhs_list) {
-				if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+				if (n.get_nodetype() == ast_node_type.AST_ID) {
 					generate_lhs_id((ast_id) n);
 				} else {
 					generate_lhs_field((ast_field) n);
@@ -1431,8 +1431,8 @@ public class gm_gps_gen extends BackendGenerator {
 
 			Body.push(" = ");
 
-			if ((a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_PLUS) || (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MULT)
-					|| (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_AND) || (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_OR)) {
+			if ((a.get_reduce_type() == gm_reduce.GMREDUCE_PLUS) || (a.get_reduce_type() == gm_reduce.GMREDUCE_MULT)
+					|| (a.get_reduce_type() == gm_reduce.GMREDUCE_AND) || (a.get_reduce_type() == gm_reduce.GMREDUCE_OR)) {
 				if (a.is_target_scalar())
 					generate_rhs_id(a.get_lhs_scala());
 				else
@@ -1457,8 +1457,8 @@ public class gm_gps_gen extends BackendGenerator {
 				}
 				generate_expr(a.get_rhs());
 				Body.pushln(");");
-			} else if ((a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MIN) || (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MAX)) {
-				if (a.get_reduce_type() == GM_REDUCE_T.GMREDUCE_MIN)
+			} else if ((a.get_reduce_type() == gm_reduce.GMREDUCE_MIN) || (a.get_reduce_type() == gm_reduce.GMREDUCE_MAX)) {
+				if (a.get_reduce_type() == gm_reduce.GMREDUCE_MIN)
 					Body.push("java.lang.Min(");
 				else
 					Body.push("java.lang.Max(");
@@ -1558,7 +1558,7 @@ public class gm_gps_gen extends BackendGenerator {
 				return;
 			} else {
 				// write to global scalar
-				get_lib().generate_reduce_assign_vertex(a, Body, GM_REDUCE_T.GMREDUCE_NULL);
+				get_lib().generate_reduce_assign_vertex(a, Body, gm_reduce.GMREDUCE_NULL);
 				return;
 
 				// [TO BE DONE]

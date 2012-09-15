@@ -30,7 +30,7 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		// STEP 1:
 		// trasverse AST and mark each sentence
 		// --------------------------------
-		HashMap<ast_sent, gps_gps_sentence_t> s_mark = new HashMap<ast_sent, gps_gps_sentence_t>();
+		HashMap<ast_sent, gps_gps_sentence> s_mark = new HashMap<ast_sent, gps_gps_sentence>();
 		gm_stage_create_pre_process_t T1 = new gm_stage_create_pre_process_t(s_mark);
 		gm_traverse.gm_traverse_sents_pre_post(proc, T1);
 
@@ -60,8 +60,8 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		gm_gps_basic_block top = T2.get_entry();
 		if (gm_main.FE.get_proc_info(proc).find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
 			// create prepareation state
-			gm_gps_basic_block t1 = new gm_gps_basic_block(GPS_PREPARE_STEP1, gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE1);
-			gm_gps_basic_block t2 = new gm_gps_basic_block(GPS_PREPARE_STEP2, gm_gps_bbtype_t.GM_GPS_BBTYPE_PREPARE2);
+			gm_gps_basic_block t1 = new gm_gps_basic_block(GPS_PREPARE_STEP1, gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE1);
+			gm_gps_basic_block t2 = new gm_gps_basic_block(GPS_PREPARE_STEP2, gm_gps_bbtype.GM_GPS_BBTYPE_PREPARE2);
 			t1.add_exit(t2);
 
 			t2.add_exit(top);

@@ -55,7 +55,7 @@ package frontend;
 // Note. Same variable may have multiple WSET/RSET entries
 //-----------------------------------------------------------------
 
-public enum gm_range_type_t {
+public enum gm_range_type {
 	GM_RANGE_LINEAR, // G.Nodes or G.Edges
 	GM_RANGE_RANDOM, // G.Nbrs, ... (or access via non-iterator variable)
 	GM_RANGE_SINGLE, // t.X, t is a fixed iterator

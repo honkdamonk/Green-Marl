@@ -1,6 +1,6 @@
 package backend_gps;
 
-import inc.GM_REDUCE_T;
+import inc.gm_reduce;
 
 import java.util.ArrayList;
 
@@ -18,9 +18,9 @@ public class gps_syminfo extends ast_extra_info {
 		this.used_in_vertex = false;
 		this.used_in_master = false;
 		this.used_in_receiver = false;
-		this.reduce_op_type = GM_REDUCE_T.GMREDUCE_NULL;
+		this.reduce_op_type = gm_reduce.GMREDUCE_NULL;
 		this.start_byte = 0;
-		this.scope = gm_gps_scope_t.GPS_SCOPE_GLOBAL;
+		this.scope = gm_gps_scope.GPS_SCOPE_GLOBAL;
 	}
 
 	public void dispose() {
@@ -38,11 +38,11 @@ public class gps_syminfo extends ast_extra_info {
 		return _scalar;
 	}
 
-	public final void add_usage_in_BB(int bb_no, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context) {
-		add_usage_in_BB(bb_no, usage, context, GM_REDUCE_T.GMREDUCE_NULL);
+	public final void add_usage_in_BB(int bb_no, gm_gps_symbol_usage usage, gm_gps_symbol_usage_location context) {
+		add_usage_in_BB(bb_no, usage, context, gm_reduce.GMREDUCE_NULL);
 	}
 
-	public final void add_usage_in_BB(int bb_no, gm_gps_symbol_usage_t usage, gm_gps_symbol_usage_location_t context, GM_REDUCE_T reduce_type) {
+	public final void add_usage_in_BB(int bb_no, gm_gps_symbol_usage usage, gm_gps_symbol_usage_location context, gm_reduce reduce_type) {
 		// if not already in
 		for (int i = 0; i < (int) used_BB.size(); i++) {
 			if ((used_BB.get(i) == bb_no) && (used_type.get(i) == usage) && (used_context.get(i) == context))
@@ -59,11 +59,11 @@ public class gps_syminfo extends ast_extra_info {
 		used_type.add(usage);
 		used_context.add(context);
 
-		if (usage == gm_gps_symbol_usage_t.GPS_SYM_USED_AS_RHS) {
+		if (usage == gm_gps_symbol_usage.GPS_SYM_USED_AS_RHS) {
 			used_as_rhs = true;
-		} else if (usage == gm_gps_symbol_usage_t.GPS_SYM_USED_AS_LHS) {
+		} else if (usage == gm_gps_symbol_usage.GPS_SYM_USED_AS_LHS) {
 			used_as_lhs = true;
-		} else if (usage == gm_gps_symbol_usage_t.GPS_SYM_USED_AS_REDUCE) {
+		} else if (usage == gm_gps_symbol_usage.GPS_SYM_USED_AS_REDUCE) {
 			used_as_reduce = true;
 			reduce_op_type = reduce_type;
 		} else {
@@ -121,7 +121,7 @@ public class gps_syminfo extends ast_extra_info {
 		return used_in_receiver;
 	}
 
-	public final GM_REDUCE_T get_reduce_type() {
+	public final gm_reduce get_reduce_type() {
 		return reduce_op_type;
 	}
 
@@ -135,24 +135,24 @@ public class gps_syminfo extends ast_extra_info {
 	}
 
 	// where the symbol is defined?
-	public final gm_gps_scope_t get_scope() {
+	public final gm_gps_scope get_scope() {
 		return scope;
 	}
 
-	public final void set_scope(gm_gps_scope_t scope2) {
+	public final void set_scope(gm_gps_scope scope2) {
 		scope = scope2;
 	}
 
 	public final boolean is_scoped_global() {
-		return scope == gm_gps_scope_t.GPS_SCOPE_GLOBAL;
+		return scope == gm_gps_scope.GPS_SCOPE_GLOBAL;
 	}
 
 	public final boolean is_scoped_outer() {
-		return scope == gm_gps_scope_t.GPS_SCOPE_OUTER;
+		return scope == gm_gps_scope.GPS_SCOPE_OUTER;
 	}
 
 	public final boolean is_scoped_inner() {
-		return scope == gm_gps_scope_t.GPS_SCOPE_INNER;
+		return scope == gm_gps_scope.GPS_SCOPE_INNER;
 	}
 
 	private boolean _used_in_multiple_BB;
@@ -160,9 +160,9 @@ public class gps_syminfo extends ast_extra_info {
 	private boolean _scalar;
 	private boolean _is_arg;
 	private ArrayList<Integer> used_BB = new ArrayList<Integer>();
-	private ArrayList<gm_gps_symbol_usage_t> used_type = new ArrayList<gm_gps_symbol_usage_t>();
-	private ArrayList<gm_gps_symbol_usage_location_t> used_context = new ArrayList<gm_gps_symbol_usage_location_t>();
-	private gm_gps_scope_t scope; // GPS_SCOPE_XX
+	private ArrayList<gm_gps_symbol_usage> used_type = new ArrayList<gm_gps_symbol_usage>();
+	private ArrayList<gm_gps_symbol_usage_location> used_context = new ArrayList<gm_gps_symbol_usage_location>();
+	private gm_gps_scope scope; // GPS_SCOPE_XX
 
 	private boolean used_as_rhs;
 	private boolean used_as_lhs;
@@ -173,6 +173,6 @@ public class gps_syminfo extends ast_extra_info {
 	// bool used_in_sender;
 	private boolean used_in_receiver;
 
-	private GM_REDUCE_T reduce_op_type;
+	private gm_reduce reduce_op_type;
 	private int start_byte;
 }

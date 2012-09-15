@@ -1,7 +1,7 @@
 package ast;
 
-import inc.GMEXPR_CLASS;
-import inc.GMTYPE_T;
+import inc.gm_expr_class;
+import inc.gm_type;
 import inc.expr_list;
 
 import java.util.LinkedList;
@@ -36,7 +36,7 @@ public class ast_expr_builtin_field extends ast_expr_builtin {
 	}
 
 	@Override
-	public final GMTYPE_T get_source_type() {
+	public final gm_type get_source_type() {
 		assert field_driver != null;
 		return field_driver.get_second().getTargetTypeInfo().getTypeSummary();
 	}
@@ -44,7 +44,7 @@ public class ast_expr_builtin_field extends ast_expr_builtin {
 	public static ast_expr_builtin_field new_builtin_field_expr(ast_field field, String orgname, expr_list exList) {
 
 		ast_expr_builtin_field newExpression = new ast_expr_builtin_field();
-		newExpression.expr_class = GMEXPR_CLASS.GMEXPR_BUILTIN_FIELD;
+		newExpression.expr_class = gm_expr_class.GMEXPR_BUILTIN_FIELD;
 		newExpression.field_driver = field;
 		assert orgname != null;
 		newExpression.orgname = orgname;

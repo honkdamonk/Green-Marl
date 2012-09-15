@@ -1,11 +1,11 @@
 package frontend;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 import inc.gm_compile_step;
 
 import java.util.HashMap;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_node;
@@ -42,19 +42,19 @@ public class gm_fe_typecheck_step5 extends gm_compile_step {
 		return new gm_fe_typecheck_step5();
 	}
 
-	private static void insert_explicit_type_conversion_for_assign_or_return(HashMap<ast_expr, GMTYPE_T> coercion_targets) {
+	private static void insert_explicit_type_conversion_for_assign_or_return(HashMap<ast_expr, gm_type> coercion_targets) {
 		for (ast_expr t : coercion_targets.keySet()) {
-			GMTYPE_T dest_type = coercion_targets.get(t);
+			gm_type dest_type = coercion_targets.get(t);
 
 			assert t.get_up_op() == null;
 			ast_node n = t.get_parent();
 
 			ast_expr tc = ast_expr.new_typeconv_expr(dest_type, t);
 
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+			if (n.get_nodetype() == ast_node_type.AST_ASSIGN) {
 				ast_assign a = (ast_assign) n;
 				a.set_rhs(tc);
-			} else if (n.get_nodetype() == AST_NODE_TYPE.AST_RETURN) {
+			} else if (n.get_nodetype() == ast_node_type.AST_RETURN) {
 				ast_return r = (ast_return) n;
 				r.set_expr(tc);
 			} else {

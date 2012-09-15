@@ -1,6 +1,6 @@
 package frontend;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_expr;
 import ast.ast_foreach;
@@ -25,7 +25,7 @@ public class gm_ss1_filter extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 
 			// if it has a filter, change it into if-then
 			ast_foreach fe = (ast_foreach) s;
@@ -41,7 +41,7 @@ public class gm_ss1_filter extends gm_apply {
 			fe.set_filter(null);
 			fe.set_body(sb);
 		} // or DFS
-		else if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		else if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			ast_bfs bfs = (ast_bfs) s;
 			ast_expr e = bfs.get_f_filter();
 			if (e != null) {

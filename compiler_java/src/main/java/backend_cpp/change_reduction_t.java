@@ -3,7 +3,7 @@ package backend_cpp;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_id;
 import ast.ast_node;
@@ -26,7 +26,7 @@ public class change_reduction_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+		if (s.get_nodetype() != ast_node_type.AST_ASSIGN)
 			return true;
 		ast_assign a = (ast_assign) s;
 		if (!a.is_reduce_assign())
@@ -46,7 +46,7 @@ public class change_reduction_t extends gm_apply {
 		if (a.is_argminmax_assign()) {
 			LinkedList<ast_node> L_old = a.get_lhs_list();
 			for (ast_node n : L_old) {
-				assert n.get_nodetype() == AST_NODE_TYPE.AST_ID;
+				assert n.get_nodetype() == ast_node_type.AST_ID;
 				ast_id id = (ast_id) n;
 				gm_symtab_entry old_e = id.getSymInfo();
 				gm_symtab_entry new_e = symbol_map.get(old_e);

@@ -1,11 +1,11 @@
 package frontend;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_sent;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
 
@@ -29,17 +29,17 @@ public class gm_check_par_return_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_RETURN) {
+		if (s.get_nodetype() == ast_node_type.AST_RETURN) {
 			if (par_depth > 0) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_PAR_RETURN, s.get_line(), s.get_col());
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_PAR_RETURN, s.get_line(), s.get_col());
 				_is_okay = false;
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		} else if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (fe.is_parallel()) {
 				par_depth++;
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		} else if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			ast_bfs bfs = (ast_bfs) s;
 			if (bfs.is_parallel()) {
 				par_depth++;
@@ -50,12 +50,12 @@ public class gm_check_par_return_t extends gm_apply {
 
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_FOREACH) {
+		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
 			if (fe.is_parallel()) {
 				par_depth--;
 			}
-		} else if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		} else if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			ast_bfs bfs = (ast_bfs) s;
 			if (bfs.is_parallel()) {
 				par_depth--;

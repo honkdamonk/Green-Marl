@@ -3,7 +3,7 @@ package common;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
@@ -114,7 +114,7 @@ public class gm_replace_symbol_access_t extends gm_apply {
 	// LHS changing
 	@Override
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			if (a.is_target_scalar() && INFO.src_scalar) {
 				if (a.get_lhs_scala().getSymInfo() == INFO.src) {
@@ -153,7 +153,7 @@ public class gm_replace_symbol_access_t extends gm_apply {
 				int i = 0;
 				for (I = lhs_list.iterator(); I.hasNext(); i++) {
 					ast_node n = I.next();
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+					if (n.get_nodetype() == ast_node_type.AST_ID) {
 						ast_id id = (ast_id) n;
 						if (id.getSymInfo() == INFO.src) {
 
@@ -162,7 +162,7 @@ public class gm_replace_symbol_access_t extends gm_apply {
 							lhs_list.add(i, new_target);
 							to_be_removed.addLast(n);
 						}
-					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+					} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 						ast_field f = (ast_field) n;
 						if ((f.get_first().getSymInfo() == INFO.s_drv) && (f.get_second().getSymInfo() == INFO.src)) {
 							// insert new lhs in front of this one

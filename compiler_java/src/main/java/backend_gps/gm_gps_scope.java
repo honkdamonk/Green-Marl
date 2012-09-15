@@ -1,7 +1,7 @@
 package backend_gps;
 
 // where the symbol is defined
-public enum gm_gps_scope_t
+public enum gm_gps_scope
 {
 	GPS_SCOPE_GLOBAL,
 	GPS_SCOPE_OUTER,
@@ -12,7 +12,7 @@ public enum gm_gps_scope_t
 		return this.ordinal();
 	}
 
-	public static gm_gps_scope_t forValue(int value)
+	public static gm_gps_scope forValue(int value)
 	{
 		return values()[value];
 	}

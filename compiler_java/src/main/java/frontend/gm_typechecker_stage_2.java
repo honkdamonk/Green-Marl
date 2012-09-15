@@ -1,10 +1,10 @@
 package frontend;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -14,7 +14,7 @@ import ast.ast_id;
 import ast.ast_sent;
 import ast.ast_typedecl;
 
-import common.GM_ERRORS_AND_WARNINGS;
+import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_error;
@@ -45,15 +45,15 @@ public class gm_typechecker_stage_2 extends gm_apply {
 	// pre
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			if (bfs_level > 0) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_NESTED_BFS, s.get_line(), s.get_col());
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_NESTED_BFS, s.get_line(), s.get_col());
 				set_okay(false);
 			}
 			bfs_level++;
 		}
 
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
 			if (!a.is_target_scalar() && !a.is_target_map_entry()) {
 				ast_field f = a.get_lhs_field();
@@ -70,7 +70,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 					_group_sym = f.get_first().getSymInfo();
 
 					if (a.is_reduce_assign() || a.is_defer_assign()) {
-						gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_GROUP_REDUCTION, a.get_line(), a.get_col());
+						gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_GROUP_REDUCTION, a.get_line(), a.get_col());
 						set_okay(false);
 						return false;
 					}
@@ -84,10 +84,10 @@ public class gm_typechecker_stage_2 extends gm_apply {
 	// post
 	@Override
 	public boolean apply2(ast_sent s) {
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_BFS) {
+		if (s.get_nodetype() == ast_node_type.AST_BFS) {
 			bfs_level--;
 		}
-		if (s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			if (_is_group_assignment) {
 				_is_group_assignment = false;
 				// printf("end group assignment\n");
@@ -106,9 +106,9 @@ public class gm_typechecker_stage_2 extends gm_apply {
 				ast_id id = e.get_id();
 				if (id.getSymInfo() == _group_sym) {
 					if (_is_group_assignment_node_prop)
-						e.set_alternative_type(GMTYPE_T.GMTYPE_NODE);
+						e.set_alternative_type(gm_type.GMTYPE_NODE);
 					else
-						e.set_alternative_type(GMTYPE_T.GMTYPE_EDGE);
+						e.set_alternative_type(gm_type.GMTYPE_EDGE);
 				}
 			}
 			break;
@@ -146,19 +146,19 @@ public class gm_typechecker_stage_2 extends gm_apply {
 	}
 
 	private boolean apply_on_builtin(ast_expr_builtin builtinExpr) {
-		GMTYPE_T sourceType = builtinExpr.get_source_type();
+		gm_type sourceType = builtinExpr.get_source_type();
 		switch (sourceType) {
 		case GMTYPE_PROPERTYITER_SET:
 		case GMTYPE_COLLECTIONITER_SET:
-			sourceType = GMTYPE_T.GMTYPE_NSET;
+			sourceType = gm_type.GMTYPE_NSET;
 			break;
 		case GMTYPE_PROPERTYITER_SEQ:
 		case GMTYPE_COLLECTIONITER_SEQ:
-			sourceType = GMTYPE_T.GMTYPE_NSEQ;
+			sourceType = gm_type.GMTYPE_NSEQ;
 			break;
 		case GMTYPE_PROPERTYITER_ORDER:
 		case GMTYPE_COLLECTIONITER_ORDER:
-			sourceType = GMTYPE_T.GMTYPE_NORDER;
+			sourceType = gm_type.GMTYPE_NORDER;
 			break;
 		default:
 			break;
@@ -166,16 +166,16 @@ public class gm_typechecker_stage_2 extends gm_apply {
 		return set_and_check_builtin_definition(builtinExpr, sourceType);
 	}
 
-	private boolean set_and_check_builtin_definition(ast_expr_builtin builtinExpr, GMTYPE_T sourceType) {
+	private boolean set_and_check_builtin_definition(ast_expr_builtin builtinExpr, gm_type sourceType) {
 
 		gm_builtin_def builtinDef = gm_main.BUILT_IN.find_builtin_def(sourceType, builtinExpr.get_callname());
 
 		if (builtinDef == null) {
 			if (_is_group_assignment && (sourceType.is_graph_type() || sourceType.is_collection_type())) {
 				if (_is_group_assignment_node_prop)
-					sourceType = GMTYPE_T.GMTYPE_NODE;
+					sourceType = gm_type.GMTYPE_NODE;
 				else
-					sourceType = GMTYPE_T.GMTYPE_EDGE;
+					sourceType = gm_type.GMTYPE_EDGE;
 
 				builtinDef = gm_main.BUILT_IN.find_builtin_def(sourceType, builtinExpr.get_callname());
 			}
@@ -183,7 +183,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 
 		boolean isOkay = true;
 		if (builtinDef == null) {
-			gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN, builtinExpr.get_line(), builtinExpr.get_col(), builtinExpr.get_callname());
+			gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_INVALID_BUILTIN, builtinExpr.get_line(), builtinExpr.get_col(), builtinExpr.get_callname());
 			isOkay = false;
 		}
 		builtinExpr.set_builtin_def(builtinDef);
@@ -193,7 +193,7 @@ public class gm_typechecker_stage_2 extends gm_apply {
 
 			int argCount = arguments.size();
 			if (argCount != builtinDef.get_num_args()) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_BUILTIN_ARG_COUNT, builtinExpr.get_line(), builtinExpr.get_col(),
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_INVALID_BUILTIN_ARG_COUNT, builtinExpr.get_line(), builtinExpr.get_col(),
 						builtinExpr.get_callname());
 				isOkay = false;
 			}
@@ -209,19 +209,19 @@ public class gm_typechecker_stage_2 extends gm_apply {
 		if (t.is_graph() || t.is_collection()) // group assignment
 		{
 			if ((!_is_group_assignment) || (_group_sym != driver.getSymInfo())) {
-				gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_INVALID_GROUP_DRIVER, driver);
+				gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_INVALID_GROUP_DRIVER, driver);
 				return false;
 			}
 			// check node property
 			ast_typedecl prop_type = f.get_second().getTypeInfo();
 			if (_is_group_assignment_node_prop) {
 				if (!prop_type.is_node_property()) {
-					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, f.get_second(), "Node_Property");
+					gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_WRONG_PROPERTY, f.get_second(), "Node_Property");
 					return false;
 				}
 			} else {
 				if (!prop_type.is_edge_property()) {
-					gm_error.gm_type_error(GM_ERRORS_AND_WARNINGS.GM_ERROR_WRONG_PROPERTY, f.get_second(), "Edge_Property");
+					gm_error.gm_type_error(gm_errors_and_warnings.GM_ERROR_WRONG_PROPERTY, f.get_second(), "Edge_Property");
 					return false;
 				}
 			}

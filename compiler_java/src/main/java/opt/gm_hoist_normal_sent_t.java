@@ -1,10 +1,10 @@
 package opt;
 
-import static ast.AST_NODE_TYPE.AST_ASSIGN;
+import static ast.ast_node_type.AST_ASSIGN;
 
 import java.util.LinkedList;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -29,7 +29,7 @@ abstract class gm_hoist_normal_sent_t extends gm_apply {
 
 	@Override
 	public boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+		if (s.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 			return true;
 
 		ast_sentblock sb = (ast_sentblock) s;

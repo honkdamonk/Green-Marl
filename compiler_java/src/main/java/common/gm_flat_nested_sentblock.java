@@ -1,6 +1,6 @@
 package common;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_node;
 import ast.ast_procdef;
 
@@ -13,7 +13,7 @@ public class gm_flat_nested_sentblock {
 		T.post_process();
 
 		// need to re-build scope
-		if (n.get_nodetype() == AST_NODE_TYPE.AST_PROCDEF)
+		if (n.get_nodetype() == ast_node_type.AST_PROCDEF)
 			gm_transform_helper.gm_reconstruct_scope(((ast_procdef) n).get_body());
 		else {
 			while (!n.has_scope()) {

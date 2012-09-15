@@ -1,20 +1,20 @@
 package ast;
 
-import static inc.GMTYPE_T.GMTYPE_COLLECTION;
-import static inc.GMTYPE_T.GMTYPE_EDGE;
-import static inc.GMTYPE_T.GMTYPE_EDGEPROP;
-import static inc.GMTYPE_T.GMTYPE_INVALID;
-import static inc.GMTYPE_T.GMTYPE_NODE;
-import static inc.GMTYPE_T.GMTYPE_NODEPROP;
-import static inc.GMTYPE_T.GMTYPE_VOID;
+import static inc.gm_type.GMTYPE_COLLECTION;
+import static inc.gm_type.GMTYPE_EDGE;
+import static inc.gm_type.GMTYPE_EDGEPROP;
+import static inc.gm_type.GMTYPE_INVALID;
+import static inc.gm_type.GMTYPE_NODE;
+import static inc.gm_type.GMTYPE_NODEPROP;
+import static inc.gm_type.GMTYPE_VOID;
 import frontend.gm_symtab_entry;
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import common.gm_dumptree;
 
 public class ast_typedecl extends ast_node { // property or type
 
-	protected GMTYPE_T type_id;
+	protected gm_type type_id;
 	protected boolean _well_defined;
 
 	private ast_typedecl target_type; // for property
@@ -24,7 +24,7 @@ public class ast_typedecl extends ast_node { // property or type
 	private ast_id target_nbr2; // for common neighbor iterator
 
 	protected ast_typedecl() {
-		super(AST_NODE_TYPE.AST_TYPEDECL);
+		super(ast_node_type.AST_TYPEDECL);
 		type_id = GMTYPE_INVALID;
 	}
 
@@ -43,13 +43,13 @@ public class ast_typedecl extends ast_node { // property or type
 		return p;
 	}
 
-	public static ast_typedecl new_primtype(GMTYPE_T ptype_id) {
+	public static ast_typedecl new_primtype(gm_type ptype_id) {
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = ptype_id;
 		return t;
 	}
 
-	public static ast_typedecl new_graphtype(GMTYPE_T gtype_id) {
+	public static ast_typedecl new_graphtype(gm_type gtype_id) {
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = gtype_id;
 		return t;
@@ -77,7 +77,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return t;
 	}
 
-	public static ast_typedecl new_nodeedge_iterator(ast_id tg, GMTYPE_T iter_type) {
+	public static ast_typedecl new_nodeedge_iterator(ast_id tg, gm_type iter_type) {
 		assert iter_type.is_all_graph_iter_type();
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = iter_type;
@@ -86,7 +86,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return t;
 	}
 
-	public static ast_typedecl new_nbr_iterator(ast_id tg, GMTYPE_T iter_type) {
+	public static ast_typedecl new_nbr_iterator(ast_id tg, gm_type iter_type) {
 		assert iter_type.is_any_nbr_iter_type();
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = iter_type;
@@ -95,7 +95,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return t;
 	}
 
-	public static ast_typedecl new_common_nbr_iterator(ast_id tg, ast_id tg2, GMTYPE_T iter_type) {
+	public static ast_typedecl new_common_nbr_iterator(ast_id tg, ast_id tg2, gm_type iter_type) {
 		assert iter_type.is_any_nbr_iter_type();
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = iter_type;
@@ -106,7 +106,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return t;
 	}
 
-	public static ast_typedecl new_set(ast_id tg, GMTYPE_T set_type) {
+	public static ast_typedecl new_set(ast_id tg, gm_type set_type) {
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = set_type;
 		if (tg == null) // no graph defined for this set - we will handle this
@@ -129,7 +129,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return typeDecl;
 	}
 
-	public static ast_typedecl new_set_iterator(ast_id set, GMTYPE_T iter_type) {
+	public static ast_typedecl new_set_iterator(ast_id set, gm_type iter_type) {
 		// deprecated
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = iter_type;
@@ -138,7 +138,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return t;
 	}
 
-	public static ast_typedecl new_collection_iterator(ast_id set, GMTYPE_T iter_type) {
+	public static ast_typedecl new_collection_iterator(ast_id set, gm_type iter_type) {
 		ast_typedecl t = new ast_typedecl();
 		t.type_id = iter_type;
 		t.target_collection = set;
@@ -172,7 +172,7 @@ public class ast_typedecl extends ast_node { // property or type
 		return t;
 	}
 
-	public static ast_typedecl new_property_iterator(ast_id property, GMTYPE_T iter_type) {
+	public static ast_typedecl new_property_iterator(ast_id property, gm_type iter_type) {
 		ast_typedecl typeDecl = new ast_typedecl();
 		typeDecl.type_id = iter_type;
 		typeDecl.target_collection = property;
@@ -186,11 +186,11 @@ public class ast_typedecl extends ast_node { // property or type
 		return t;
 	}
 
-	public GMTYPE_T get_typeid() {
+	public gm_type get_typeid() {
 		return type_id;
 	}
 
-	public final void set_typeid(GMTYPE_T s) {
+	public final void set_typeid(gm_type s) {
 		type_id = s;
 	}
 
@@ -453,17 +453,17 @@ public class ast_typedecl extends ast_node { // property or type
 		return target_type;
 	}
 
-	public GMTYPE_T getTypeSummary() // same as get type id
+	public gm_type getTypeSummary() // same as get type id
 	{
 		return type_id;
 	}
 
-	public final void setTypeSummary(GMTYPE_T s) {
+	public final void setTypeSummary(gm_type s) {
 		// type id might be overriden during type-checking
 		set_typeid(s);
 	}
 
-	public final GMTYPE_T getTargetTypeSummary() {
+	public final gm_type getTargetTypeSummary() {
 		assert is_property() || is_collection_of_collection();
 		assert target_type != null;
 		return target_type.getTypeSummary();

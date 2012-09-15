@@ -1,6 +1,6 @@
 package common;
 
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab_entry;
 import inc.gm_procinfo;
 import ast.ast_id;
@@ -17,7 +17,7 @@ public class gm_prepare_genname_T extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab_entry e, SYMTAB_TYPES symtab_type) {
+	public boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
 		ast_id ID = e.getId();
 		String org_name = ID.get_orgname();
 

@@ -1,7 +1,7 @@
 package frontend;
 
-import static ast.AST_NODE_TYPE.AST_PROCDEF;
-import static ast.AST_NODE_TYPE.AST_SENTBLOCK;
+import static ast.ast_node_type.AST_PROCDEF;
+import static ast.ast_node_type.AST_SENTBLOCK;
 import ast.ast_node;
 import ast.ast_sent;
 import ast.gm_rwinfo_list;

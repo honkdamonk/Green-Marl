@@ -1,6 +1,6 @@
 package common;
 
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_scope;
 import frontend.gm_symtab;
 
@@ -22,14 +22,14 @@ public class replace_upper_scope extends gm_apply {
 	}
 
 	@Override
-	public boolean apply(gm_symtab b, SYMTAB_TYPES symtab_type) {
-		if ((symtab_type == SYMTAB_TYPES.GM_SYMTAB_ARG) || (symtab_type == SYMTAB_TYPES.GM_SYMTAB_VAR)) {
+	public boolean apply(gm_symtab b, symtab_types symtab_type) {
+		if ((symtab_type == symtab_types.GM_SYMTAB_ARG) || (symtab_type == symtab_types.GM_SYMTAB_VAR)) {
 			if (b.get_parent() == old_scope.get_varsyms())
 				b.set_parent(new_scope.get_varsyms());
-		} else if (symtab_type == SYMTAB_TYPES.GM_SYMTAB_FIELD) {
+		} else if (symtab_type == symtab_types.GM_SYMTAB_FIELD) {
 			if (b.get_parent() == old_scope.get_fieldsyms())
 				b.set_parent(new_scope.get_fieldsyms());
-		} else if (symtab_type == SYMTAB_TYPES.GM_SYMTAB_PROC) {
+		} else if (symtab_type == symtab_types.GM_SYMTAB_PROC) {
 			if (b.get_parent() == old_scope.get_procsyms())
 				b.set_parent(new_scope.get_procsyms());
 		} else {

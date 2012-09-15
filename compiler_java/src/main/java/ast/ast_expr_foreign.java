@@ -1,7 +1,7 @@
 package ast;
 
-import inc.GMEXPR_CLASS;
-import inc.GMTYPE_T;
+import inc.gm_expr_class;
+import inc.gm_type;
 
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -18,15 +18,15 @@ public class ast_expr_foreign extends ast_expr {
 
 	// void parse_foreign_syntax();
 	private ast_expr_foreign() {
-		set_nodetype(AST_NODE_TYPE.AST_EXPR_FOREIGN);
+		set_nodetype(ast_node_type.AST_EXPR_FOREIGN);
 	}
 
 	public static ast_expr_foreign new_expr_foreign(String text) {
 		ast_expr_foreign aef = new ast_expr_foreign();
-		aef.expr_class = GMEXPR_CLASS.GMEXPR_FOREIGN;
+		aef.expr_class = gm_expr_class.GMEXPR_FOREIGN;
 		assert text != null;
 		aef.orig_text = text;
-		aef.type_of_expression = GMTYPE_T.GMTYPE_FOREIGN_EXPR;
+		aef.type_of_expression = gm_type.GMTYPE_FOREIGN_EXPR;
 		return aef;
 	}
 
@@ -72,9 +72,9 @@ public class ast_expr_foreign extends ast_expr {
 			Out.push(J_s);
 			if (n == null)
 				continue;
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			if (n.get_nodetype() == ast_node_type.AST_ID) {
 				((ast_id) n).reproduce(0);
-			} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+			} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 				((ast_field) n).reproduce(0);
 			}
 		}
@@ -93,13 +93,13 @@ public class ast_expr_foreign extends ast_expr {
 		for (ast_node n : parsed_gm) {
 			if (n == null)
 				continue;
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			if (n.get_nodetype() == ast_node_type.AST_ID) {
 				ast_id id = (ast_id) n;
 				if (apply2)
 					a.apply2(id);
 				else
 					a.apply(id);
-			} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+			} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 				ast_field f = (ast_field) n;
 				if (apply2) {
 					a.apply2(f.get_first());
@@ -116,13 +116,13 @@ public class ast_expr_foreign extends ast_expr {
 		for (ast_node n : parsed_gm) {
 			if (n == null)
 				continue;
-			if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+			if (n.get_nodetype() == ast_node_type.AST_ID) {
 				ast_id id = (ast_id) n;
 				if (apply2)
 					a.apply_rhs2(id);
 				else
 					a.apply_rhs(id);
-			} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+			} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 				ast_field f = (ast_field) n;
 				if (apply2) {
 					a.apply_rhs2(f);

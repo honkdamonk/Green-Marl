@@ -1,11 +1,11 @@
 package opt;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_foreach;
@@ -45,7 +45,7 @@ public class gm_flip_edges {
 
 	public static ast_sent get_single_destination_sentence(ast_sent s) {
 		while (true) {
-			if (s.get_nodetype() != AST_NODE_TYPE.AST_SENTBLOCK)
+			if (s.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 				return s;
 
 			ast_sentblock sb = (ast_sentblock) s;
@@ -76,7 +76,7 @@ public class gm_flip_edges {
 		if (body1 == null)
 			return false;
 
-		if (body1.get_nodetype() == AST_NODE_TYPE.AST_IF) {
+		if (body1.get_nodetype() == ast_node_type.AST_IF) {
 			if1 = (ast_if) body1;
 			if (if1.get_else() != null)
 				return false;
@@ -85,12 +85,12 @@ public class gm_flip_edges {
 				return false;
 		}
 
-		if (body1.get_nodetype() != AST_NODE_TYPE.AST_FOREACH)
+		if (body1.get_nodetype() != ast_node_type.AST_FOREACH)
 			return false;
 		in = (ast_foreach) body1;
 
-		GMTYPE_T iter2 = in.get_iter_type();
-		if ((iter2 != GMTYPE_T.GMTYPE_NODEITER_NBRS) && (iter2 != GMTYPE_T.GMTYPE_NODEITER_IN_NBRS))
+		gm_type iter2 = in.get_iter_type();
+		if ((iter2 != gm_type.GMTYPE_NODEITER_NBRS) && (iter2 != gm_type.GMTYPE_NODEITER_IN_NBRS))
 			return false;
 
 		if (in.get_source().getSymInfo() != out.get_iterator().getSymInfo())
@@ -99,7 +99,7 @@ public class gm_flip_edges {
 		body1 = gm_flip_edges.get_single_destination_sentence(in.get_body());
 		if (body1 == null)
 			return false;
-		if (body1.get_nodetype() == AST_NODE_TYPE.AST_IF) {
+		if (body1.get_nodetype() == ast_node_type.AST_IF) {
 			if2 = (ast_if) body1;
 			if (if2.get_else() != null)
 				return false;
@@ -169,10 +169,10 @@ public class gm_flip_edges {
 			in.get_source().setSymInfo(iter_in);
 
 			// 2) flip inner edge direction
-			if (in.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_NBRS)
-				in.set_iter_type(GMTYPE_T.GMTYPE_NODEITER_IN_NBRS);
-			else if (in.get_iter_type() == GMTYPE_T.GMTYPE_NODEITER_IN_NBRS)
-				in.set_iter_type(GMTYPE_T.GMTYPE_NODEITER_NBRS);
+			if (in.get_iter_type() == gm_type.GMTYPE_NODEITER_NBRS)
+				in.set_iter_type(gm_type.GMTYPE_NODEITER_IN_NBRS);
+			else if (in.get_iter_type() == gm_type.GMTYPE_NODEITER_IN_NBRS)
+				in.set_iter_type(gm_type.GMTYPE_NODEITER_NBRS);
 			else {
 				assert false;
 			}
@@ -219,7 +219,7 @@ public class gm_flip_edges {
 				//e1.set_parent(if2);
 			}
 
-			if (dest.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN) {
+			if (dest.get_nodetype() == ast_node_type.AST_ASSIGN) {
 				ast_assign a = (ast_assign) dest;
 				if (a.get_bound() != null) {
 					gm_symtab_entry bound_sym = a.get_bound().getSymInfo();

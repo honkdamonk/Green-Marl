@@ -1,6 +1,6 @@
 package common;
 
-import inc.GMTYPE_T;
+import inc.gm_type;
 
 import java.util.HashMap;
 
@@ -8,12 +8,12 @@ import ast.ast_extra_info;
 
 public class gm_builtin_def {
 
-	private GMTYPE_T src_type = GMTYPE_T.GMTYPE_INVALID;
-	private GMTYPE_T res_type = GMTYPE_T.GMTYPE_INVALID;
+	private gm_type src_type = gm_type.GMTYPE_INVALID;
+	private gm_type res_type = gm_type.GMTYPE_INVALID;
 	private int num_args = 0;
-	private GMTYPE_T[] arg_types = null;
+	private gm_type[] arg_types = null;
 	private String orgname = null;
-	private gm_method_id_t method_id;
+	private gm_method_id method_id;
 	private boolean need_strict = false;
 	private final HashMap<String, ast_extra_info> extra_info = new HashMap<String, ast_extra_info>();
 
@@ -55,21 +55,21 @@ public class gm_builtin_def {
 			// parse and fill
 			String[] p = text.split(":");
 			if (p[0].charAt(0) == '_')
-				src_type = GMTYPE_T.GMTYPE_VOID; // top-level
+				src_type = gm_type.GMTYPE_VOID; // top-level
 			else
-				src_type = GMTYPE_T.gm_get_type_from_string(p[0]);
+				src_type = gm_type.gm_get_type_from_string(p[0]);
 
 			assert p != null;
 			orgname = p[1];
-			res_type = GMTYPE_T.gm_get_type_from_string(p[2]);
+			res_type = gm_type.gm_get_type_from_string(p[2]);
 			if (p.length < 4)
 				num_args = 0;
 			else
 				num_args = Integer.parseInt(p[3]);
 			if (num_args > 0) {
-				arg_types = new GMTYPE_T[num_args];
+				arg_types = new gm_type[num_args];
 				for (int i = 0; i < num_args; i++) {
-					arg_types[i] = GMTYPE_T.gm_get_type_from_string(p[i + 4]);
+					arg_types[i] = gm_type.gm_get_type_from_string(p[i + 4]);
 				}
 			}
 
@@ -99,15 +99,15 @@ public class gm_builtin_def {
 		return num_args;
 	}
 
-	public final GMTYPE_T get_source_type_summary() {
+	public final gm_type get_source_type_summary() {
 		return src_type;
 	}
 
-	public final GMTYPE_T get_result_type_summary() {
+	public final gm_type get_result_type_summary() {
 		return res_type;
 	}
 
-	public final GMTYPE_T get_arg_type(int i) {
+	public final gm_type get_arg_type(int i) {
 		assert i < num_args;
 		return arg_types[i];
 	}
@@ -126,7 +126,7 @@ public class gm_builtin_def {
 		}
 	}
 
-	public final gm_method_id_t get_method_id() {
+	public final gm_method_id get_method_id() {
 		return method_id;
 	}
 

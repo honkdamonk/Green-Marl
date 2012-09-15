@@ -6,7 +6,7 @@ package backend_gps;
 //     Mark each sentence: Sequential, Contains Vertex, Begin Vertex
 //  (2) make basic-blocks from this pre-processing result
 //----------------------------------------------------------------------
-public enum gps_gps_sentence_t //TOOD new name?
+public enum gps_gps_sentence //TODO new name?
 {
 	GPS_TYPE_SEQ, //
 	GPS_TYPE_CANBE_VERTEX, //
@@ -18,7 +18,7 @@ public enum gps_gps_sentence_t //TOOD new name?
 		return this.ordinal();
 	}
 
-	public static gps_gps_sentence_t forValue(int value)
+	public static gps_gps_sentence forValue(int value)
 	{
 		return values()[value];
 	}

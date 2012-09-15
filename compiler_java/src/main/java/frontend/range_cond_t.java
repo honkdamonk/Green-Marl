@@ -1,6 +1,6 @@
 package frontend;
 
-import static frontend.gm_range_type_t.GM_RANGE_INVALID;
+import static frontend.gm_range_type.GM_RANGE_INVALID;
 //--------------------------------------------------------------------------
 //--------------------------------------------------------------------------
 // temporary iterator symbol
@@ -9,10 +9,10 @@ import static frontend.gm_range_type_t.GM_RANGE_INVALID;
 
 public class range_cond_t {
 
-	public gm_range_type_t range_type;
+	public gm_range_type range_type;
 	public boolean is_always;
 
-	public range_cond_t(gm_range_type_t range_type, boolean b) {
+	public range_cond_t(gm_range_type range_type, boolean b) {
 		this.range_type = range_type;
 		is_always = b;
 	}

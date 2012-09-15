@@ -12,7 +12,7 @@ public class ast_foreign extends ast_sent {
 	private LinkedList<ast_node> modified = new LinkedList<ast_node>();
 	
 	private ast_foreign() {
-		super(AST_NODE_TYPE.AST_FOREIGN);
+		super(ast_node_type.AST_FOREIGN);
 	}
 	
 	public static ast_foreign new_foreign(ast_expr_foreign f) {
@@ -60,10 +60,10 @@ public class ast_foreign extends ast_sent {
 		if (is_pre) {
 			if (for_id) {
 				for (ast_node n : modified) {
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+					if (n.get_nodetype() == ast_node_type.AST_ID) {
 						ast_id id = (ast_id) n;
 						a.apply(id);
-					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+					} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 						ast_id id1 = ((ast_field) n).get_first();
 						ast_id id2 = ((ast_field) n).get_second();
 						a.apply(id1);
@@ -73,10 +73,10 @@ public class ast_foreign extends ast_sent {
 			}
 			if (for_lhs) {
 				for (ast_node n : modified) {
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+					if (n.get_nodetype() == ast_node_type.AST_ID) {
 						ast_id id = (ast_id) n;
 						a.apply_lhs(id);
-					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+					} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 						ast_field f = ((ast_field) n);
 						a.apply_lhs(f);
 					}
@@ -92,13 +92,13 @@ public class ast_foreign extends ast_sent {
 		if (is_post) {
 			if (for_id) {
 				for (ast_node n : modified) {
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+					if (n.get_nodetype() == ast_node_type.AST_ID) {
 						ast_id id = (ast_id) n;
 						if (b)
 							a.apply2(id);
 						else
 							a.apply(id);
-					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+					} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 						ast_id id1 = ((ast_field) n).get_first();
 						ast_id id2 = ((ast_field) n).get_second();
 						if (b) {
@@ -113,13 +113,13 @@ public class ast_foreign extends ast_sent {
 			}
 			if (for_lhs) {
 				for (ast_node n : modified) {
-					if (n.get_nodetype() == AST_NODE_TYPE.AST_ID) {
+					if (n.get_nodetype() == ast_node_type.AST_ID) {
 						ast_id id = (ast_id) n;
 						if (b)
 							a.apply_lhs2(id);
 						else
 							a.apply_lhs(id);
-					} else if (n.get_nodetype() == AST_NODE_TYPE.AST_FIELD) {
+					} else if (n.get_nodetype() == ast_node_type.AST_FIELD) {
 						ast_field f = ((ast_field) n);
 						if (b)
 							a.apply_lhs2(f);

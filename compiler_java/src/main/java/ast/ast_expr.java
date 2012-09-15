@@ -1,9 +1,9 @@
 package ast;
 
 import frontend.gm_symtab_entry;
-import inc.GMEXPR_CLASS;
-import inc.GMTYPE_T;
-import inc.GM_OPS_T;
+import inc.gm_expr_class;
+import inc.gm_type;
+import inc.gm_ops;
 
 import common.gm_apply;
 import common.gm_dumptree;
@@ -12,7 +12,7 @@ import common.gm_dumptree;
 
 public class ast_expr extends ast_node {
 
-	protected GMEXPR_CLASS expr_class = GMEXPR_CLASS.GMEXPR_ID;
+	protected gm_expr_class expr_class = gm_expr_class.GMEXPR_ID;
 	protected ast_expr left = null;
 	protected ast_expr right = null;
 	protected ast_expr cond = null;
@@ -23,7 +23,7 @@ public class ast_expr extends ast_node {
 	protected double fval = 0.0d;
 	protected boolean bval = false;
 	protected boolean plus_inf = false;
-	protected GM_OPS_T op_type = GM_OPS_T.GMOP_END;
+	protected gm_ops op_type = gm_ops.GMOP_END;
 
 	/** am I a right-operand? */
 	protected boolean is_right = false;
@@ -31,14 +31,14 @@ public class ast_expr extends ast_node {
 	protected boolean is_cond = false;
 
 	/** set after local typecheck */
-	protected GMTYPE_T type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
+	protected gm_type type_of_expression = gm_type.GMTYPE_UNKNOWN;
 	/** used for group-assignment only. (during type checking) */
-	protected GMTYPE_T alternative_type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN;
+	protected gm_type alternative_type_of_expression = gm_type.GMTYPE_UNKNOWN;
 	/** used only during typecheck */
 	protected gm_symtab_entry bound_graph_sym = null;
 
 	protected ast_expr() {
-		super(AST_NODE_TYPE.AST_EXPR);
+		super(ast_node_type.AST_EXPR);
 	}
 
 	public void reproduce(int ind_level) {
@@ -70,14 +70,14 @@ public class ast_expr extends ast_node {
 			field.reproduce(0);
 			return;
 		case GMEXPR_UOP:
-			if (op_type == GM_OPS_T.GMOP_NEG) {
+			if (op_type == gm_ops.GMOP_NEG) {
 				Out.push(" - ");
 				left.reproduce(0);
-			} else if (op_type == GM_OPS_T.GMOP_ABS) {
+			} else if (op_type == gm_ops.GMOP_ABS) {
 				Out.push(" | ");
 				left.reproduce(0);
 				Out.push(" | ");
-			} else if (op_type == GM_OPS_T.GMOP_TYPECONVERSION) {
+			} else if (op_type == gm_ops.GMOP_TYPECONVERSION) {
 				Out.push(" (");
 				Out.push(type_of_expression.get_type_string());
 				Out.push(" ) ");
@@ -87,7 +87,7 @@ public class ast_expr extends ast_node {
 			}
 			return;
 		case GMEXPR_LUOP:
-			assert op_type == GM_OPS_T.GMOP_NOT;
+			assert op_type == gm_ops.GMOP_NOT;
 			Out.push("!");
 			left.reproduce(0);
 			return;
@@ -187,11 +187,11 @@ public class ast_expr extends ast_node {
 			return;
 		case GMEXPR_UOP:
 			System.out.print("[ ");
-			if (op_type == GM_OPS_T.GMOP_NEG) {
+			if (op_type == gm_ops.GMOP_NEG) {
 				System.out.print("- \n");
-			} else if (op_type == GM_OPS_T.GMOP_ABS) {
+			} else if (op_type == gm_ops.GMOP_ABS) {
 				System.out.print("abs \n");
-			} else if (op_type == GM_OPS_T.GMOP_TYPECONVERSION) {
+			} else if (op_type == gm_ops.GMOP_TYPECONVERSION) {
 				System.out.printf("( %s )\n", type_of_expression.get_type_string());
 			}
 			left.dump_tree(ind_level + 1);
@@ -241,7 +241,7 @@ public class ast_expr extends ast_node {
 		}
 		String opstr = op_type.get_op_string();
 
-		assert (expr_class == GMEXPR_CLASS.GMEXPR_BIOP) || (expr_class == GMEXPR_CLASS.GMEXPR_LBIOP) || (expr_class == GMEXPR_CLASS.GMEXPR_COMP);
+		assert (expr_class == gm_expr_class.GMEXPR_BIOP) || (expr_class == gm_expr_class.GMEXPR_LBIOP) || (expr_class == gm_expr_class.GMEXPR_COMP);
 
 		System.out.printf("[%s\n", opstr);
 		left.dump_tree(ind_level + 1);
@@ -434,7 +434,7 @@ public class ast_expr extends ast_node {
 
 	public static ast_expr new_id_expr(ast_id id) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_ID;
+		E.expr_class = gm_expr_class.GMEXPR_ID;
 		E.id1 = id;
 		id.set_parent(E);
 		return E;
@@ -442,7 +442,7 @@ public class ast_expr extends ast_node {
 
 	public static ast_expr new_field_expr(ast_field f) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_FIELD;
+		E.expr_class = gm_expr_class.GMEXPR_FIELD;
 		E.field = f;
 		f.set_parent(E);
 		return E;
@@ -450,47 +450,47 @@ public class ast_expr extends ast_node {
 
 	public static ast_expr new_ival_expr(int ival) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_IVAL;
-		E.type_of_expression = GMTYPE_T.GMTYPE_INT; // LONG?
+		E.expr_class = gm_expr_class.GMEXPR_IVAL;
+		E.type_of_expression = gm_type.GMTYPE_INT; // LONG?
 		E.ival = ival;
 		return E;
 	}
 
 	public static ast_expr new_fval_expr(double fval) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_FVAL;
-		E.type_of_expression = GMTYPE_T.GMTYPE_FLOAT; // DOUBLE?
+		E.expr_class = gm_expr_class.GMEXPR_FVAL;
+		E.type_of_expression = gm_type.GMTYPE_FLOAT; // DOUBLE?
 		E.fval = fval;
 		return E;
 	}
 
 	public static ast_expr new_bval_expr(boolean bval) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_BVAL;
-		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL;
+		E.expr_class = gm_expr_class.GMEXPR_BVAL;
+		E.type_of_expression = gm_type.GMTYPE_BOOL;
 		E.bval = bval;
 		return E;
 	}
 
 	public static ast_expr new_nil_expr() {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_NIL;
-		E.type_of_expression = GMTYPE_T.GMTYPE_NIL_UNKNOWN;
+		E.expr_class = gm_expr_class.GMEXPR_NIL;
+		E.type_of_expression = gm_type.GMTYPE_NIL_UNKNOWN;
 		return E;
 	}
 
 	public static ast_expr new_inf_expr(boolean is_p) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_INF;
-		E.type_of_expression = GMTYPE_T.GMTYPE_INF;
+		E.expr_class = gm_expr_class.GMEXPR_INF;
+		E.type_of_expression = gm_type.GMTYPE_INF;
 		E.plus_inf = is_p;
 		return E;
 	}
 
-	public static ast_expr new_typeconv_expr(GMTYPE_T target_type, ast_expr l) {
+	public static ast_expr new_typeconv_expr(gm_type target_type, ast_expr l) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_UOP;
-		E.op_type = GM_OPS_T.GMOP_TYPECONVERSION;
+		E.expr_class = gm_expr_class.GMEXPR_UOP;
+		E.op_type = gm_ops.GMOP_TYPECONVERSION;
 		E.type_of_expression = target_type; // GMTYPE_xxx
 		E.left = l;
 		l.up = E;
@@ -498,74 +498,74 @@ public class ast_expr extends ast_node {
 		return E;
 	}
 
-	public static ast_expr new_uop_expr(GM_OPS_T op_type, ast_expr l) {
+	public static ast_expr new_uop_expr(gm_ops op_type, ast_expr l) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_UOP;
+		E.expr_class = gm_expr_class.GMEXPR_UOP;
 		E.op_type = op_type;
-		E.type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC;
+		E.type_of_expression = gm_type.GMTYPE_UNKNOWN_NUMERIC;
 		E.left = l;
 		l.up = E;
 		l.parent = E;
 		return E;
 	}
 
-	public static ast_expr new_biop_expr(GM_OPS_T op_type, ast_expr l, ast_expr r) {
+	public static ast_expr new_biop_expr(gm_ops op_type, ast_expr l, ast_expr r) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_BIOP;
+		E.expr_class = gm_expr_class.GMEXPR_BIOP;
 		E.op_type = op_type;
 		E.left = l;
 		E.right = r;
 		l.up = E;
 		r.up = E;
 		r.is_right = true;
-		E.type_of_expression = GMTYPE_T.GMTYPE_UNKNOWN_NUMERIC;
+		E.type_of_expression = gm_type.GMTYPE_UNKNOWN_NUMERIC;
 		l.parent = r.parent = E;
 		return E;
 	}
 
-	public static ast_expr new_luop_expr(GM_OPS_T op_type, ast_expr l) {
+	public static ast_expr new_luop_expr(gm_ops op_type, ast_expr l) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_LUOP;
+		E.expr_class = gm_expr_class.GMEXPR_LUOP;
 		E.op_type = op_type;
-		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL;
+		E.type_of_expression = gm_type.GMTYPE_BOOL;
 		E.left = l;
 		l.up = E;
 		l.parent = E;
 		return E;
 	}
 
-	public static ast_expr new_lbiop_expr(GM_OPS_T op_type, ast_expr l, ast_expr r) {
+	public static ast_expr new_lbiop_expr(gm_ops op_type, ast_expr l, ast_expr r) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_LBIOP;
+		E.expr_class = gm_expr_class.GMEXPR_LBIOP;
 		E.op_type = op_type;
 		E.left = l;
 		E.right = r;
 		l.up = E;
 		r.up = E;
 		r.is_right = true;
-		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL;
+		E.type_of_expression = gm_type.GMTYPE_BOOL;
 		l.parent = r.parent = E;
 		return E;
 	}
 
-	public static ast_expr new_comp_expr(GM_OPS_T op_type, ast_expr l, ast_expr r) {
+	public static ast_expr new_comp_expr(gm_ops op_type, ast_expr l, ast_expr r) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_COMP;
+		E.expr_class = gm_expr_class.GMEXPR_COMP;
 		E.op_type = op_type;
 		E.left = l;
 		E.right = r;
 		l.up = E;
 		r.up = E;
 		r.is_right = true;
-		E.type_of_expression = GMTYPE_T.GMTYPE_BOOL;
+		E.type_of_expression = gm_type.GMTYPE_BOOL;
 		l.parent = r.parent = E;
 		return E;
 	}
 
 	public static ast_expr new_ternary_expr(ast_expr cond, ast_expr left, ast_expr right) {
 		ast_expr E = new ast_expr();
-		E.expr_class = GMEXPR_CLASS.GMEXPR_TER;
-		E.op_type = GM_OPS_T.GMOP_TERNARY;
+		E.expr_class = gm_expr_class.GMEXPR_TER;
+		E.op_type = gm_ops.GMOP_TERNARY;
 		E.left = left;
 		E.right = right;
 		E.cond = cond;
@@ -576,43 +576,43 @@ public class ast_expr extends ast_node {
 	}
 
 	public final boolean is_biop() {
-		return (expr_class == GMEXPR_CLASS.GMEXPR_BIOP) || (expr_class == GMEXPR_CLASS.GMEXPR_LBIOP);
+		return (expr_class == gm_expr_class.GMEXPR_BIOP) || (expr_class == gm_expr_class.GMEXPR_LBIOP);
 	}
 
 	public final boolean is_uop() {
-		return (expr_class == GMEXPR_CLASS.GMEXPR_UOP) || (expr_class == GMEXPR_CLASS.GMEXPR_LUOP);
+		return (expr_class == gm_expr_class.GMEXPR_UOP) || (expr_class == gm_expr_class.GMEXPR_LUOP);
 	}
 
 	public final boolean is_comp() {
-		return (expr_class == GMEXPR_CLASS.GMEXPR_COMP);
+		return (expr_class == gm_expr_class.GMEXPR_COMP);
 	}
 
 	public final boolean is_id() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_ID;
+		return expr_class == gm_expr_class.GMEXPR_ID;
 	}
 
 	public final boolean is_nil() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_NIL;
+		return expr_class == gm_expr_class.GMEXPR_NIL;
 	}
 
 	public final boolean is_field() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_FIELD;
+		return expr_class == gm_expr_class.GMEXPR_FIELD;
 	}
 
 	public final boolean is_int_literal() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_IVAL;
+		return expr_class == gm_expr_class.GMEXPR_IVAL;
 	}
 
 	public final boolean is_float_literal() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_FVAL;
+		return expr_class == gm_expr_class.GMEXPR_FVAL;
 	}
 
 	public final boolean is_boolean_literal() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_BVAL;
+		return expr_class == gm_expr_class.GMEXPR_BVAL;
 	}
 
 	public final boolean is_inf() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_INF;
+		return expr_class == gm_expr_class.GMEXPR_INF;
 	}
 
 	public final boolean is_literal() {
@@ -620,29 +620,29 @@ public class ast_expr extends ast_node {
 	}
 
 	public final boolean is_reduction() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_REDUCE;
+		return expr_class == gm_expr_class.GMEXPR_REDUCE;
 	}
 
 	public final boolean is_builtin() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_BUILTIN || expr_class == GMEXPR_CLASS.GMEXPR_BUILTIN_FIELD;
+		return expr_class == gm_expr_class.GMEXPR_BUILTIN || expr_class == gm_expr_class.GMEXPR_BUILTIN_FIELD;
 	}
 
 	public final boolean is_terop() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_TER;
+		return expr_class == gm_expr_class.GMEXPR_TER;
 	}
 
 	public final boolean is_foreign() {
-		return expr_class == GMEXPR_CLASS.GMEXPR_FOREIGN;
+		return expr_class == gm_expr_class.GMEXPR_FOREIGN;
 	}
 
 	// -----------------------------------------------
 	// type is set after type-checker execution
 	// -----------------------------------------------
-	public final GMTYPE_T get_type_summary() {
+	public final gm_type get_type_summary() {
 		return type_of_expression;
 	}
 
-	public final void set_type_summary(GMTYPE_T t) {
+	public final void set_type_summary(gm_type t) {
 		type_of_expression = t;
 	} // set by type checker
 
@@ -681,11 +681,11 @@ public class ast_expr extends ast_node {
 		return field;
 	}
 
-	public GMEXPR_CLASS get_opclass() {
+	public gm_expr_class get_opclass() {
 		return expr_class;
 	}
 
-	public GM_OPS_T get_optype() {
+	public gm_ops get_optype() {
 		return op_type;
 	}
 
@@ -701,7 +701,7 @@ public class ast_expr extends ast_node {
 		id1 = i;
 		if (i != null) {
 			i.set_parent(this);
-			expr_class = GMEXPR_CLASS.GMEXPR_ID;
+			expr_class = gm_expr_class.GMEXPR_ID;
 		}
 	}
 
@@ -709,12 +709,12 @@ public class ast_expr extends ast_node {
 		field = f;
 		if (f != null) {
 			f.set_parent(this);
-			expr_class = GMEXPR_CLASS.GMEXPR_FIELD;
+			expr_class = gm_expr_class.GMEXPR_FIELD;
 		}
 	}
 
 	public final boolean is_type_conv() {
-		return op_type == GM_OPS_T.GMOP_TYPECONVERSION;
+		return op_type == gm_ops.GMOP_TYPECONVERSION;
 	}
 
 	public final ast_expr get_left_op() {
@@ -761,15 +761,15 @@ public class ast_expr extends ast_node {
 		}
 	}
 
-	public final void set_alternative_type(GMTYPE_T i) {
+	public final void set_alternative_type(gm_type i) {
 		alternative_type_of_expression = i;
 	}
 
-	public final GMTYPE_T get_alternative_type() {
+	public final gm_type get_alternative_type() {
 		return alternative_type_of_expression;
 	}
 
-	public final void set_expr_class(GMEXPR_CLASS ec) {
+	public final void set_expr_class(gm_expr_class ec) {
 		expr_class = ec;
 	}
 

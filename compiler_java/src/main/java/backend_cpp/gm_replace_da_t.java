@@ -1,8 +1,8 @@
 package backend_cpp;
 
-import inc.GM_REDUCE_T;
-import inc.gm_assignment_t;
-import ast.AST_NODE_TYPE;
+import inc.gm_reduce;
+import inc.gm_assignment;
+import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_id;
@@ -24,7 +24,7 @@ class gm_replace_da_t extends gm_apply {
 	
 	@Override
 	public final boolean apply(ast_sent s) {
-		if (s.get_nodetype() != AST_NODE_TYPE.AST_ASSIGN)
+		if (s.get_nodetype() != ast_node_type.AST_ASSIGN)
 			return true;
 		ast_assign a = (ast_assign) s;
 		if (a.is_defer_assign()) {
@@ -37,8 +37,8 @@ class gm_replace_da_t extends gm_apply {
 
 					ast_id bound = a.get_bound();
 					a.set_bound(null);
-					a.set_assign_type(gm_assignment_t.GMASSIGN_NORMAL);
-					a.set_reduce_type(GM_REDUCE_T.GMREDUCE_NULL);
+					a.set_assign_type(gm_assignment.GMASSIGN_NORMAL);
+					a.set_reduce_type(gm_reduce.GMREDUCE_NULL);
 					if (bound != null)
 						bound.dispose();
 				}

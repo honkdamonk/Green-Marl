@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import common.gm_apply;
 
-import frontend.SYMTAB_TYPES;
+import frontend.symtab_types;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 
@@ -18,9 +18,9 @@ public class gm_opt_remove_unused_t extends gm_apply
 	}
 	
 	@Override
-	public boolean apply(gm_symtab tab, SYMTAB_TYPES symtab_type)
+	public boolean apply(gm_symtab tab, symtab_types symtab_type)
 	{
-		if (symtab_type != SYMTAB_TYPES.GM_SYMTAB_VAR)
+		if (symtab_type != symtab_types.GM_SYMTAB_VAR)
 			return true;
 
 		Iterator<gm_symtab_entry> I;

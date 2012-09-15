@@ -6,14 +6,14 @@ import static backend_gps.GPSConstants.GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB;
 import static backend_gps.GPSConstants.GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN;
 import static backend_gps.GPSConstants.GPS_INT_SYMBOL_SCOPE;
 import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_RANDOM_NODE_WRITE_CONDITIONAL;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_RANDOM_NODE_WRITE_DEF_SCOPE;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_RANDOM_NODE_WRITE_REDEF;
-import static common.GM_ERRORS_AND_WARNINGS.GM_ERROR_GPS_RANDOM_NODE_WRITE_USE_SCOPE;
+import static common.gm_errors_and_warnings.GM_ERROR_GPS_RANDOM_NODE_WRITE_CONDITIONAL;
+import static common.gm_errors_and_warnings.GM_ERROR_GPS_RANDOM_NODE_WRITE_DEF_SCOPE;
+import static common.gm_errors_and_warnings.GM_ERROR_GPS_RANDOM_NODE_WRITE_REDEF;
+import static common.gm_errors_and_warnings.GM_ERROR_GPS_RANDOM_NODE_WRITE_USE_SCOPE;
 
 import java.util.HashSet;
 
-import ast.AST_NODE_TYPE;
+import ast.ast_node_type;
 import ast.ast_field;
 import ast.ast_id;
 import ast.ast_node;
@@ -43,7 +43,7 @@ public class gps_check_random_access_t2 extends gm_apply {
 		gm_symtab_entry sym = i.getSymInfo();
 
 		if (sym.getType().is_node()
-				&& (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue())) {
+				&& (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue())) {
 			// redefined;
 			if (is_defined(sym)) {
 				gm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_REDEF, i.get_line(), i.get_col());
@@ -64,8 +64,8 @@ public class gps_check_random_access_t2 extends gm_apply {
 			if (sym.find_info_bool(GPS_FLAG_IS_INNER_LOOP)
 					|| sym.find_info_bool(GPS_FLAG_IS_OUTER_LOOP)) {
 				// non random write
-			} else if (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue()) {
-				if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis_t.GPS_NEW_SCOPE_OUT.getValue()) {
+			} else if (sym.find_info_int(GPS_INT_SYMBOL_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue()) {
+				if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue()) {
 					_error = true;
 					gm_error.gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_WRITE_USE_SCOPE, f.get_line(), f.get_col());
 				} else if (check_if_met_conditional_before(s, sym)) {
@@ -83,7 +83,7 @@ public class gps_check_random_access_t2 extends gm_apply {
 			if (is_random_write) {
 				ast_sentblock sb = gm_add_symbol.gm_find_defining_sentblock_up(s, sym);
 				assert sb != null;
-				assert s.get_nodetype() == AST_NODE_TYPE.AST_ASSIGN;
+				assert s.get_nodetype() == ast_node_type.AST_ASSIGN;
 				s.add_info_ptr(GPS_FLAG_SENT_BLOCK_FOR_RANDOM_WRITE_ASSIGN, sb);
 				sb.add_info_set_element(GPS_FLAG_RANDOM_WRITE_SYMBOLS_FOR_SB, sym);
 			}
@@ -139,7 +139,7 @@ public class gps_check_random_access_t2 extends gm_apply {
 	private static boolean check_if_met_conditional_before(ast_node s, gm_symtab_entry symbol) {
 		while (true) {
 			assert s != null;
-			if ((s.get_nodetype() == AST_NODE_TYPE.AST_WHILE) || (s.get_nodetype() == AST_NODE_TYPE.AST_IF)) {
+			if ((s.get_nodetype() == ast_node_type.AST_WHILE) || (s.get_nodetype() == ast_node_type.AST_IF)) {
 				return true;
 			}
 			if (s.has_symtab()) {

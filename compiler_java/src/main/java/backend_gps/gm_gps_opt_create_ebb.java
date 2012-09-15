@@ -25,6 +25,7 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		set_description("Create ExtendedBasicBlocks");
 	}
 
+	@Override
 	public void process(ast_procdef proc) {
 		// --------------------------------
 		// STEP 1:

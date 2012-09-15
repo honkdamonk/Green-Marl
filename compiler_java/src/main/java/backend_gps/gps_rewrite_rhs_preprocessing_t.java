@@ -36,7 +36,7 @@ import common.gm_transform_helper;
 //-----------------------------------------------------------------
 public class gps_rewrite_rhs_preprocessing_t extends gm_apply {
 
-	private LinkedList<ast_foreach> inner_loops = new LinkedList<ast_foreach>();
+	private final LinkedList<ast_foreach> inner_loops = new LinkedList<ast_foreach>();
 
 	public gps_rewrite_rhs_preprocessing_t() {
 		set_for_sent(true);

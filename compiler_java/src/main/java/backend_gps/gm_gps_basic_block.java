@@ -19,24 +19,31 @@ import common.gm_reproduce;
 import frontend.gm_symtab_entry;
 
 public class gm_gps_basic_block {
+
+	private Iterator<ast_sent> I;
+	private final LinkedList<ast_sent> sents = new LinkedList<ast_sent>();
+
+	// std::list<ast_foreach*> receivers;
+	private final LinkedList<gm_gps_comm_unit> receivers = new LinkedList<gm_gps_comm_unit>();
+	private final ArrayList<gm_gps_basic_block> exits = new ArrayList<gm_gps_basic_block>();
+	private final ArrayList<gm_gps_basic_block> entries = new ArrayList<gm_gps_basic_block>();
+
+	private int id;
+	private gm_gps_bbtype type;
+	private boolean after_vertex = false;
+	private ast_id for_info; // to use info methods defined in
+
+	// map of used symbols inside this BB
+	private final HashMap<gm_symtab_entry, gps_syminfo> symbols = new HashMap<gm_symtab_entry, gps_syminfo>();
+
 	public gm_gps_basic_block(int _id) {
 		this(_id, gm_gps_bbtype.GM_GPS_BBTYPE_SEQ);
 	}
 
-	public gm_gps_basic_block(int _id, gm_gps_bbtype _type) // ,_has_sender(false)
-	{
-		this.id = _id;
-		this.type = _type;
-		this.after_vertex = false;
+	public gm_gps_basic_block(int _id, gm_gps_bbtype _type) {// ,_has_sender(false)
+		id = _id;
+		type = _type;
 		for_info = ast_id.new_id("", 0, 0);
-	}
-
-	public void dispose() {
-		for (gm_symtab_entry key : symbols.keySet()) {
-			gps_syminfo s = symbols.get(key);
-			if (s != null)
-				s.dispose();
-		}
 	}
 
 	public final void prepare_iter() {
@@ -285,22 +292,6 @@ public class gm_gps_basic_block {
 		return receivers.size() > 0;
 	}
 
-	private Iterator<ast_sent> I;
-	private LinkedList<ast_sent> sents = new LinkedList<ast_sent>();
-
-	// std::list<ast_foreach*> receivers;
-	private LinkedList<gm_gps_comm_unit> receivers = new LinkedList<gm_gps_comm_unit>();
-
-	private ArrayList<gm_gps_basic_block> exits = new ArrayList<gm_gps_basic_block>();
-	private ArrayList<gm_gps_basic_block> entries = new ArrayList<gm_gps_basic_block>();
-	private int id;
-	private gm_gps_bbtype type;
-	private boolean after_vertex;
-	// bool _has_sender;
-
-	// map of used symbols inside this BB
-	private HashMap<gm_symtab_entry, gps_syminfo> symbols = new HashMap<gm_symtab_entry, gps_syminfo>();
-
 	public final gps_syminfo find_symbol_info(gm_symtab_entry sym) {
 		if (!symbols.containsKey(sym))
 			return null;
@@ -315,8 +306,6 @@ public class gm_gps_basic_block {
 	public final HashMap<gm_symtab_entry, gps_syminfo> get_symbols() {
 		return symbols;
 	}
-
-	private ast_id for_info; // to use info methods defined in
 
 	public final boolean has_info(String id) {
 		return for_info.has_info(id);

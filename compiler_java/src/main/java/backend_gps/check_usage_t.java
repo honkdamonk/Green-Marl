@@ -17,10 +17,15 @@ import ast.ast_node;
 import ast.ast_node_type;
 import ast.ast_sent;
 
-public class check_usage_t extends gps_apply_bb_ast {
+class check_usage_t extends gps_apply_bb_ast {
+
+	private final HashMap<gm_symtab_entry, gm_reduce> usage = new HashMap<gm_symtab_entry, gm_reduce>();
+	private final HashMap<gm_symtab_entry, gm_reduce> read_usage = new HashMap<gm_symtab_entry, gm_reduce>();
+	private boolean _okay_to_merge = true;
+	private int _state;
+
 	public check_usage_t() {
 		set_is_pre(true);
-		_okay_to_merge = true;
 		set_state(FOR_PAR1);
 	}
 
@@ -178,20 +183,10 @@ public class check_usage_t extends gps_apply_bb_ast {
 
 	public final boolean apply_seq1(ast_expr e) {
 		if (e.is_id()) {
-			read_usage.put(e.get_id().getSymInfo(), gm_reduce.GMREDUCE_PLUS); // TODO
-																				// changed
-																				// 1
-																				// to
-																				// GMREDUCE_PLUS,
-																				// is
-																				// this
-																				// ok?
+			// TODO: changed 1 to GMREDUCE_PLUS, is this ok?
+			read_usage.put(e.get_id().getSymInfo(), gm_reduce.GMREDUCE_PLUS);
 		}
 		return true;
 	}
 
-	private HashMap<gm_symtab_entry, gm_reduce> usage = new HashMap<gm_symtab_entry, gm_reduce>();
-	private HashMap<gm_symtab_entry, gm_reduce> read_usage = new HashMap<gm_symtab_entry, gm_reduce>();
-	private boolean _okay_to_merge;
-	private int _state;
 }

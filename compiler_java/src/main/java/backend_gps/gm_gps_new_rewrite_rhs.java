@@ -11,8 +11,8 @@ public class gm_gps_new_rewrite_rhs extends gm_compile_step {
 		set_description("Rewriting rhs for messages");
 	}
 
+	@Override
 	public void process(ast_procdef proc) {
-
 		// TODO--> get rid of 'parent' pointer of symtabs. (It is hard to move
 		// sentences around with this)
 		gm_transform_helper.gm_reconstruct_scope(proc);

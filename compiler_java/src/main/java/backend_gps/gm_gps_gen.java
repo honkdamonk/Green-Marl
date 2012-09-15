@@ -77,8 +77,8 @@ import common.gm_reproduce;
 // is pararell
 public class gm_gps_gen extends BackendGenerator {
 
-	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
-	protected LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
+	protected final LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
+	protected final LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
 
 	protected String dname = null;
 	protected String fname = null;

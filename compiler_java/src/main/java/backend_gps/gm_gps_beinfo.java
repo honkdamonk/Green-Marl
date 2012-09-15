@@ -21,13 +21,13 @@ public class gm_gps_beinfo extends gm_backend_info {
 	/** entry for the procedure basic blocks (DAG) */
 	private gm_gps_basic_block bb_entry = null;
 	/** same as above DAG, but flattened as list */
-	private LinkedList<gm_gps_basic_block> bb_blocks = new LinkedList<gm_gps_basic_block>();
+	private final LinkedList<gm_gps_basic_block> bb_blocks = new LinkedList<gm_gps_basic_block>();
 	/** list of persistent master symbols */
-	private HashSet<gm_symtab_entry> scalar = new HashSet<gm_symtab_entry>();
+	private final HashSet<gm_symtab_entry> scalar = new HashSet<gm_symtab_entry>();
 	/** list of persistent property symbols */
-	private HashSet<gm_symtab_entry> node_prop = new HashSet<gm_symtab_entry>();
+	private final HashSet<gm_symtab_entry> node_prop = new HashSet<gm_symtab_entry>();
 	/** list of persistent property symbols */
-	private HashSet<gm_symtab_entry> edge_prop = new HashSet<gm_symtab_entry>();
+	private final HashSet<gm_symtab_entry> edge_prop = new HashSet<gm_symtab_entry>();
 	private int total_node_prop_size = 0;
 	private int total_edge_prop_size = 0;
 
@@ -35,15 +35,15 @@ public class gm_gps_beinfo extends gm_backend_info {
 	 * map of inner loops (possible communications) and symbols used for the
 	 * communication in the loop.
 	 */
-	private HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>> comm_symbol_info = new HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>>();
-	private HashMap<gm_gps_comm_unit, gm_gps_communication_size_info> comm_size_info = new HashMap<gm_gps_comm_unit, gm_gps_communication_size_info>();
-	private gm_gps_communication_size_info max_comm_size = new gm_gps_communication_size_info();
+	private final HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>> comm_symbol_info = new HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>>();
+	private final HashMap<gm_gps_comm_unit, gm_gps_communication_size_info> comm_size_info = new HashMap<gm_gps_comm_unit, gm_gps_communication_size_info>();
+	private final gm_gps_communication_size_info max_comm_size = new gm_gps_communication_size_info();
 
 	/** set of communications */
-	private HashSet<gm_gps_comm_unit> comm_loops = new HashSet<gm_gps_comm_unit>();
-	private HashMap<gm_gps_comm_unit, LinkedList<ast_sent>> random_write_sents = new HashMap<gm_gps_comm_unit, LinkedList<ast_sent>>();
+	private final HashSet<gm_gps_comm_unit> comm_loops = new HashSet<gm_gps_comm_unit>();
+	private final HashMap<gm_gps_comm_unit, LinkedList<ast_sent>> random_write_sents = new HashMap<gm_gps_comm_unit, LinkedList<ast_sent>>();
 	/** congruent message class information */
-	private LinkedList<gm_gps_congruent_msg_class> congruent_msg = new LinkedList<gm_gps_congruent_msg_class>();
+	private final LinkedList<gm_gps_congruent_msg_class> congruent_msg = new LinkedList<gm_gps_congruent_msg_class>();
 
 	private int comm_id = 0;
 	private int basicblock_id = 0;

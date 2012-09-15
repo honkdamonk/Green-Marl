@@ -33,6 +33,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply {
 	}
 
 	// write to OUT_SCOPE in INNER_LOOP is an error
+	@Override
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;

@@ -10,10 +10,12 @@ import ast.ast_procdef;
 import common.gm_main;
 
 public class gm_gps_opt_split_comm_ebb extends gm_compile_step {
+	
 	private gm_gps_opt_split_comm_ebb() {
 		set_description("Split communicatining EBBs");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		gm_gps_beinfo info = (gm_gps_beinfo) gm_main.FE.get_backend_info(p);
 		gm_gps_basic_block entry = info.get_entry_basic_block();

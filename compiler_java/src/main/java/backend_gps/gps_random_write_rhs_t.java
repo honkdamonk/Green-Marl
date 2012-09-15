@@ -28,6 +28,7 @@ public class gps_random_write_rhs_t extends gm_apply {
 		INFO = (gm_gps_beinfo) gm_main.FE.get_current_backend_info();
 	}
 
+	@Override
 	public final boolean apply(ast_expr e) {
 		if (!e.is_id() && !e.is_field())
 			return true;

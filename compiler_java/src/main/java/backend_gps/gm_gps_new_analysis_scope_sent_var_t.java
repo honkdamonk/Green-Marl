@@ -34,6 +34,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 		set_for_symtab(true);
 	}
 
+	@Override
 	public final boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
 		e.add_info_int(GPS_INT_SYMBOL_SCOPE, current_scope.getValue());
 
@@ -60,6 +61,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 		return true;
 	}
 
+	@Override
 	public final boolean apply(ast_sent s) {
 		s.add_info_int(GPS_INT_SYNTAX_CONTEXT, current_scope.getValue());
 
@@ -103,6 +105,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 		return true;
 	}
 
+	@Override
 	public final boolean apply2(ast_sent s) {
 		if (s == outer_loop) {
 			current_scope = gm_gps_new_scope_analysis.GPS_NEW_SCOPE_GLOBAL;

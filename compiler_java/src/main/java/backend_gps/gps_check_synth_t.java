@@ -28,7 +28,6 @@ import frontend.symtab_types;
 //
 //  5. Some built-in functions are not supported
 //------------------------------------------------
-
 // check condition 1-4
 public class gps_check_synth_t extends gm_apply {
 

@@ -25,11 +25,13 @@ import common.gm_transform_helper;
 //-----------------------------------------------------
 
 public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
+	
+	private final LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
+	private int depth = 0;
 
 	public gm_gps_opt_remove_master_random_write_t() {
 		set_for_sent(true);
 		set_separate_post_apply(true);
-		depth = 0;
 	}
 
 	// pre
@@ -83,6 +85,4 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 		}
 	}
 
-	private LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
-	private int depth;
 }

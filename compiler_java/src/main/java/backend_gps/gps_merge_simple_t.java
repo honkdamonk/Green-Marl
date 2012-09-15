@@ -10,17 +10,14 @@ import ast.ast_sent;
 //      B does not have any other successor
 //      B and C are SEQUENTIAL_TYPE
 //------------------------------------------------------------------
-public class gps_merge_simple_t extends gps_apply_bb
-{
+public class gps_merge_simple_t extends gps_apply_bb {
+	
 	@Override
-	public void apply(gm_gps_basic_block B)
-	{
+	public void apply(gm_gps_basic_block B) {
 		// B -> C
-		if (B.get_num_exits() == 1)
-		{
+		if (B.get_num_exits() == 1) {
 			gm_gps_basic_block C = B.get_nth_exit(0);
-			if (C.get_num_entries() == 1)
-			{
+			if (C.get_num_entries() == 1) {
 
 				if (B.get_type() != C.get_type())
 					return;
@@ -33,8 +30,7 @@ public class gps_merge_simple_t extends gps_apply_bb
 				// merge sents
 				C.prepare_iter();
 				ast_sent s = C.get_next();
-				while (s != null)
-				{
+				while (s != null) {
 					B.add_sent(s);
 					s = C.get_next();
 				}
@@ -44,23 +40,20 @@ public class gps_merge_simple_t extends gps_apply_bb
 				// update exits
 				B.remove_all_exits();
 
-				if (C.get_num_exits() != 0)
-				{
+				if (C.get_num_exits() != 0) {
 					assert C.get_num_exits() == 1;
 					gm_gps_basic_block D = C.get_nth_exit(0);
-					boolean auto_insert_remote_entry = false; // do not auto-add entries at D
+					boolean auto_insert_remote_entry = false; // do not auto-add
+																// entries at D
 					B.add_exit(D, auto_insert_remote_entry);
 					D.update_entry_from(C, B);
 
 				}
 
 				// migrate extra info from B to C
-				//printf("merging %d %d \n", B->get_id(), C->get_id());
+				// printf("merging %d %d \n", B->get_id(), C->get_id());
 				B.copy_info_from(C);
 
-				// delete C
-				if (C != null)
-					C.dispose();
 			}
 		}
 	}

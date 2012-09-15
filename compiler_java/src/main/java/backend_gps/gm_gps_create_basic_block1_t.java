@@ -36,7 +36,6 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 		gen = _gen;
 		entry = prev = newBB(); // entry
 		exit = next = newBB(); // exit
-
 		entry.add_exit(exit);
 	}
 

@@ -13,7 +13,6 @@ import common.gm_errors_and_warnings;
 //-----------------------------------------------------------------
 // Check random access
 //-----------------------------------------------------------------
-
 public class gps_check_random_read_t extends gm_apply {
 
 	private boolean _error = false;
@@ -26,6 +25,7 @@ public class gps_check_random_read_t extends gm_apply {
 		return _error;
 	}
 
+	@Override
 	public final boolean apply(ast_expr f) {
 		// random read always happens by field or builtin
 		if ((f.get_opclass() == gm_expr_class.GMEXPR_FIELD) || (f.get_opclass() == gm_expr_class.GMEXPR_BUILTIN)) {

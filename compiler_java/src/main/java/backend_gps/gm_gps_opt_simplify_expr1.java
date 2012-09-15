@@ -13,6 +13,7 @@ import ast.ast_sentblock;
 import common.gm_method_id;
 
 public class gm_gps_opt_simplify_expr1 extends gm_compile_step {
+	
 	private gm_gps_opt_simplify_expr1() {
 		set_description("Seperating builtin-calls from outer-loop driver");
 	}

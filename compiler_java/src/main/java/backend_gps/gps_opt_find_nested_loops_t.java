@@ -33,15 +33,16 @@ import common.gm_apply;
 //-------------------------------------------------
 // [todo] what to do with loops nested more than 3 depths
 //----------------------------------------------------
-
 public class gps_opt_find_nested_loops_t extends gm_apply {
 
+	private int depth = 0;
+	private ast_foreach outer_loop = null;
+	private HashMap<ast_foreach, ast_foreach> MAP;
+
 	public gps_opt_find_nested_loops_t(HashMap<ast_foreach, ast_foreach> M) {
-		this.MAP = new HashMap<ast_foreach, ast_foreach>(M);
+		MAP = new HashMap<ast_foreach, ast_foreach>(M);
 		set_for_sent(true);
 		set_separate_post_apply(true);
-		depth = 0;
-		outer_loop = null;
 	}
 
 	@Override
@@ -73,20 +74,4 @@ public class gps_opt_find_nested_loops_t extends gm_apply {
 		return true;
 	}
 
-	private int depth;
-	private ast_foreach outer_loop;
-	private HashMap<ast_foreach, ast_foreach> MAP;
 }
-/*
- * void gm_gps_opt_find_nested_loops_test::process(ast_procdef* p) {
- * std::map<ast_foreach*, ast_foreach*> MAP; gm_gps_find_nested_loops(p, MAP);
- * 
- * std::map<ast_foreach*, ast_foreach*>::iterator I; for(I= MAP.begin();
- * I!=MAP.end(); I++) { ast_foreach* fe1 = I->first; ast_foreach* fe2 =
- * I->second; if (fe2 == NULL) { printf("outer loop = %s\n",
- * fe1->get_iterator()->get_genname()); } else {
- * printf("inner loop = %s (outer loop =%s)\n",
- * fe1->get_iterator()->get_genname(), fe2->get_iterator()->get_genname()); } }
- * }
- */
-

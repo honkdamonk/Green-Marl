@@ -39,6 +39,7 @@ public class gps_check_random_access_t2 extends gm_apply {
 		return _error;
 	}
 
+	@Override
 	public final boolean apply_lhs(ast_id i) {
 		gm_symtab_entry sym = i.getSymInfo();
 
@@ -56,6 +57,7 @@ public class gps_check_random_access_t2 extends gm_apply {
 		return true;
 	}
 
+	@Override
 	public final boolean apply_lhs(ast_field f) {
 		gm_symtab_entry sym = f.get_first().getSymInfo();
 		ast_sent s = get_current_sent();

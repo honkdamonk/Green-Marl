@@ -20,13 +20,12 @@ import common.gm_apply;
 
 public class gm_stage_create_pre_process_t extends gm_apply {
 
-	private boolean master_context;
-	private LinkedList<Boolean> master_context_stack = new LinkedList<Boolean>();
+	private boolean master_context = true;
+	private final LinkedList<Boolean> master_context_stack = new LinkedList<Boolean>();
 	private HashMap<ast_sent, gps_gps_sentence> s_mark;
 
 	public gm_stage_create_pre_process_t(HashMap<ast_sent, gps_gps_sentence> mk) {
 		s_mark = mk;
-		master_context = true;
 	}
 
 	// pre-apply

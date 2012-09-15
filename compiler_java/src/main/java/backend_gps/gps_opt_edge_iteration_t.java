@@ -42,8 +42,10 @@ import common.gm_transform_helper;
 //    }
 // }
 //----------------------------------------------------
-
 public class gps_opt_edge_iteration_t extends gm_apply {
+	
+	private final LinkedList<ast_foreach> _targets = new LinkedList<ast_foreach>();
+	
 	public gps_opt_edge_iteration_t() {
 		set_for_sent(true);
 	}
@@ -119,18 +121,10 @@ public class gps_opt_edge_iteration_t extends gm_apply {
 			outer_name = null;
 			inner_name = null;
 
-			if (fe != null)
-				fe.dispose();
-			// printf("fe = %p\n", fe);
-			// printf("outer_fe = %p\n", outer_fe);
-			// printf("inner_fe = %p\n", inner_fe);
 		}
 	}
 
-	private LinkedList<ast_foreach> _targets = new LinkedList<ast_foreach>();
-
 	private void replace_from_to_builtin(ast_node body, gm_symtab_entry old_edge, gm_symtab_entry outer, gm_symtab_entry inner) {
-
 		gm_gps_opt_replace_from_to_builtin_t Q = new gm_gps_opt_replace_from_to_builtin_t(old_edge, outer, inner);
 		gm_transform_helper.gm_replace_expr_general(body, Q);
 	}

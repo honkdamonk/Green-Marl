@@ -10,24 +10,23 @@ import common.gm_method_id;
 
 import frontend.gm_symtab_entry;
 
-public class replace_in_degree_t extends gm_expr_replacement_t
-{
+public class replace_in_degree_t extends gm_expr_replacement_t {
+	
+	private gm_symtab_entry new_prop;
+	
 	@Override
-	public boolean is_target(ast_expr e)
-	{
-		if (e.is_builtin())
-		{
+	public boolean is_target(ast_expr e) {
+		if (e.is_builtin()) {
 			ast_expr_builtin b = (ast_expr_builtin) e;
-			if (b.get_builtin_def().get_method_id() == gm_method_id.GM_BLTIN_NODE_IN_DEGREE)
-			{
+			if (b.get_builtin_def().get_method_id() == gm_method_id.GM_BLTIN_NODE_IN_DEGREE) {
 				return true;
 			}
 		}
 		return false;
 	}
+
 	@Override
-	public ast_expr create_new_expr(ast_expr target, tangible.RefObject<Boolean> destory_target_after)
-	{
+	public ast_expr create_new_expr(ast_expr target, tangible.RefObject<Boolean> destory_target_after) {
 		destory_target_after.argvalue = true;
 
 		ast_expr_builtin b = (ast_expr_builtin) target;
@@ -41,11 +40,10 @@ public class replace_in_degree_t extends gm_expr_replacement_t
 		ast_expr rhs = ast_expr.new_field_expr(field);
 		return rhs;
 	}
-	public final void set_new_prop(gm_symtab_entry e)
-	{
+
+	public final void set_new_prop(gm_symtab_entry e) {
 		new_prop = e;
 	}
-	private gm_symtab_entry new_prop;
 
 }
 // check if reverse edge or num reverse edges are used

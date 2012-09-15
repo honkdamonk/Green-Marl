@@ -33,6 +33,7 @@ public class gm_gps_opt_check_reverse_edges extends gm_compile_step {
 		set_description("Check use of reverse edges");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		gps_check_reverse_edge_t T = new gps_check_reverse_edge_t();
 		p.traverse_pre(T);

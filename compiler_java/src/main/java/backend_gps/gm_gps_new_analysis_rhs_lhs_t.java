@@ -20,6 +20,7 @@ import frontend.gm_symtab_entry;
 // Find scope of each expression
 //---------------------------------------------------------------------
 public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
+	
 	public gm_gps_new_analysis_rhs_lhs_t() {
 		set_for_expr(true);
 	}

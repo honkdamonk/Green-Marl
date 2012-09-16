@@ -29,7 +29,7 @@ public class gps_check_random_read_t extends gm_apply {
 	public final boolean apply(ast_expr f) {
 		// random read always happens by field or builtin
 		if ((f.get_opclass() == gm_expr_class.GMEXPR_FIELD) || (f.get_opclass() == gm_expr_class.GMEXPR_BUILTIN)) {
-			if (f.find_info_obj(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_RANDOM) {
+			if ((gm_gps_new_scope_analysis) f.find_info_obj(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_RANDOM) {
 				gm_symtab_entry driver = (f.get_opclass() == gm_expr_class.GMEXPR_FIELD) ? f.get_field().get_first().getSymInfo() : ((ast_expr_builtin) f)
 						.get_driver().getSymInfo();
 

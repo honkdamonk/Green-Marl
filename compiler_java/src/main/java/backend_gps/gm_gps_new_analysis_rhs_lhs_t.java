@@ -52,7 +52,7 @@ public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
 
 		case GMEXPR_UOP:
 		case GMEXPR_LUOP:
-			e.add_info_int(GPS_INT_EXPR_SCOPE, e.get_left_op().find_info_int(GPS_INT_EXPR_SCOPE));
+			e.add_info_obj(GPS_INT_EXPR_SCOPE, (gm_gps_new_scope_analysis) e.get_left_op().find_info_obj(GPS_INT_EXPR_SCOPE));
 			break;
 
 		case GMEXPR_BIOP:

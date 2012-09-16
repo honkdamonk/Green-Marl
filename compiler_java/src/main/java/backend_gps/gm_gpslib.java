@@ -370,7 +370,7 @@ public class gm_gpslib extends gm_graph_library {
 				continue;
 			}
 			// Used as input only
-			if (sym.find_info_obj(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN) {
+			if ((gm_prop_usage) sym.find_info_obj(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN) {
 				// printf("used as input only :%s\n",
 				// sym->getId()->get_genname());
 				continue;

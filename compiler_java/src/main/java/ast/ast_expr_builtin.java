@@ -13,7 +13,7 @@ import common.gm_dumptree;
 
 public class ast_expr_builtin extends ast_expr {
 
-	protected ast_id driver; // canbe null
+	protected ast_id driver; // can be null
 	protected String orgname;
 	protected LinkedList<ast_expr> args = new LinkedList<ast_expr>();
 	protected gm_builtin_def def;
@@ -154,8 +154,8 @@ public class ast_expr_builtin extends ast_expr {
 		assert orgname != null;
 		E.orgname = orgname;
 		if (t != null) {
-			E.args = new LinkedList<ast_expr>(t.LIST); // shallow copy
-														// LIST
+			// shallow copy LIST
+			E.args = new LinkedList<ast_expr>(t.LIST);
 			// but not set 'up' pointer.
 			for (ast_expr e : E.args)
 				e.set_parent(E);

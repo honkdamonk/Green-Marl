@@ -598,7 +598,7 @@ not_left_recursive_expr returns [ast_node value]
     |   eu=expr_user
     	{ value = eu; }
     |	ma=map_access
-    	{ value = FE.GM_expr_map_access(ma, 0, 0); } /* TODO: should be ma.line, ma.col */
+    	{ value = FE.GM_expr_map_access(ma.value, ma.line, ma.col); } /* TODO: should be ma.line, ma.col */
     ;
 
 
@@ -779,8 +779,8 @@ lhs returns [ast_node value]
     	{ value = x; }
     |   x=field
     	{ value = x; }
-    |	x=map_access
-    	{ value = x; }
+    |	y=map_access
+    	{ value = y.value; }
     ;
 
 
@@ -807,9 +807,11 @@ field returns [ast_node value]
     ;
 
 
-map_access returns [ast_node value]
-	:	x=id '[' y=expr ']'
-		{ value = FE.GM_map_access(x, y); }
+map_access returns [ast_node value, int line, int col]
+	:	x=id op='[' y=expr ']'
+		{ retval.value = FE.GM_map_access(x, y);
+		  retval.line = op.getLine();
+		  retval.col = op.getCharPositionInLine(); }
 	;
 
 

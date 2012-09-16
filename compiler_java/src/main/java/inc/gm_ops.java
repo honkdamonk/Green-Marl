@@ -25,10 +25,6 @@ public enum gm_ops { // list of operators
 	GMOP_MAPACCESS, //
 	GMOP_END; // a marker indicating end of enum
 
-	public int getValue() {
-		return ordinal();
-	}
-
 	public boolean is_numeric_op() {
 		return (this == GMOP_MULT) || (this == GMOP_DIV) || (this == GMOP_MOD) || (this == GMOP_ADD) || (this == GMOP_SUB) || (this == GMOP_NEG)
 				|| (this == GMOP_ABS) || (this == GMOP_MAX) || (this == GMOP_MIN);
@@ -55,11 +51,24 @@ public enum gm_ops { // list of operators
 	}
 
 	// see http://cppreference.com/wiki/language/operator_precedence
-	// ABS (not in cpp)
-	private static int[] GM_OPPRED_LEVEL = { 2, 3, 5, 5, 5, 2, 2, 6, 6, 13, 13, 3, 9, 9, 8, 8, 8, 8, 2, 15, 99 };
+	private static int[] GM_OPPRED_LEVEL = {
+			2,           // ABS (not in cpp)
+	        3,           // NEG
+	        5, 5, 5,     // MULT, DIV, MOD
+	        2, 2,        // MAX, MIN
+	        6, 6,        // ADD, SUB
+	        13, 13,      // OR, AND,   // Actually AND has higher pred in parsing. But for clarity, we regard them to have same prec in code generation.
+	        3,           // NOT,
+	        9, 9,        // EQ, NEQ
+	        8, 8, 8, 8,  // LE, GE, LT, GT
+	        2,           // TYPE
+	        15,          // TERNARY
+	        99,          // ASSIGN (for type=checking only)
+	        //TODO missing value for MAPACCESS
+	        };
 
 	public int get_op_pred() {
-		return GM_OPPRED_LEVEL[getValue()];
+		return GM_OPPRED_LEVEL[ordinal()];
 	}
 
 	public boolean gm_need_paranthesis(gm_ops up_op, boolean is_right) {

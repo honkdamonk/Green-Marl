@@ -628,8 +628,8 @@ map_access
 	;
 
 built_in
-    :   id
-        ( '.' id )?
+    :   ( id '.' )?
+        id
         arg_list
     |   field
         '.' id

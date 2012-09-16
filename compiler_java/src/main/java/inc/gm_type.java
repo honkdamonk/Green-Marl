@@ -120,12 +120,8 @@ public enum gm_type {
 		getMappings().put(value, this);
 	}
 
-	public int getValue() {
+	private int getValue() {
 		return intValue;
-	}
-
-	public static gm_type forValue(int value) {
-		return getMappings().get(value);
 	}
 
 	public boolean is_graph_type() {

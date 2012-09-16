@@ -198,13 +198,12 @@ public class gm_flip_edges {
 			}
 
 			else if (if2 == null) {
-				ast_sent body1 = if1.get_then();
-				ast_sent body2 = in.get_body();
+				ast_sent body = in.get_body();
 
 				in.set_body(if1);
 				//if1.set_parent(in);
 
-				if1.set_then(body2);
+				if1.set_then(body);
 				//body2.set_parent(if1);
 
 				out.set_body(in);

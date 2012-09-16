@@ -100,6 +100,14 @@ public class gm_symtab_entry {
 		else
 			return info.ival;
 	}
+	
+	public Object find_info_obj(String id) {
+		ast_extra_info info = find_info(id);
+		if (info == null)
+			return null;
+		else
+			return info.objval;
+	}
 
 	public Object find_info_ptr(String id) {
 		ast_extra_info info = find_info(id);
@@ -137,6 +145,10 @@ public class gm_symtab_entry {
 
 	public void add_info_float(String id, float f) {
 		add_info(id, new ast_extra_info(f));
+	}
+	
+	public void add_info_obj(String id, Object obj) {
+		add_info(id, new ast_extra_info(obj));
 	}
 
 	public void add_info_string(String id, String str) {

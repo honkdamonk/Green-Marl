@@ -383,10 +383,10 @@ public class gm_frontend {
 		return n;
 	}
 
-	public static ast_node GM_expr_map_access(ast_node mapAccess, int line, int column) {
+	public static ast_node GM_expr_map_access(ast_node mapAccess) {
 		assert (mapAccess != null);
 		assert (mapAccess.get_nodetype() == AST_MAPACCESS);
-		return ast_expr_mapaccess.new_expr_mapaccess((ast_mapaccess) mapAccess, line, column);
+		return ast_expr_mapaccess.new_expr_mapaccess((ast_mapaccess) mapAccess);
 	}
 
 	public static ast_node GM_expr_ival(int lval, int l, int c) {

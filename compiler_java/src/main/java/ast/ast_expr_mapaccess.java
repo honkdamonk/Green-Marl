@@ -14,11 +14,11 @@ public class ast_expr_mapaccess extends ast_expr {
 		set_nodetype(AST_EXPR_MAPACCESS);
 	}
 
-	private ast_expr_mapaccess(ast_mapaccess mapAccess, int line, int column) {
+	private ast_expr_mapaccess(ast_mapaccess mapAccess) {
 		// ast_expr(), mapAccess(mapAccess) {
 		set_nodetype(AST_EXPR_MAPACCESS);
-		set_line(line);
-		set_col(column);
+		set_line(mapAccess.line);
+		set_col(mapAccess.col);
 	}
 
 	public ast_expr_mapaccess copy() {
@@ -57,8 +57,8 @@ public class ast_expr_mapaccess extends ast_expr {
 		return mapAccess;
 	}
 
-	public static ast_expr_mapaccess new_expr_mapaccess(ast_mapaccess mapAccess, int line, int column) {
-		ast_expr_mapaccess newMapAccess = new ast_expr_mapaccess(mapAccess, line, column);
+	public static ast_expr_mapaccess new_expr_mapaccess(ast_mapaccess mapAccess) {
+		ast_expr_mapaccess newMapAccess = new ast_expr_mapaccess(mapAccess);
 		return newMapAccess;
 	}
 }

@@ -90,10 +90,10 @@ public class gm_check_property_usage_t extends gm_apply {
 					topmost_iterator = null;
 					// finish written
 					for (gm_symtab_entry prop : under_current_linear_update) {
-						if (prop.find_info_int(gm_frontend.GMUSAGE_PROPERTY) != GMUSAGE_INVALID.getValue())
+						if (prop.find_info_obj(gm_frontend.GMUSAGE_PROPERTY) != GMUSAGE_INVALID)
 							continue;
 
-						prop.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GMUSAGE_OUT.getValue());
+						prop.add_info_obj(gm_frontend.GMUSAGE_PROPERTY, GMUSAGE_OUT);
 					}
 
 					under_current_linear_update.clear();
@@ -116,7 +116,7 @@ public class gm_check_property_usage_t extends gm_apply {
 	}
 
 	public final void property_is_written(gm_symtab_entry prop, gm_symtab_entry driver) {
-		if (prop.find_info_int(gm_frontend.GMUSAGE_PROPERTY) != GMUSAGE_INVALID.getValue())
+		if (prop.find_info_obj(gm_frontend.GMUSAGE_PROPERTY) != GMUSAGE_INVALID)
 			return;
 
 		if (!is_under_condition() && !is_under_random_iterator() && (driver == topmost_iterator)) {
@@ -125,16 +125,16 @@ public class gm_check_property_usage_t extends gm_apply {
 	}
 
 	public final void property_is_read(gm_symtab_entry prop, gm_symtab_entry driver, boolean is_reduce) {
-		if (prop.find_info_int(gm_frontend.GMUSAGE_PROPERTY) != GMUSAGE_INVALID.getValue())
+		if (prop.find_info_obj(gm_frontend.GMUSAGE_PROPERTY) != GMUSAGE_INVALID)
 			return;
 
 		if (is_reduce) {
-			prop.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GMUSAGE_INOUT.getValue());
+			prop.add_info_obj(gm_frontend.GMUSAGE_PROPERTY, GMUSAGE_INOUT);
 		}
 
 		if (driver == topmost_iterator) {
 			if (is_under_random_iterator()) {
-				prop.add_info_int(gm_frontend.GMUSAGE_PROPERTY, GMUSAGE_INOUT.getValue());
+				prop.add_info_obj(gm_frontend.GMUSAGE_PROPERTY, GMUSAGE_INOUT);
 			}
 		}
 	}

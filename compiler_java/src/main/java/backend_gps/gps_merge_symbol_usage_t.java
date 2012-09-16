@@ -118,8 +118,8 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 			return true;
 
 		// int syntax_scope =
-		// get_current_sent()->find_info_int(GPS_INT_SYNTAX_CONTEXT);
-		int expr_scope = e.find_info_int(GPS_INT_EXPR_SCOPE);
+		// get_current_sent()->find_info_obj(GPS_INT_SYNTAX_CONTEXT);
+		gm_gps_new_scope_analysis expr_scope = (gm_gps_new_scope_analysis) e.find_info_obj(GPS_INT_EXPR_SCOPE);
 		gm_gps_symbol_usage_location context = get_current_context();
 		gm_gps_symbol_usage used_type = gm_gps_symbol_usage.GPS_SYM_USED_AS_RHS;
 		boolean is_id = e.is_id();
@@ -135,8 +135,8 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 		}
 
 		if (is_random_write_target) {
-			if ((expr_scope != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_RANDOM.getValue())
-					&& (expr_scope != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_GLOBAL.getValue()))
+			if ((expr_scope != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_RANDOM)
+					&& (expr_scope != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_GLOBAL))
 				comm_symbol = true;
 			/*
 			 * if (is_id) { gps_syminfo* syminfo = gps_get_global_syminfo(tg);

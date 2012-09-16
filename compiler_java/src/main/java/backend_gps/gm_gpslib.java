@@ -370,7 +370,7 @@ public class gm_gpslib extends gm_graph_library {
 				continue;
 			}
 			// Used as input only
-			if (sym.find_info_int(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN.getValue()) {
+			if (sym.find_info_obj(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN) {
 				// printf("used as input only :%s\n",
 				// sym->getId()->get_genname());
 				continue;
@@ -398,16 +398,16 @@ public class gm_gpslib extends gm_graph_library {
 				total_count = prop.size();
 			else {
 				for (gm_symtab_entry e : prop) {
-					if ((e.find_info_int(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN.getValue())
-							|| (e.find_info_int(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_INOUT.getValue()))
+					if ((e.find_info_obj(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN)
+							|| (e.find_info_obj(GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_INOUT))
 						total_count++;
 				}
 			}
 
 			if (total_count == 1) {
 				for (gm_symtab_entry sym : prop) {
-					if (!is_edge_prop && (sym.find_info_int(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_IN.getValue())
-							&& (sym.find_info_int(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_INOUT.getValue()))
+					if (!is_edge_prop && (sym.find_info_obj(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_IN)
+							&& (sym.find_info_obj(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_INOUT))
 						continue;
 					RefObject<String> name1_ref = new RefObject<String>(null);
 					RefObject<String> name2_ref = new RefObject<String>(null);
@@ -420,8 +420,8 @@ public class gm_gpslib extends gm_graph_library {
 				Body.pushln("String[] split = inputString.split(\"###\");");
 				int cnt = 0;
 				for (gm_symtab_entry sym : prop) {
-					if (!is_edge_prop && (sym.find_info_int(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_IN.getValue())
-							&& (sym.find_info_int(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_INOUT.getValue()))
+					if (!is_edge_prop && (sym.find_info_obj(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_IN)
+							&& (sym.find_info_obj(GMUSAGE_PROPERTY) != gm_prop_usage.GMUSAGE_INOUT))
 						continue;
 					RefObject<String> name1_ref = new RefObject<String>(null);
 					RefObject<String> name2_ref = new RefObject<String>(null);
@@ -1141,10 +1141,10 @@ public class gm_gpslib extends gm_graph_library {
 				ast_assign a = (ast_assign) s;
 				assert !a.is_target_scalar();
 				gm_symtab_entry e = a.get_lhs_field().get_second().getSymInfo();
-				Integer i = (Integer) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
-				assert i != null;
+				gm_gps_edge_access access = (gm_gps_edge_access) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
+				assert access != null;
 
-				if (i == gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_SENT_WRITE.getValue()) {
+				if (access == gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_SENT_WRITE) {
 					sents_after_message.addLast(s);
 				} else {
 					get_main().generate_sent(s);

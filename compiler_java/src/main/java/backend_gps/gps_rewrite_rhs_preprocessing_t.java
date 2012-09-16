@@ -60,7 +60,7 @@ public class gps_rewrite_rhs_preprocessing_t extends gm_apply {
 			gm_transform_helper.gm_make_it_belong_to_sentblock(s);
 
 			assert s.get_parent().get_nodetype() == ast_node_type.AST_SENTBLOCK;
-			s.get_parent().add_info_int(GPS_INT_SYNTAX_CONTEXT, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN.getValue());
+			s.get_parent().add_info_obj(GPS_INT_SYNTAX_CONTEXT, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN);
 
 			assert fe.get_body().get_nodetype() == ast_node_type.AST_SENTBLOCK;
 			// printf("(1)fe = %p, sb = %p\n", fe, fe->get_body());

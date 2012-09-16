@@ -22,14 +22,13 @@ public class gm_fe_check_property_argument_usage extends gm_compile_step {
 		gm_rwinfo_map W = gm_rw_analysis.get_rwinfo_sets(proc.get_body()).write_set;
 		for (gm_symtab_entry e : SET) {
 			if ((!R.containsKey(e)) && (!W.containsKey(e)))
-				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, gm_prop_usage.GMUSAGE_UNUSED.getValue());
+				e.add_info_obj(gm_frontend.GMUSAGE_PROPERTY, gm_prop_usage.GMUSAGE_UNUSED);
 			else if ((!R.containsKey(e)) && (W.containsKey(e)))
-				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, gm_prop_usage.GMUSAGE_OUT.getValue());
+				e.add_info_obj(gm_frontend.GMUSAGE_PROPERTY, gm_prop_usage.GMUSAGE_OUT);
 			else if ((!W.containsKey(e)) && (R.containsKey(e)))
-				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, gm_prop_usage.GMUSAGE_IN.getValue());
+				e.add_info_obj(gm_frontend.GMUSAGE_PROPERTY, gm_prop_usage.GMUSAGE_IN);
 			else {
-				e.add_info_int(gm_frontend.GMUSAGE_PROPERTY, gm_prop_usage.GMUSAGE_INVALID.getValue()); // temporary
-																											// marking
+				e.add_info_obj(gm_frontend.GMUSAGE_PROPERTY, gm_prop_usage.GMUSAGE_INVALID); // temporary marking
 			}
 		}
 

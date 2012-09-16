@@ -36,7 +36,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 
 	@Override
 	public final boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
-		e.add_info_int(GPS_INT_SYMBOL_SCOPE, current_scope.getValue());
+		e.add_info_obj(GPS_INT_SYMBOL_SCOPE, current_scope);
 
 		// ---------------------------------------------------------------------------
 		// This information is redundant at this moment. Need to be clear up
@@ -63,7 +63,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 
 	@Override
 	public final boolean apply(ast_sent s) {
-		s.add_info_int(GPS_INT_SYNTAX_CONTEXT, current_scope.getValue());
+		s.add_info_obj(GPS_INT_SYNTAX_CONTEXT, current_scope);
 
 		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			ast_foreach fe = (ast_foreach) s;
@@ -71,7 +71,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 				assert fe.get_iterator().getTypeSummary() == gm_type.GMTYPE_NODEITER_ALL;
 				outer_loop = fe;
 				outer_loop.add_info_bool(GPS_FLAG_IS_OUTER_LOOP, true);
-				outer_loop.get_iterator().getSymInfo().add_info_int(GPS_INT_SYMBOL_SCOPE, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue());
+				outer_loop.get_iterator().getSymInfo().add_info_obj(GPS_INT_SYMBOL_SCOPE, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT);
 				outer_loop.get_iterator().getSymInfo().add_info_bool(GPS_FLAG_IS_OUTER_LOOP, true);
 				current_scope = gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT;
 			} else if (inner_loop == null) {
@@ -79,7 +79,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 						|| (fe.get_iterator().getTypeSummary() == gm_type.GMTYPE_NODEITER_IN_NBRS);
 				inner_loop = fe;
 				inner_loop.add_info_bool(GPS_FLAG_IS_INNER_LOOP, true);
-				inner_loop.get_iterator().getSymInfo().add_info_int(GPS_INT_SYMBOL_SCOPE, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN.getValue());
+				inner_loop.get_iterator().getSymInfo().add_info_obj(GPS_INT_SYMBOL_SCOPE, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN);
 				inner_loop.get_iterator().getSymInfo().add_info_bool(GPS_FLAG_IS_INNER_LOOP, true);
 				current_scope = gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN;
 			} else {

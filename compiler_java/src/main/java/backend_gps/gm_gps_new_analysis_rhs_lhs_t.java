@@ -26,9 +26,9 @@ public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
 	}
 
 	public final boolean apply(ast_expr e) {
-		int t;
-		int l;
-		int r;
+		gm_gps_new_scope_analysis t;
+		gm_gps_new_scope_analysis l;
+		gm_gps_new_scope_analysis r;
 		gm_gps_new_scope_analysis scope;
 
 		switch (e.get_opclass()) {
@@ -38,16 +38,16 @@ public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
 		case GMEXPR_BVAL:
 		case GMEXPR_INF:
 		case GMEXPR_NIL:
-			e.add_info_int(GPS_INT_EXPR_SCOPE, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_GLOBAL.getValue());
+			e.add_info_obj(GPS_INT_EXPR_SCOPE, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_GLOBAL);
 			break;
 		case GMEXPR_ID:
 			scope = get_scope_from_id(e.get_id().getSymInfo());
-			e.add_info_int(GPS_INT_EXPR_SCOPE, scope.getValue());
+			e.add_info_obj(GPS_INT_EXPR_SCOPE, scope);
 			break;
 
 		case GMEXPR_FIELD:
 			scope = get_scope_from_driver(e.get_field().get_first().getSymInfo());
-			e.add_info_int(GPS_INT_EXPR_SCOPE, scope.getValue());
+			e.add_info_obj(GPS_INT_EXPR_SCOPE, scope);
 			break;
 
 		case GMEXPR_UOP:
@@ -58,29 +58,24 @@ public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
 		case GMEXPR_BIOP:
 		case GMEXPR_LBIOP:
 		case GMEXPR_COMP:
-			l = e.get_left_op().find_info_int(GPS_INT_EXPR_SCOPE);
-			r = e.get_right_op().find_info_int(GPS_INT_EXPR_SCOPE);
-			gm_gps_new_scope_analysis lx = gm_gps_new_scope_analysis.forValue(l);
-			gm_gps_new_scope_analysis rx = gm_gps_new_scope_analysis.forValue(r);
-			e.add_info_int(GPS_INT_EXPR_SCOPE, gm_gps_new_scope_analysis.get_more_restricted_scope(lx, rx).getValue());
+			l = (gm_gps_new_scope_analysis) e.get_left_op().find_info_obj(GPS_INT_EXPR_SCOPE);
+			r = (gm_gps_new_scope_analysis) e.get_right_op().find_info_obj(GPS_INT_EXPR_SCOPE);
+			e.add_info_obj(GPS_INT_EXPR_SCOPE, gm_gps_new_scope_analysis.get_more_restricted_scope(l, r));
 			break;
 
 		case GMEXPR_TER:
-			l = e.get_left_op().find_info_int(GPS_INT_EXPR_SCOPE);
-			r = e.get_right_op().find_info_int(GPS_INT_EXPR_SCOPE);
-			t = e.get_cond_op().find_info_int(GPS_INT_EXPR_SCOPE);
-			gm_gps_new_scope_analysis lx2 = gm_gps_new_scope_analysis.forValue(l);
-			gm_gps_new_scope_analysis rx2 = gm_gps_new_scope_analysis.forValue(r);
-			gm_gps_new_scope_analysis tx = gm_gps_new_scope_analysis.forValue(t);
-			e.add_info_int(GPS_INT_EXPR_SCOPE,
-					gm_gps_new_scope_analysis.get_more_restricted_scope(tx, gm_gps_new_scope_analysis.get_more_restricted_scope(lx2, rx2)).getValue());
+			l = (gm_gps_new_scope_analysis) e.get_left_op().find_info_obj(GPS_INT_EXPR_SCOPE);
+			r = (gm_gps_new_scope_analysis) e.get_right_op().find_info_obj(GPS_INT_EXPR_SCOPE);
+			t = (gm_gps_new_scope_analysis) e.get_cond_op().find_info_obj(GPS_INT_EXPR_SCOPE);
+			e.add_info_obj(GPS_INT_EXPR_SCOPE,
+					gm_gps_new_scope_analysis.get_more_restricted_scope(t, gm_gps_new_scope_analysis.get_more_restricted_scope(l, r)));
 			break;
 
 		case GMEXPR_BUILTIN: {
 			ast_expr_builtin b = (ast_expr_builtin) e;
 			ast_id i = b.get_driver();
 			if (i == null) {
-				e.add_info_int(GPS_INT_EXPR_SCOPE, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_GLOBAL.getValue());
+				e.add_info_obj(GPS_INT_EXPR_SCOPE, gm_gps_new_scope_analysis.GPS_NEW_SCOPE_GLOBAL);
 				break;
 			}
 
@@ -90,10 +85,10 @@ public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
 			// scope of arguments
 			LinkedList<ast_expr> L = b.get_args();
 			for (ast_expr ee : L) {
-				t2 = gm_gps_new_scope_analysis.get_more_restricted_scope(t2, gm_gps_new_scope_analysis.forValue(ee.find_info_int(GPS_INT_EXPR_SCOPE)));
+				t2 = gm_gps_new_scope_analysis.get_more_restricted_scope(t2, (gm_gps_new_scope_analysis) ee.find_info_obj(GPS_INT_EXPR_SCOPE));
 			}
 
-			e.add_info_int(GPS_INT_EXPR_SCOPE, t2.getValue());
+			e.add_info_obj(GPS_INT_EXPR_SCOPE, t2);
 		}
 			break;
 
@@ -107,7 +102,7 @@ public class gm_gps_new_analysis_rhs_lhs_t extends gm_apply {
 	}
 
 	public final gm_gps_new_scope_analysis get_scope_from_id(gm_symtab_entry e) {
-		return gm_gps_new_scope_analysis.forValue(e.find_info_int(GPS_INT_SYMBOL_SCOPE));
+		return (gm_gps_new_scope_analysis) e.find_info_obj(GPS_INT_SYMBOL_SCOPE);
 	}
 
 	public final gm_gps_new_scope_analysis get_scope_from_driver(gm_symtab_entry e) {

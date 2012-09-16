@@ -53,8 +53,8 @@ public class gm_gps_opt_analyze_symbol_summary extends gm_compile_step {
 		// --------------------------------------------------------
 		boolean need_node_prop_init = false;
 		for (gm_symtab_entry e : prop) {
-			if ((e.find_info_int(gm_frontend.GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN.getValue())
-					|| (e.find_info_int(gm_frontend.GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_INOUT.getValue())) {
+			if ((e.find_info_obj(gm_frontend.GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_IN)
+					|| (e.find_info_obj(gm_frontend.GMUSAGE_PROPERTY) == gm_prop_usage.GMUSAGE_INOUT)) {
 				/*
 				 * printf("in/inout -> %s :%d\n", e->getId()->get_genname(),
 				 * e->find_info_int(GMUSAGE_PROPERTY) );

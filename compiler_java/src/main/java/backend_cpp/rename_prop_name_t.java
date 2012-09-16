@@ -15,9 +15,9 @@ class rename_prop_name_t extends gm_apply {
 		set_for_symtab(true);
 	}
 
-	public final boolean apply(gm_symtab_entry e, int symtab_type) {
+	public final boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
 
-		if (symtab_type != symtab_types.GM_SYMTAB_FIELD.getValue())
+		if (symtab_type != symtab_types.GM_SYMTAB_FIELD)
 			return true;
 
 		ast_id id = e.getId();

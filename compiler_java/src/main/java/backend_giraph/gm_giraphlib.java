@@ -865,10 +865,10 @@ public class gm_giraphlib extends gm_gpslib {
 				ast_assign a = (ast_assign) s;
 				assert !a.is_target_scalar();
 				gm_symtab_entry e = a.get_lhs_field().get_second().getSymInfo();
-				Integer i = (Integer) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
-				assert i != null;
+				gm_gps_edge_access access = (gm_gps_edge_access) fe.find_info_map_value(GPS_MAP_EDGE_PROP_ACCESS, e);
+				assert access != null;
 
-				if (i == gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_SENT_WRITE.getValue()) {
+				if (access == gm_gps_edge_access.GPS_ENUM_EDGE_VALUE_SENT_WRITE) {
 					sents_after_message.addLast(s);
 				} else {
 					get_main().generate_sent(s);

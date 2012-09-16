@@ -52,11 +52,11 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	@Override
 	public final boolean apply(ast_expr e) {
 		ast_sent s = get_current_sent();
-		if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN.getValue())
+		if (s.find_info_obj(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN)
 			return true;
 
-		if ((e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT.getValue())
-				|| (e.find_info_int(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_EDGE.getValue())) {
+		if ((e.find_info_obj(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT)
+				|| (e.find_info_obj(GPS_INT_EXPR_SCOPE) == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_EDGE)) {
 			// (current traversal engine does not support pruning, so should
 			// look at parents
 			//

@@ -37,7 +37,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply {
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
 			ast_assign a = (ast_assign) s;
-			int context = s.find_info_int(GPS_INT_SYNTAX_CONTEXT);
+			gm_gps_new_scope_analysis context = (gm_gps_new_scope_analysis) s.find_info_obj(GPS_INT_SYNTAX_CONTEXT);
 			gm_gps_new_scope_analysis scope;
 			if (a.is_target_scalar()) {
 				scope = get_scope_from_id(a.get_lhs_scala().getSymInfo());
@@ -59,7 +59,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply {
 			}
 
 			// writing to out-scope inside inner-loop.
-			if ((context == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN.getValue()) && (scope == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT)) {
+			if ((context == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN) && (scope == gm_gps_new_scope_analysis.GPS_NEW_SCOPE_OUT)) {
 				gm_error.gm_backend_error(gm_errors_and_warnings.GM_ERROR_GPS_PULL_SYNTAX, s.get_line(), s.get_col());
 				_error = true;
 			}
@@ -77,7 +77,7 @@ public class gm_gps_new_check_pull_syntax_t extends gm_apply {
 	}
 
 	private gm_gps_new_scope_analysis get_scope_from_id(gm_symtab_entry e) {
-		return gm_gps_new_scope_analysis.forValue(e.find_info_int(GPS_INT_SYMBOL_SCOPE));
+		return (gm_gps_new_scope_analysis) e.find_info_obj(GPS_INT_SYMBOL_SCOPE);
 	}
 
 	private gm_gps_new_scope_analysis get_scope_from_driver(gm_symtab_entry e) {

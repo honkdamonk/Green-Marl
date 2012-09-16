@@ -439,8 +439,8 @@ sent_reduce_assignment returns [ast_node value]
         x=reduce_eq
         y=rhs
         z=optional_bind
-        { value = FE.GM_reduce_assign(w, y, z, x);
-          FE.GM_set_lineinfo(value, 0, 0); } /* TODO: should be x.getLine(), x.getCharPositionInLine() */
+        { value = FE.GM_reduce_assign(w, y, z, x.value);
+          FE.GM_set_lineinfo(value, x.line, x.col); }
     |   w=lhs
         T_PLUSPLUS
         z=optional_bind
@@ -465,8 +465,8 @@ sent_argminmax_assignment returns [ast_node value]
     x=minmax_eq
     y=rhs_list2
     z=optional_bind
-    { value = FE.GM_argminmax_assign(w.p1, y.p1, z, x, w.l_list, y.e_list);
-      FE.GM_set_lineinfo(value, 0, 0); } /* TODO: should be x.getLine(), x.getCharPositionInLine() */
+    { value = FE.GM_argminmax_assign(w.p1, y.p1, z, x.value, w.l_list, y.e_list);
+      FE.GM_set_lineinfo(value, x.line, x.col); }
     ;
 
 
@@ -478,27 +478,43 @@ optional_bind returns [ast_node value]
     ;
 
 
-reduce_eq returns [gm_reduce value]
+reduce_eq returns [gm_reduce value, int line, int col]
     :   T_PLUSEQ
-    	{ value = gm_reduce.GMREDUCE_PLUS; }
+    	{ retval.value = gm_reduce.GMREDUCE_PLUS;
+    	  retval.line = $T_PLUSEQ.getLine();
+    	  retval.col = $T_PLUSEQ.getCharPositionInLine(); }
     |   T_MULTEQ
-    	{ value = gm_reduce.GMREDUCE_MULT; }
+    	{ retval.value = gm_reduce.GMREDUCE_MULT;
+    	  retval.line = $T_MULTEQ.getLine();
+    	  retval.col = $T_MULTEQ.getCharPositionInLine(); }
     |   T_MINEQ
-    	{ value = gm_reduce.GMREDUCE_MIN; }
+    	{ retval.value = gm_reduce.GMREDUCE_MIN;
+    	  retval.line = $T_MINEQ.getLine();
+    	  retval.col = $T_MINEQ.getCharPositionInLine(); }
     |   T_MAXEQ
-    	{ value = gm_reduce.GMREDUCE_MAX; }
+    	{ retval.value = gm_reduce.GMREDUCE_MAX;
+    	  retval.line = $T_MAXEQ.getLine();
+    	  retval.col = $T_MAXEQ.getCharPositionInLine(); }
     |   T_ANDEQ
-    	{ value = gm_reduce.GMREDUCE_AND; }
+    	{ retval.value = gm_reduce.GMREDUCE_AND;
+    	  retval.line = $T_ANDEQ.getLine();
+    	  retval.col = $T_ANDEQ.getCharPositionInLine(); }
     |   T_OREQ
-    	{ value = gm_reduce.GMREDUCE_OR; }
+    	{ retval.value = gm_reduce.GMREDUCE_OR;
+    	  retval.line = $T_OREQ.getLine();
+    	  retval.col = $T_OREQ.getCharPositionInLine(); }
     ;
 
 
-minmax_eq returns [gm_reduce value]
+minmax_eq returns [gm_reduce value, int line, int col]
     :   T_MINEQ
-    	{ value = gm_reduce.GMREDUCE_MIN; }
+    	{ retval.value = gm_reduce.GMREDUCE_MIN;
+    	  retval.line = $T_MINEQ.getLine();
+    	  retval.col = $T_MINEQ.getCharPositionInLine(); }
     |   T_MAXEQ
-    	{ value = gm_reduce.GMREDUCE_MAX; }
+    	{ retval.value = gm_reduce.GMREDUCE_MAX;
+    	  retval.line = $T_MAXEQ.getLine();
+    	  retval.col = $T_MAXEQ.getCharPositionInLine(); }
     ;
 
 
@@ -556,13 +572,13 @@ not_left_recursive_expr returns [ast_node value]
         '(' i1=id ':' i2=id '.' it=iterator1 ')'
         ( '(' e1=expr ')' )?
         '{' e2=expr '}'
-        { value = FE.GM_expr_reduceop(rop, i1, i2, it.i1, e2, e1, it.p1, 0, 0); } /* TODO: should be rop.getLine(), rop.getCharPositionInLine() */
-    |   rop=reduce_op2
+        { value = FE.GM_expr_reduceop(rop.value, i1, i2, it.i1, e2, e1, it.p1, rop.line, rop.col); }
+    |   rop2=reduce_op2
         '(' i1=id ':' i2=id '.' it=iterator1 ')'
         ( '(' e1=expr ')' )?
-        { value = FE.GM_expr_reduceop(rop, i1, i2, it.i1, 
-          FE.GM_expr_ival(1, 0, 0), /* TODO: should be rop.getLine(), rop.getCharPositionInLine() */
-          e1, it.p1, 0, 0); } /* TODO: should be rop.getLine(), rop.getCharPositionInLine() */
+        { value = FE.GM_expr_reduceop(rop.value, i1, i2, it.i1,
+          FE.GM_expr_ival(1, rop.line, rop.col),
+          e1, it.p1, rop.line, rop.col); }
     |   b=BOOL_VAL
     	{ value = FE.GM_expr_bval(b.getText().equals("True") ? true : false, b.getLine(), b.getCharPositionInLine()); }
     |   i=INT_NUM
@@ -570,7 +586,7 @@ not_left_recursive_expr returns [ast_node value]
     |   f=FLOAT_NUM
     	{ value = FE.GM_expr_fval(Double.parseDouble(f.getText()), f.getLine(), f.getCharPositionInLine()); }
     |   nf=inf
-    	{ value = FE.GM_expr_inf(nf, 0, 0); } /* TODO: should be inf.getLine(), inf.getCharPositionInLine() */
+    	{ value = FE.GM_expr_inf(nf.value, nf.line, nf.col); }
     |   nil=T_NIL
     	{ value = FE.GM_expr_nil(nil.getLine(), nil.getCharPositionInLine()); }
     |   s=scala
@@ -582,7 +598,7 @@ not_left_recursive_expr returns [ast_node value]
     |   eu=expr_user
     	{ value = eu; }
     |	ma=map_access
-    	{ value = FE.GM_expr_map_access(ma, 0, 0); } /* TODO: should be ma.getLine(), ma.getCharPositionInLine() */
+    	{ value = FE.GM_expr_map_access(ma, 0, 0); } /* TODO: should be ma.line, ma.col */
     ;
 
 
@@ -705,35 +721,56 @@ numeric_expr returns [ast_node value]
     ;
 
 
-reduce_op returns [gm_reduce value]
+reduce_op returns [gm_reduce value, int line, int col]
     :   T_SUM
-    	{ value = gm_reduce.GMREDUCE_PLUS; }
+    	{ retval.value = gm_reduce.GMREDUCE_PLUS;
+    	  retval.line = $T_SUM.getLine();
+    	  retval.col = $T_SUM.getCharPositionInLine(); }
     |   T_PRODUCT
-    	{ value = gm_reduce.GMREDUCE_MULT; }
+    	{ retval.value = gm_reduce.GMREDUCE_MULT;
+    	  retval.line = $T_PRODUCT.getLine();
+    	  retval.col = $T_PRODUCT.getCharPositionInLine(); }
     |   T_MIN
-    	{ value = gm_reduce.GMREDUCE_MIN; }
+    	{ retval.value = gm_reduce.GMREDUCE_MIN;
+    	  retval.line = $T_MIN.getLine();
+    	  retval.col = $T_MIN.getCharPositionInLine(); }
     |   T_MAX
-    	{ value = gm_reduce.GMREDUCE_MAX; }
+    	{ retval.value = gm_reduce.GMREDUCE_MAX;
+    	  retval.line = $T_MAX.getLine();
+    	  retval.col = $T_MAX.getCharPositionInLine(); }
     |   T_EXIST
-    	{ value = gm_reduce.GMREDUCE_OR; }
+    	{ retval.value = gm_reduce.GMREDUCE_OR;
+    	  retval.line = $T_EXIST.getLine();
+    	  retval.col = $T_EXIST.getCharPositionInLine(); }
     |   T_ALL
-    	{ value = gm_reduce.GMREDUCE_AND; }
+    	{ retval.value = gm_reduce.GMREDUCE_AND;
+    	  retval.line = $T_ALL.getLine();
+    	  retval.col = $T_ALL.getCharPositionInLine(); }
     |   T_AVG
-    	{ value = gm_reduce.GMREDUCE_AVG; /* syntactic sugar*/ }
+    	 /* syntactic sugar*/
+    	{ retval.value = gm_reduce.GMREDUCE_AVG;
+    	  retval.line = $T_AVG.getLine();
+    	  retval.col = $T_AVG.getCharPositionInLine(); }
     ;
 
 
-reduce_op2 returns [gm_reduce value]
+reduce_op2 returns [gm_reduce value, int line, int col]
     :   T_COUNT
-    	{ value = gm_reduce.GMREDUCE_PLUS; }
+    	{ retval.value = gm_reduce.GMREDUCE_PLUS;
+    	  retval.line = $T_COUNT.getLine();
+    	  retval.col = $T_COUNT.getCharPositionInLine(); }
     ;
 
 
-inf returns [boolean value]
+inf returns [boolean value, int line, int col]
     :   T_P_INF
-    	{ value = true; }
+    	{ retval.value = true;
+    	  retval.line = $T_P_INF.getLine();
+    	  retval.col = $T_P_INF.getCharPositionInLine(); }
     |   T_M_INF
-    	{ value = false; }
+    	{ retval.value = false;
+    	  retval.line = $T_M_INF.getLine();
+    	  retval.col = $T_M_INF.getCharPositionInLine(); }
     ;
 
 

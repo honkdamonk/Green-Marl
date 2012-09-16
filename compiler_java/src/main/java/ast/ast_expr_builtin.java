@@ -173,7 +173,7 @@ public class ast_expr_builtin extends ast_expr {
 		assert d.get_orgname() != null;
 		E.orgname = d.get_orgname();
 		if (t != null) {
-			E.args = t.LIST; // shallow copy LIST
+			E.args = new LinkedList<ast_expr>(t.LIST); // shallow copy LIST
 			// but not set 'up' pointer.
 			for (ast_expr e : E.args)
 				e.set_parent(E);

@@ -30,11 +30,11 @@ public class nop_reduce_scalar extends ast_nop {
 	public void set_symbols(List<gm_symtab_entry> O, List<gm_symtab_entry> N, List<gm_reduce> R, List<LinkedList<gm_symtab_entry>> O_S,
 			List<LinkedList<gm_symtab_entry>> N_S) {
 		// shallow copy the whole list
-		old_s = O;
-		new_s = N;
-		reduce_op = R;
-		old_supple = O_S;
-		new_supple = N_S;
+		old_s = new LinkedList<gm_symtab_entry>(O);
+		new_s = new LinkedList<gm_symtab_entry>(N);
+		reduce_op = new LinkedList<gm_reduce>(R);
+		old_supple = new LinkedList<LinkedList<gm_symtab_entry>>(O_S);
+		new_supple = new LinkedList<LinkedList<gm_symtab_entry>>(N_S);
 	}
 
 	public boolean do_rw_analysis() {

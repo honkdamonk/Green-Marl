@@ -33,11 +33,18 @@ gm_graph::gm_graph() {
     _frozen = false;
     _directed = true;
     _semi_sorted = false;
-
 }
 
 gm_graph::~gm_graph() {
     delete_frozen_graph();
+}
+
+bool gm_graph::has_edge_to(node_t source, node_t to) {
+    edge_t current = begin[source];
+    edge_t end = begin[source + 1];
+    while(current < end)
+        if(node_idx[current++] == to) return true;
+    return false;
 }
 
 void gm_graph::freeze() {
@@ -225,11 +232,11 @@ void gm_graph::make_reverse_edges() {
         for (edge_t e = begin[i]; e < begin[i + 1]; e++) {
             node_t dest = node_idx[e];
             edge_t r_edge_idx = r_begin[dest] + loc[e];
-            #if GM_GRAPH_NUMA_OPT
+#if GM_GRAPH_NUMA_OPT
             temp_r_node_idx[r_edge_idx] = i;
-            #else
+#else
             r_node_idx[r_edge_idx] = i;
-            #endif
+#endif
         }
     }
 #if GM_GRAPH_NUMA_OPT
@@ -253,7 +260,7 @@ void gm_graph::make_reverse_edges() {
     delete[] loc;
 }
 
-inline static void swap(edge_t idx1, edge_t idx2, node_t* dest_array, edge_t* aux_array) {
+static void swap(edge_t idx1, edge_t idx2, node_t* dest_array, edge_t* aux_array) {
     if (idx1 == idx2) return;
 
     node_t T = dest_array[idx1];
@@ -513,18 +520,26 @@ bool gm_graph::load_binary(char* filename) {
         goto error_return;
     }
 
+    uint32_t saved_node_t_size;
+    uint32_t saved_edge_t_size;
     i = fread(&key, 4, 1, f); // index size (4B)
-    key = ntohl(key);
-    if (key != sizeof(node_t)) {
-        fprintf(stderr, "node_t size mismatch:%d (expect %ld)\n", key, sizeof(node_t));
+    saved_node_t_size = ntohl(key);
+    if (saved_node_t_size > sizeof(node_t)) {
+        fprintf(stderr, "node_t size mismatch:%d (expect %ld), please re-generate the graph\n", key, sizeof(node_t));
         goto error_return;
     }
 
     i = fread(&key, 4, 1, f); // index size (4B)
-    key = ntohl(key);
-    if (key != sizeof(edge_t)) {
-        fprintf(stderr, "edge_t size mismatch:%d (expect %ld)\n", key, sizeof(edge_t));
+    saved_edge_t_size = ntohl(key);
+    if (saved_edge_t_size > sizeof(edge_t)) {
+        fprintf(stderr, "edge_t size mismatch:%d (expect %ld), please re-generate the graph\n", key, sizeof(edge_t));
         goto error_return;
+    }
+    if ((saved_node_t_size != 4) && (saved_node_t_size != 8)) {
+        fprintf(stderr, "unexpected node_t size in the file:%d(B)\n", saved_node_t_size);
+    }
+    if ((saved_edge_t_size != 4) && (saved_edge_t_size != 8)) {
+        fprintf(stderr, "unexpected node_t size in the file:%d(B)\n", saved_node_t_size);
     }
 
     //---------------------------------------------
@@ -532,19 +547,23 @@ bool gm_graph::load_binary(char* filename) {
     //---------------------------------------------
     node_t N;
     edge_t M;
-    i = fread(&N, sizeof(node_t), 1, f);
-    N = ntohnode(N);
+    i = fread(&N, saved_node_t_size, 1, f);
+#define BITS_TO_NODE(X) ((saved_node_t_size == 4) ? n32tohnode(X) : n64tohnode(X))
+#define BITS_TO_EDGE(X) ((saved_edge_t_size == 4) ? n32tohedge(X) : n64tohedge(X))
+
+    N = BITS_TO_NODE(N);
     if (i != 1) {
         fprintf(stderr, "Error reading numNodes from file \n");
         goto error_return;
     }
-    i = fread(&M, sizeof(edge_t), 1, f);
-    M = ntohedge(M);
+    i = fread(&M, saved_edge_t_size, 1, f);
+    M = BITS_TO_EDGE(M);
     if (i != 1) {
         fprintf(stderr, "Error reading numEdges from file \n");
         goto error_return;
     }
 
+    printf("N = %ld, M = %ld\n", N,M);
     allocate_memory_for_frozen_graph(N, M);
 
 #if GM_GRAPH_NUMA_OPT 
@@ -554,8 +573,8 @@ bool gm_graph::load_binary(char* filename) {
 
     for (node_t i = 0; i < N + 1; i++) {
         edge_t key;
-        int k = fread(&key, sizeof(edge_t), 1, f);
-        key = ntohedge(key);
+        int k = fread(&key, saved_edge_t_size, 1, f);
+        key = BITS_TO_EDGE(key);
         if ((k != 1)) {
             fprintf(stderr, "Error reading node begin array\n");
             goto error_return;
@@ -579,8 +598,8 @@ bool gm_graph::load_binary(char* filename) {
 
     for (edge_t i = 0; i < M; i++) {
         node_t key;
-        int k = fread(&key, sizeof(node_t), 1, f);
-        key = ntohnode(key);
+        int k = fread(&key, saved_node_t_size, 1, f);
+        key = BITS_TO_NODE(key);
         if ((k != 1)) {
             fprintf(stderr, "Error reading edge-end array\n");
             goto error_return;
@@ -738,9 +757,108 @@ void gm_graph_check_if_size_is_correct(int node_size, int edge_size)
         printf("Current nodesize in the applicaiton is %d, while the library expects %d. Please rebuild the library\n",
                 edge_size, (int)sizeof(edge_t));
     }
-    assert (node_size == sizeof(node_t)); 
+    assert (node_size == sizeof(node_t));
     assert (edge_size == sizeof(edge_t));
-        
+
 }
 
 int GM_SIZE_CHECK_VAR;
+
+#ifdef HDFS
+#include <hdfs.h>
+#define HDFS_NAMENODE "namenode.ib.bunch"
+#define HDFS_PORT 8020
+
+bool gm_graph::load_binary_hdfs(char* filename) {
+    clear_graph();
+    int32_t key;
+    int i;
+    hdfsFS fs;
+    hdfsFile f;
+
+    fs = hdfsConnect(HDFS_NAMENODE, HDFS_PORT);
+    if(fs == NULL) {
+        fprintf(stderr, "Failed to connect to hdfs.\n");
+        goto error_return_noclose;
+    }
+
+    i = hdfsExists(fs, filename);
+    if (i != 0) {
+        fprintf(stderr, "Failed to validate existence of %s\n", filename);
+        goto error_return_noclose;
+    }
+
+    f = hdfsOpenFile(fs, filename, O_RDONLY, 0, 0, 0);
+    if (f == NULL) {
+        fprintf(stderr, "Failed to open %s for reading.\n", filename);
+        goto error_return_noclose;
+    }
+
+    // write it 4B wise?
+    i = hdfsRead(fs, f, &key, 4); //TODO should this be 4 or 1?
+    if ((i != 4) || (key != MAGIC_WORD)) {
+        fprintf(stderr, "wrong file format, KEY mismatch: %d, %x\n", i, key);
+        goto error_return;
+    }
+
+    i = hdfsRead(fs, f, &key, 4); // index size (4B)
+    if (key != sizeof(node_t)) {
+        fprintf(stderr, "node_t size mismatch:%d (expect %ld)\n", key, sizeof(node_t));
+        goto error_return;
+    }
+
+    i = hdfsRead(fs, f, &key, 4); // index size (4B)
+    if (key != sizeof(edge_t)) {
+        fprintf(stderr, "edge_t size mismatch:%d (expect %ld)\n", key, sizeof(edge_t));
+        goto error_return;
+    }
+
+    //---------------------------------------------
+    // need back, numNodes, numEdges
+    //---------------------------------------------
+    node_t N;
+    edge_t M;
+    i = hdfsRead(fs, f, &N, sizeof(node_t));
+    if (i != sizeof(node_t)) {
+        fprintf(stderr, "Error reading numNodes from file \n");
+        goto error_return;
+    }
+    i = hdfsRead(fs, f, &M, sizeof(edge_t));
+    if (i != sizeof(edge_t)) {
+        fprintf(stderr, "Error reading numEdges from file \n");
+        goto error_return;
+    }
+
+    allocate_memory_for_frozen_graph(N, M);
+
+    for (node_t i = 0; i < N + 1; i++) {
+        edge_t key;
+        int k = hdfsRead(fs, f, &key, sizeof(edge_t));
+        if ((k != sizeof(edge_t))) {
+            fprintf(stderr, "Error reading node begin array\n");
+            goto error_return;
+        }
+        this->begin[i] = key;
+    }
+
+    for (edge_t i = 0; i < M; i++) {
+        node_t key;
+        int k = hdfsRead(fs, f, &key, sizeof(node_t));
+        if ((k != sizeof(node_t))) {
+            fprintf(stderr, "Error reading edge-end array\n");
+            goto error_return;
+        }
+        this->node_idx[i] = key;
+    }
+
+    hdfsCloseFile(fs, f);
+    _frozen = true;
+    return true;
+
+    error_return: hdfsCloseFile(fs, f);
+    error_return_noclose: clear_graph();
+    return false;
+}
+
+#endif  // HDFS
+

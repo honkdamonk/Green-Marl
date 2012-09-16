@@ -6,6 +6,7 @@ public class ast_extra_info {
 	public int ival = 0;
 	public boolean bval = false;
 	public float fval = 0f;
+	public Object objval = null;
 	public Object ptr1 = null;
 	public Object ptr2 = null;
 
@@ -24,6 +25,10 @@ public class ast_extra_info {
 		fval = f;
 	}
 
+	public ast_extra_info(Object obj) {
+		objval = obj;
+	}
+	
 	public ast_extra_info(Object p1, Object p2) {
 		ptr1 = p1;
 		ptr2 = p2;

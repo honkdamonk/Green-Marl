@@ -235,6 +235,14 @@ public abstract class ast_node {
 		else
 			return info.fval;
 	}
+	
+	public Object find_info_obj(String id) {
+		ast_extra_info info = find_info(id);
+		if (info == null)
+			return null;
+		else
+			return info.objval;
+	}
 
 	public int find_info_int(String id) {
 		ast_extra_info info = find_info(id);
@@ -296,6 +304,14 @@ public abstract class ast_node {
 			add_info(id, new ast_extra_info(f));
 		else
 			e.fval = f;
+	}
+	
+	public void add_info_obj(String id, Object obj) {
+		ast_extra_info e = find_info(id);
+		if (e == null)
+			add_info(id, new ast_extra_info(obj));
+		else
+			e.objval = obj;
 	}
 
 	public void add_info_string(String id, String str) {

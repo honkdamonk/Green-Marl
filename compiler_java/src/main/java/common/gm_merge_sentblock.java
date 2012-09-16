@@ -52,8 +52,9 @@ public class gm_merge_sentblock {
 			anchor = s;
 		}
 
-		LinkedList<ast_sent> Qs = Q.get_sents(); // work on a copy
-		for (ast_sent s : Qs) {
+		LinkedList<ast_sent> Qs = new LinkedList<ast_sent>(Q.get_sents()); // work on a copy
+		for (int i = 0; i < Qs.size(); i++) {
+			ast_sent s = Qs.get(i);
 			gm_transform_helper.gm_ripoff_sent(s);
 			if (s.get_nodetype() == ast_node_type.AST_VARDECL) {
 				if (anchor == null)

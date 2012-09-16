@@ -5,8 +5,8 @@ import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
 
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_foreach;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 import common.gm_apply;
@@ -35,9 +35,9 @@ import common.gm_transform_helper;
 // }
 //-----------------------------------------------------------------
 public class gps_rewrite_rhs_preprocessing_t extends gm_apply {
-	
-	private LinkedList<ast_foreach> inner_loops = new LinkedList<ast_foreach>();
-	
+
+	private final LinkedList<ast_foreach> inner_loops = new LinkedList<ast_foreach>();
+
 	public gps_rewrite_rhs_preprocessing_t() {
 		set_for_sent(true);
 	}

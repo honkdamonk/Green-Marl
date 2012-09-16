@@ -44,12 +44,12 @@ import common.gm_main;
 //-----------------------------------------------------------------
 // interface for graph library Layer
 //-----------------------------------------------------------------
-
 // Nothing happens in this class
 public class gm_gpslib extends gm_graph_library {
+	
+	protected gm_gps_gen main = null;
 
 	public gm_gpslib() {
-		main = null;
 	}
 
 	public gm_gpslib(gm_gps_gen gen) {
@@ -595,8 +595,6 @@ public class gm_gpslib extends gm_graph_library {
 	public boolean is_edge_type_int() {
 		return true;
 	}
-
-	protected gm_gps_gen main;
 
 	/* TODO Inserted from gm_gps_lib.java, clean up */
 
@@ -1348,8 +1346,7 @@ public class gm_gpslib extends gm_graph_library {
 
 	}
 
-	// -----------------------------------------------------------------------------
-
+	@Override
 	public boolean do_local_optimize() {
 		String[] NAMES = { "[(nothing)]" };
 		final int COUNT = NAMES.length;

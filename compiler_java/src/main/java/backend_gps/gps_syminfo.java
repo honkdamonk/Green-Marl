@@ -7,23 +7,30 @@ import java.util.ArrayList;
 import ast.ast_extra_info;
 
 public class gps_syminfo extends ast_extra_info {
-	public gps_syminfo(boolean sc) {
-		this._scalar = sc;
-		this._is_arg = false;
-		this._used_in_multiple_BB = false;
-		this.last_BB = -1;
-		this.used_as_rhs = false;
-		this.used_as_lhs = false;
-		this.used_as_reduce = false;
-		this.used_in_vertex = false;
-		this.used_in_master = false;
-		this.used_in_receiver = false;
-		this.reduce_op_type = gm_reduce.GMREDUCE_NULL;
-		this.start_byte = 0;
-		this.scope = gm_gps_scope.GPS_SCOPE_GLOBAL;
-	}
+	
+	private boolean _used_in_multiple_BB = false;
+	private int last_BB = -1;
+	private boolean _scalar;
+	private boolean _is_arg = false;
+	private final ArrayList<Integer> used_BB = new ArrayList<Integer>();
+	private final ArrayList<gm_gps_symbol_usage> used_type = new ArrayList<gm_gps_symbol_usage>();
+	private final ArrayList<gm_gps_symbol_usage_location> used_context = new ArrayList<gm_gps_symbol_usage_location>();
+	private gm_gps_scope scope = gm_gps_scope.GPS_SCOPE_GLOBAL;
 
-	public void dispose() {
+	private boolean used_as_rhs = false;
+	private boolean used_as_lhs = false;
+	private boolean used_as_reduce = false;
+
+	private boolean used_in_vertex = false;
+	private boolean used_in_master = false;
+	// bool used_in_sender;
+	private boolean used_in_receiver = false;
+
+	private gm_reduce reduce_op_type = gm_reduce.GMREDUCE_NULL;
+	private int start_byte = 0;
+	
+	public gps_syminfo(boolean sc) {
+		_scalar = sc;
 	}
 
 	public final void set_is_argument(boolean b) {
@@ -155,24 +162,4 @@ public class gps_syminfo extends ast_extra_info {
 		return scope == gm_gps_scope.GPS_SCOPE_INNER;
 	}
 
-	private boolean _used_in_multiple_BB;
-	private int last_BB;
-	private boolean _scalar;
-	private boolean _is_arg;
-	private ArrayList<Integer> used_BB = new ArrayList<Integer>();
-	private ArrayList<gm_gps_symbol_usage> used_type = new ArrayList<gm_gps_symbol_usage>();
-	private ArrayList<gm_gps_symbol_usage_location> used_context = new ArrayList<gm_gps_symbol_usage_location>();
-	private gm_gps_scope scope; // GPS_SCOPE_XX
-
-	private boolean used_as_rhs;
-	private boolean used_as_lhs;
-	private boolean used_as_reduce;
-
-	private boolean used_in_vertex;
-	private boolean used_in_master;
-	// bool used_in_sender;
-	private boolean used_in_receiver;
-
-	private gm_reduce reduce_op_type;
-	private int start_byte;
 }

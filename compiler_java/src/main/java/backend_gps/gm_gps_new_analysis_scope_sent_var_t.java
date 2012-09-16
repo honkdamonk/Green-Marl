@@ -7,20 +7,20 @@ import static backend_gps.GPSConstants.GPS_INT_SYMBOL_SCOPE;
 import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import inc.gm_type;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_extra_info;
 import ast.ast_foreach;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_sent;
 
 import common.gm_apply;
 import common.gm_method_id;
 
-import frontend.symtab_types;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 
 public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 
@@ -34,6 +34,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 		set_for_symtab(true);
 	}
 
+	@Override
 	public final boolean apply(gm_symtab_entry e, symtab_types symtab_type) {
 		e.add_info_int(GPS_INT_SYMBOL_SCOPE, current_scope.getValue());
 
@@ -60,6 +61,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 		return true;
 	}
 
+	@Override
 	public final boolean apply(ast_sent s) {
 		s.add_info_int(GPS_INT_SYNTAX_CONTEXT, current_scope.getValue());
 
@@ -103,6 +105,7 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 		return true;
 	}
 
+	@Override
 	public final boolean apply2(ast_sent s) {
 		if (s == outer_loop) {
 			current_scope = gm_gps_new_scope_analysis.GPS_NEW_SCOPE_GLOBAL;
@@ -123,16 +126,16 @@ public class gm_gps_new_analysis_scope_sent_var_t extends gm_apply {
 	// Int x2;
 	//
 	// Foreach(s: G.Nodes) { // outer loop
-	//   Int y;
-	//   Int y2;
+	// Int y;
+	// Int y2;
 	//
-	//   If (s.A + x > 0) // (s.A + x > 0) ==> EXPR_OUT
-	//     x2 += s.B; // assignment: PREFIX_COND_OUT, lhs: GLOBAL, rhs: OUT,
+	// If (s.A + x > 0) // (s.A + x > 0) ==> EXPR_OUT
+	// x2 += s.B; // assignment: PREFIX_COND_OUT, lhs: GLOBAL, rhs: OUT,
 	//
-	//   Foreach(t: s.Nbrs) { // inner loop
-	//     Int z;
-	//     Int z2;
-	//   }
+	// Foreach(t: s.Nbrs) { // inner loop
+	// Int z;
+	// Int z2;
+	// }
 	// }
 	// -----------------------------------------------------------------------------------------------------------------------
 	public static void add_syminfo_struct(gm_symtab_entry sym, boolean is_scalar, gm_gps_scope scope) {

@@ -19,6 +19,7 @@ public class gm_gps_opt_merge_ebb_intra_loop extends gm_compile_step {
 		set_description("Merging Intra-Loop EBBs");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		if (!gm_main.OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_MERGE_BB_INTRA))
 			return;
@@ -207,12 +208,6 @@ public class gm_gps_opt_merge_ebb_intra_loop extends gm_compile_step {
 			org_exit.update_entry_from(s_n, TAIL2);
 
 		}
-
-		// delete states
-		if (p_1 != null)
-			p_1.dispose();
-		if (s_1 != null)
-			s_1.dispose();
 	}
 	
 	private static void find_linear_while_segments(gm_gps_basic_block entry, LinkedList<gps_intra_merge_candidate_t> L) {

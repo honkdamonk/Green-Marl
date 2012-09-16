@@ -4,20 +4,20 @@ import inc.gm_type;
 
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_expr_builtin_field;
 import ast.ast_field;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_typedecl;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 import common.gm_main;
 
 //----------------------------------------------------------------

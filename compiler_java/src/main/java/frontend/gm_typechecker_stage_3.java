@@ -13,15 +13,14 @@ import static inc.gm_type.GMTYPE_MAP;
 import static inc.gm_type.GMTYPE_NORDER;
 import static inc.gm_type.GMTYPE_NSEQ;
 import static inc.gm_type.GMTYPE_NSET;
-import inc.gm_type;
 import inc.gm_ops;
 import inc.gm_reduce;
+import inc.gm_type;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -30,6 +29,7 @@ import ast.ast_expr_reduce;
 import ast.ast_id;
 import ast.ast_mapaccess;
 import ast.ast_maptypedecl;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_typedecl;
 

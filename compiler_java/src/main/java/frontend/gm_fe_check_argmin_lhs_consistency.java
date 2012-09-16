@@ -2,15 +2,15 @@ package frontend;
 
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 
 public class gm_fe_check_argmin_lhs_consistency extends gm_apply {
 

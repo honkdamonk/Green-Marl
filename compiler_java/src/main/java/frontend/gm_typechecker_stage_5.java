@@ -6,15 +6,14 @@ import static common.gm_errors_and_warnings.GM_ERROR_TARGET_MISMATCH;
 import static inc.gm_type.GMTYPE_NORDER;
 import static inc.gm_type.GMTYPE_NSEQ;
 import static inc.gm_type.GMTYPE_NSET;
-import inc.gm_type;
 import inc.gm_reduce;
+import inc.gm_type;
 
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -26,14 +25,15 @@ import ast.ast_if;
 import ast.ast_mapaccess;
 import ast.ast_maptypedecl;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_return;
 import ast.ast_sent;
 import ast.ast_typedecl;
 import ast.ast_while;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 
 //----------------------------------------------------------------
 // Type-check Step 5: 
@@ -43,7 +43,6 @@ import common.gm_error;
 //       - LHS should either have same driver (e.g <n.A; n.B> min= <... ; ... > )
 //       - or should be all scalar            (e.g <x; y, z>  max= <... ; ... > )
 //----------------------------------------------------------------
-
 // resolve type of every sub-expression
 public class gm_typechecker_stage_5 extends gm_apply {
 

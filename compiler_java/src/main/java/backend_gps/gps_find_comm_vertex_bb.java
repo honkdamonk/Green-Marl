@@ -25,7 +25,7 @@ import ast.ast_sentblock;
 public class gps_find_comm_vertex_bb extends gps_apply_bb_ast {
 
 	private gm_gps_beinfo gen;
-	private HashSet<gm_gps_basic_block> target_bb = new HashSet<gm_gps_basic_block>();
+	private final HashSet<gm_gps_basic_block> target_bb = new HashSet<gm_gps_basic_block>();
 	private ast_foreach current_outer_loop = null;
 
 	public gps_find_comm_vertex_bb(gm_gps_beinfo g) {

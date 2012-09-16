@@ -10,14 +10,14 @@ import static ast.ast_node_type.AST_IDLIST;
 import static ast.ast_node_type.AST_MAPACCESS;
 import static ast.ast_node_type.AST_SENTBLOCK;
 import static ast.ast_node_type.AST_TYPEDECL;
-import inc.gm_type;
-import inc.gm_ops;
-import inc.gm_reduce;
 import inc.expr_list;
 import inc.gm_assignment;
 import inc.gm_backend_info;
 import inc.gm_compile_step;
+import inc.gm_ops;
 import inc.gm_procinfo;
+import inc.gm_reduce;
+import inc.gm_type;
 import inc.lhs_list;
 
 import java.util.ArrayList;
@@ -469,8 +469,8 @@ public class gm_frontend {
 		return n;
 	}
 
-	public static ast_node GM_expr_reduceop(gm_reduce op, ast_node iter, ast_node src, gm_type iter_op, ast_node body, ast_node filter, ast_node src2,
-			int l, int c) {
+	public static ast_node GM_expr_reduceop(gm_reduce op, ast_node iter, ast_node src, gm_type iter_op, ast_node body, ast_node filter, ast_node src2, int l,
+			int c) {
 		assert iter.get_nodetype() == AST_ID;
 		assert src.get_nodetype() == AST_ID;
 		assert body.is_expr();

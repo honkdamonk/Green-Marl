@@ -1,17 +1,17 @@
 package backend_gps;
 
-import inc.gm_type;
 import inc.gm_ops;
+import inc.gm_type;
 
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_if;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
@@ -25,11 +25,13 @@ import common.gm_transform_helper;
 //-----------------------------------------------------
 
 public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
+	
+	private final LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
+	private int depth = 0;
 
 	public gm_gps_opt_remove_master_random_write_t() {
 		set_for_sent(true);
 		set_separate_post_apply(true);
-		depth = 0;
 	}
 
 	// pre
@@ -66,8 +68,8 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 			String name = gm_main.FE.voca_temp_name_and_add("_t", null, true);
 			ast_id id = ast_id.new_id(name, a.get_line(), a.get_col());
 			ast_sentblock foreach_sb = ast_sentblock.new_sentblock();
-			ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(id, a.get_lhs_field().get_first().getTypeInfo()
-					.get_target_graph_id().copy(true), foreach_sb, gm_type.GMTYPE_NODEITER_ALL);
+			ast_foreach foreach_out = gm_new_sents_after_tc.gm_new_foreach_after_tc(id,
+					a.get_lhs_field().get_first().getTypeInfo().get_target_graph_id().copy(true), foreach_sb, gm_type.GMTYPE_NODEITER_ALL);
 			gm_transform_helper.gm_add_sent_after(a, foreach_out);
 			name = null;
 			gm_transform_helper.gm_ripoff_sent(a);
@@ -83,6 +85,4 @@ public class gm_gps_opt_remove_master_random_write_t extends gm_apply {
 		}
 	}
 
-	private LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
-	private int depth;
 }

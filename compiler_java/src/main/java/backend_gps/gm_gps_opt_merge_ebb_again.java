@@ -21,6 +21,7 @@ public class gm_gps_opt_merge_ebb_again extends gm_compile_step {
 		set_description("Merging EBBs");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		if (!gm_main.OPTIONS.get_arg_bool(gm_argopts.GMARGFLAG_MERGE_BB))
 			return;
@@ -136,10 +137,6 @@ public class gm_gps_opt_merge_ebb_again extends gm_compile_step {
 			// printf("deleting %d\n", par2->get_id());
 			seq1.copy_info_from(seq2);
 			par2.copy_info_from(par1);
-			if (seq2 != null)
-				seq2.dispose();
-			if (par2 != null)
-				par2.dispose();
 		}
 	}
 

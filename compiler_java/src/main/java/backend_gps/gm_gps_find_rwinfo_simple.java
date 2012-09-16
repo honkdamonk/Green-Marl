@@ -3,19 +3,19 @@ package backend_gps;
 import static backend_gps.GPSConstants.GPS_FLAG_EDGE_DEFINED_INNER;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_INNER_LOOP;
 import static backend_gps.GPSConstants.GPS_FLAG_IS_OUTER_LOOP;
-import frontend.symtab_types;
 import frontend.gm_range_type;
 import frontend.gm_rw_analysis;
 import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 import inc.gps_apply_bb_ast;
-import ast.ast_node_type;
 import ast.ast_expr_builtin;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 import common.gm_reproduce;
@@ -70,16 +70,16 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 	public boolean apply_lhs(ast_id id) {
 		// -----------------------------------------------------
 		// write to LHS
-		//   int x = 0; <- add
-		//   Foreach(n) {
-		//     int y = 0; <- add
-		//     x = 0; <- add
-		//     Foreach(t) {
-		//       int z = 0; <- add if receiver
-		//       y = 0; should not happen
-		//       x = 0; <- add if receiver
-		//     }
-		//   }
+		// int x = 0; <- add
+		// Foreach(n) {
+		// int y = 0; <- add
+		// x = 0; <- add
+		// Foreach(t) {
+		// int z = 0; <- add if receiver
+		// y = 0; should not happen
+		// x = 0; <- add if receiver
+		// }
+		// }
 		// -----------------------------------------------------
 		gps_syminfo syminfo = gps_get_global_syminfo(id);
 		if (syminfo == null) {
@@ -102,16 +102,16 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 	public boolean apply_lhs(ast_field field) {
 		// -----------------------------------------------------
 		// write to LHS
-		//   x.A = 0; should not happen
-		//   Foreach(n) {
-		//     n.A = 0; <- add (linear)
-		//     x.A = 0; <- add if receiver
-		//     Foreach(t) {
-		//       t.A = 0; <- add if receiver
-		//       n.A = 0; should not happen
-		//       x.A = 0; <- add if receiver (should not happen?)
-		//     }
-		//   }
+		// x.A = 0; should not happen
+		// Foreach(n) {
+		// n.A = 0; <- add (linear)
+		// x.A = 0; <- add if receiver
+		// Foreach(t) {
+		// t.A = 0; <- add if receiver
+		// n.A = 0; should not happen
+		// x.A = 0; <- add if receiver (should not happen?)
+		// }
+		// }
 		// -----------------------------------------------------
 		gm_symtab_entry drv = field.get_first().getSymInfo();
 		boolean is_random = true;
@@ -150,16 +150,16 @@ public class gm_gps_find_rwinfo_simple extends gps_apply_bb_ast {
 	public boolean apply_rhs(ast_id id) {
 		// -----------------------------------------------------
 		// RHS
-		//   int x; ... = x; <- add
-		//   Foreach(n) {
-		//     int y; ... = y; <- add
-		//     ... = x; <- add
-		//     Foreach(t) {
-		//       int z; ... = z; <- add if receiver
-		//       ... = y; <- add if sender
-		//       ... = x ; <- add if receiver
-		//     }
-		//   }
+		// int x; ... = x; <- add
+		// Foreach(n) {
+		// int y; ... = y; <- add
+		// ... = x; <- add
+		// Foreach(t) {
+		// int z; ... = z; <- add if receiver
+		// ... = y; <- add if sender
+		// ... = x ; <- add if receiver
+		// }
+		// }
 		// -----------------------------------------------------
 		gps_syminfo syminfo = gps_get_global_syminfo(id);
 		if (syminfo == null) {

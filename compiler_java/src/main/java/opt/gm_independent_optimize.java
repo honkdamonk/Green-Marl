@@ -18,7 +18,7 @@ import common.gm_apply_compiler_stage;
 
 public class gm_independent_optimize {
 
-	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
+	protected final LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
 
 	public gm_independent_optimize() {
 		init_steps();
@@ -51,21 +51,4 @@ public class gm_independent_optimize {
 		LIST.addLast(gm_ind_opt_remove_unused_scalar.get_factory());
 	}
 
-	// ----------------------------------------------------
-	// Any later stage can call below optimizations
-	// returns false if error
-	// ----------------------------------------------------
-	// group assign => foreach
-	// reduction op => foreach
-	/*
-	 * virtual bool do_regularize_syntax(ast_procdef *p); virtual bool
-	 * do_hoist_assign(ast_procdef* proc); virtual bool
-	 * do_hoist_foreach(ast_procdef* proc); virtual bool
-	 * do_merge_foreach(ast_procdef* proc); virtual bool
-	 * do_moveup_propdecl(ast_procdef* p); virtual bool
-	 * do_flip_edges(ast_procdef* p);
-	 */
-
 }
-/*
- */

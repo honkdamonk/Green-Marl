@@ -25,21 +25,26 @@ import ast.ast_sentblock;
 //     (in MASTER, in RECEIVER, in VERTEX)
 //---------------------------------------------------------------------
 public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
+	
 	private static final boolean IS_SCALAR = true;
 	private static final boolean IS_FIELD = false;
+	
+	protected int foreach_depth = 0;
+
+	protected ast_foreach in_loop = null;
+	protected gm_gps_beinfo beinfo;
+
+	protected boolean is_random_write_target = false;
+	protected boolean is_edge_prop_write_target = false;
+	protected boolean is_message_write_target  = false;
+	protected gm_symtab_entry random_write_target  = null;
+	protected ast_sentblock random_write_target_sb  = null;
 
 	public gps_merge_symbol_usage_t(gm_gps_beinfo i) {
 		set_for_sent(true);
 		set_for_expr(true);
 		set_separate_post_apply(true);
 		beinfo = i;
-		is_random_write_target = false;
-		is_message_write_target = false;
-		is_edge_prop_write_target = false;
-		random_write_target = null;
-		random_write_target_sb = null;
-		foreach_depth = 0;
-		in_loop = null;
 	}
 
 	@Override
@@ -48,10 +53,8 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 		is_message_write_target = false;
 
 		if (s.get_nodetype() == ast_node_type.AST_ASSIGN) {
-			gm_gps_symbol_usage_location context = get_current_context(); // GPS_CONTEXT_
-																			// (MASTER,
-																			// VERTEX,
-																			// RECEIVER)
+			// GPS_CONTEXT_ (MASTER, VERTEX, RECEIVER)
+			gm_gps_symbol_usage_location context = get_current_context();
 
 			ast_assign a = (ast_assign) s;
 
@@ -223,15 +226,4 @@ public class gps_merge_symbol_usage_t extends gps_apply_bb_ast {
 		return syminfo;
 	}
 
-	protected int foreach_depth;
-
-	// gm_symtab_entry* out_iterator;
-	protected ast_foreach in_loop;
-	protected gm_gps_beinfo beinfo;
-
-	protected boolean is_random_write_target;
-	protected boolean is_edge_prop_write_target;
-	protected boolean is_message_write_target;
-	protected gm_symtab_entry random_write_target;
-	protected ast_sentblock random_write_target_sb;
 }

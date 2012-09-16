@@ -7,11 +7,11 @@ import inc.gm_reduce;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 

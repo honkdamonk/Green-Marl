@@ -17,7 +17,7 @@ import ast.gm_rwinfo_map;
 public class gps_find_intra_merge_candidate_t extends gps_apply_bb {
 
 	private LinkedList<gps_intra_merge_candidate_t> cands;
-	private LinkedList<gm_gps_basic_block> stack = new LinkedList<gm_gps_basic_block>();
+	private final LinkedList<gm_gps_basic_block> stack = new LinkedList<gm_gps_basic_block>();
 	private int current_trace_head = -1;
 	private gm_gps_basic_block curr_head = null;
 	private gm_gps_basic_block curr_tail = null;

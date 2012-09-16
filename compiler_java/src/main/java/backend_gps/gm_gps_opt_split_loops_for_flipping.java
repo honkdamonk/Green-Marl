@@ -13,10 +13,10 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_if;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -29,7 +29,7 @@ import common.gm_resolve_nc;
 import common.gm_transform_helper;
 
 public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
-	
+
 	private static String USED_BY_WHO = "gm_split_used_by_who";
 	private static final int USED_BY_OLDER = 1;
 	private static final int USED_BY_YOUNGER = 2;
@@ -38,6 +38,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		set_description("(Pre-Flip) Splitting loops");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		// -------------------------------------
 		// Find nested loops
@@ -78,7 +79,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 	public static gm_compile_step get_factory() {
 		return new gm_gps_opt_split_loops_for_flipping();
 	}
-	
+
 	private static void split_the_loop(ast_foreach in) {
 		ast_foreach out = null;
 
@@ -181,8 +182,8 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 			ast_node old = reconstruct_old_new(frame, older_siblings, true);
 			assert old != null;
 
-			ast_foreach old_loop = gm_new_sents_after_tc.gm_new_foreach_after_tc(out.get_iterator().copy(false), out.get_source().copy(true),
-					(ast_sent) old, out.get_iter_type());
+			ast_foreach old_loop = gm_new_sents_after_tc.gm_new_foreach_after_tc(out.get_iterator().copy(false), out.get_source().copy(true), (ast_sent) old,
+					out.get_iter_type());
 			// replace iterator id
 			gm_resolve_nc.gm_replace_symbol_entry(out.get_iterator().getSymInfo(), old_loop.get_iterator().getSymInfo(), old);
 
@@ -193,8 +194,8 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		if (need_young) {
 			ast_node old = reconstruct_old_new(frame, younger_siblings, false);
 			assert old != null;
-			ast_foreach new_loop = gm_new_sents_after_tc.gm_new_foreach_after_tc(out.get_iterator().copy(false), out.get_source().copy(true),
-					(ast_sent) old, out.get_iter_type());
+			ast_foreach new_loop = gm_new_sents_after_tc.gm_new_foreach_after_tc(out.get_iterator().copy(false), out.get_source().copy(true), (ast_sent) old,
+					out.get_iter_type());
 			// replace iterator id
 			gm_resolve_nc.gm_replace_symbol_entry(out.get_iterator().getSymInfo(), new_loop.get_iterator().getSymInfo(), old);
 
@@ -202,17 +203,17 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 
 		}
 	}
-	
+
 	private static void ensure_no_dependency_via_scala(LinkedList<ast_node> frame, HashMap<ast_sentblock, LinkedList<ast_sent>> elder,
 			HashMap<ast_sentblock, LinkedList<ast_sent>> younger) {
 		// create prev/next
 		// create set of scalar symbols used in prev
-		HashSet<gm_symtab_entry> PREVS = new HashSet<gm_symtab_entry>(); 
+		HashSet<gm_symtab_entry> PREVS = new HashSet<gm_symtab_entry>();
 		// symbols used in next
 		HashSet<gm_symtab_entry> NEXTS = new HashSet<gm_symtab_entry>();
 		// every scalar symbols
 		HashSet<gm_symtab_entry> ALL = new HashSet<gm_symtab_entry>();
-		
+
 		for (ast_node node : frame) {
 			if (node.get_nodetype() == ast_node_type.AST_IF) {
 				// continue
@@ -250,8 +251,6 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		}
 	}
 
-	
-
 	private static void add_scalar_rw(ast_sent s, HashSet<gm_symtab_entry> TARGET) {
 		gm_rwinfo_map W = gm_rw_analysis_check2.gm_get_write_set(s);
 		gm_rwinfo_map R = gm_rw_analysis_check2.gm_get_write_set(s);
@@ -266,7 +265,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 			}
 		}
 	}
-	
+
 	private static void reconstruct_old_new_main(ast_node n, HashMap<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old, RefObject<ast_node> last) {
 
 		if (n.get_nodetype() == ast_node_type.AST_IF) {
@@ -322,12 +321,12 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 			}
 		}
 	}
-	
+
 	private static gm_rwinfo_map gm_get_reduce_set(ast_sent S) {
 		assert S != null;
 		return gm_rw_analysis.get_rwinfo_sets(S).reduce_set;
 	}
-	
+
 	// --------------------------------------------
 	// example>
 	// FE(n:)
@@ -387,7 +386,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 
 		return last;
 	}
-	
+
 	// ----------------------------------------------------
 	// N_P<Int>(G) _tmp_S;
 	// Foreach (n: G.Nodes) {
@@ -542,6 +541,5 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 			SET.add(in);
 		}
 	}
-
 
 }

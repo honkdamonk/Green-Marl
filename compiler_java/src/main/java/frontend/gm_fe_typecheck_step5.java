@@ -1,14 +1,14 @@
 package frontend;
 
-import inc.gm_type;
 import inc.gm_compile_step;
+import inc.gm_type;
 
 import java.util.HashMap;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_return;
 

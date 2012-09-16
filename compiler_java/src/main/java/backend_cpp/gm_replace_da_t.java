@@ -1,11 +1,11 @@
 package backend_cpp;
 
-import inc.gm_reduce;
 import inc.gm_assignment;
-import ast.ast_node_type;
+import inc.gm_reduce;
 import ast.ast_assign;
 import ast.ast_field;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 import common.gm_apply;

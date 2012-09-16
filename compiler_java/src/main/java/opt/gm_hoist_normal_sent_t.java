@@ -4,8 +4,8 @@ import static ast.ast_node_type.AST_ASSIGN;
 
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 

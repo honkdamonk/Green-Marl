@@ -4,9 +4,9 @@ import inc.gm_type;
 
 import java.util.HashSet;
 
-import ast.ast_node_type;
 import ast.ast_id;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;

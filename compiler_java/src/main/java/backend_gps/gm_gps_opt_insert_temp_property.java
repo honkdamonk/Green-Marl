@@ -16,10 +16,12 @@ import common.gm_main;
 import common.gm_replace_sym_access;
 
 public class gm_gps_opt_insert_temp_property extends gm_compile_step {
+	
 	private gm_gps_opt_insert_temp_property() {
 		set_description("(Pre-Flip) Replacing scalars with temp-properties");
 	}
 
+	@Override
 	public void process(ast_procdef p) {
 		// -------------------------------------
 		// Find nested loops

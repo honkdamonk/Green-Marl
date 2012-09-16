@@ -6,15 +6,15 @@ import static backend_gps.GPSConstants.GPS_FLAG_WHILE_TAIL;
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_if;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_while;
 
 import common.gm_apply;
 
 public class gm_gps_create_basic_block1_t extends gm_apply {
-	
+
 	private final HashMap<ast_sent, gm_gps_basic_block> prev_map = new HashMap<ast_sent, gm_gps_basic_block>();
 	private final HashMap<ast_sent, gm_gps_basic_block> next_map = new HashMap<ast_sent, gm_gps_basic_block>();
 	private HashMap<ast_sent, gps_gps_sentence> s_mark;
@@ -30,16 +30,15 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 	private boolean already_added = false;
 	private int added_depth = 0;
 	private gm_gps_beinfo gen;
-	
+
 	public gm_gps_create_basic_block1_t(HashMap<ast_sent, gps_gps_sentence> s, gm_gps_beinfo _gen) {
 		s_mark = s;
 		gen = _gen;
 		entry = prev = newBB(); // entry
 		exit = next = newBB(); // exit
-
 		entry.add_exit(exit);
 	}
-	
+
 	@Override
 	public boolean apply(ast_sent s) {
 		if (already_added) {
@@ -85,6 +84,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 		}
 
 		else if ((s_mark.get(s) == gps_gps_sentence.GPS_TYPE_CANBE_VERTEX)) {
+
 			if (s.get_nodetype() == ast_node_type.AST_SENTBLOCK) {
 				// do nothing but recurse
 			} else if (s.get_nodetype() == ast_node_type.AST_IF) {

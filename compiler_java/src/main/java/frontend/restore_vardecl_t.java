@@ -18,7 +18,7 @@ import common.gm_transform_helper;
 import common.gm_traverse;
 
 public class restore_vardecl_t extends gm_apply {
-	
+
 	@Override
 	public boolean apply(ast_sent b) {
 		if (b.get_nodetype() != AST_SENTBLOCK)

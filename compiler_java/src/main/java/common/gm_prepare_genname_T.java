@@ -1,7 +1,7 @@
 package common;
 
-import frontend.symtab_types;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 import inc.gm_procinfo;
 import ast.ast_id;
 

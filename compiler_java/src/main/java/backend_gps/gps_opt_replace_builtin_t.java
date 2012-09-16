@@ -7,10 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import tangible.Pair;
-import ast.ast_node_type;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sentblock;
 
 import common.gm_add_symbol;
@@ -21,11 +21,11 @@ import common.gm_method_id;
 import frontend.gm_symtab_entry;
 
 public class gps_opt_replace_builtin_t extends gm_apply {
-	
+
 	private gm_symtab_entry sym;
 	private ast_sentblock sb;
 	private Map<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry> map;
-	
+
 	public gps_opt_replace_builtin_t(gm_symtab_entry drv, ast_sentblock scope, HashMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry> M) {
 		map = new HashMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry>(M);
 		set_for_expr(true);

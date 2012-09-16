@@ -1,17 +1,17 @@
 package frontend;
 
-import ast.ast_node_type;
 import ast.ast_assign;
+import ast.ast_node_type;
 import ast.ast_sent;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 
 public class check_argmax_num_args_t extends gm_apply {
-	
+
 	private boolean _is_okay = true;
-	
+
 	public check_argmax_num_args_t() {
 		set_for_sent(true);
 	}

@@ -7,20 +7,20 @@ import frontend.gm_rwinfo;
 import frontend.gm_rwinfo_sets;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
-import inc.gm_type;
 import inc.gm_compile_step;
+import inc.gm_type;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_if;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -34,7 +34,7 @@ import common.gm_new_sents_after_tc;
 import common.gm_transform_helper;
 
 public class gm_cpp_opt_defer extends gm_compile_step {
-	
+
 	private gm_cpp_opt_defer() {
 		set_description("Handle deferred writes");
 	}
@@ -44,7 +44,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		LinkedList<gm_symtab_entry> S = new LinkedList<gm_symtab_entry>();
 		LinkedList<ast_foreach> F = new LinkedList<ast_foreach>();
 		// return found defer
-		boolean b = find_deferred_writes(proc, S, F); 
+		boolean b = find_deferred_writes(proc, S, F);
 		if (b) {
 			post_process_deferred_writes(S, F);
 			gm_rw_analysis.gm_redo_rw_analysis(proc.get_body());
@@ -70,12 +70,10 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 	}
 
 	/**
-	* process deferred writes in following ways.
-	* <li>add symbol-def for A_new
-	* <li>add initializer<br>
-	* (apply optimization: conditional initializer)
-	* <li>add updater
-	*/
+	 * process deferred writes in following ways. <li>add symbol-def for A_new
+	 * <li>add initializer<br>
+	 * (apply optimization: conditional initializer) <li>add updater
+	 */
 	private static void post_process_deferred_writes(LinkedList<gm_symtab_entry> target_syms, LinkedList<ast_foreach> target_foreach) {
 		assert target_syms.size() == target_foreach.size();
 		Iterator<gm_symtab_entry> i = target_syms.iterator();
@@ -335,7 +333,7 @@ public class gm_cpp_opt_defer extends gm_compile_step {
 		// move up one level
 		return check_if_modified_elsewhere(e, up, seq_loop);
 	}
-	
+
 	private static boolean is_modified(ast_sent S, gm_symtab_entry e) {
 
 		gm_rwinfo_map W = gm_rw_analysis_check2.gm_get_write_set(S);

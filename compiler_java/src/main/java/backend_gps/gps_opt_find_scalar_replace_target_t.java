@@ -4,17 +4,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 import common.gm_apply;
 
-import frontend.symtab_types;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 
 //----------------------------------------------------
 // Foreach (n: G.Nodes) {
@@ -35,17 +35,20 @@ import frontend.gm_symtab_entry;
 //   n.B = n._tmp_S * alpha + beta;
 // }
 //----------------------------------------------------
-
 public class gps_opt_find_scalar_replace_target_t extends gm_apply {
+	
+	private HashMap<ast_foreach, ast_foreach> MAP;
+	private HashSet<gm_symtab_entry> potential_target_syms = new HashSet<gm_symtab_entry>();
+	private HashMap<gm_symtab_entry, ast_foreach> target_syms = new HashMap<gm_symtab_entry, ast_foreach>();
+	private ast_foreach outloop = null;
+	private ast_foreach inloop = null;
+	private int level = 0;
 
 	public gps_opt_find_scalar_replace_target_t(HashMap<ast_foreach, ast_foreach> M) {
-		this.MAP = new HashMap<ast_foreach, ast_foreach>(M);
+		MAP = new HashMap<ast_foreach, ast_foreach>(M);
 		set_for_sent(true);
 		set_for_symtab(true);
 		set_separate_post_apply(true);
-		level = 0;
-		outloop = null;
-		inloop = null;
 	}
 
 	@Override
@@ -92,7 +95,8 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 							continue;
 						ast_id id = (ast_id) n;
 						target = id.getSymInfo();
-						if (potential_target_syms.contains(target)) // found target
+						if (potential_target_syms.contains(target)) // found
+																	// target
 							target_syms.put(target, outloop);
 					}
 				}
@@ -118,10 +122,4 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 		return target_syms;
 	}
 
-	private HashMap<ast_foreach, ast_foreach> MAP;
-	private HashSet<gm_symtab_entry> potential_target_syms = new HashSet<gm_symtab_entry>();
-	private HashMap<gm_symtab_entry, ast_foreach> target_syms = new HashMap<gm_symtab_entry, ast_foreach>();
-	private ast_foreach outloop;
-	private ast_foreach inloop;
-	private int level;
 }

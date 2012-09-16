@@ -20,17 +20,17 @@ import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import inc.BackendGenerator;
-import inc.gm_expr_class;
-import inc.gm_type;
-import inc.gm_ops;
-import inc.gm_reduce;
 import inc.gm_code_writer;
 import inc.gm_compile_step;
+import inc.gm_expr_class;
 import inc.gm_ind_opt_flip_edges;
 import inc.gm_ind_opt_loop_merge;
 import inc.gm_ind_opt_move_propdecl;
 import inc.gm_ind_opt_propagate_trivial_writes;
 import inc.gm_ind_opt_remove_unused_scalar;
+import inc.gm_ops;
+import inc.gm_reduce;
+import inc.gm_type;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -42,7 +42,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -52,6 +51,7 @@ import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_if;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_nop;
 import ast.ast_procdef;
 import ast.ast_return;
@@ -62,10 +62,10 @@ import ast.ast_vardecl;
 import ast.ast_while;
 import backend_cpp.gm_cpp_opt_defer;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply_compiler_stage;
 import common.gm_builtin_def;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 import common.gm_main;
 import common.gm_reproduce;
 
@@ -77,8 +77,8 @@ import common.gm_reproduce;
 // is pararell
 public class gm_gps_gen extends BackendGenerator {
 
-	protected LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
-	protected LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
+	protected final LinkedList<gm_compile_step> opt_steps = new LinkedList<gm_compile_step>();
+	protected final LinkedList<gm_compile_step> gen_steps = new LinkedList<gm_compile_step>();
 
 	protected String dname = null;
 	protected String fname = null;
@@ -602,8 +602,8 @@ public class gm_gps_gen extends BackendGenerator {
 			generate_expr(i.get_cond());
 			Body.pushln(";");
 
-			Body.pushlnf("if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;\n", b.get_nth_exit(0).get_id(),
-					b.get_nth_exit(1).get_id()); // exit - continue while
+			Body.pushlnf("if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;\n", b.get_nth_exit(0).get_id(), b.get_nth_exit(1)
+					.get_id()); // exit - continue while
 
 			if (b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 				Body.pushlnf("if (!_expression_result) %s%d=true; // reset is_first\n\n", GPS_INTRA_MERGE_IS_FIRST, b.get_id());
@@ -631,7 +631,7 @@ public class gm_gps_gen extends BackendGenerator {
 			int source_id = b.find_info_int(GPS_INT_INTRA_MERGED_CONDITIONAL_NO);
 			Body.pushlnf("if (%s%d) _master_state_nxt = %d;", GPS_INTRA_MERGE_IS_FIRST, source_id, b.get_nth_exit(0).get_id());
 			Body.pushlnf("else _master_state_nxt = %d;", b.get_nth_exit(1).get_id());
-			String temp = String.format("%s%d = false;\n", GPS_INTRA_MERGE_IS_FIRST, source_id);
+			Body.pushlnf("%s%d = false;", GPS_INTRA_MERGE_IS_FIRST, source_id);
 		} else {
 			assert false;
 		}
@@ -753,8 +753,7 @@ public class gm_gps_gen extends BackendGenerator {
 		}
 
 		if (gm_main.FE.get_current_proc_info().find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
-			Body.pushlnf("%s [] %s; //reverse edges (node IDs) {should this to be marshalled?}", get_lib().is_node_type_int() ? "int" : "long",
-					GPS_REV_NODE_ID);
+			Body.pushlnf("%s [] %s; //reverse edges (node IDs) {should this to be marshalled?}", get_lib().is_node_type_int() ? "int" : "long", GPS_REV_NODE_ID);
 		}
 
 		Body.NL();
@@ -907,8 +906,7 @@ public class gm_gps_gen extends BackendGenerator {
 		int id = b.get_id();
 		gm_gps_bbtype type = b.get_type();
 
-		Body.pushlnf("private void _vertex_state_%d(Iterable<%s.MessageData> _msgs) {", id, gm_main.FE.get_current_proc().get_procname()
-				.get_genname());
+		Body.pushlnf("private void _vertex_state_%d(Iterable<%s.MessageData> _msgs) {", id, gm_main.FE.get_current_proc().get_procname().get_genname());
 
 		get_lib().generate_vertex_prop_access_prepare(Body);
 
@@ -1028,6 +1026,7 @@ public class gm_gps_gen extends BackendGenerator {
 				cnt++;
 				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 					Body.pushf("if (!%s)", cond_var);
+
 					if (body.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 						Body.pushln(" {");
 					else

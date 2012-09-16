@@ -14,12 +14,16 @@ import frontend.gm_symtab_entry;
 //-----------------------------------------------------------------------------------
 // Create a flat table, for the generation of fields in master/vertex class
 //-----------------------------------------------------------------------------------
-
 public class gps_flat_symbol_t extends gm_apply {
+	
+	private HashSet<gm_symtab_entry> scalar;
+	private HashSet<gm_symtab_entry> prop;
+	private HashSet<gm_symtab_entry> edge_prop;
+	
 	public gps_flat_symbol_t(HashSet<gm_symtab_entry> s, HashSet<gm_symtab_entry> p, HashSet<gm_symtab_entry> e) {
-		this.scalar = new HashSet<gm_symtab_entry>(s);
-		this.prop = new HashSet<gm_symtab_entry>(p);
-		this.edge_prop = new HashSet<gm_symtab_entry>(e);
+		scalar = new HashSet<gm_symtab_entry>(s);
+		prop = new HashSet<gm_symtab_entry>(p);
+		edge_prop = new HashSet<gm_symtab_entry>(e);
 		set_for_symtab(true);
 	}
 
@@ -62,11 +66,7 @@ public class gps_flat_symbol_t extends gm_apply {
 			 * //assert(false); prop.insert(sym); }
 			 */
 		}
-
 		return true;
 	}
 
-	private HashSet<gm_symtab_entry> scalar;
-	private HashSet<gm_symtab_entry> prop;
-	private HashSet<gm_symtab_entry> edge_prop;
 }

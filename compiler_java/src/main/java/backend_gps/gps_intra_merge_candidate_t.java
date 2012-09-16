@@ -66,16 +66,12 @@ package backend_gps;
 //    
 //------------------------------------------------------------------
 
-public class gps_intra_merge_candidate_t
-{
-	public gps_intra_merge_candidate_t()
-	{
-		while_cond = par1 = seq1 = parn = seqn = seq0 = null;
-	}
-	public gm_gps_basic_block while_cond;
-	public gm_gps_basic_block seq0;
-	public gm_gps_basic_block par1;
-	public gm_gps_basic_block seq1;
-	public gm_gps_basic_block parn;
-	public gm_gps_basic_block seqn;
+public class gps_intra_merge_candidate_t {
+	
+	public gm_gps_basic_block while_cond = null;
+	public gm_gps_basic_block seq0 = null;
+	public gm_gps_basic_block par1 = null;
+	public gm_gps_basic_block seq1 = null;
+	public gm_gps_basic_block parn = null;
+	public gm_gps_basic_block seqn = null;	
 }

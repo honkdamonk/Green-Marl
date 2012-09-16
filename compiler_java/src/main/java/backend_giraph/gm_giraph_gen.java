@@ -15,16 +15,16 @@ import static common.gm_errors_and_warnings.GM_ERROR_GPS_PROC_NAME;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
-import inc.gm_reduce;
 import inc.gm_compile_step;
+import inc.gm_reduce;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_foreach;
 import ast.ast_if;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -67,11 +67,10 @@ import common.gm_reproduce;
 // is parallel
 public class gm_giraph_gen extends gm_gps_gen {
 
-	private gm_giraphlib glib; // graph library
+	private final gm_giraphlib glib = new gm_giraphlib(this); // graph library
 
 	public gm_giraph_gen() {
 		super();
-		glib = new gm_giraphlib(this);
 	}
 
 	@Override
@@ -501,8 +500,8 @@ public class gm_giraph_gen extends gm_gps_gen {
 			generate_expr(i.get_cond());
 			Body.pushln(";");
 
-			Body.pushlnf("if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;\n", b.get_nth_exit(0).get_id(),
-					b.get_nth_exit(1).get_id()); // exit - continue while
+			Body.pushlnf("if (_expression_result) _master_state_nxt = %d;\nelse _master_state_nxt = %d;\n", b.get_nth_exit(0).get_id(), b.get_nth_exit(1)
+					.get_id()); // exit - continue while
 
 			if (b.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 				Body.pushlnf("if (!_expression_result) %s%d=true; // reset is_first\n\n", GPS_INTRA_MERGE_IS_FIRST, b.get_id());
@@ -900,6 +899,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 				cnt++;
 				if (fe.find_info_bool(GPS_FLAG_IS_INTRA_MERGED_CONDITIONAL)) {
 					Body.pushf("if (!%s)", cond_var);
+
 					if (body.get_nodetype() != ast_node_type.AST_SENTBLOCK)
 						Body.pushln(" {");
 					else
@@ -977,8 +977,8 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("// Vertex Input format");
 		Body.pushln("//----------------------------------------------");
 
-		Body.pushlnf("static class %sVertexInputFormat extends TextVertexInputFormat<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data,
-				edge_data, message_data);
+		Body.pushlnf("static class %sVertexInputFormat extends TextVertexInputFormat<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data, edge_data,
+				message_data);
 		Body.pushln("@Override");
 		Body.pushlnf(" VertexReader<%s, %s, %s, %s>", vertex_id, vertex_data, edge_data, message_data);
 		Body.pushln("createVertexReader(InputSplit split, TaskAttemptContext context) throws IOException {");
@@ -986,8 +986,8 @@ public class gm_giraph_gen extends gm_gps_gen {
 		Body.pushln("}");
 		Body.NL();
 
-		Body.pushlnf("static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, %s, %s, %s> {", proc_name, vertex_id,
-				vertex_data, edge_data, message_data);
+		Body.pushlnf("static class %sVertexReader extends TextVertexInputFormat.TextVertexReader<%s, %s, %s, %s> {", proc_name, vertex_id, vertex_data,
+				edge_data, message_data);
 		Body.pushlnf(" %sVertexReader(RecordReader<LongWritable, Text> lineRecordReader) {", proc_name);
 		Body.pushln("super(lineRecordReader);");
 		Body.pushln("}");
@@ -1104,8 +1104,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			if (!s.getType().is_primitive() && (!s.getType().is_node()))
 				continue;
 			if (s.isReadable()) {
-				Body.pushlnf("options.addOption(\"_%s\", \"%s\", true, \"%s\");", s.getId().get_genname(), s.getId().get_genname(), s.getId()
-						.get_genname());
+				Body.pushlnf("options.addOption(\"_%s\", \"%s\", true, \"%s\");", s.getId().get_genname(), s.getId().get_genname(), s.getId().get_genname());
 			}
 		}
 		Body.pushln("HelpFormatter formatter = new HelpFormatter();");

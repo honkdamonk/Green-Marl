@@ -22,7 +22,7 @@ import frontend.gm_symtab_entry;
 //   (3) Mark graph symbols if it uses from/to
 //-------------------------------------------------------------
 class cpp_check_reverse_edge_t extends gm_apply {
-	
+
 	cpp_check_reverse_edge_t() {
 		set_for_sent(true);
 		set_for_expr(true);

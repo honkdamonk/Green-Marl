@@ -7,14 +7,13 @@ import static frontend.gm_range_type.GM_RANGE_LINEAR;
 import static frontend.gm_range_type.GM_RANGE_RANDOM;
 import static frontend.gm_range_type.GM_RANGE_SINGLE;
 import static inc.gm_assignment_location.GMASSIGN_LHS_MAP;
-import inc.gm_type;
-import inc.gm_reduce;
 import inc.gm_assignment_location;
+import inc.gm_reduce;
+import inc.gm_type;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_call;
@@ -31,6 +30,7 @@ import ast.ast_id;
 import ast.ast_if;
 import ast.ast_mapaccess;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_nop;
 import ast.ast_return;
 import ast.ast_sent;
@@ -39,16 +39,16 @@ import ast.ast_while;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 import common.gm_traverse;
+
 //----------------------------------------------------
 // Traverse for Analysis
 // (Should be 'post-applying')
 //----------------------------------------------------
-
 public class gm_rw_analysis extends gm_apply {
 
 	private static final int GM_BLTIN_MUTATE_GROW = 1;
@@ -1183,8 +1183,8 @@ public class gm_rw_analysis extends gm_apply {
 		// bfs iter ==> conditional, linear iteration
 		boolean new_always = false;
 		gm_range_type new_range = GM_RANGE_LINEAR; // G.Nodes
-														// or
-														// G.Edges
+													// or
+													// G.Edges
 
 		for (gm_symtab_entry key : T.keySet()) {
 			boolean is_target = false;

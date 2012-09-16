@@ -5,36 +5,30 @@ import ast.ast_sentblock;
 import frontend.gm_symtab_entry;
 
 public class gm_gps_comm_unit {
+	
+	public gm_gps_comm type_of_comm = null; // INIT, NESTED, RANDOM_WRITE
+	public ast_foreach fe = null; // for NESTED communication
+	public ast_sentblock sb = null; // for RANDOM_WRITE communication
+	public gm_symtab_entry sym = null; // for RANDOM_WRITE communication
 
 	public gm_gps_comm_unit() {
-		this.type_of_comm = gm_gps_comm.GPS_COMM_INIT;
-		this.fe = null;
-		this.sb = null;
-		this.sym = null;
+		type_of_comm = gm_gps_comm.GPS_COMM_INIT;
 	}
 
 	public gm_gps_comm_unit(gm_gps_comm t, ast_foreach f) {
-		this.type_of_comm = t;
-		this.fe = f;
-		this.sb = null;
-		this.sym = null;
+		type_of_comm = t;
+		fe = f;
 	}
 
 	public gm_gps_comm_unit(gm_gps_comm t, ast_sentblock s, gm_symtab_entry m) {
-		this.type_of_comm = t;
-		this.fe = null;
-		this.sb = s;
-		this.sym = m;
+		type_of_comm = t;
+		sb = s;
+		sym = m;
 	}
 
 	public final gm_gps_comm get_type() {
 		return type_of_comm;
 	}
-
-	public gm_gps_comm type_of_comm; // INIT, NESTED, RANDOM_WRITE
-	public ast_foreach fe; // for NESTED communication
-	public ast_sentblock sb; // for RANDOM_WRITE communication
-	public gm_symtab_entry sym; // for RANDOM_WRITE communication
 
 	/* Eclipse generated hashCode() */
 	@Override

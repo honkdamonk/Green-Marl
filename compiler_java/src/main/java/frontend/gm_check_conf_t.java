@@ -16,23 +16,23 @@ import static frontend.gm_conflict.WW_CONFLICT;
 import static frontend.gm_range_type.GM_RANGE_LEVEL;
 import static frontend.gm_range_type.GM_RANGE_LEVEL_DOWN;
 import static frontend.gm_range_type.GM_RANGE_LEVEL_UP;
-import inc.gm_type;
 import inc.gm_reduce;
+import inc.gm_type;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 
 /**
  * Traverse a subtree S. Assuming S is executed in parallel. Find and report any
@@ -64,14 +64,14 @@ public class gm_check_conf_t extends gm_apply {
 			gm_rwinfo_map M = gm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
 			check_rw_conf_error(R, W, gm_conflict.RW_CONFLICT, Report); // R-W
-																			// //
-																			// (warning)
+																		// //
+																		// (warning)
 			check_rw_conf_error(W, W, gm_conflict.WW_CONFLICT, Report); // W-W
-																			// //
-																			// (warning)
+																		// //
+																		// (warning)
 			check_rw_conf_error(R, M, gm_conflict.RM_CONFLICT, Report); // R-M
-																			// //
-																			// (warning)
+																		// //
+																		// (warning)
 			check_rw_conf_error(M, M, gm_conflict.MM_CONFLICT, Report); // M-M
 			// (warning)
 			is_okay = is_okay && check_rw_conf_error(R, D, gm_conflict.RD_CONFLICT, Report); // R-D
@@ -125,19 +125,19 @@ public class gm_check_conf_t extends gm_apply {
 				gm_rwinfo_map M = gm_rw_analysis.get_rwinfo_sets(body).mutate_set;
 
 				check_rw_conf_error(R, W, gm_conflict.RW_CONFLICT, Report); // R-W
-																				// //
-																				// (warning)
+																			// //
+																			// (warning)
 				check_rw_conf_error(R_filter, W, gm_conflict.RW_CONFLICT, Report); // R-W
-																						// //
-																						// (warning)
+																					// //
+																					// (warning)
 				check_rw_conf_error(W, W, gm_conflict.WW_CONFLICT, Report); // W-W
-																				// //
-																				// (warning)
+																			// //
+																			// (warning)
 				check_rw_conf_error(R, M, gm_conflict.RM_CONFLICT, Report); // R-M
-																				// //
-																				// (warning)
+																			// //
+																			// (warning)
 				check_rw_conf_error(M, M, gm_conflict.MM_CONFLICT, Report); // M-M
-																				// (warning)
+																			// (warning)
 				is_okay = is_okay && check_rw_conf_error(R, D, gm_conflict.RD_CONFLICT, Report); // R-D
 				is_okay = is_okay && check_rw_conf_error(R_filter, D, gm_conflict.RD_CONFLICT, Report); // R-D
 				is_okay = is_okay && check_rw_conf_error(W, D, gm_conflict.WD_CONFLICT, Report); // W-D
@@ -159,19 +159,19 @@ public class gm_check_conf_t extends gm_apply {
 				// printf("D:");gm_print_rwinfo_set(D);
 
 				check_rw_conf_error(R, W, gm_conflict.RW_CONFLICT, Report); // R-W
-																				// //
-																				// (warning)
+																			// //
+																			// (warning)
 				check_rw_conf_error(R_filter, W, gm_conflict.RW_CONFLICT, Report); // R-W
-																						// //
-																						// (warning)
+																					// //
+																					// (warning)
 				check_rw_conf_error(W, W, gm_conflict.WW_CONFLICT, Report); // W-W
-																				// //
-																				// (warning)
+																			// //
+																			// (warning)
 				check_rw_conf_error(R, M, gm_conflict.RM_CONFLICT, Report); // R-M
-																				// //
-																				// (warning)
+																			// //
+																			// (warning)
 				check_rw_conf_error(M, M, gm_conflict.MM_CONFLICT, Report); // M-M
-																				// (warning)
+																			// (warning)
 				is_okay = is_okay && check_rw_conf_error(R, D, gm_conflict.RD_CONFLICT, Report); // R-D
 				is_okay = is_okay && check_rw_conf_error(R_filter, D, gm_conflict.RD_CONFLICT, Report); // R-D
 				is_okay = is_okay && check_rw_conf_error(W, D, gm_conflict.WD_CONFLICT, Report); // W-D

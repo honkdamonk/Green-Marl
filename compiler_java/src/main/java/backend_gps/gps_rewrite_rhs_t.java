@@ -11,12 +11,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
@@ -28,13 +28,16 @@ import common.gm_transform_helper;
 import frontend.gm_symtab_entry;
 
 public class gps_rewrite_rhs_t extends gm_apply {
-	
+
+	private HashMap<ast_foreach, HashSet<ast_expr>> sub_exprs = new HashMap<ast_foreach, HashSet<ast_expr>>();
+	private ast_foreach current_fe = null;
+
 	public gps_rewrite_rhs_t() {
 		set_for_expr(true);
 		set_for_sent(true);
-		current_fe = null;
 	}
 
+	@Override
 	public final boolean apply(ast_sent s) {
 		if (s.get_nodetype() == ast_node_type.AST_FOREACH) {
 			if (s.find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
@@ -43,10 +46,10 @@ public class gps_rewrite_rhs_t extends gm_apply {
 				sub_exprs.put(current_fe, empty); // initialization by copying
 			}
 		}
-
 		return true;
 	}
 
+	@Override
 	public final boolean apply(ast_expr e) {
 		ast_sent s = get_current_sent();
 		if (s.find_info_int(GPS_INT_SYNTAX_CONTEXT) != gm_gps_new_scope_analysis.GPS_NEW_SCOPE_IN.getValue())
@@ -61,7 +64,6 @@ public class gps_rewrite_rhs_t extends gm_apply {
 				sub_exprs.get(current_fe).add(e);
 			}
 		}
-
 		return true;
 	}
 
@@ -169,9 +171,6 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		}
 
 	}
-
-	private HashMap<ast_foreach, HashSet<ast_expr>> sub_exprs = new HashMap<ast_foreach, HashSet<ast_expr>>();
-	private ast_foreach current_fe;
 
 	private gm_symtab_entry define_temp(gm_type type, ast_sentblock sb, gm_symtab_entry graph) {
 		String temp_name = gm_main.FE.voca_temp_name_and_add("_m");

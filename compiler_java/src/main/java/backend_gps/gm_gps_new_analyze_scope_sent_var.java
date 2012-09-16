@@ -9,6 +9,7 @@ public class gm_gps_new_analyze_scope_sent_var extends gm_compile_step {
 		set_description("Analyzing scope of symbols and sentences");
 	}
 
+	@Override
 	public void process(ast_procdef proc) {
 		gm_gps_new_analysis_scope_sent_var_t.gm_gps_do_new_analysis_scope_sent_var(proc);
 		return;

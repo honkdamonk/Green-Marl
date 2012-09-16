@@ -10,12 +10,12 @@ import inc.gm_type;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
@@ -74,8 +74,7 @@ public class Replace_PropertyItarator_With_NodeIterator extends gm_apply {
 		iterType = getNewIterType();
 		ast_id sourceGraph = fe.get_source().getTargetTypeInfo().get_target_graph_id();
 		ast_typedecl type = ast_typedecl.new_nodeedge_iterator(sourceGraph.copy(true), iterType);
-		if (!declare_symbol(fe.get_symtab_var(), newIterator, type, gm_typecheck.GM_READ_AVAILABLE,
-				gm_typecheck.GM_WRITE_NOT_AVAILABLE))
+		if (!declare_symbol(fe.get_symtab_var(), newIterator, type, gm_typecheck.GM_READ_AVAILABLE, gm_typecheck.GM_WRITE_NOT_AVAILABLE))
 			assert false;
 
 		return newIterator;

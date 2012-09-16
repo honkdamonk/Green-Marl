@@ -17,11 +17,11 @@ public class gm_merge_sentblock {
 	// - (RW analysis is re-done here?)
 	// ---------------------------------------------------------
 
-	public static void gm_merge_sentblock(ast_sentblock P, ast_sentblock Q) {
-		gm_merge_sentblock(P, Q, false);
+	public static void apply(ast_sentblock P, ast_sentblock Q) {
+		apply(P, Q, false);
 	}
 
-	public static void gm_merge_sentblock(ast_sentblock P, ast_sentblock Q, boolean delete_Q_after) {
+	public static void apply(ast_sentblock P, ast_sentblock Q, boolean delete_Q_after) {
 		// (assumption) type-checking is already done
 		// (assumption) var-decl has been hoisted up.
 
@@ -46,10 +46,8 @@ public class gm_merge_sentblock {
 		ast_sent anchor = null;
 		LinkedList<ast_sent> Ps = P.get_sents();
 		for (ast_sent s : Ps) {
-			if (s.get_nodetype() != ast_node_type.AST_VARDECL) // stop at the
-																// first
-																// non-decl
-																// sentence
+			if (s.get_nodetype() != ast_node_type.AST_VARDECL)
+				// stop at the first non-decl sentence
 				break;
 			anchor = s;
 		}

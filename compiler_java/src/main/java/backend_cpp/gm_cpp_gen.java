@@ -182,7 +182,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 	public boolean do_local_optimize() {
 		// apply all the optimize steps to all procedures
-		return gm_apply_compiler_stage.gm_apply_compiler_stage(opt_steps);
+		return gm_apply_compiler_stage.apply(opt_steps);
 	}
 
 	public boolean do_generate() {
@@ -191,7 +191,7 @@ public class gm_cpp_gen extends BackendGenerator {
 
 		do_generate_begin();
 
-		boolean b = gm_apply_compiler_stage.gm_apply_compiler_stage(this.gen_steps);
+		boolean b = gm_apply_compiler_stage.apply(this.gen_steps);
 		assert b == true;
 
 		do_generate_end();

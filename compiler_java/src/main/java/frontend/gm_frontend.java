@@ -86,7 +86,7 @@ public class gm_frontend {
 
 	/** interface to parser */
 	public final int start_parse(String fname) {
-		return start_parse.start_parse(fname);
+		return start_parse.parse(fname);
 	}
 
 	// void clean_up(); // clean-up intermediate structures (for iterative mode)
@@ -136,7 +136,7 @@ public class gm_frontend {
 		}
 
 		// now apply frontend steps
-		return gm_apply_compiler_stage.gm_apply_compiler_stage(local_steps);
+		return gm_apply_compiler_stage.apply(local_steps);
 	}
 
 	/** reproduce: method implementations for ast debuggin */

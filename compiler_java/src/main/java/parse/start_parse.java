@@ -10,7 +10,7 @@ import org.antlr.runtime.tree.CommonTreeNodeStream;
 
 public class start_parse {
 
-	public static int start_parse(String fname) {
+	public static int parse(String fname) {
 		CharStream cs;
 		try {
 			cs = new ANTLRFileStream(fname);

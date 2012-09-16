@@ -149,7 +149,7 @@ public class gm_gps_gen extends BackendGenerator {
 		// -----------------------------------
 		// Now apply all the steps
 		// -----------------------------------
-		return gm_apply_compiler_stage.gm_apply_compiler_stage(get_opt_steps());
+		return gm_apply_compiler_stage.apply(get_opt_steps());
 	}
 
 	@Override
@@ -167,7 +167,7 @@ public class gm_gps_gen extends BackendGenerator {
 		if (!open_output_files())
 			return false;
 
-		boolean b = gm_apply_compiler_stage.gm_apply_compiler_stage(get_gen_steps());
+		boolean b = gm_apply_compiler_stage.apply(get_gen_steps());
 
 		close_output_files();
 

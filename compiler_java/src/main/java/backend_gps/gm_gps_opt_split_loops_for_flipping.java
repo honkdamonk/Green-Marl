@@ -59,7 +59,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 			split_the_loop(fe);
 		}
 
-		gm_flat_nested_sentblock.gm_flat_nested_sentblock(p);
+		gm_flat_nested_sentblock.apply(p);
 
 		// reconstruct_scope implied in flattening
 		// gm_reconstruct_scope(p);

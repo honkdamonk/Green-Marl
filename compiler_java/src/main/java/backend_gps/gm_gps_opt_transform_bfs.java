@@ -56,7 +56,7 @@ public class gm_gps_opt_transform_bfs extends gm_compile_step {
 			gm_gps_rewrite_bfs(b);
 		}
 
-		gm_flat_nested_sentblock.gm_flat_nested_sentblock(p);
+		gm_flat_nested_sentblock.apply(p);
 		gm_rw_analysis.gm_redo_rw_analysis(p.get_body());
 	}
 

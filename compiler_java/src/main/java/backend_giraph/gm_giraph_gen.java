@@ -127,7 +127,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		if (!open_output_files())
 			return false;
 
-		boolean b = gm_apply_compiler_stage.gm_apply_compiler_stage(get_gen_steps());
+		boolean b = gm_apply_compiler_stage.apply(get_gen_steps());
 
 		close_output_files();
 

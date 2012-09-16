@@ -8,7 +8,7 @@ import ast.ast_procdef;
 
 public class gm_apply_compiler_stage {
 	
-	public static boolean gm_apply_compiler_stage(LinkedList<gm_compile_step> LIST) {
+	public static boolean apply(LinkedList<gm_compile_step> LIST) {
 		boolean is_okay = true;
 		int i = 0;
 

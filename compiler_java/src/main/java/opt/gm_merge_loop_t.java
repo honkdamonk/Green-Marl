@@ -51,7 +51,7 @@ public class gm_merge_loop_t extends gm_apply {
 						if (curr.get_body().get_nodetype() != ast_node_type.AST_SENTBLOCK)
 							gm_transform_helper.gm_make_it_belong_to_sentblock(curr.get_body());
 
-						gm_merge_sentblock.gm_merge_sentblock((ast_sentblock) prev.get_body(), (ast_sentblock) curr.get_body());
+						gm_merge_sentblock.apply((ast_sentblock) prev.get_body(), (ast_sentblock) curr.get_body());
 
 						// redo-rw-analysis
 						gm_rw_analysis.gm_redo_rw_analysis(prev);

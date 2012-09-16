@@ -6,7 +6,7 @@ import ast.ast_procdef;
 
 public class gm_flat_nested_sentblock {
 
-	public static void gm_flat_nested_sentblock(ast_node n) {
+	public static void apply(ast_node n) {
 
 		gm_flat_nested_sentblock_t T = new gm_flat_nested_sentblock_t();
 		n.traverse_post(T);

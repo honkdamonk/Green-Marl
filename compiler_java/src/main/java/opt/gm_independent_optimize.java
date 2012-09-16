@@ -29,7 +29,7 @@ public class gm_independent_optimize {
 
 	// return true if successful
 	public boolean do_local_optimize() {
-		return gm_apply_compiler_stage.gm_apply_compiler_stage(opt_steps);
+		return gm_apply_compiler_stage.apply(opt_steps);
 	}
 
 	// --------------------------------------------

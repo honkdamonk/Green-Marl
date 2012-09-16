@@ -21,7 +21,7 @@ class gm_cpp_gen_sanitize_name extends gm_compile_step {
 	public void process(ast_procdef proc) {
 		// (1) create gen-name
 		gm_vocabulary V = gm_main.CPP_BE.get_language_voca();
-		gm_prepare_genname.gm_prepare_genname(proc, V);
+		gm_prepare_genname.apply(proc, V);
 
 		// (2) rename property names A --> G_A
 		rename_prop_name_t T = new rename_prop_name_t();

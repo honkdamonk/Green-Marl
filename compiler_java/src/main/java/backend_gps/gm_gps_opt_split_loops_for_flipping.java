@@ -8,9 +8,10 @@ import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
 import inc.gm_compile_step;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import tangible.RefObject;
 import ast.ast_foreach;
@@ -43,7 +44,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		// -------------------------------------
 		// Find nested loops
 		// -------------------------------------
-		HashMap<ast_foreach, ast_foreach> MAP = new HashMap<ast_foreach, ast_foreach>();
+		Map<ast_foreach, ast_foreach> MAP = new TreeMap<ast_foreach, ast_foreach>();
 		HashSet<ast_foreach> SET = new HashSet<ast_foreach>();
 		BackendGpsGlobal.gm_gps_find_double_nested_loops(p, MAP);
 
@@ -112,8 +113,8 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		// ----------------------------------------------------------------
 
 		LinkedList<ast_node> frame = new LinkedList<ast_node>();
-		HashMap<ast_sentblock, LinkedList<ast_sent>> older_siblings = new HashMap<ast_sentblock, LinkedList<ast_sent>>();
-		HashMap<ast_sentblock, LinkedList<ast_sent>> younger_siblings = new HashMap<ast_sentblock, LinkedList<ast_sent>>();
+		Map<ast_sentblock, LinkedList<ast_sent>> older_siblings = new TreeMap<ast_sentblock, LinkedList<ast_sent>>();
+		Map<ast_sentblock, LinkedList<ast_sent>> younger_siblings = new TreeMap<ast_sentblock, LinkedList<ast_sent>>();
 
 		ast_node current = in;
 		boolean need_young = false;
@@ -204,8 +205,8 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		}
 	}
 
-	private static void ensure_no_dependency_via_scala(LinkedList<ast_node> frame, HashMap<ast_sentblock, LinkedList<ast_sent>> elder,
-			HashMap<ast_sentblock, LinkedList<ast_sent>> younger) {
+	private static void ensure_no_dependency_via_scala(LinkedList<ast_node> frame, Map<ast_sentblock, LinkedList<ast_sent>> elder,
+			Map<ast_sentblock, LinkedList<ast_sent>> younger) {
 		// create prev/next
 		// create set of scalar symbols used in prev
 		HashSet<gm_symtab_entry> PREVS = new HashSet<gm_symtab_entry>();
@@ -266,7 +267,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 		}
 	}
 
-	private static void reconstruct_old_new_main(ast_node n, HashMap<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old, RefObject<ast_node> last) {
+	private static void reconstruct_old_new_main(ast_node n, Map<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old, RefObject<ast_node> last) {
 
 		if (n.get_nodetype() == ast_node_type.AST_IF) {
 			if (last.argvalue == null) // can ignore this if loop
@@ -373,7 +374,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 	// F;
 	// }
 	// ------------------------------------------
-	private static ast_node reconstruct_old_new(LinkedList<ast_node> frame, HashMap<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old) {
+	private static ast_node reconstruct_old_new(LinkedList<ast_node> frame, Map<ast_sentblock, LinkedList<ast_sent>> siblings, boolean is_old) {
 		ast_node last = null;
 
 		// reconstruct hierarchy
@@ -425,7 +426,7 @@ public class gm_gps_opt_split_loops_for_flipping extends gm_compile_step {
 	// .... (B)
 	// }
 	// ---------------------------------------
-	private static void filter_target_loops(HashMap<ast_foreach, ast_foreach> SRC, HashSet<ast_foreach> SET) {
+	private static void filter_target_loops(Map<ast_foreach, ast_foreach> SRC, HashSet<ast_foreach> SET) {
 		for (ast_foreach in : SRC.keySet()) {
 			ast_foreach out = SRC.get(in);
 			if (out == null)

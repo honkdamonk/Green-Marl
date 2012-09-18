@@ -6,9 +6,9 @@ import ast.ast_expr;
 import ast.ast_node;
 import ast.ast_procdef;
 import ast.ast_sent;
-import frontend.symtab_types;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 
 public class gm_traverse {
 

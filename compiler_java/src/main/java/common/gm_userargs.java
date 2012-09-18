@@ -1,12 +1,13 @@
 package common;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class gm_userargs {
 
-	private final HashMap<String, String> str_args = new HashMap<String, String>();
-	private final HashMap<String, Boolean> bool_args = new HashMap<String, Boolean>();
-	private final HashMap<String, Integer> int_args = new HashMap<String, Integer>();
+	private final Map<String, String> str_args = new TreeMap<String, String>();
+	private final Map<String, Boolean> bool_args = new TreeMap<String, Boolean>();
+	private final Map<String, Integer> int_args = new TreeMap<String, Integer>();
 
 	// key (and value) will be copied before it is stored.
 	public final void set_arg_string(String key, String val) {

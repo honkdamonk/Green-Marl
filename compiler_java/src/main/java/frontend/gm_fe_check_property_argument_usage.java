@@ -1,7 +1,7 @@
 package frontend;
 
-import inc.gm_prop_usage;
 import inc.gm_compile_step;
+import inc.gm_prop_usage;
 
 import java.util.HashSet;
 

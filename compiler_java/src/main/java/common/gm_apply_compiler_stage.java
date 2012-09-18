@@ -10,11 +10,12 @@ public class gm_apply_compiler_stage {
 	
 	public static boolean apply(LinkedList<gm_compile_step> LIST) {
 		boolean is_okay = true;
-		int i = 0;
+		int i = 1;
 
 		// for each compilation step
 		for (gm_compile_step step : LIST) {
-			gm_main.gm_begin_minor_compiler_stage(i + 1, step.get_description());
+			gm_main.gm_begin_minor_compiler_stage(i, step.get_description());
+			i++;
 
 			is_okay = gm_apply_compiler_stage.gm_apply_all_proc(step) && is_okay;
 

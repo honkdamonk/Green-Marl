@@ -1,8 +1,8 @@
 package common;
 
-import ast.ast_node_type;
 import ast.ast_expr;
 import ast.ast_expr_reduce;
+import ast.ast_node_type;
 
 public class replace_subexpr_A extends gm_apply {
 

@@ -1,9 +1,9 @@
 package opt;
 
-import inc.gm_type;
+import inc.gm_assignment;
 import inc.gm_ops;
 import inc.gm_reduce;
-import inc.gm_assignment;
+import inc.gm_type;
 import tangible.RefObject;
 import ast.ast_assign;
 import ast.ast_expr;

@@ -8,8 +8,8 @@ import ast.ast_extra_info;
 
 import common.gm_apply;
 
-import frontend.symtab_types;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 
 //-----------------------------------------------------------------------------------
 // Create a flat table, for the generation of fields in master/vertex class

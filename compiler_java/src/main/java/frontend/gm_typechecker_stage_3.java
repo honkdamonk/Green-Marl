@@ -17,9 +17,9 @@ import inc.gm_ops;
 import inc.gm_reduce;
 import inc.gm_type;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeMap;
 
 import tangible.RefObject;
 import ast.ast_assign;
@@ -48,7 +48,7 @@ import common.gm_method_id;
 public class gm_typechecker_stage_3 extends gm_apply {
 
 	/** expression, dest-type */
-	public final Map<ast_expr, gm_type> coercion_targets = new HashMap<ast_expr, gm_type>();
+	public final Map<ast_expr, gm_type> coercion_targets = new TreeMap<ast_expr, gm_type>();
 
 	private boolean _is_okay = true;
 

@@ -11,21 +11,21 @@ import static common.gm_errors_and_warnings.GM_ERROR_GPS_EDGE_READ_RANDOM;
 import static common.gm_errors_and_warnings.GM_ERROR_GPS_EDGE_SEND_VERSIONS;
 import static common.gm_errors_and_warnings.GM_ERROR_GPS_EDGE_WRITE_CONDITIONAL;
 import static common.gm_errors_and_warnings.GM_ERROR_GPS_EDGE_WRITE_RHS;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 import common.gm_apply;
 import common.gm_error;
 import common.gm_method_id;
 
-import frontend.symtab_types;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 
 public class gps_check_edge_value_t extends gm_apply {
 

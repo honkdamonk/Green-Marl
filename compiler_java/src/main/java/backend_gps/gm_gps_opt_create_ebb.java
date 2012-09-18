@@ -8,8 +8,9 @@ import frontend.gm_symtab_entry;
 import inc.gm_compile_step;
 import inc.gps_apply_bb;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_id;
 import ast.ast_procdef;
@@ -31,7 +32,7 @@ public class gm_gps_opt_create_ebb extends gm_compile_step {
 		// STEP 1:
 		// trasverse AST and mark each sentence
 		// --------------------------------
-		HashMap<ast_sent, gps_gps_sentence> s_mark = new HashMap<ast_sent, gps_gps_sentence>();
+		Map<ast_sent, gps_gps_sentence> s_mark = new TreeMap<ast_sent, gps_gps_sentence>();
 		gm_stage_create_pre_process_t T1 = new gm_stage_create_pre_process_t(s_mark);
 		gm_traverse.gm_traverse_sents_pre_post(proc, T1);
 

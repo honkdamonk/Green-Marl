@@ -4,8 +4,9 @@ import frontend.gm_rw_analysis;
 import frontend.gm_symtab_entry;
 import inc.gm_compile_step;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_foreach;
 import ast.ast_procdef;
@@ -26,7 +27,7 @@ public class gm_gps_opt_insert_temp_property extends gm_compile_step {
 		// -------------------------------------
 		// Find nested loops
 		// -------------------------------------
-		HashMap<ast_foreach, ast_foreach> MAP = new HashMap<ast_foreach, ast_foreach>();
+		Map<ast_foreach, ast_foreach> MAP = new TreeMap<ast_foreach, ast_foreach>();
 		BackendGpsGlobal.gm_gps_find_double_nested_loops(p, MAP);
 
 		// -------------------------------------
@@ -40,7 +41,7 @@ public class gm_gps_opt_insert_temp_property extends gm_compile_step {
 		// - Replace accesses
 		// - Remove symbol
 		// -------------------------------------
-		HashMap<gm_symtab_entry, ast_foreach> MAP2 = T.get_target_syms_and_outer_loop();
+		Map<gm_symtab_entry, ast_foreach> MAP2 = T.get_target_syms_and_outer_loop();
 		for (gm_symtab_entry sym : MAP2.keySet()) {
 			ast_foreach out_loop = MAP2.get(sym);
 

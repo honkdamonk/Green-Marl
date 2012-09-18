@@ -1,10 +1,11 @@
 package opt;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
@@ -113,8 +114,8 @@ public class gm_opt_propagate_trivial_write_t extends gm_apply
 		}
 	}
 
-	private HashMap<gm_symtab_entry, Integer> assign_cnt = new HashMap<gm_symtab_entry, Integer>();
-	private HashMap<gm_symtab_entry, ast_assign> potential_assign = new HashMap<gm_symtab_entry, ast_assign>();
+	private Map<gm_symtab_entry, Integer> assign_cnt = new TreeMap<gm_symtab_entry, Integer>();
+	private Map<gm_symtab_entry, ast_assign> potential_assign = new TreeMap<gm_symtab_entry, ast_assign>();
 	private boolean _changed;
 
 }

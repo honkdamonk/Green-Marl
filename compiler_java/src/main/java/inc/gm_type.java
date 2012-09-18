@@ -1,6 +1,7 @@
 package inc;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import tangible.RefObject;
 import frontend.Oprules;
@@ -90,13 +91,13 @@ public enum gm_type {
 	GMTYPE_INVALID(99999); //
 
 	private int intValue;
-	private static HashMap<Integer, gm_type> mappings;
+	private static Map<Integer, gm_type> mappings;
 
-	private static HashMap<Integer, gm_type> getMappings() {
+	private static Map<Integer, gm_type> getMappings() {
 		if (mappings == null) {
 			synchronized (gm_type.class) {
 				if (mappings == null) {
-					mappings = new HashMap<Integer, gm_type>();
+					mappings = new TreeMap<Integer, gm_type>();
 				}
 			}
 		}

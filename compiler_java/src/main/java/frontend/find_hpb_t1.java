@@ -1,7 +1,7 @@
 package frontend;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -41,10 +41,10 @@ public class find_hpb_t1 extends gm_apply {
 	private int current_depth = 0;
 
 	/** map of symbol & depth */
-	private final Map<gm_symtab_entry, Integer> depth_map = new HashMap<gm_symtab_entry, Integer>();
+	private final Map<gm_symtab_entry, Integer> depth_map = new TreeMap<gm_symtab_entry, Integer>();
 
 	/** map of iterator symbol & is parallel */
-	private final Map<gm_symtab_entry, Boolean> para_iter_map = new HashMap<gm_symtab_entry, Boolean>();
+	private final Map<gm_symtab_entry, Boolean> para_iter_map = new TreeMap<gm_symtab_entry, Boolean>();
 
 	@Override
 	public final void begin_context(ast_node t) {

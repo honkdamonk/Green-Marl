@@ -37,10 +37,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -386,7 +386,7 @@ public class gm_gps_gen extends BackendGenerator {
 		Body.pushlnf("public %sMaster (CommandLine line) {", proc.get_procname().get_genname());
 
 		Body.pushln("// parse command-line arguments (if any)");
-		Body.pushln("HashMap<String,String> arg_map = new HashMap<String,String>();");
+		Body.pushln("Map<String,String> arg_map = new TreeMap<String,String>();");
 		Body.pushln("gps.node.Utils.parseOtherOptions(line, arg_map);");
 		Body.NL();
 
@@ -533,7 +533,7 @@ public class gm_gps_gen extends BackendGenerator {
 			}
 
 			// define local variables
-			HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
+			Map<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
 			for (gm_symtab_entry sym : symbols.keySet()) {
 				gps_syminfo local_info = symbols.get(sym);
 				// TODO: why is sym->isArgument() != local_info->is_argument()?
@@ -643,7 +643,7 @@ public class gm_gps_gen extends BackendGenerator {
 		get_lib().generate_broadcast_prepare(Body);
 
 		// check if scalar variable is used inside the block
-		HashMap<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
+		Map<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
 		for (gm_symtab_entry key : syms.keySet()) {
 			gps_syminfo local_info = syms.get(key);
 			gps_syminfo global_info = (gps_syminfo) key.find_info(GPS_TAG_BB_USAGE);
@@ -674,7 +674,7 @@ public class gm_gps_gen extends BackendGenerator {
 		assert pred.is_vertex();
 
 		// check if scalar variable is modified inside the block
-		HashMap<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
+		Map<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
 		for (gm_symtab_entry key : syms.keySet()) {
 			gps_syminfo local_info = syms.get(key);
 			gps_syminfo global_info = (gps_syminfo) key.find_info(GPS_TAG_BB_USAGE);
@@ -1049,7 +1049,7 @@ public class gm_gps_gen extends BackendGenerator {
 	public void do_generate_vertex_state_receive_global(gm_gps_basic_block b) {
 
 		// load scalar variable
-		HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
+		Map<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
 		for (gm_symtab_entry sym : symbols.keySet()) {
 			gps_syminfo local_info = symbols.get(sym);
 			if (!local_info.is_scalar())

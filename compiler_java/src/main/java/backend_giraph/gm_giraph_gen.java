@@ -18,9 +18,9 @@ import frontend.gm_symtab_entry;
 import inc.gm_compile_step;
 import inc.gm_reduce;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 
 import ast.ast_foreach;
 import ast.ast_if;
@@ -429,7 +429,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			}
 
 			// define local variables
-			HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
+			Map<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
 			for (gm_symtab_entry sym : symbols.keySet()) {
 				gps_syminfo local_info = symbols.get(sym);
 				if (!local_info.is_scalar() || sym.isArgument()) // TODO: why is
@@ -534,7 +534,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 	@Override
 	public void do_generate_scalar_broadcast_send(gm_gps_basic_block b) {
 		// check if scalar variable is used inside the block
-		HashMap<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
+		Map<gm_symtab_entry, gps_syminfo> syms = b.get_symbols();
 		for (gm_symtab_entry entry : syms.keySet()) {
 			gps_syminfo local_info = syms.get(entry);
 			gps_syminfo global_info = (gps_syminfo) entry.find_info(GPS_TAG_BB_USAGE);
@@ -566,7 +566,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 		assert pred.is_vertex();
 
 		// check if scalar variable is modified inside the block
-		HashMap<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
+		Map<gm_symtab_entry, gps_syminfo> syms = pred.get_symbols();
 		for (gm_symtab_entry entry : syms.keySet()) {
 			gps_syminfo local_info = syms.get(entry);
 			gps_syminfo global_info = (gps_syminfo) entry.find_info(GPS_TAG_BB_USAGE);
@@ -923,7 +923,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 	public void do_generate_vertex_state_receive_global(gm_gps_basic_block b) {
 
 		// load scalar variable
-		HashMap<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
+		Map<gm_symtab_entry, gps_syminfo> symbols = b.get_symbols();
 		for (gm_symtab_entry sym : symbols.keySet()) {
 			gps_syminfo local_info = symbols.get(sym);
 			if (!local_info.is_scalar())
@@ -1007,7 +1007,7 @@ public class gm_giraph_gen extends gm_gps_gen {
 			Body.pushln("LongWritable vertexId = new LongWritable(Long.parseLong(values[0]));");
 		}
 		Body.pushln("double vertexValue = Double.parseDouble(values[1]);");
-		Body.pushlnf("Map<%s, %s> edges = Maps.newHashMap();", vertex_id, edge_data);
+		Body.pushlnf("Map<%s, %s> edges = Maps.newMap();", vertex_id, edge_data);
 		Body.pushln("for (int i = 2; i < values.length; i += 2) {");
 		if (get_lib().is_node_type_int()) {
 			Body.pushln("IntWritable edgeId = new IntWritable(Integer.parseInt(values[i]));");

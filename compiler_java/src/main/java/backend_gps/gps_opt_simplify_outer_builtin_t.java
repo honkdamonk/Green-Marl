@@ -1,15 +1,16 @@
 package backend_gps;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import tangible.Pair;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr_builtin;
 import ast.ast_foreach;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 
@@ -60,8 +61,8 @@ public class gps_opt_simplify_outer_builtin_t extends gm_apply {
 	public final void post_process() {
 		Iterator<ast_sent> I = L1.iterator();
 		Iterator<gm_symtab_entry> J = L2.iterator();
-		HashMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry> already_defined_map = new HashMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry>();
-		HashMap<ast_sentblock, gm_symtab_entry> sent_block_driver_map = new HashMap<ast_sentblock, gm_symtab_entry>(); // sentblock
+		Map<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry> already_defined_map = new TreeMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry>();
+		Map<ast_sentblock, gm_symtab_entry> sent_block_driver_map = new TreeMap<ast_sentblock, gm_symtab_entry>(); // sentblock
 																														// <->
 		while (I.hasNext()) { // driver
 			ast_sent s = I.next();

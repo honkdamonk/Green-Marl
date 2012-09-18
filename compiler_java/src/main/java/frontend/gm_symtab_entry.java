@@ -1,7 +1,7 @@
 package frontend;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_extra_info;
 import ast.ast_extra_info_string;
@@ -16,7 +16,7 @@ public class gm_symtab_entry {
 	private boolean isRA = false;
 	private boolean isWA = false;
 	private boolean isArg = false;
-	private Map<String, ast_extra_info> extra = new HashMap<String, ast_extra_info>();
+	private Map<String, ast_extra_info> extra = new TreeMap<String, ast_extra_info>();
 
 	// always call with a copy of ID
 	public gm_symtab_entry(ast_id _id, ast_typedecl _type, boolean _isRA) {
@@ -101,7 +101,7 @@ public class gm_symtab_entry {
 		else
 			return info.ival;
 	}
-	
+
 	public Object find_info_obj(String id) {
 		ast_extra_info info = find_info(id);
 		if (info == null)
@@ -147,7 +147,7 @@ public class gm_symtab_entry {
 	public void add_info_float(String id, float f) {
 		add_info(id, new ast_extra_info(f));
 	}
-	
+
 	public void add_info_obj(String id, Object obj) {
 		add_info(id, new ast_extra_info(obj));
 	}

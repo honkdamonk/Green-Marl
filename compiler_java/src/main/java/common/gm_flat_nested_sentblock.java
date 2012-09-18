@@ -1,7 +1,7 @@
 package common;
 
-import ast.ast_node_type;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_procdef;
 
 public class gm_flat_nested_sentblock {

@@ -2,10 +2,10 @@ package common;
 
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 public class check_par_exe_t extends gm_apply {

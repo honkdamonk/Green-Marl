@@ -12,10 +12,10 @@ import static opt.gm_syntax_sugar2.find_count_function;
 import static opt.gm_syntax_sugar2.insert_def_and_init_before;
 import static opt.gm_syntax_sugar2.replace_avg_to_varaible;
 import frontend.gm_symtab_entry;
-import inc.gm_type;
+import inc.gm_assignment;
 import inc.gm_ops;
 import inc.gm_reduce;
-import inc.gm_assignment;
+import inc.gm_type;
 
 import java.util.LinkedList;
 

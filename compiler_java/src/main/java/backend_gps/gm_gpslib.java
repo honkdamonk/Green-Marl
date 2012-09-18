@@ -16,23 +16,23 @@ import static backend_gps.gm_gps_comm.GPS_COMM_RANDOM_WRITE;
 import static frontend.gm_frontend.GMUSAGE_PROPERTY;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_symtab_entry;
-import inc.gm_type;
-import inc.gm_prop_usage;
-import inc.gm_reduce;
 import inc.gm_code_writer;
 import inc.gm_graph_library;
+import inc.gm_prop_usage;
+import inc.gm_reduce;
+import inc.gm_type;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_foreach;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_sentblock;
@@ -1212,7 +1212,7 @@ public class gm_gpslib extends gm_graph_library {
 	}
 
 	static boolean is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {
-		HashMap<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
+		Map<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
 		if (!SYMS.containsKey(e))
 			return false;
 		else

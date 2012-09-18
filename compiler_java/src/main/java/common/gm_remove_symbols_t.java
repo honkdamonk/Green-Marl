@@ -2,9 +2,9 @@ package common;
 
 import java.util.HashSet;
 
-import frontend.symtab_types;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 
 //---------------------------------------------------------------------------
 // remove set of symbols

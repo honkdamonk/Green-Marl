@@ -1,8 +1,9 @@
 package backend_gps;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_assign;
 import ast.ast_foreach;
@@ -37,15 +38,15 @@ import frontend.symtab_types;
 //----------------------------------------------------
 public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 	
-	private HashMap<ast_foreach, ast_foreach> MAP;
+	private Map<ast_foreach, ast_foreach> MAP;
 	private HashSet<gm_symtab_entry> potential_target_syms = new HashSet<gm_symtab_entry>();
-	private HashMap<gm_symtab_entry, ast_foreach> target_syms = new HashMap<gm_symtab_entry, ast_foreach>();
+	private Map<gm_symtab_entry, ast_foreach> target_syms = new TreeMap<gm_symtab_entry, ast_foreach>();
 	private ast_foreach outloop = null;
 	private ast_foreach inloop = null;
 	private int level = 0;
 
-	public gps_opt_find_scalar_replace_target_t(HashMap<ast_foreach, ast_foreach> M) {
-		MAP = new HashMap<ast_foreach, ast_foreach>(M);
+	public gps_opt_find_scalar_replace_target_t(Map<ast_foreach, ast_foreach> M) {
+		MAP = new TreeMap<ast_foreach, ast_foreach>(M);
 		set_for_sent(true);
 		set_for_symtab(true);
 		set_separate_post_apply(true);
@@ -118,7 +119,7 @@ public class gps_opt_find_scalar_replace_target_t extends gm_apply {
 		return true;
 	}
 
-	public final HashMap<gm_symtab_entry, ast_foreach> get_target_syms_and_outer_loop() {
+	public final Map<gm_symtab_entry, ast_foreach> get_target_syms_and_outer_loop() {
 		return target_syms;
 	}
 

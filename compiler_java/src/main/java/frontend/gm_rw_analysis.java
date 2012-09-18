@@ -13,9 +13,9 @@ import inc.gm_assignment_location;
 import inc.gm_reduce;
 import inc.gm_type;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -57,7 +57,7 @@ public class gm_rw_analysis extends gm_apply {
 	private static final int GM_BLTIN_MUTATE_SHRINK = 2;
 
 	static final String GM_INFOKEY_RW = "GM_INFOKEY_RW";
-	static final Map<gm_symtab_entry, range_cond_t> Default_DriverMap = new HashMap<gm_symtab_entry, range_cond_t>();
+	static final Map<gm_symtab_entry, range_cond_t> Default_DriverMap = new TreeMap<gm_symtab_entry, range_cond_t>();
 
 	private boolean _succ = true;
 
@@ -613,12 +613,10 @@ public class gm_rw_analysis extends gm_apply {
 				if (is_same_entry(e2, new_entry)) {
 					// old entry is wider
 					return true;
-				} 
-				else if (is_wider_entry(new_entry, e2)) {
+				} else if (is_wider_entry(new_entry, e2)) {
 					// new_entry is wider
 					return true;
-				} 
-				else if (is_wider_entry(e2, new_entry)) {
+				} else if (is_wider_entry(e2, new_entry)) {
 					// hack. copy new entry into old one
 					e2.copyFrom(new_entry);
 					return true;
@@ -692,7 +690,7 @@ public class gm_rw_analysis extends gm_apply {
 		// do-it again RW analysis
 		gm_rw_analysis RWA = new gm_rw_analysis();
 		gm_traverse_sents(s, RWA, GM_POST_APPLY); // post
-																			// apply
+													// apply
 		return RWA.is_success();
 	}
 

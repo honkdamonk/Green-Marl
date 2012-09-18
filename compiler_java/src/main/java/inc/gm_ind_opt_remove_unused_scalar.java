@@ -8,7 +8,7 @@ public class gm_ind_opt_remove_unused_scalar extends gm_compile_step
 {
 	private gm_ind_opt_remove_unused_scalar()
 	{
-		set_description("");
+		set_description("Remove Unused Scalar");
 	}
 
 	public void process(ast_procdef proc)

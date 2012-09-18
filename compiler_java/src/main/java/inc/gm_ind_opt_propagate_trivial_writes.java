@@ -8,7 +8,7 @@ public class gm_ind_opt_propagate_trivial_writes extends gm_compile_step
 {
 	private gm_ind_opt_propagate_trivial_writes()
 	{
-		set_description("");
+		set_description("Propagate Trivial Writes");
 	}
 
 	public void process(ast_procdef proc)

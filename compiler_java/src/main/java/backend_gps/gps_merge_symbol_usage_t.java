@@ -9,12 +9,12 @@ import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
 import frontend.gm_symtab_entry;
 import inc.gm_reduce;
 import inc.gps_apply_bb_ast;
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_extra_info;
 import ast.ast_foreach;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 

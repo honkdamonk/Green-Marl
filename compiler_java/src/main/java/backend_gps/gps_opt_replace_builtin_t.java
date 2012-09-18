@@ -3,8 +3,8 @@ package backend_gps;
 import inc.gm_expr_class;
 import inc.gm_type;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 
 import tangible.Pair;
 import ast.ast_expr;
@@ -26,8 +26,8 @@ public class gps_opt_replace_builtin_t extends gm_apply {
 	private ast_sentblock sb;
 	private Map<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry> map;
 
-	public gps_opt_replace_builtin_t(gm_symtab_entry drv, ast_sentblock scope, HashMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry> M) {
-		map = new HashMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry>(M);
+	public gps_opt_replace_builtin_t(gm_symtab_entry drv, ast_sentblock scope, Map<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry> M) {
+		map = new TreeMap<Pair<ast_sentblock, gm_method_id>, gm_symtab_entry>(M);
 		set_for_expr(true);
 		sym = drv;
 		sb = scope;

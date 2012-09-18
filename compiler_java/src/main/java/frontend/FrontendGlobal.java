@@ -1,19 +1,19 @@
 package frontend;
 
+import inc.gm_assignment;
 import inc.gm_ops;
 import inc.gm_reduce;
-import inc.gm_assignment;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_id;
 import ast.ast_if;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sentblock;
 
 import common.gm_transform_helper;

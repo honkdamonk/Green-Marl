@@ -1,8 +1,8 @@
 package common;
 
-import frontend.symtab_types;
 import frontend.gm_scope;
 import frontend.gm_symtab;
+import frontend.symtab_types;
 
 // replace old_scope -> top_scope
 public class replace_upper_scope extends gm_apply {

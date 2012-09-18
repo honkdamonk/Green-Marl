@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 
 import tangible.RefObject;
-import ast.ast_node_type;
 import ast.ast_argdecl;
 import ast.ast_assign;
 import ast.ast_assign_mapentry;
@@ -37,14 +36,15 @@ import ast.ast_idlist;
 import ast.ast_mapaccess;
 import ast.ast_maptypedecl;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_procdef;
 import ast.ast_sent;
 import ast.ast_typedecl;
 import ast.ast_vardecl;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 import common.gm_main;
 
 /**

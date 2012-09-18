@@ -1,7 +1,7 @@
 package opt;
 
-import ast.ast_node_type;
 import ast.ast_assign;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 //--------------------------------------------------------------------

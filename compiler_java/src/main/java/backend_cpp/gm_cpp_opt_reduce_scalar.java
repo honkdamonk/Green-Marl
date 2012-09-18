@@ -1,9 +1,5 @@
 package backend_cpp;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-
 import frontend.FrontendGlobal;
 import frontend.gm_rw_analysis;
 import frontend.gm_symtab_entry;
@@ -12,6 +8,12 @@ import inc.gm_compile_step;
 import inc.gm_reduce;
 import inc.gm_type;
 import inc.nop_reduce_scalar;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
+
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_extra_info;
@@ -130,12 +132,12 @@ class gm_cpp_opt_reduce_scalar extends gm_compile_step {
 		// apply to each BFS
 		// ---------------------------------------------
 		private void apply_transform(ast_foreach fe) {
-			HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map = new HashMap<gm_symtab_entry, gm_symtab_entry>();
+			Map<gm_symtab_entry, gm_symtab_entry> symbol_map = new TreeMap<gm_symtab_entry, gm_symtab_entry>();
 			LinkedList<gm_symtab_entry> old_s = new LinkedList<gm_symtab_entry>();
 			LinkedList<gm_symtab_entry> new_s = new LinkedList<gm_symtab_entry>();
 			LinkedList<gm_reduce> reduce_op = new LinkedList<gm_reduce>();
-			HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>> old_supple_map = new HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>>();
-			HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>> new_supple_map = new HashMap<gm_symtab_entry, LinkedList<gm_symtab_entry>>();
+			Map<gm_symtab_entry, LinkedList<gm_symtab_entry>> old_supple_map = new TreeMap<gm_symtab_entry, LinkedList<gm_symtab_entry>>();
+			Map<gm_symtab_entry, LinkedList<gm_symtab_entry>> new_supple_map = new TreeMap<gm_symtab_entry, LinkedList<gm_symtab_entry>>();
 			LinkedList<LinkedList<gm_symtab_entry>> old_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
 			LinkedList<LinkedList<gm_symtab_entry>> new_supple = new LinkedList<LinkedList<gm_symtab_entry>>();
 
@@ -254,10 +256,10 @@ class gm_cpp_opt_reduce_scalar extends gm_compile_step {
 
 	class change_reduction_t extends gm_apply {
 		
-		private HashMap<gm_symtab_entry, gm_symtab_entry> symbol_map;
+		private Map<gm_symtab_entry, gm_symtab_entry> symbol_map;
 		private LinkedList<ast_assign> to_normals = new LinkedList<ast_assign>();
 		
-		public final void set_map(HashMap<gm_symtab_entry, gm_symtab_entry> m) {
+		public final void set_map(Map<gm_symtab_entry, gm_symtab_entry> m) {
 			symbol_map = m;
 		}
 	

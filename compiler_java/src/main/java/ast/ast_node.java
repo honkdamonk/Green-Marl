@@ -10,16 +10,16 @@ import static frontend.symtab_types.GM_SYMTAB_ARG;
 import static frontend.symtab_types.GM_SYMTAB_FIELD;
 import static frontend.symtab_types.GM_SYMTAB_PROC;
 import static frontend.symtab_types.GM_SYMTAB_VAR;
-import frontend.symtab_types;
 import frontend.gm_scope;
 import frontend.gm_symtab;
+import frontend.symtab_types;
 import inc.gm_code_writer;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import common.gm_apply;
 import common.gm_traverse;
@@ -30,7 +30,7 @@ public abstract class ast_node {
 
 	protected int line = 0;
 	protected int col = 0;
-	protected HashMap<String, ast_extra_info> extra = new HashMap<String, ast_extra_info>();
+	protected Map<String, ast_extra_info> extra = new TreeMap<String, ast_extra_info>();
 	protected ast_node_type nodetype = null;
 	protected ast_node parent = null;
 	protected gm_symtab sym_vars = null;
@@ -387,7 +387,7 @@ public abstract class ast_node {
 		return S.get(key);
 	}
 
-	public HashMap<Object, Object> get_info_map(String id) {
+	public Map<Object, Object> get_info_map(String id) {
 		ast_extra_info_map INFO = ((ast_extra_info_map) find_info(id));
 		assert INFO != null;
 		return INFO.get_map();

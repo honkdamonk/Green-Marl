@@ -1,6 +1,7 @@
 package backend_gps;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_foreach;
 import ast.ast_node_type;
@@ -37,10 +38,10 @@ public class gps_opt_find_nested_loops_t extends gm_apply {
 
 	private int depth = 0;
 	private ast_foreach outer_loop = null;
-	private HashMap<ast_foreach, ast_foreach> MAP;
+	private Map<ast_foreach, ast_foreach> MAP;
 
-	public gps_opt_find_nested_loops_t(HashMap<ast_foreach, ast_foreach> M) {
-		MAP = new HashMap<ast_foreach, ast_foreach>(M);
+	public gps_opt_find_nested_loops_t(Map<ast_foreach, ast_foreach> M) {
+		MAP = new TreeMap<ast_foreach, ast_foreach>(M);
 		set_for_sent(true);
 		set_separate_post_apply(true);
 	}

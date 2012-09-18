@@ -8,14 +8,15 @@ import static inc.gm_type.GMTYPE_NODEITER_ORDER;
 import static inc.gm_type.GMTYPE_NODEITER_SET;
 import inc.gm_type;
 
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_foreach;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 import common.gm_apply;
@@ -32,7 +33,7 @@ import frontend.gm_symtab_entry;
 public class gm_reduce_opt_linear_t extends gm_apply {
 
 	/** map [(target, bound, is_bfs) ==> list of assign] */
-	private HashMap<triple_t, LinkedList<ast_assign>> candidates = new HashMap<triple_t, LinkedList<ast_assign>>();
+	private Map<triple_t, LinkedList<ast_assign>> candidates = new TreeMap<triple_t, LinkedList<ast_assign>>();
 	private LinkedList<ast_assign> targets = new LinkedList<ast_assign>();
 	private boolean under_rev_bfs;
 

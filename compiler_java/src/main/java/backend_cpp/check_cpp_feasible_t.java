@@ -3,9 +3,9 @@ package backend_cpp;
 import ast.ast_node_type;
 import ast.ast_sent;
 
-import common.gm_errors_and_warnings;
 import common.gm_apply;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 
 class check_cpp_feasible_t extends gm_apply {
 	

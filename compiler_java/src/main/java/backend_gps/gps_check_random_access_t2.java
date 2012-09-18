@@ -13,10 +13,10 @@ import static common.gm_errors_and_warnings.GM_ERROR_GPS_RANDOM_NODE_WRITE_USE_S
 
 import java.util.HashSet;
 
-import ast.ast_node_type;
 import ast.ast_field;
 import ast.ast_id;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 

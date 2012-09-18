@@ -5,9 +5,9 @@ import java.util.Iterator;
 
 import common.gm_apply;
 
-import frontend.symtab_types;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 
 public class gm_opt_remove_unused_t extends gm_apply
 {

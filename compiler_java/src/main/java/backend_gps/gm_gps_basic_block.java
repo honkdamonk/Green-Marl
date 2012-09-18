@@ -1,9 +1,10 @@
 package backend_gps;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_extra_info;
 import ast.ast_foreach;
@@ -34,7 +35,7 @@ public class gm_gps_basic_block {
 	private ast_id for_info; // to use info methods defined in
 
 	// map of used symbols inside this BB
-	private final HashMap<gm_symtab_entry, gps_syminfo> symbols = new HashMap<gm_symtab_entry, gps_syminfo>();
+	private final Map<gm_symtab_entry, gps_syminfo> symbols = new TreeMap<gm_symtab_entry, gps_syminfo>();
 
 	public gm_gps_basic_block(int _id) {
 		this(_id, gm_gps_bbtype.GM_GPS_BBTYPE_SEQ);
@@ -303,7 +304,7 @@ public class gm_gps_basic_block {
 		symbols.put(sym, info);
 	}
 
-	public final HashMap<gm_symtab_entry, gps_syminfo> get_symbols() {
+	public final Map<gm_symtab_entry, gps_syminfo> get_symbols() {
 		return symbols;
 	}
 

@@ -1,8 +1,8 @@
 package ast;
 
 import inc.gm_expr_class;
-import inc.gm_type;
 import inc.gm_reduce;
+import inc.gm_type;
 
 import common.gm_apply;
 import common.gm_dumptree;

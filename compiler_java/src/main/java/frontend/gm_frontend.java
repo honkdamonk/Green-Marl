@@ -21,9 +21,10 @@ import inc.gm_type;
 import inc.lhs_list;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import parse.start_parse;
 import tangible.Extern;
@@ -73,7 +74,7 @@ public class gm_frontend {
 	private ast_idlist curr_idlist = null;
 	private Iterator<ast_procdef> I;
 	private final ArrayList<ast_procdef> procs = new ArrayList<ast_procdef>();
-	private final HashMap<ast_procdef, gm_procinfo> proc_info = new HashMap<ast_procdef, gm_procinfo>();
+	private final Map<ast_procdef, gm_procinfo> proc_info = new TreeMap<ast_procdef, gm_procinfo>();
 	private ast_procdef _curr_proc;
 
 	/** a hack for debug */

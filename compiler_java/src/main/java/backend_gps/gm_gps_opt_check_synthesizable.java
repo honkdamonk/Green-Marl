@@ -3,8 +3,8 @@ package backend_gps;
 import inc.gm_compile_step;
 import ast.ast_procdef;
 
-import common.gm_errors_and_warnings;
 import common.gm_error;
+import common.gm_errors_and_warnings;
 import common.gm_main;
 
 public class gm_gps_opt_check_synthesizable extends gm_compile_step {

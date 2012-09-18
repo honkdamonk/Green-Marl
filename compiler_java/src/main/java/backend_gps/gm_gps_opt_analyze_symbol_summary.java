@@ -4,8 +4,8 @@ import static backend_gps.GPSConstants.GPS_FLAG_NODE_VALUE_INIT;
 import static inc.gps_apply_bb.GPS_TAG_BB_USAGE;
 import frontend.gm_frontend;
 import frontend.gm_symtab_entry;
-import inc.gm_prop_usage;
 import inc.gm_compile_step;
+import inc.gm_prop_usage;
 
 import java.util.HashSet;
 

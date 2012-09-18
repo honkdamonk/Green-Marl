@@ -3,7 +3,6 @@ package inc;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_call;
@@ -17,6 +16,7 @@ import ast.ast_id;
 import ast.ast_if;
 import ast.ast_mapaccess;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_nop;
 import ast.ast_return;
 import ast.ast_sent;

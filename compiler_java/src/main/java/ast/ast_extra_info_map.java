@@ -1,10 +1,11 @@
 package ast;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ast_extra_info_map extends ast_extra_info {
 	
-	public HashMap<Object, Object> map = new HashMap<Object, Object>();
+	public Map<Object, Object> map = new TreeMap<Object, Object>();
 
 	public ast_extra_info_map() {
 	}
@@ -15,7 +16,7 @@ public class ast_extra_info_map extends ast_extra_info {
 		return null;
 	}
 
-	public final HashMap<Object, Object> get_map() {
+	public final Map<Object, Object> get_map() {
 		return map;
 	}
 }

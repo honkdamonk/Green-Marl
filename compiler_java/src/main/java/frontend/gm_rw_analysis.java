@@ -11,8 +11,9 @@ import inc.gm_assignment_location;
 import inc.gm_reduce;
 import inc.gm_type;
 
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -55,7 +56,7 @@ public class gm_rw_analysis extends gm_apply {
 	private static final int GM_BLTIN_MUTATE_SHRINK = 2;
 
 	static final String GM_INFOKEY_RW = "GM_INFOKEY_RW";
-	static final HashMap<gm_symtab_entry, range_cond_t> Default_DriverMap = new HashMap<gm_symtab_entry, range_cond_t>();
+	static final Map<gm_symtab_entry, range_cond_t> Default_DriverMap = new TreeMap<gm_symtab_entry, range_cond_t>();
 
 	private boolean _succ = true;
 
@@ -856,7 +857,7 @@ public class gm_rw_analysis extends gm_apply {
 		traverse_expr_for_readset_adding(e, rset, Default_DriverMap);
 	}
 
-	public static void traverse_expr_for_readset_adding(ast_expr e, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding(ast_expr e, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 
 		switch (e.get_opclass()) {
 		case GMEXPR_ID: {
@@ -917,7 +918,7 @@ public class gm_rw_analysis extends gm_apply {
 		}
 	}
 
-	public static void traverse_expr_for_readset_adding_field(ast_expr e, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_field(ast_expr e, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 		gm_symtab_entry iter_sym = e.get_field().get_first().getSymInfo();
 		gm_symtab_entry field_sym = e.get_field().get_second().getSymInfo();
 		assert iter_sym != null;
@@ -943,7 +944,7 @@ public class gm_rw_analysis extends gm_apply {
 		gm_add_rwinfo_to_set(rset, field_sym, new_entry);
 	}
 
-	public static void traverse_expr_for_readset_adding_builtin(ast_expr_builtin builtin, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_builtin(ast_expr_builtin builtin, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 		// add every arguments in the readset
 		LinkedList<ast_expr> args = builtin.get_args();
 		for (ast_expr a : args) {
@@ -951,7 +952,7 @@ public class gm_rw_analysis extends gm_apply {
 		}
 	}
 
-	public static void traverse_expr_for_readset_adding_foreign(ast_expr_foreign f, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_foreign(ast_expr_foreign f, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 
 		gm_rwinfo new_entry;
 		LinkedList<ast_node> N = f.get_parsed_nodes();
@@ -982,7 +983,7 @@ public class gm_rw_analysis extends gm_apply {
 		}
 	}
 
-	public static void traverse_expr_for_readset_adding_reduce(ast_expr_reduce e2, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_reduce(ast_expr_reduce e2, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 		gm_symtab_entry it = e2.get_iterator().getSymInfo();
 		gm_type iter_type = e2.get_iter_type();
 		ast_expr f = e2.get_filter();

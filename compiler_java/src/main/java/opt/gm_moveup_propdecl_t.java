@@ -1,19 +1,20 @@
 package opt;
 
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import tangible.Pair;
-import ast.ast_node_type;
 import ast.ast_bfs;
 import ast.ast_foreach;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 import common.gm_apply;
 
-import frontend.symtab_types;
 import frontend.gm_symtab;
 import frontend.gm_symtab_entry;
+import frontend.symtab_types;
 
 //---------------------------------------------
 // example
@@ -57,7 +58,7 @@ public class gm_moveup_propdecl_t extends gm_apply {
 	private LinkedList<Integer> stack_state = new LinkedList<Integer>();
 	private LinkedList<gm_symtab> stack_top_scope = new LinkedList<gm_symtab>();
 	private LinkedList<ast_sent> stack_pushed_node = new LinkedList<ast_sent>();
-	private HashMap<gm_symtab_entry, Pair<gm_symtab, gm_symtab>> movements = new HashMap<gm_symtab_entry, Pair<gm_symtab, gm_symtab>>(); // entry
+	private Map<gm_symtab_entry, Pair<gm_symtab, gm_symtab>> movements = new TreeMap<gm_symtab_entry, Pair<gm_symtab, gm_symtab>>(); // entry
 																																			// ->
 																																			// (from_symtab,
 																																			// to_symtab)

@@ -8,12 +8,12 @@ import inc.gm_type;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 
 import common.gm_apply;

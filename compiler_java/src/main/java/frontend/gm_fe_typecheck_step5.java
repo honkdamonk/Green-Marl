@@ -3,7 +3,7 @@ package frontend;
 import inc.gm_compile_step;
 import inc.gm_type;
 
-import java.util.HashMap;
+import java.util.Map;
 
 import ast.ast_assign;
 import ast.ast_expr;
@@ -42,7 +42,7 @@ public class gm_fe_typecheck_step5 extends gm_compile_step {
 		return new gm_fe_typecheck_step5();
 	}
 
-	private static void insert_explicit_type_conversion_for_assign_or_return(HashMap<ast_expr, gm_type> coercion_targets) {
+	private static void insert_explicit_type_conversion_for_assign_or_return(Map<ast_expr, gm_type> coercion_targets) {
 		for (ast_expr t : coercion_targets.keySet()) {
 			gm_type dest_type = coercion_targets.get(t);
 

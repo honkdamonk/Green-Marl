@@ -1,13 +1,13 @@
 package opt;
 
-import inc.gm_type;
 import inc.gm_assignment;
+import inc.gm_type;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_bfs;
 import ast.ast_expr;
@@ -16,6 +16,7 @@ import ast.ast_field;
 import ast.ast_foreach;
 import ast.ast_id;
 import ast.ast_node;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.gm_rwinfo_list;
@@ -77,7 +78,7 @@ public class gm_flip_backedge_t extends gm_apply {
 		LinkedList<ast_sent> S = body.get_sents();
 
 		LinkedList<gm_symtab_entry> targets = new LinkedList<gm_symtab_entry>();
-		HashMap<gm_symtab_entry, Boolean> check_init = new HashMap<gm_symtab_entry, Boolean>();
+		Map<gm_symtab_entry, Boolean> check_init = new TreeMap<gm_symtab_entry, Boolean>();
 
 		// --------------------------------------
 		// check if bodies are all assignments

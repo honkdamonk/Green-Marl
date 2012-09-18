@@ -1,7 +1,7 @@
 package frontend;
 
-import inc.gm_type;
 import inc.gm_ops;
+import inc.gm_type;
 import tangible.RefObject;
 
 public class gm_typecheck {

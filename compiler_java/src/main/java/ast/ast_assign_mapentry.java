@@ -1,9 +1,9 @@
 package ast;
 
-import static inc.gm_assignment_location.GMASSIGN_LHS_MAP;
 import static inc.gm_assignment.GMASSIGN_REDUCE;
-import inc.gm_reduce;
+import static inc.gm_assignment_location.GMASSIGN_LHS_MAP;
 import inc.gm_assignment_location;
+import inc.gm_reduce;
 
 import common.gm_apply;
 

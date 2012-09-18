@@ -3,8 +3,9 @@ package backend_gps;
 import static backend_gps.GPSConstants.GPS_FLAG_WHILE_HEAD;
 import static backend_gps.GPSConstants.GPS_FLAG_WHILE_TAIL;
 
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_if;
 import ast.ast_node_type;
@@ -15,9 +16,9 @@ import common.gm_apply;
 
 public class gm_gps_create_basic_block1_t extends gm_apply {
 
-	private final HashMap<ast_sent, gm_gps_basic_block> prev_map = new HashMap<ast_sent, gm_gps_basic_block>();
-	private final HashMap<ast_sent, gm_gps_basic_block> next_map = new HashMap<ast_sent, gm_gps_basic_block>();
-	private HashMap<ast_sent, gps_gps_sentence> s_mark;
+	private final Map<ast_sent, gm_gps_basic_block> prev_map = new TreeMap<ast_sent, gm_gps_basic_block>();
+	private final Map<ast_sent, gm_gps_basic_block> next_map = new TreeMap<ast_sent, gm_gps_basic_block>();
+	private Map<ast_sent, gps_gps_sentence> s_mark;
 
 	private gm_gps_basic_block prev;
 	private gm_gps_basic_block entry;
@@ -31,7 +32,7 @@ public class gm_gps_create_basic_block1_t extends gm_apply {
 	private int added_depth = 0;
 	private gm_gps_beinfo gen;
 
-	public gm_gps_create_basic_block1_t(HashMap<ast_sent, gps_gps_sentence> s, gm_gps_beinfo _gen) {
+	public gm_gps_create_basic_block1_t(Map<ast_sent, gps_gps_sentence> s, gm_gps_beinfo _gen) {
 		s_mark = s;
 		gen = _gen;
 		entry = prev = newBB(); // entry

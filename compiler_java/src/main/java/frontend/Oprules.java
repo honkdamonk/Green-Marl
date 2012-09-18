@@ -1,11 +1,5 @@
 package frontend;
 
-import static frontend.gm_operator_coercion.COERCION_ALL;
-import static frontend.gm_operator_coercion.COERCION_NO;
-import static frontend.gm_operator_coercion.COERCION_RIGHT;
-import static frontend.gm_operator_result.RESULT_BOOL;
-import static frontend.gm_operator_result.RESULT_COERCION;
-import static frontend.gm_operator_result.RESULT_LEFT;
 import static frontend.gm_operator.ASSIGN_OP;
 import static frontend.gm_operator.BOOL_OP;
 import static frontend.gm_operator.COMP_OP;
@@ -13,13 +7,19 @@ import static frontend.gm_operator.EQ_OP;
 import static frontend.gm_operator.INT_OP;
 import static frontend.gm_operator.NUMERIC_OP;
 import static frontend.gm_operator.TER_OP;
+import static frontend.gm_operator_coercion.COERCION_ALL;
+import static frontend.gm_operator_coercion.COERCION_NO;
+import static frontend.gm_operator_coercion.COERCION_RIGHT;
+import static frontend.gm_operator_result.RESULT_BOOL;
+import static frontend.gm_operator_result.RESULT_COERCION;
+import static frontend.gm_operator_result.RESULT_LEFT;
 import static frontend.gm_operator_type_class.T_BOOL;
 import static frontend.gm_operator_type_class.T_COMPATIBLE;
 import static frontend.gm_operator_type_class.T_INT;
 import static frontend.gm_operator_type_class.T_NUMERIC;
 import static frontend.gm_operator_type_class.T_NUMERIC_INF;
-import inc.gm_type;
 import inc.gm_ops;
+import inc.gm_type;
 
 import java.util.ArrayList;
 

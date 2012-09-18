@@ -2,7 +2,8 @@ package common;
 
 import inc.gm_type;
 
-import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_extra_info;
 
@@ -15,7 +16,7 @@ public class gm_builtin_def {
 	private String orgname = null;
 	private gm_method_id method_id;
 	private boolean need_strict = false;
-	private final HashMap<String, ast_extra_info> extra_info = new HashMap<String, ast_extra_info>();
+	private final Map<String, ast_extra_info> extra_info = new TreeMap<String, ast_extra_info>();
 
 	private boolean synonym = false;
 	private gm_builtin_def org_def = null;

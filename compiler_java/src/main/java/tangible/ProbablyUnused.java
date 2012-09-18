@@ -2,10 +2,10 @@ package tangible;
 
 import frontend.gm_rwinfo;
 import frontend.gm_symtab_entry;
-import inc.gm_type;
+import inc.gm_assignment;
 import inc.gm_ops;
 import inc.gm_reduce;
-import inc.gm_assignment;
+import inc.gm_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_id;

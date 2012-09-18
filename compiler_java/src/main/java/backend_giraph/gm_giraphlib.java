@@ -13,23 +13,22 @@ import static backend_gps.GPSConstants.STATE_SHORT_CUT;
 import static common.gm_main.FE;
 import static common.gm_main.PREGEL_BE;
 import frontend.gm_symtab_entry;
-import inc.gm_type;
-import inc.gm_reduce;
 import inc.gm_code_writer;
+import inc.gm_reduce;
+import inc.gm_type;
 import inc.gps_apply_bb;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import ast.ast_node_type;
 import ast.ast_assign;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
 import ast.ast_foreach;
 import ast.ast_id;
+import ast.ast_node_type;
 import ast.ast_sent;
 import ast.ast_sentblock;
 import ast.ast_typedecl;
@@ -939,7 +938,7 @@ public class gm_giraphlib extends gm_gpslib {
 	}
 
 	static boolean is_symbol_defined_in_bb(gm_gps_basic_block b, gm_symtab_entry e) {
-		HashMap<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
+		Map<gm_symtab_entry, gps_syminfo> SYMS = b.get_symbols();
 		if (!SYMS.containsKey(e))
 			return false;
 		else

@@ -2,8 +2,8 @@ package ast;
 
 import frontend.gm_symtab_entry;
 import inc.gm_expr_class;
-import inc.gm_type;
 import inc.gm_ops;
+import inc.gm_type;
 
 import common.gm_apply;
 import common.gm_dumptree;

@@ -8,9 +8,6 @@ import inc.gm_compile_step;
 
 import java.util.LinkedList;
 
-import common.gm_apply;
-import common.gm_main;
-
 import ast.ast_bfs;
 import ast.ast_expr;
 import ast.ast_expr_builtin;
@@ -21,6 +18,9 @@ import ast.ast_procdef;
 import ast.ast_sent;
 import ast.gm_rwinfo_list;
 import ast.gm_rwinfo_map;
+
+import common.gm_apply;
+import common.gm_main;
 
 class gm_cpp_gen_check_bfs extends gm_compile_step {
 

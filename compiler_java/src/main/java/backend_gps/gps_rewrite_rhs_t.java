@@ -7,9 +7,10 @@ import static backend_gps.GPSConstants.GPS_INT_EXPR_SCOPE;
 import static backend_gps.GPSConstants.GPS_INT_SYNTAX_CONTEXT;
 import inc.gm_type;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_assign;
 import ast.ast_expr;
@@ -29,7 +30,7 @@ import frontend.gm_symtab_entry;
 
 public class gps_rewrite_rhs_t extends gm_apply {
 
-	private HashMap<ast_foreach, HashSet<ast_expr>> sub_exprs = new HashMap<ast_foreach, HashSet<ast_expr>>();
+	private Map<ast_foreach, HashSet<ast_expr>> sub_exprs = new TreeMap<ast_foreach, HashSet<ast_expr>>();
 	private ast_foreach current_fe = null;
 
 	public gps_rewrite_rhs_t() {
@@ -76,8 +77,8 @@ public class gps_rewrite_rhs_t extends gm_apply {
 	}
 
 	public final void process_foreach(ast_foreach fe, HashSet<ast_expr> exprs) {
-		HashMap<gm_symtab_entry, gm_symtab_entry> props_vars = new HashMap<gm_symtab_entry, gm_symtab_entry>();
-		HashMap<ast_expr, gm_symtab_entry> expr_vars = new HashMap<ast_expr, gm_symtab_entry>();
+		Map<gm_symtab_entry, gm_symtab_entry> props_vars = new TreeMap<gm_symtab_entry, gm_symtab_entry>();
+		Map<ast_expr, gm_symtab_entry> expr_vars = new TreeMap<ast_expr, gm_symtab_entry>();
 
 		assert fe.find_info_bool(GPS_FLAG_IS_INNER_LOOP);
 
@@ -205,7 +206,7 @@ public class gps_rewrite_rhs_t extends gm_apply {
 		return false;
 	}
 
-	public static boolean is_composed_of(ast_expr e, HashMap<gm_symtab_entry, gm_symtab_entry> SYMS) {
+	public static boolean is_composed_of(ast_expr e, Map<gm_symtab_entry, gm_symtab_entry> SYMS) {
 		return false;
 	}
 

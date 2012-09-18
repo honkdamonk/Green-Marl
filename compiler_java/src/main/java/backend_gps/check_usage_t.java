@@ -7,8 +7,9 @@ import frontend.gm_symtab_entry;
 import inc.gm_reduce;
 import inc.gps_apply_bb_ast;
 
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_assign;
 import ast.ast_expr;
@@ -19,8 +20,8 @@ import ast.ast_sent;
 
 class check_usage_t extends gps_apply_bb_ast {
 
-	private final HashMap<gm_symtab_entry, gm_reduce> usage = new HashMap<gm_symtab_entry, gm_reduce>();
-	private final HashMap<gm_symtab_entry, gm_reduce> read_usage = new HashMap<gm_symtab_entry, gm_reduce>();
+	private final Map<gm_symtab_entry, gm_reduce> usage = new TreeMap<gm_symtab_entry, gm_reduce>();
+	private final Map<gm_symtab_entry, gm_reduce> read_usage = new TreeMap<gm_symtab_entry, gm_reduce>();
 	private boolean _okay_to_merge = true;
 	private int _state;
 

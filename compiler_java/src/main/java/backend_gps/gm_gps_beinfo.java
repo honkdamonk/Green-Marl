@@ -1,12 +1,13 @@
 package backend_gps;
 
 import frontend.gm_symtab_entry;
-import inc.gm_type;
 import inc.gm_backend_info;
+import inc.gm_type;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import ast.ast_foreach;
 import ast.ast_procdef;
@@ -35,13 +36,13 @@ public class gm_gps_beinfo extends gm_backend_info {
 	 * map of inner loops (possible communications) and symbols used for the
 	 * communication in the loop.
 	 */
-	private final HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>> comm_symbol_info = new HashMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>>();
-	private final HashMap<gm_gps_comm_unit, gm_gps_communication_size_info> comm_size_info = new HashMap<gm_gps_comm_unit, gm_gps_communication_size_info>();
+	private final Map<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>> comm_symbol_info = new TreeMap<gm_gps_comm_unit, LinkedList<gm_gps_communication_symbol_info>>();
+	private final Map<gm_gps_comm_unit, gm_gps_communication_size_info> comm_size_info = new TreeMap<gm_gps_comm_unit, gm_gps_communication_size_info>();
 	private final gm_gps_communication_size_info max_comm_size = new gm_gps_communication_size_info();
 
 	/** set of communications */
 	private final HashSet<gm_gps_comm_unit> comm_loops = new HashSet<gm_gps_comm_unit>();
-	private final HashMap<gm_gps_comm_unit, LinkedList<ast_sent>> random_write_sents = new HashMap<gm_gps_comm_unit, LinkedList<ast_sent>>();
+	private final Map<gm_gps_comm_unit, LinkedList<ast_sent>> random_write_sents = new TreeMap<gm_gps_comm_unit, LinkedList<ast_sent>>();
 	/** congruent message class information */
 	private final LinkedList<gm_gps_congruent_msg_class> congruent_msg = new LinkedList<gm_gps_congruent_msg_class>();
 

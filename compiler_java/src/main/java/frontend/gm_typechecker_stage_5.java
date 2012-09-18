@@ -12,6 +12,7 @@ import inc.gm_type;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 
 import tangible.RefObject;
 import ast.ast_assign;
@@ -46,7 +47,7 @@ import common.gm_errors_and_warnings;
 // resolve type of every sub-expression
 public class gm_typechecker_stage_5 extends gm_apply {
 
-	public final HashMap<ast_expr, gm_type> coercion_targets = new HashMap<ast_expr, gm_type>();
+	public final Map<ast_expr, gm_type> coercion_targets = new HashMap<ast_expr, gm_type>();
 
 	private boolean _is_okay = true;
 	private ast_typedecl ret = null;

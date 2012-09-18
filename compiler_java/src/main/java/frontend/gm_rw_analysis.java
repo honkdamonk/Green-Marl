@@ -1,5 +1,7 @@
 package frontend;
 
+import static common.gm_traverse.GM_POST_APPLY;
+import static common.gm_traverse.gm_traverse_sents;
 import static frontend.gm_range_type.GM_RANGE_LEVEL;
 import static frontend.gm_range_type.GM_RANGE_LEVEL_DOWN;
 import static frontend.gm_range_type.GM_RANGE_LEVEL_UP;
@@ -13,6 +15,7 @@ import inc.gm_type;
 
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 import ast.ast_assign;
 import ast.ast_bfs;
@@ -43,7 +46,6 @@ import common.gm_apply;
 import common.gm_builtin_def;
 import common.gm_error;
 import common.gm_errors_and_warnings;
-import common.gm_traverse;
 
 //----------------------------------------------------
 // Traverse for Analysis
@@ -55,7 +57,7 @@ public class gm_rw_analysis extends gm_apply {
 	private static final int GM_BLTIN_MUTATE_SHRINK = 2;
 
 	static final String GM_INFOKEY_RW = "GM_INFOKEY_RW";
-	static final HashMap<gm_symtab_entry, range_cond_t> Default_DriverMap = new HashMap<gm_symtab_entry, range_cond_t>();
+	static final Map<gm_symtab_entry, range_cond_t> Default_DriverMap = new HashMap<gm_symtab_entry, range_cond_t>();
 
 	private boolean _succ = true;
 
@@ -575,13 +577,11 @@ public class gm_rw_analysis extends gm_apply {
 		}
 	}
 
-	// -----------------------------------------------------------
-	// Add rwinfo to set.
-	// new_entry deleted if not added
-	// [return]
-	// true; okay
-	// false; error
-	// -----------------------------------------------------------
+	/**
+	 * Add rwinfo to set. new_entry deleted if not added
+	 * 
+	 * @return false if an error occured, otherwise true
+	 */
 	public static boolean gm_add_rwinfo_to_set(gm_rwinfo_map info_set, gm_symtab_entry sym, gm_rwinfo new_entry) {
 		return gm_add_rwinfo_to_set(info_set, sym, new_entry, false);
 	}
@@ -589,13 +589,11 @@ public class gm_rw_analysis extends gm_apply {
 	// list of rw-info
 	// map from target(symtab entry) to list of rw-info
 	// (one field may have multiple access patterns)
-
 	public static boolean gm_add_rwinfo_to_set(gm_rwinfo_map info_set, gm_symtab_entry sym, gm_rwinfo new_entry, boolean is_reduce_ops) {
 		boolean is_error = false;
 
 		// find entry in the map
-		if (!info_set.containsKey(sym)) // not found --> add new;
-		{
+		if (!info_set.containsKey(sym)) { // not found --> add new;
 			gm_rwinfo_list l = new gm_rwinfo_list();
 			l.addLast(new_entry);
 			info_set.put(sym, l);
@@ -606,20 +604,20 @@ public class gm_rw_analysis extends gm_apply {
 			for (gm_rwinfo e2 : l) {
 				// check reduce error
 				if (is_reduce_ops) {
-
 					is_error = is_reduce_error(e2, new_entry);
 					if (is_error) {
 						return false;
 					}
-
 				}
 
 				if (is_same_entry(e2, new_entry)) {
+					// old entry is wider
 					return true;
-				} // old entry is wider
+				} 
 				else if (is_wider_entry(new_entry, e2)) {
+					// new_entry is wider
 					return true;
-				} // new_entry is wider
+				} 
 				else if (is_wider_entry(e2, new_entry)) {
 					// hack. copy new entry into old one
 					e2.copyFrom(new_entry);
@@ -689,11 +687,11 @@ public class gm_rw_analysis extends gm_apply {
 	public static boolean gm_redo_rw_analysis(ast_sent s) {
 		// nullify previous analysis. (IR tree has been modified)
 		gm_delete_rw_analysis D = new gm_delete_rw_analysis();
-		gm_traverse.gm_traverse_sents(s, D, gm_traverse.GM_POST_APPLY);
+		gm_traverse_sents(s, D, GM_POST_APPLY);
 
 		// do-it again RW analysis
 		gm_rw_analysis RWA = new gm_rw_analysis();
-		gm_traverse.gm_traverse_sents(s, RWA, gm_traverse.GM_POST_APPLY); // post
+		gm_traverse_sents(s, RWA, GM_POST_APPLY); // post
 																			// apply
 		return RWA.is_success();
 	}
@@ -856,7 +854,7 @@ public class gm_rw_analysis extends gm_apply {
 		traverse_expr_for_readset_adding(e, rset, Default_DriverMap);
 	}
 
-	public static void traverse_expr_for_readset_adding(ast_expr e, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding(ast_expr e, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 
 		switch (e.get_opclass()) {
 		case GMEXPR_ID: {
@@ -917,7 +915,7 @@ public class gm_rw_analysis extends gm_apply {
 		}
 	}
 
-	public static void traverse_expr_for_readset_adding_field(ast_expr e, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_field(ast_expr e, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 		gm_symtab_entry iter_sym = e.get_field().get_first().getSymInfo();
 		gm_symtab_entry field_sym = e.get_field().get_second().getSymInfo();
 		assert iter_sym != null;
@@ -943,7 +941,7 @@ public class gm_rw_analysis extends gm_apply {
 		gm_add_rwinfo_to_set(rset, field_sym, new_entry);
 	}
 
-	public static void traverse_expr_for_readset_adding_builtin(ast_expr_builtin builtin, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_builtin(ast_expr_builtin builtin, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 		// add every arguments in the readset
 		LinkedList<ast_expr> args = builtin.get_args();
 		for (ast_expr a : args) {
@@ -951,7 +949,7 @@ public class gm_rw_analysis extends gm_apply {
 		}
 	}
 
-	public static void traverse_expr_for_readset_adding_foreign(ast_expr_foreign f, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_foreign(ast_expr_foreign f, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 
 		gm_rwinfo new_entry;
 		LinkedList<ast_node> N = f.get_parsed_nodes();
@@ -982,7 +980,7 @@ public class gm_rw_analysis extends gm_apply {
 		}
 	}
 
-	public static void traverse_expr_for_readset_adding_reduce(ast_expr_reduce e2, gm_rwinfo_map rset, HashMap<gm_symtab_entry, range_cond_t> DrvMap) {
+	public static void traverse_expr_for_readset_adding_reduce(ast_expr_reduce e2, gm_rwinfo_map rset, Map<gm_symtab_entry, range_cond_t> DrvMap) {
 		gm_symtab_entry it = e2.get_iterator().getSymInfo();
 		gm_type iter_type = e2.get_iter_type();
 		ast_expr f = e2.get_filter();

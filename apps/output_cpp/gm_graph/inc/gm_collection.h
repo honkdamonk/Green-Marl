@@ -9,8 +9,12 @@ using namespace std;
 template<class T>
 class gm_collection
 {
+private:
+    list<T> data;
+    gm_spinlock_t lock;
+
   public:
-    gm_collection(int maxNumberThreads = 16) {
+    gm_collection(int maxNumberThreads = 16) : lock(0) {
     }
 
     void push_back(T e) {
@@ -22,11 +26,15 @@ class gm_collection
     }
 
     void push_back_par(T e, int tid) {
-        assert(false); //TODO
+        gm_spinlock_acquire(&lock);
+        data.push_back(T);
+        gm_spinlock_release(&lock);
     }
 
     void push_front_par(T e, int tid) {
-        assert(false); //TODO
+        gm_spinlock_acquire(&lock);
+        data.push_front(T);
+        gm_spinlock_release(&lock);
     }
 
     void pop_back() {
@@ -35,6 +43,18 @@ class gm_collection
 
     void pop_front() {
         data.pop_front();
+    }
+
+    void pop_back_par() {
+        gm_spinlock_acquire(&lock);
+        data.pop_back();
+        gm_spinlock_release(&lock);
+    }
+
+    void pop_front_par() {
+        gm_spinlock_acquire(&lock);
+        data.pop_front();
+        gm_spinlock_release(&lock);
     }
 
     void clear() {
@@ -69,9 +89,6 @@ class gm_collection
     seq_iter prepare_seq_iteration() {
         return seq_iter(data.begin(), data.end());
     }
-
-  private:
-      list<T> data;
 
 };
 

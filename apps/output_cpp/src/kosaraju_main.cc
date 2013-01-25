@@ -28,6 +28,13 @@ public:
 
     virtual bool post_process() {
         printf("num_membership = %d\n", num_membership);
+        for(int i = 0; i < num_membership; i++) {
+            printf("%i\t\t", i);
+            for(int n = 0; n < G.num_nodes(); n++) {
+                if(membership[n] == i) printf("%d\t", n);
+            }
+            printf("\n");
+        }
         return true;
     }
 };

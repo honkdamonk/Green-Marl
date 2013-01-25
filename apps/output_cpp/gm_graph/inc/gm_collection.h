@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <list>
 
+#include "gm_lock.h"
+
 using namespace std;
 
 template<class T>
@@ -25,15 +27,15 @@ private:
         data.push_front(e);
     }
 
-    void push_back_par(T e, int tid) {
+    void push_back_par(T e) {
         gm_spinlock_acquire(&lock);
-        data.push_back(T);
+        data.push_back(e);
         gm_spinlock_release(&lock);
     }
 
-    void push_front_par(T e, int tid) {
+    void push_front_par(T e) {
         gm_spinlock_acquire(&lock);
-        data.push_front(T);
+        data.push_front(e);
         gm_spinlock_release(&lock);
     }
 

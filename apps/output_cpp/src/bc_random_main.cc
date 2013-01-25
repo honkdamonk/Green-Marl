@@ -15,6 +15,11 @@ public:
     }
 
     virtual bool prepare() {
+
+        std::vector<VALUE_TYPE> p1, p2;
+        std::vector<void*> p3, p4;
+        G.load_edge_list("mini.txt", p1, p2, p3, p4);
+
         BC = new float[G.num_nodes()];
         return true;
     }
@@ -25,10 +30,8 @@ public:
     }
 
     virtual bool post_process() {
-        printf("BC[0] = %0.9lf\n", BC[0]);
-        printf("BC[1] = %0.9lf\n", BC[1]);
-        printf("BC[2] = %0.9lf\n", BC[2]);
-        printf("BC[3] = %0.9lf\n", BC[3]);
+        for(int i = 0; i < G.num_nodes(); i++)
+            printf("BC[%d] = %0.9lf\n", i, BC[i]);
         return true;
     }
 };

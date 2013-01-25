@@ -20,9 +20,9 @@ class gm_bfs_template
             G(_G) {
         visited_bitmap = NULL; // bitmap
         visited_level = NULL;
-        global_curr_level = NULL;
-        global_next_level = NULL;
-        global_queue = NULL;
+        //global_curr_level = NULL;
+        //global_next_level = NULL;
+        //global_queue = NULL;
         thread_local_next_level = NULL;
         down_edge_array = NULL;
         down_edge_set = NULL;
@@ -34,8 +34,8 @@ class gm_bfs_template
     virtual ~gm_bfs_template() {
         delete visited_bitmap;
         delete visited_level;
-        delete global_queue;
-        delete[] thread_local_next_level;
+        //delete [] global_queue;
+        delete [] thread_local_next_level;
         delete down_edge_set;
         delete down_edge_array;
     }
@@ -54,9 +54,9 @@ class gm_bfs_template
         state = ST_SMALL;
         assert(root != gm_graph::NIL_NODE);
 
-        global_queue = new node_t[G.num_nodes()];
-        global_curr_level = global_queue;
-        global_next_level = NULL;
+        //global_queue = new node_t[G.num_nodes()];
+        //global_curr_level = global_queue;
+        //global_next_level = NULL;
 
         // create local queues
         thread_local_next_level = new std::vector<node_t>[num_thread];
@@ -72,84 +72,131 @@ class gm_bfs_template
         curr_level = 0;
         curr_count = 0;
         next_count = 0;
+
         small_visited[root] = curr_level;
-        global_curr_level[curr_count++] = root;
-        global_next_level = &(global_curr_level[curr_count]);
+        curr_count++;
+        global_vector.push_back(root);
+        global_curr_level_begin = 0;
+        global_next_level_begin = curr_count;
+
         level_count.push_back(curr_count);
-        level_start_ptr.push_back(global_curr_level);
+        level_queue_begin.push_back(global_curr_level_begin);
 
         bool is_done = false;
         while (!is_done) {
             switch (state) {
                 case ST_SMALL: {
                     for (node_t i = 0; i < curr_count; i++) {
-                        node_t t = global_curr_level[i];
+                        node_t t = global_vector[global_curr_level_begin + i];
                         iterate_neighbor_small(t);
-                        visit_fw(t);            // visit after iteration. in that way, one can check
-                        // down-neighbors quite easily
+                        visit_fw(t);            // visit after iteration. in that way, one can check  down-neighbors quite easily
                     }
                     break;
                 }
                 case ST_QUE: {
-#pragma omp parallel
-                    if (use_multithread)
+                    if (use_multithread)  // do it in parallel
                     {
-                        int tid = omp_get_thread_num();
-#pragma omp for nowait
-                        for (node_t i = 0; i < curr_count; i++) {
-                            node_t t = global_curr_level[i];
-                            iterate_neighbor_que(t, tid);
-                            visit_fw(t);
+                        #pragma omp parallel
+                        {
+                            int tid = omp_get_thread_num();
+                            #pragma omp for nowait
+                            for (node_t i = 0; i < curr_count; i++) {
+                                //node_t t = global_curr_level[i];
+                                node_t t = global_vector[global_curr_level_begin + i];
+                                iterate_neighbor_que(t, tid);
+                                visit_fw(t);
+                            }
+                            finish_thread_que(tid);
                         }
-                        finish_thread_que(tid);
+                    }
+                    else { // do it in sequential
+                            int tid = 0;
+                            for (node_t i = 0; i < curr_count; i++) {
+                                //node_t t = global_curr_level[i];
+                                node_t t = global_vector[global_curr_level_begin + i];
+                                iterate_neighbor_que(t, tid);
+                                visit_fw(t);
+                            }
+                            finish_thread_que(tid);
                     }
                     break;
                 }
                 case ST_Q2R: {
-#pragma omp parallel
-                    if (use_multithread)
-                    {
-                        node_t local_cnt = 0;
-#pragma omp for nowait
-                        for (node_t i = 0; i < curr_count; i++) {
-                            node_t t = global_curr_level[i];
-                            iterate_neighbor_rd(t, local_cnt);
-                            visit_fw(t);
+                    if (use_multithread) {  // do it in parallel
+                        #pragma omp parallel
+                        {
+                            node_t local_cnt = 0;
+                            #pragma omp for nowait
+                            for (node_t i = 0; i < curr_count; i++) {
+                                //node_t t = global_curr_level[i];
+                                node_t t = global_vector[global_curr_level_begin + i];
+                                iterate_neighbor_rd(t, local_cnt);
+                                visit_fw(t);
+                            }
+                            finish_thread_rd(local_cnt);
                         }
-                        finish_thread_rd(local_cnt);
+                    } else { // do it sequentially
+                            node_t local_cnt = 0;
+                            for (node_t i = 0; i < curr_count; i++) {
+                                //node_t t = global_curr_level[i];
+                                node_t t = global_vector[global_curr_level_begin + i];
+                                iterate_neighbor_rd(t, local_cnt);
+                                visit_fw(t);
+                            }
+                            finish_thread_rd(local_cnt);
                     }
                     break;
                 }
 
                 case ST_RD: {
-#pragma omp parallel
-                    if (use_multithread)
-                    {
-                        node_t local_cnt = 0;
-#pragma omp for nowait
-                        for (node_t t = 0; t < G.num_nodes(); t++) {
-                            if (visited_level[t] == curr_level) {
-                                iterate_neighbor_rd(t, local_cnt);
-                                visit_fw(t);
+                    if (use_multithread) { // do it in parallel
+                        #pragma omp parallel
+                        {
+                            node_t local_cnt = 0;
+                            #pragma omp for nowait schedule(dynamic,128)
+                            for (node_t t = 0; t < G.num_nodes(); t++) {
+                                if (visited_level[t] == curr_level) {
+                                    iterate_neighbor_rd(t, local_cnt);
+                                    visit_fw(t);
+                                }
                             }
+                            finish_thread_rd(local_cnt);
                         }
-                        finish_thread_rd(local_cnt);
+                    } else { // do it in sequential
+                            node_t local_cnt = 0;
+                            for (node_t t = 0; t < G.num_nodes(); t++) {
+                                if (visited_level[t] == curr_level) {
+                                    iterate_neighbor_rd(t, local_cnt);
+                                    visit_fw(t);
+                                }
+                            }
+                            finish_thread_rd(local_cnt);
                     }
                     break;
                 }
                 case ST_R2Q: {
-#pragma omp parallel
-                    if (use_multithread)
-                    {
-                        int tid = omp_get_thread_num();
-#pragma omp for nowait
-                        for (node_t t = 0; t < G.num_nodes(); t++) {
-                            if (visited_level[t] == curr_level) {
-                                iterate_neighbor_que(t, tid);
-                                visit_fw(t);
+                    if (use_multithread) { // do it in parallel
+                        #pragma omp parallel
+                        {
+                            int tid = omp_get_thread_num();
+                            #pragma omp for nowait schedule(dynamic,128)
+                            for (node_t t = 0; t < G.num_nodes(); t++) {
+                                if (visited_level[t] == curr_level) {
+                                    iterate_neighbor_que(t, tid);
+                                    visit_fw(t);
+                                }
                             }
+                            finish_thread_que(tid);
                         }
-                        finish_thread_que(tid);
+                    } else {
+                            int tid = 0;
+                            for (node_t t = 0; t < G.num_nodes(); t++) {
+                                if (visited_level[t] == curr_level) {
+                                    iterate_neighbor_que(t, tid);
+                                    visit_fw(t);
+                                }
+                            }
+                            finish_thread_que(tid);
                     }
                     break;
                 }
@@ -166,20 +213,26 @@ class gm_bfs_template
         level_t& level = curr_level;
         while (true) {
             node_t count = level_count[level];
-            node_t* queue_ptr = level_start_ptr[level];
+            //node_t* queue_ptr = level_start_ptr[level];
+            node_t* queue_ptr;
+            node_t begin_idx = level_queue_begin[level];
+            if (begin_idx == -1) { 
+                queue_ptr = NULL;
+            } else {
+                queue_ptr = & (global_vector[begin_idx]);
+            }
+           
             if (queue_ptr == NULL) {
-#pragma omp parallel
-                if (use_multithread)
+#pragma omp parallel if (use_multithread)
                 {
-#pragma omp for nowait
+#pragma omp for nowait schedule(dynamic,128)
                     for (node_t i = 0; i < G.num_nodes(); i++) {
                         if (visited_level[i] != curr_level) continue;
                         visit_rv(i);
                     }
                 }
             } else {
-#pragma omp parallel
-                if (use_multithread)
+#pragma omp parallel if (use_multithread)
                 {
 #pragma omp for nowait
                     for (node_t i = 0; i < count; i++) {
@@ -234,8 +287,7 @@ class gm_bfs_template
 
   private:
     bool get_next_state() {
-        //const char* state_name[5] = {"SMALL","QUEUE","Q2R","RD","R2Q"};
-        //printf("level = %d, state=%s, next = %d\n", curr_level, state_name[state], next_count);
+        const char* state_name[5] = {"SMALL","QUEUE","Q2R","RD","R2Q"};
 
         if (next_count == 0) return true;  // BFS is finished
 
@@ -248,7 +300,7 @@ class gm_bfs_template
                 }
                 break;
             case ST_QUE:
-                if (next_count >= THRESHOLD2) {
+                if ((next_count >= THRESHOLD2) && (next_count >= curr_count*5)) {
                     prepare_read();
                     next_state = ST_Q2R;
                 }
@@ -276,9 +328,11 @@ class gm_bfs_template
         if ((state == ST_RD) || (state == ST_Q2R)) {
             // output queue is not valid
         } else { // move output queue
-            node_t* temp = &(global_next_level[next_count]);
-            global_curr_level = global_next_level;
-            global_next_level = temp;
+            //node_t* temp = &(global_next_level[next_count]);
+            //global_curr_level = global_next_level;
+            //global_next_level = temp;
+            global_curr_level_begin = global_next_level_begin;
+            global_next_level_begin = global_next_level_begin + next_count;
         }
 
         curr_count = next_count;
@@ -288,9 +342,11 @@ class gm_bfs_template
         // save 'new current' level status
         level_count.push_back(curr_count);
         if ((state == ST_RD) || (state == ST_Q2R)) {
-            level_start_ptr.push_back(NULL);
+            //level_start_ptr.push_back(NULL);
+            level_queue_begin.push_back(-1);
         } else {
-            level_start_ptr.push_back(global_curr_level);
+            //level_start_ptr.push_back(global_curr_level);
+            level_queue_begin.push_back(global_curr_level_begin);
         }
     }
 
@@ -330,7 +386,18 @@ class gm_bfs_template
                 }
 
                 small_visited[u] = curr_level + 1;
-                global_next_level[next_count++] = u;
+                //global_next_level[next_count++] = u;
+                global_vector.push_back(u); 
+                next_count++;
+            }
+            else if (save_child) {
+                if (has_navigator) {
+                    if (check_navigator(u, nx) == false) continue;
+                }
+
+                if (small_visited[u] == (curr_level+1)){
+                    save_down_edge_small(nx);
+                }
             }
         }
     }
@@ -345,6 +412,9 @@ class gm_bfs_template
     }
 
     void prepare_que() {
+
+        global_vector.reserve(G.num_nodes());
+
         // create bitmap and edges
         visited_bitmap = new unsigned char[(G.num_nodes() + 7) / 8];
         visited_level = new level_t[G.num_nodes()];
@@ -428,6 +498,14 @@ class gm_bfs_template
                     visited_level[u] = (curr_level + 1);
                 }
             }
+            else if (save_child) {
+                if (has_navigator) {
+                    if (check_navigator(u, nx) == false) continue;
+                }
+                if (visited_level[u] == (curr_level +1)) {
+                    save_down_edge_large(nx);
+                }
+            }
         }
     }
 
@@ -436,7 +514,10 @@ class gm_bfs_template
         //copy curr_cnt to next_cnt
         if (local_cnt > 0) {
             node_t old_idx = _gm_atomic_fetch_and_add_node(&next_count, local_cnt);
-            memcpy(&(global_next_level[old_idx]), &(thread_local_next_level[tid][0]), local_cnt * sizeof(node_t));
+            // copy to global vector
+            memcpy(&(global_vector[global_next_level_begin + old_idx]), 
+                   &(thread_local_next_level[tid][0]), 
+                   local_cnt * sizeof(node_t));
         }
         thread_local_next_level[tid].clear();
     }
@@ -477,6 +558,14 @@ class gm_bfs_template
                     local_cnt++;
                 }
             }
+            else if (save_child) {
+                if (has_navigator) {
+                    if (check_navigator(u, nx) == false) continue;
+                }
+                if (visited_level[u] == (curr_level +1)) {
+                    save_down_edge_large(nx);
+                }
+            }
         }
     }
 
@@ -514,11 +603,15 @@ class gm_bfs_template
     std::set<edge_t>* down_edge_set;
     unsigned char* down_edge_array;
 
-    node_t* global_next_level;
-    node_t* global_curr_level;
-    node_t* global_queue;
+    //node_t* global_next_level;
+    //node_t* global_curr_level;
+    //node_t* global_queue;
+    std::vector<node_t> global_vector; 
+    node_t global_curr_level_begin;
+    node_t global_next_level_begin;
 
-    std::vector<node_t*> level_start_ptr;
+    //std::vector<node_t*> level_start_ptr;
+    std::vector<node_t> level_queue_begin;
     std::vector<node_t> level_count;
 
     std::vector<node_t>* thread_local_next_level;

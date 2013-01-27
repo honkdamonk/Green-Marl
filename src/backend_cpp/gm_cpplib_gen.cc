@@ -446,9 +446,9 @@ void gm_cpplib::generate_expr_builtin(ast_expr_builtin* e, gm_code_writer& Body)
                     //sprintf(str_buf, "%s.has_edge_to(", i->getTypeInfo()->get_target_graph_id()->get_genname());
                     sprintf(str_buf, "%s.is_neighbor(", i->getTypeInfo()->get_target_graph_id()->get_genname());
                     Body.push(str_buf);
-                    sprintf(str_buf, "%s,", i->get_genname());
-                    Body.push(str_buf);
                     main->generate_expr(e->get_args().front());
+                    sprintf(str_buf, ", %s", i->get_genname());
+                    Body.push(str_buf);
                     Body.push(")");
                     break;
                 case GM_BLTIN_NODE_RAND_NBR:

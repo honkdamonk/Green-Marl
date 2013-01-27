@@ -28,5 +28,4 @@ int main(int argc, char** argv) {
             assert(mapping[actual] == target);
         }
     }
-    assert(false);
 }

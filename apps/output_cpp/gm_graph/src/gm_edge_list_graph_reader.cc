@@ -61,9 +61,11 @@ void gm_edge_list_graph_reader::builtGraph() {
         if (strlen(lineData) == 0 || lineData[0] == '#') continue;
 
         char* p = strtok(lineData, " \t");
-        node_t x;
-        sscanf(p, "%d", &x);
-
+        node_t nodeId = readValueFromToken<node_t>(p);
+        while (nodeId > maxNodeId) {
+            G.add_node();
+            maxNodeId++;
+        }
         p = strtok(NULL, " \t");
         if (*p != '*') {
             node_t destination = readValueFromToken<node_t>(p);
@@ -71,7 +73,7 @@ void gm_edge_list_graph_reader::builtGraph() {
                 G.add_node();
                 maxNodeId++;
             }
-
+            G.add_edge(nodeId, destination);
         }
     }
 

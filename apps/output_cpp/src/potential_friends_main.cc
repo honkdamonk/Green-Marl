@@ -21,7 +21,7 @@ public:
 
     virtual bool post_process() {
         printf("potential friends for the first 10 nodes (max. 10 entries per node shown):\n");
-        for (node_t iter_aux = 0; iter_aux < 10 && iter_aux < G.num_nodes(); iter_aux++) {
+        for (node_t iter_aux = 0;iter_aux < G.num_nodes(); iter_aux++) {
             gm_node_set x = (*coll)[iter_aux];
             gm_node_set::seq_iter x0_I = x.prepare_seq_iteration();
             if (!x0_I.has_next()) continue;

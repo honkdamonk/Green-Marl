@@ -12,7 +12,7 @@ H_FILES = $(addprefix $(INCDIR)/, $(INCFILES))
 include ../../setup.mk
 include ../../apps/output_cpp/common.mk
 
-PROGS = pagerank hop_dist kosaraju triangle_counting
+PROGS = pagerank hop_dist kosaraju triangle_counting potential_friends
 OUT = $(addprefix $(BINDIR)/, $(PROGS))
 
 LFILES = $(addprefix $(GEN_SRC)/, $(PROGS))

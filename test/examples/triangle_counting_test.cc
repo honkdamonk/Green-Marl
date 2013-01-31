@@ -10,6 +10,6 @@ int main(int argc, char** argv) {
 
     int count = triangle_counting(G);
 
-    assert(count == 15);
+    assert(count == 24);
 
 }

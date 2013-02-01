@@ -12,7 +12,7 @@ H_FILES = $(addprefix $(INCDIR)/, $(INCFILES))
 include ../../setup.mk
 include ../../apps/output_cpp/common.mk
 
-PROGS = pagerank hop_dist kosaraju triangle_counting potential_friends sssp sssp_path
+PROGS = pagerank hop_dist kosaraju triangle_counting potential_friends sssp sssp_path sssp_path_adj
 OUT = $(addprefix $(BINDIR)/, $(PROGS))
 
 LFILES = $(addprefix $(GEN_SRC)/, $(PROGS))
@@ -23,8 +23,8 @@ all: $(OUT)
 echo:
 	echo $(INCFILES)
 
-$(BINDIR)/% : %_test.cc $(LIBDIR)/libgmgraph.a 
-	$(CC) $(CFLAGS) $(L_FILES) $^ $(LFLAGS) -o $@_test
+$(BINDIR)/% : %_test.cc $(GEN_SRC)/%.cc $(LIBDIR)/libgmgraph.a 
+	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $@_test
 	
 clean:
 	\rm -f $(OUT)

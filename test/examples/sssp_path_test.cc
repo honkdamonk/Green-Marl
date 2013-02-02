@@ -10,7 +10,7 @@ int main(int argc, char** argv) {
     edge_schema.push_back(GMTYPE_INT);
 
     gm_graph G;
-    G.load_edge_list("graphs/sssp_path_testgraph.txt", node_schema, edge_schema, node_props, edge_props);
+    G.load_edge_list("graphs/sssp_testgraph.txt", node_schema, edge_schema, node_props, edge_props);
 
     int* edgeCosts = (int*) edge_props.front();
 
@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
 
         node_t actual_p = actual_prev[i];
         node_t target_p = target_prev[i];
-        assert(actual_p == target_p);
+        if(actual_p != target_p) printf("%d %d %d\n", i, actual_p, target_p);
+       // assert(actual_p == target_p);
     }
 }

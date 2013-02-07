@@ -30,7 +30,14 @@ int main(int argc, char** argv) {
 
         node_t actual_p = actual_prev[i];
         node_t target_p = target_prev[i];
-        if(actual_p != target_p) printf("%d %d %d\n", i, actual_p, target_p);
-       // assert(actual_p == target_p);
+        if(actual_p != target_p) {
+            node_t x, y;
+            x = y = i;
+            while(x != root && y != root) {
+                x = actual_prev[x];
+                y = target_prev[y];
+            }
+            assert(x == y); // if x == y we just found a different shortest path to the target
+        }
     }
 }

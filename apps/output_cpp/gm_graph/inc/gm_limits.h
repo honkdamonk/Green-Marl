@@ -3,6 +3,7 @@
 
 #include <limits.h>
 #include <math.h>
+#include <float.h>
 
 template<class Type>
 Type gm_get_min();
@@ -32,27 +33,22 @@ inline int64_t gm_get_max() {
 
 template<>
 inline double gm_get_min() {
-    return -HUGE_VAL;
-    //return -INFINITY;
+    return -DBL_MAX;
 }
 
 template<>
 inline double gm_get_max() {
-    return HUGE_VAL;
-    //return INFINITY;
+    return DBL_MAX;
 }
 
 template<>
 inline float gm_get_min() {
-    return (float) -HUGE_VAL;
-    //return -INFINITY;
+    return (float) -FLT_MAX;
 }
 
 template<>
 inline float gm_get_max() {
-    return (float) HUGE_VAL;
-    //return INFINITY;
+    return (float) FLT_MAX;
 }
-
 
 #endif /* GM_LIMITS_H_ */

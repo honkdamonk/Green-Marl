@@ -21,7 +21,7 @@ protected:
         candidates(candidate_seqs) {
     }
 
-    virtual bool applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) = 0;
+    virtual void applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) = 0;
 
 public:
     Vector get_candidates() {
@@ -47,7 +47,8 @@ public:
 
         gm_builtin_def* def = builtIn->get_builtin_def();
         gm_method_id_t methodId = (gm_method_id_t) def->get_method_id();
-        return applyBuiltIn(builtIn, position, def, methodId);
+        applyBuiltIn(builtIn, position, def, methodId);
+        return true;
     }
 
 };
@@ -55,10 +56,7 @@ public:
 class sequence_front_usage_filter: public abstract_sequence_filter
 {
 public:
-    sequence_front_usage_filter() : abstract_sequence_filter() {
-    }
-
-    bool applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) {
+    void applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) {
         switch (methodId) {
             case GM_BLTIN_SET_ADD_BACK:
             case GM_BLTIN_SET_REMOVE_BACK:
@@ -66,50 +64,46 @@ public:
                 candidates.erase(position);
                 break;
         }
-        return true;
     }
 
 };
 
 class seq_front_to_back_transformer: public abstract_sequence_filter
 {
+private:
+    gm_method_id_t get_transformed_method_id(gm_method_id_t methodId) {
+        switch (methodId) {
+            case GM_BLTIN_SET_ADD:
+                return GM_BLTIN_SET_ADD_BACK;
+            case GM_BLTIN_SEQ_POP_FRONT:
+                return GM_BLTIN_SET_REMOVE_BACK;
+            case GM_BLTIN_SET_PEEK:
+                return GM_BLTIN_SET_PEEK_BACK;
+            default:
+                return methodId;
+        }
+    }
+
 public:
     seq_front_to_back_transformer(Vector candidate_seqs) :
             abstract_sequence_filter(candidate_seqs) {
     }
 
-    bool applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) {
+    void applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) {
 
-        gm_method_id_t newMethodId = methodId;
-
-        switch (methodId) {
-            case GM_BLTIN_SET_ADD:
-            newMethodId = GM_BLTIN_SET_ADD_BACK;
-            break;
-            case GM_BLTIN_SEQ_POP_FRONT:
-            newMethodId = GM_BLTIN_SET_REMOVE_BACK;
-            break;
-            case GM_BLTIN_SET_PEEK:
-            newMethodId = GM_BLTIN_SET_PEEK_BACK;
-            break;
-        }
-
+        gm_method_id_t newMethodId = get_transformed_method_id(methodId);
         if (methodId != newMethodId) {
             gm_builtin_manager manager;
             gm_builtin_def* newBuiltInDef = BUILT_IN.find_builtin_def(def->get_source_type_summary(), newMethodId, 0);
             builtIn->set_builtin_def(newBuiltInDef);
         }
-        return true;
     }
 };
 
 class sequence_back_usage_filtler: public abstract_sequence_filter
 {
 public:
-    sequence_back_usage_filtler() :  abstract_sequence_filter() {
-    }
-
-    bool applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) {
+    void applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) {
         switch (methodId) {
             case GM_BLTIN_SET_ADD:
             case GM_BLTIN_SEQ_POP_FRONT:
@@ -117,9 +111,7 @@ public:
             candidates.erase(position);
             break;
         }
-        return true;
     }
-
 };
 
 class sequence_to_vector_transformer

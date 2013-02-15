@@ -10,11 +10,12 @@ Procedure sssp_path(G:Graph, dist: N_P<Double>, edge_cost: E_P<Double>, root: No
     G.dist_nxt = G.dist;
     G.updated_nxt = G.updated;
     G.prev_node = NIL;
+    G.prev_edge = NIL;
 
     While(!fin) {
         fin = True;
 
-        Foreach(n: G.Nodes)(n.updated) {
+        Foreach(n: G.Nodes)(n.updated && n.dist < end.dist) {
             Foreach(s: n.Nbrs) {
                 Edge(G) e = s.ToEdge(); // the edge to s
                 If (n.dist + e.edge_cost < end.dist) {

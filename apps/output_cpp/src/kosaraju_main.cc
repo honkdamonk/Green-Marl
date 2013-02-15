@@ -66,4 +66,3 @@ int main(int argc, char** argv)
     printf("num_membership = %d\n", num_membership);
 #endif
 }
-

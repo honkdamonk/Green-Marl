@@ -25,9 +25,9 @@ public:
 
     virtual bool run() {
 #ifdef NODE64
-	gm_rand64 xorshift_rng;
+    gm_rand64 xorshift_rng;
 #else
-	gm_rand32 xorshift_rng;
+    gm_rand32 xorshift_rng;
 #endif
         assert(Seeds != NULL);
         // pick 5 random starting points;

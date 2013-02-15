@@ -221,6 +221,8 @@ const char* gm_cpplib::get_function_name_nset(int methodId, bool in_parallel) {
             return "is_subset";
         case GM_BLTIN_SET_SIZE:
             return "get_size";
+        case GM_BLTIN_SET_CLEAR:
+            return "clear";
         default:
             assert(false);
             return "ERROR";
@@ -446,7 +448,7 @@ void gm_cpplib::generate_expr_builtin(ast_expr_builtin* e, gm_code_writer& Body)
                     //sprintf(str_buf, "%s.has_edge_to(", i->getTypeInfo()->get_target_graph_id()->get_genname());
                     sprintf(str_buf, "%s.is_neighbor(", i->getTypeInfo()->get_target_graph_id()->get_genname());
                     Body.push(str_buf);
-                    sprintf(str_buf, "%s,", i->get_genname());
+                    sprintf(str_buf, "%s, ", i->get_genname());
                     Body.push(str_buf);
                     main->generate_expr(e->get_args().front());
                     Body.push(")");

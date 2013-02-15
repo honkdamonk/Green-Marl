@@ -253,10 +253,10 @@ public:
         seq_iter I(data.begin(), data.end());
         return I; // copy return
     }
-//    rev_iter prepare_rev_iteration() {
-//        rev_iter I(data.rbegin(), data.rend());
-//        return I; // copy return
-//    }
+    rev_iter prepare_rev_iteration() {
+        rev_iter I(data.rbegin(), data.rend());
+        return I; // copy return
+    }
 
     // [xxx] to be implemented
     par_iter prepare_par_iteration(int thread_id, int max_threads) {

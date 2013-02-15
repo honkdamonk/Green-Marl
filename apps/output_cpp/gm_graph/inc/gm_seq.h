@@ -6,6 +6,29 @@
 #include "gm_internal.h"
 #include "gm_runtime.h"
 
+template<typename IterType, typename T>
+class Seq_Iterator
+{
+private:
+    IterType iter;
+    IterType end;
+
+public:
+    Seq_Iterator(IterType iterator_begin, IterType iterator_end) :
+            iter(iterator_begin), end(iterator_end) {
+    }
+
+    inline bool has_next() {
+        return iter != end;
+    }
+
+    inline T get_next() {
+        T value = *iter;
+        iter++;
+        return value;
+    }
+};
+
 template<typename T>
 class gm_seq
 {
@@ -76,26 +99,8 @@ public:
         return Q;
     }
 
-    // [todo] fix as nested template 
-#define ITERATOR_CLASS(CLASS_NAME, LIST_ITER_TYPE) \
-    class CLASS_NAME    \
-    {                   \
-    public:                                             \
-        CLASS_NAME(typename LIST_ITER_TYPE I, typename LIST_ITER_TYPE E)  \
-        : ITER(I), END_ITER(E) {}                       \
-    inline  bool has_next() {                           \
-        if (ITER == END_ITER) return false;             \
-        else return true;}                              \
-    inline T get_next() {T t = *ITER;ITER++;return t; } \
-    private:                                            \
-        typename LIST_ITER_TYPE ITER;                            \
-        typename LIST_ITER_TYPE END_ITER;                        \
-    };                                      
-
-    ITERATOR_CLASS(seq_iter, std::list<T>::iterator)
-    ITERATOR_CLASS(rev_iter, std::list<T>::reverse_iterator)
-
-#undef ITERATOR_CLASS
+    typedef Seq_Iterator<typename std::list<T>::iterator, T> seq_iter;
+    typedef Seq_Iterator<typename std::list<T>::reverse_iterator, T> rev_iter;
     typedef seq_iter par_iter; // type-alias
 
     seq_iter prepare_seq_iteration() {
@@ -227,26 +232,8 @@ public:
         }
     }
 
-    // [todo] fix as nested template
-#define ITERATOR_CLASS(CLASS_NAME, LIST_ITER_TYPE) \
-    class CLASS_NAME    \
-    {                   \
-    public:                                             \
-        CLASS_NAME(typename LIST_ITER_TYPE I, typename LIST_ITER_TYPE E)  \
-        : ITER(I), END_ITER(E) {}                       \
-    inline  bool has_next() {                           \
-        if (ITER == END_ITER) return false;             \
-        else return true;}                              \
-    inline T get_next() {T t = *ITER;ITER++;return t; } \
-    private:                                            \
-        typename LIST_ITER_TYPE ITER;                            \
-        typename LIST_ITER_TYPE END_ITER;                        \
-    };
-
-    ITERATOR_CLASS(seq_iter, std::list<T>::iterator)
-    ITERATOR_CLASS(rev_iter, std::list<T>::reverse_iterator)
-
-#undef ITERATOR_CLASS
+    typedef Seq_Iterator<typename std::vector<T>::iterator, T> seq_iter;
+    typedef Seq_Iterator<typename std::vector<T>::reverse_iterator, T> rev_iter;
     typedef seq_iter par_iter; // type-alias
 
     seq_iter prepare_seq_iteration() {

@@ -18,6 +18,7 @@ GM_COMPILE_STEP(gm_cpp_opt_save_bfs, "Finding BFS Children")
 GM_COMPILE_STEP(gm_cpp_opt_reduce_scalar, "Privitize reduction to scalar")
 GM_COMPILE_STEP(gm_cpp_opt_reduce_field, "Privitize reduction to field")
 GM_COMPILE_STEP(gm_cpp_opt_temp_cleanup, "Clean-up routines for temporary properties")
+GM_COMPILE_STEP(gm_cpp_opt_select_seq_implementation, "Select implementation for Node_Seq/Edge_Seq")
 GM_COMPILE_STEP(gm_cpp_opt_entry_exit, "Add procedure enter and exit")
 GM_COMPILE_STEP(gm_cpp_opt_debug, "A dummy routine for debug")
 

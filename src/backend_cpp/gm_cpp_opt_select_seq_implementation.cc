@@ -6,13 +6,25 @@
 
 #include "gm_backend_cpp_opt_steps.h"
 
-class sequence_front_usage_filter: public gm_apply
+#define Vector std::vector<gm_symtab_entry*>
+#define Iterator Vector::iterator
+
+class abstract_sequence_filter: public gm_apply
 {
-private:
-    std::vector<gm_symtab_entry*> candidates;
+protected:
+    Vector candidates;
+
+    abstract_sequence_filter() {
+    }
+
+    abstract_sequence_filter(Vector candidate_seqs) :
+        candidates(candidate_seqs) {
+    }
+
+    virtual bool applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) = 0;
 
 public:
-    std::vector<gm_symtab_entry*> get_candidates() {
+    Vector get_candidates() {
         return candidates;
     }
 
@@ -30,12 +42,23 @@ public:
         ast_expr_builtin* builtIn = (ast_expr_builtin*) expr;
         gm_symtab_entry* driverEntry = builtIn->get_driver()->getSymInfo();
 
-        std::vector<gm_symtab_entry*>::iterator position = std::find(candidates.begin(), candidates.end(), driverEntry);
+        Iterator position = std::find(candidates.begin(), candidates.end(), driverEntry);
         if (position == candidates.end()) return true;
 
         gm_builtin_def* def = builtIn->get_builtin_def();
         gm_method_id_t methodId = (gm_method_id_t) def->get_method_id();
+        return applyBuiltIn(builtIn, position, def, methodId);
+    }
 
+};
+
+class sequence_front_usage_filter: public abstract_sequence_filter
+{
+public:
+    sequence_front_usage_filter() : abstract_sequence_filter() {
+    }
+
+    bool applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) {
         switch (methodId) {
             case GM_BLTIN_SET_ADD_BACK:
             case GM_BLTIN_SET_REMOVE_BACK:
@@ -48,39 +71,27 @@ public:
 
 };
 
-class seq_front_to_back_transformer: public gm_apply
+class seq_front_to_back_transformer: public abstract_sequence_filter
 {
-private:
-    std::vector<gm_symtab_entry*> candidates;
-
 public:
-    seq_front_to_back_transformer(std::vector<gm_symtab_entry*> candidate_seqs) :
-            candidates(candidate_seqs) {
+    seq_front_to_back_transformer(Vector candidate_seqs) :
+            abstract_sequence_filter(candidate_seqs) {
     }
 
-    virtual bool apply(ast_expr* expr) {
-        if (expr->get_nodetype() != AST_EXPR_BUILTIN) return true;
+    bool applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) {
 
-        ast_expr_builtin* builtIn = (ast_expr_builtin*) expr;
-        gm_symtab_entry* driverEntry = builtIn->get_driver()->getSymInfo();
-
-        std::vector<gm_symtab_entry*>::iterator position = std::find(candidates.begin(), candidates.end(), driverEntry);
-        if (position == candidates.end()) return true;
-
-        gm_builtin_def* def = builtIn->get_builtin_def();
-        gm_method_id_t methodId = (gm_method_id_t) def->get_method_id();
         gm_method_id_t newMethodId = methodId;
 
         switch (methodId) {
             case GM_BLTIN_SET_ADD:
-                newMethodId = GM_BLTIN_SET_ADD_BACK;
-                break;
+            newMethodId = GM_BLTIN_SET_ADD_BACK;
+            break;
             case GM_BLTIN_SEQ_POP_FRONT:
-                newMethodId = GM_BLTIN_SET_REMOVE_BACK;
-                break;
+            newMethodId = GM_BLTIN_SET_REMOVE_BACK;
+            break;
             case GM_BLTIN_SET_PEEK:
-                newMethodId = GM_BLTIN_SET_PEEK_BACK;
-                break;
+            newMethodId = GM_BLTIN_SET_PEEK_BACK;
+            break;
         }
 
         if (methodId != newMethodId) {
@@ -88,47 +99,23 @@ public:
             gm_builtin_def* newBuiltInDef = BUILT_IN.find_builtin_def(def->get_source_type_summary(), newMethodId, 0);
             builtIn->set_builtin_def(newBuiltInDef);
         }
-
         return true;
     }
 };
 
-class sequence_back_usage_filtler: public gm_apply
+class sequence_back_usage_filtler: public abstract_sequence_filter
 {
-private:
-    std::vector<gm_symtab_entry*> candidates;
-
 public:
-    std::vector<gm_symtab_entry*> get_candidates() {
-        return candidates;
+    sequence_back_usage_filtler() :  abstract_sequence_filter() {
     }
 
-    virtual bool apply(gm_symtab_entry* e, int symtab_type) {
-        if (symtab_type != GM_SYMTAB_VAR) return true;
-        if (gm_is_sequence_collection_type(e->getType()->getTypeSummary())) {
-            candidates.push_back(e);
-        }
-        return true;
-    }
-
-    virtual bool apply(ast_expr* expr) {
-        if (expr->get_nodetype() != AST_EXPR_BUILTIN) return true;
-
-        ast_expr_builtin* builtIn = (ast_expr_builtin*) expr;
-        gm_symtab_entry* driverEntry = builtIn->get_driver()->getSymInfo();
-
-        std::vector<gm_symtab_entry*>::iterator position = std::find(candidates.begin(), candidates.end(), driverEntry);
-        if (position == candidates.end()) return true;
-
-        gm_builtin_def* def = builtIn->get_builtin_def();
-        gm_method_id_t methodId = (gm_method_id_t) def->get_method_id();
-
+    bool applyBuiltIn(ast_expr_builtin* builtIn, Iterator position, gm_builtin_def* def, gm_method_id_t methodId) {
         switch (methodId) {
             case GM_BLTIN_SET_ADD:
             case GM_BLTIN_SEQ_POP_FRONT:
             case GM_BLTIN_SET_PEEK:
-                candidates.erase(position);
-                break;
+            candidates.erase(position);
+            break;
         }
         return true;
     }
@@ -138,15 +125,15 @@ public:
 class sequence_to_vector_transformer
 {
 private:
-    std::vector<gm_symtab_entry*> candidates;
+    Vector candidates;
 
 public:
-    sequence_to_vector_transformer(std::vector<gm_symtab_entry*> candidate_seqs) :
-            candidates(candidate_seqs) {
+    sequence_to_vector_transformer(Vector candidate_seqs) :
+        candidates(candidate_seqs) {
     }
 
     void transform_all() {
-        std::vector<gm_symtab_entry*>::iterator II;
+        Iterator II;
         for (II = candidates.begin(); II != candidates.end(); II++) {
             gm_symtab_entry* entry = *II;
             entry->add_info_bool("seq_vector", true);
@@ -171,3 +158,6 @@ void gm_cpp_opt_select_seq_implementation::process(ast_procdef* p) {
     transformer.transform_all();
 
 }
+
+#undef Iterator
+#undef Vector

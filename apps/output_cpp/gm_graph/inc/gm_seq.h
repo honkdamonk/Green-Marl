@@ -188,7 +188,7 @@ public:
     }
 
     void push_front(T e) {
-        data.push_front(e);
+        assert(false); //not meant to be used this way
     }
 
     void pop_back() {
@@ -196,7 +196,7 @@ public:
     }
 
     void pop_front() {
-        data.pop_front();
+        assert(false); //not meant to be used this way
     }
 
     void clear() {

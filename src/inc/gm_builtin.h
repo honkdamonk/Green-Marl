@@ -62,6 +62,8 @@ enum gm_method_id_t
     GM_BLTIN_SET_SIZE,
     GM_BLTIN_SET_CLEAR,
 
+    GM_BLTIN_SEQ_POP_FRONT,
+
     GM_BLTIN_MAP_SIZE,          // returns the number of mappings in the map
     GM_BLTIN_MAP_HAS_MAX_VALUE, // checks if the key is mapped to the biggest value
     GM_BLTIN_MAP_HAS_MIN_VALUE, // checks if the key is mapped to the smallest value
@@ -121,7 +123,7 @@ const gm_builtin_desc_t GM_builtins[] = {
         { "*Push", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
         { "N_O:PushFront:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
         { "N_O:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-        { "N_O:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
+        { "N_O:PopFront:Node:0", GM_BLTIN_SEQ_POP_FRONT, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
         { "*Pop", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
         { "N_O:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" },
         { "N_O:Size:Int", GM_BLTIN_SET_SIZE, "" },
@@ -133,7 +135,7 @@ const gm_builtin_desc_t GM_builtins[] = {
         { "*Push", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
         { "N_Q:PushFront:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
         { "N_Q:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-        { "N_Q:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
+        { "N_Q:PopFront:Node:0", GM_BLTIN_SEQ_POP_FRONT, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
         { "*Pop", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
         { "N_Q:Size:Int", GM_BLTIN_SET_SIZE, "" },
         //{"NodeQ:Front:Node:0",         GM_BLTIN_SET_PEEK,        ""},

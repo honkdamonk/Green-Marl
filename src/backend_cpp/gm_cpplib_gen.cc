@@ -235,7 +235,7 @@ const char* gm_cpplib::get_function_name_nseq(int methodId) {
             return "push_front";
         case GM_BLTIN_SET_ADD_BACK:
             return "push_back";
-        case GM_BLTIN_SET_REMOVE:
+        case GM_BLTIN_SEQ_POP_FRONT:
             return "pop_front";
         case GM_BLTIN_SET_REMOVE_BACK:
             return "pop_back";

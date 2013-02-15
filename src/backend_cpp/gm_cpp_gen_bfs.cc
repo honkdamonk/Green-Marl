@@ -136,7 +136,12 @@ void gm_cpp_gen::generate_bfs_def(ast_bfs* bfs) {
         is_first = false;
         gm_symtab_entry* sym = (gm_symtab_entry*) (*S);
         ast_typedecl* t = sym->getType();
-        Body.push(get_type_string(t));
+        if (sym->find_info_bool("seq_vector")) {
+            if(t->is_node_collection())Body.push("gm_node_seq_vec");
+            else Body.push("gm_edge_seq_vec");
+        } else {
+            Body.push(get_type_string(t));
+        }
         Body.push("&");
         Body.push(" _");
         Body.push(sym->getId()->get_genname());
@@ -180,7 +185,12 @@ void gm_cpp_gen::generate_bfs_def(ast_bfs* bfs) {
     for (S = SET.begin(); S != SET.end(); S++, i++) {
         gm_symtab_entry* sym = (gm_symtab_entry*) (*S);
         ast_typedecl* t = sym->getType();
-        Body.push(get_type_string(t));
+        if (sym->find_info_bool("seq_vector")) {
+            if(t->is_node_collection())Body.push("gm_node_seq_vec");
+            else Body.push("gm_edge_seq_vec");
+        } else {
+            Body.push(get_type_string(t));
+        }
         Body.push("& ");
         Body.push(sym->getId()->get_genname());
         Body.pushln(";");

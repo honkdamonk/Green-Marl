@@ -527,7 +527,20 @@ void gm_cpp_gen::generate_sent_vardecl(ast_vardecl* v) {
         return;
     }
 
-    Body.push_spc(get_type_string(t));
+    if (t->is_sequence_collection()) {
+        //for sequence-list-vector optimization
+        ast_id* id = v->get_idlist()->get_item(0);
+        if (id->getSymInfo()->find_info_bool("seq_vector")) {
+            if (t->is_node_collection())
+                Body.push_spc("gm_node_seq_vec ");
+            else
+                Body.push_spc("gm_edge_seq_vec ");
+        } else {
+            Body.push_spc(get_type_string(t));
+        }
+    } else {
+        Body.push_spc(get_type_string(t));
+    }
 
     if (t->is_property()) {
         ast_idlist* idl = v->get_idlist();
@@ -1090,7 +1103,7 @@ void gm_cpp_gen::generate_expr_builtin(ast_expr* ee) {
 }
 
 void gm_cpp_gen::prepare_parallel_for(bool need_dynamic) {
-    if (is_under_parallel_sentblock()) 
+    if (is_under_parallel_sentblock())
         Body.push("#pragma omp for nowait"); // already under parallel region.
     else
         Body.push("#pragma omp parallel for");

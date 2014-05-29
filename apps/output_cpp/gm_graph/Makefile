@@ -6,7 +6,7 @@ INC = inc
 SRC = src
 OBJ = obj
 CFLAGS = -O3 -g -I$(INC) -fopenmp -Wall 
-OUT = $(BIN)/graph_gen $(LIB)/libgmgraph.a
+OUT = $(BIN)/graph_gen $(LIB)/libgmgraph.a $(BIN)/gm_format_converter
 JC = javac
 JSRC = javasrc
 JBIN = javabin
@@ -18,7 +18,7 @@ vpath %.java $(JSRC)
 
 SOURCES := $(wildcard $(SRC)/*.cc)
 OBJECTS := $(subst $(SRC),$(OBJ),$(SOURCES:.cc=.o)) 
-GRAPHGEN_OBJECTS = $(OBJ)/gm_graph.o $(OBJ)/gm_rand.o $(OBJ)/graph_gen.o $(OBJ)/graph_gen_main.o $(OBJ)/gm_util.o $(OBJ)/gm_lock.o $(OBJ)/gm_file_handling.o $(OBJ)/gm_file_c.o $(OBJ)/gm_read_setup.o
+GRAPHGEN_OBJECTS = $(OBJ)/gm_graph.o $(OBJ)/gm_rand.o $(OBJ)/graph_gen.o $(OBJ)/graph_gen_main.o $(OBJ)/gm_util.o $(OBJ)/gm_lock.o $(OBJ)/gm_file_handling.o $(OBJ)/gm_file_c.o $(OBJ)/gm_read_setup.o $(OBJ)/gm_graph_binary_loader.o
 JAVASOURCES := $(wildcard $(JSRC)/*.java)
 JAVACLASSES := $(subst $(JSRC),$(JBIN),$(JAVASOURCES:.java=.class))
 
@@ -59,6 +59,9 @@ endif
 $(BIN)/graph_gen: $(GRAPHGEN_OBJECTS) 
 	$(CC) $(CFLAGS) $^ $(LFLAGS) -o $@
 
+$(BIN)/gm_format_converter: $(OBJ)/gm_format_converter.o $(LIB)/libgmgraph.a
+	$(CC) $(CFLAGS) $(OBJ)/gm_format_converter.o  $(LFLAGS) -L$(LIB) -lgmgraph -o $@ 
+
 $(LIB)/libgmgraph.a: $(GRAPHLIB_OBJECTS)
 	$(AR) r $@  $^  
 
@@ -69,7 +72,7 @@ ifeq ($(SUPPORT_HDFS),1)
 $(JBIN)/%.class: %.java
 	$(JC) $(JFLAGS) -d $(JBIN) $<
 $(OBJ)/%.o: %.cc $(JAVACLASSES)	../../../setup.mk
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@ 
 else
 $(OBJ)/%.o: %.cc ../../../setup.mk
 	$(CC) $(CFLAGS) -c $< -o $@

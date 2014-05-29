@@ -3,6 +3,7 @@
 bin/*
 obj/*
 .cproject
+.pydevproject
 .project
 .settings
 nbproject
@@ -25,9 +26,15 @@ test/giraph/.project
 test/giraph/giraph_errors/output
 test/giraph/bin
 test/giraph/lib/
+test/errors/output/
+test/opt/output/
+test/parse/output/
+test/rw_check/output/
+test/sugars/output/
 
 src/parse/gm_grammer.output
 src/parse/gm_grammer.tab.c
+src/parse/gm_grammer.tab.h
 src/parse/gm_lex.c
 
 apps/output_cpp/generated
@@ -38,6 +45,16 @@ apps/output_cpp/gm_graph/obj
 apps/output_cpp/gm_graph/avro-c-1.7.2/jansson/src/*.o
 apps/output_cpp/gm_graph/avro-c-1.7.2/src/*.o
 apps/output_gps/generated
+apps/output_giraph/generated
+
+apps/output_java/jars
+apps/output_java/bin
+apps/output_java/data
+apps/output_java/src/generated
+apps/output_java/src/runtime/_48bit
+apps/output_java/src/runtime/_64bit
+apps/output_java/src/main/_48bit
+apps/output_java/src/main/_64bit
 
 etc/update_setup
 setup.mk.bak

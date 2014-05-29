@@ -25,10 +25,14 @@ void gm_giraphlib::generate_headers_vertex(gm_code_writer& Body) {
     Body.pushln("import java.io.IOException;");
     Body.pushln("import java.lang.Math;");
     Body.pushln("import java.util.Random;");
+    Body.pushln("import java.util.ArrayList;");
+    Body.pushln("import java.util.Arrays;");
     Body.pushln("import org.apache.giraph.aggregators.*;");
     Body.pushln("import org.apache.giraph.graph.*;");
+    Body.pushln("import org.apache.giraph.master.*;");
     Body.pushln("import org.apache.hadoop.io.*;");
     Body.pushln("import org.apache.log4j.Logger;");
+    Body.pushln("import com.oracle.greenmarl.giraphlib.*;");
     Body.NL();
 
     Body.pushln("@SuppressWarnings(\"unused\")");
@@ -44,9 +48,9 @@ void gm_giraphlib::generate_headers_main(gm_code_writer& Body) {
     Body.pushln("import org.apache.commons.cli.PosixParser;");
     Body.pushln("import org.apache.giraph.GiraphConfiguration;");
     Body.pushln("import org.apache.giraph.graph.GiraphJob;");
+    Body.pushln("import org.apache.giraph.io.GiraphFileInputFormat;");
     Body.pushln("import org.apache.hadoop.conf.Configuration;");
     Body.pushln("import org.apache.hadoop.fs.Path;");
-    Body.pushln("import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;");
     Body.pushln("import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;");
     Body.pushln("import org.apache.hadoop.util.Tool;");
     Body.pushln("import org.apache.hadoop.util.ToolRunner;");
@@ -57,13 +61,16 @@ void gm_giraphlib::generate_headers_main(gm_code_writer& Body) {
 void gm_giraphlib::generate_headers_input(gm_code_writer& Body) {
     generate_package_decl_if_required(Body);
     Body.pushln("import java.io.IOException;");
+    Body.pushln("import java.util.List;");
     Body.pushln("import java.util.Map;");
+    Body.pushln("import java.util.HashMap;");
 
+    Body.pushln("import org.apache.giraph.graph.*;");
     Body.pushln("import org.apache.giraph.io.*;");
     Body.pushln("import org.apache.hadoop.io.*;");
     Body.pushln("import org.apache.hadoop.mapreduce.InputSplit;");
     Body.pushln("import org.apache.hadoop.mapreduce.TaskAttemptContext;");
-    Body.pushln("import com.google.common.collect.Maps;");
+    Body.pushln("import com.google.common.collect.Lists;");
     Body.NL();
 }
 
@@ -79,8 +86,15 @@ void gm_giraphlib::generate_headers_output(gm_code_writer& Body) {
 }
 
 void gm_giraphlib::generate_node_iterator_rhs(ast_id* id, gm_code_writer& Body) {
-    //TODO
-    Body.push("getId().get()");
+    if (id->getSymInfo()->find_info_bool(GPS_FLAG_IS_OUTER_LOOP) || id->getSymInfo()->find_info_bool(GPS_FLAG_IS_INNER_LOOP))
+    {
+        Body.push("getId().get()");
+    }
+    else 
+    {
+        Body.push(id->get_genname());
+    }
+
 }
 
 // scalar variable broadcast
@@ -139,8 +153,11 @@ void gm_giraphlib::generate_broadcast_receive_vertex(ast_id* id, gm_code_writer&
     char temp[1024];
     Body.push("this.<");
     generate_broadcast_writable_type(id->getTypeSummary(), Body);
-    sprintf(temp, "> getAggregatedValue(%s).get()", create_key_string(id));
+    sprintf(temp, "> getAggregatedValue(%s)", create_key_string(id));
     Body.push(temp);
+    if (!id->getTypeInfo()->is_collection())
+        Body.push(".get()"); // primitive 
+
 }
 
 void gm_giraphlib::generate_parameter_read_vertex(ast_id* id, gm_code_writer& Body) {
@@ -181,6 +198,29 @@ void gm_giraphlib::generate_broadcast_aggregator_type(int type_id, gm_code_write
     //   <Type><Reduce>BV( value )
     //--------------------------------------
     // Generate following string
+    if (gm_is_collection_type(type_id))
+    {
+        switch(type_id) {
+            case GMTYPE_NSET:
+                if (is_node_type_int())
+                    Body.push("Int");
+                else
+                    Body.push("Long");
+                Body.push("Set");
+                break;
+
+            default: 
+                assert(false);
+        }
+        switch(reduce_op) {
+            case GMREDUCE_NULL: Body.push("Overwrite"); break;
+            default:
+                assert(false);
+        }
+
+        Body.push("Aggregator");
+        return;
+    }
 
     //---------------------------------------------------
     // Type:  Long, Int, Double, Float, Bool, NODE,EDGE
@@ -249,6 +289,25 @@ void gm_giraphlib::generate_broadcast_aggregator_type(int type_id, gm_code_write
 
 void gm_giraphlib::generate_broadcast_writable_type(int type_id, gm_code_writer& Body)
 {
+    if (gm_is_collection_type(type_id))
+    {
+        switch(type_id) {
+            case GMTYPE_NSET:
+            if (is_node_type_int())
+                Body.push("Int");
+            else
+                Body.push("Long");
+            Body.push("Set");
+            break;
+
+            default: 
+                assert(false);
+        }
+        Body.push("Writable");
+        return;
+    }
+
+
     if (gm_is_node_compatible_type(type_id)) type_id = GMTYPE_NODE;
     if (gm_is_edge_compatible_type(type_id)) type_id = GMTYPE_EDGE;
 
@@ -361,6 +420,14 @@ static int get_java_type_size(int gm_type) {
             return 8;
         case GMTYPE_BOOL:
             return 1;
+        case GMTYPE_NSET:
+        case GMTYPE_NSEQ:
+        case GMTYPE_NORDER:
+        case GMTYPE_ESET:
+        case GMTYPE_ESEQ:
+        case GMTYPE_EORDER:
+            return 8;       // 8 bytes for reference
+
         default:
             printf("type = %s\n", gm_get_type_string(gm_type));
             assert(false);
@@ -385,6 +452,7 @@ int gm_giraphlib::get_type_size(int gm_type) {
 
     return get_java_type_size(gm_type);
 }
+
 
 static void genPutIOB(const char* name, int gm_type, gm_code_writer& Body, gm_giraphlib* lib) {
     if (gm_is_node_compatible_type(gm_type)) gm_type = GMTYPE_NODE;
@@ -431,6 +499,39 @@ static void genPutIOB(const char* name, int gm_type, gm_code_writer& Body, gm_gi
     Body.push(name);
     Body.pushln(");");
 }
+
+static void genPutIOBCollection(const char* name, ast_typedecl* T, gm_code_writer& Body, gm_giraphlib* lib) {
+    Body.push(name);
+    Body.pushln(".write(out);");
+
+    /*
+    int base_type = T->is_node_collection() ? GMTYPE_NODE : GMTYPE_EDGE;
+    const char* iterator = "__iter";
+    Body.push("out.writeInt(");
+    Body.push(name);
+    Body.pushln(".size());");
+    Body.push("for (");
+    Body.push(lib->get_main()->get_box_type_string(base_type));
+    Body.push(" ");
+    Body.push(iterator);
+    Body.push("  : ");
+    Body.push(name);
+    Body.pushln(") {");
+    if (((base_type == GMTYPE_NODE) && (lib->is_node_type_int())) ||
+        ((base_type == GMTYPE_EDGE) && (lib->is_edge_type_int()))) {
+        Body.push("out.writeInt(");
+        Body.push(iterator);
+        Body.pushln(".get());");
+    }
+    else {
+        Body.push("out.writeLong(");
+        Body.push(iterator);
+        Body.pushln(".get());");
+    }
+    Body.pushln("}");
+    */
+}
+
 static void genGetIOB(const char* name, int gm_type, gm_code_writer& Body, gm_giraphlib* lib) {
     if (gm_is_node_compatible_type(gm_type)) gm_type = GMTYPE_NODE;
     if (gm_is_edge_compatible_type(gm_type)) gm_type = GMTYPE_EDGE;
@@ -475,6 +576,37 @@ static void genGetIOB(const char* name, int gm_type, gm_code_writer& Body, gm_gi
     }
     Body.pushln(";");
 }
+static void genGetIOBCollection(const char* name, ast_typedecl* T, gm_code_writer& Body, gm_giraphlib* lib) {
+    // collection themselves are writables
+    Body.push(name);
+    Body.push(" = new ");
+    Body.push(lib->get_giraph_main()->get_collection_type_string(T));
+    Body.pushln("();");
+    Body.push(name);
+    Body.pushln(".readFields(in);");
+    /*
+    int base_type = T->is_node_collection() ? GMTYPE_NODE : GMTYPE_EDGE;
+    const char* iterator = "__iter";
+    Body.pushln("{");
+    Body.pushln("int __size = in.readInt();");
+    Body.pushln("for (int __i = 0; __i < __size; __i++) {");
+    Body.push(name);
+    Body.push(".add(new ");
+    Body.push(lib->get_main()->get_box_type_string(base_type));
+    Body.push("(");
+    if (((base_type == GMTYPE_NODE) && (lib->is_node_type_int())) ||
+        ((base_type == GMTYPE_EDGE) && (lib->is_edge_type_int()))) {
+        Body.push("in.readInt()");
+    }
+    else {
+        Body.push("in.readLong()");
+    } 
+    Body.pushln("));");
+    Body.pushln("}");
+    Body.pushln("}");
+    */
+}
+
 
 void gm_giraphlib::generate_master_class_details(std::set<gm_symtab_entry*>& prop, gm_code_writer& Body) {
     std::set<gm_symtab_entry*>::iterator I;
@@ -491,7 +623,12 @@ void gm_giraphlib::generate_master_class_details(std::set<gm_symtab_entry*>& pro
         gps_syminfo* syminfo = (gps_syminfo*) sym->find_info(GPS_TAG_BB_USAGE);
         if (!syminfo->is_used_in_master()) continue;
 
-        genPutIOB(sym->getId()->get_genname(), sym->getType()->getTypeSummary(), Body, this);
+        if (sym->getType()->is_collection()) {
+            genPutIOBCollection(sym->getId()->get_genname(), sym->getType(), Body, this);
+        }
+        else {
+            genPutIOB(sym->getId()->get_genname(), sym->getType()->getTypeSummary(), Body, this);
+        }
     }
     Body.pushln("}");
 
@@ -507,7 +644,12 @@ void gm_giraphlib::generate_master_class_details(std::set<gm_symtab_entry*>& pro
         gps_syminfo* syminfo = (gps_syminfo*) sym->find_info(GPS_TAG_BB_USAGE);
         if (!syminfo->is_used_in_master()) continue;
 
-        genGetIOB(sym->getId()->get_genname(), sym->getType()->getTypeSummary(), Body, this);
+        if (sym->getType()->is_collection()) {
+            genGetIOBCollection(sym->getId()->get_genname(), sym->getType(), Body, this);
+        }
+        else {
+            genGetIOB(sym->getId()->get_genname(), sym->getType()->getTypeSummary(), Body, this);
+        }
     }
     Body.pushln("}");
 }
@@ -522,20 +664,48 @@ void gm_giraphlib::generate_vertex_prop_class_details(std::set<gm_symtab_entry*>
 
     std::set<gm_symtab_entry*>::iterator I;
 
+    bool has_collection = false;
+    for (I = prop.begin(); I != prop.end(); I++) {
+        gm_symtab_entry * sym = *I;
+        if (sym->getType()->get_target_type()->is_collection()) {
+            has_collection = true;
+        }
+    }
+
+   
+    if (has_collection) {
+        Body.pushln("private void initCollections() {");
+        for (I = prop.begin(); I != prop.end(); I++) {
+            gm_symtab_entry * sym = *I;
+            if (sym->getType()->get_target_type()->is_collection()) {
+                Body.push(sym->getId()->get_genname());
+                Body.push(" = new ");
+                Body.push(get_main()->get_type_string(sym->getType()->get_target_type(), true));
+                Body.pushln("();");
+            }
+        }
+        Body.pushln("}");
+    }
+
+
+    if (is_edge_prop) {
+        Body.pushln("public EdgeData() {");
+    } else {
+        Body.pushln("public VertexData() {");
+    }
+
+        Body.pushln("// Default constructor needed for Giraph");
+        if (has_collection) 
+            Body.pushln("initCollections();");
+
+        Body.pushln("}");
+        Body.NL();
+
+
     std::list<gm_symtab_entry*> inputList = (is_edge_prop) ? 
                     ((gm_gps_beinfo*) FE.get_current_backend_info())->get_edge_input_prop_symbols():
                     ((gm_gps_beinfo*) FE.get_current_backend_info())->get_node_input_prop_symbols();
-    if (is_edge_prop) {
-        Body.pushln("public EdgeData() {");
-        Body.pushln("// Default constructor needed for Giraph");
-        Body.pushln("}");
-        Body.NL();
-    } else {
-        Body.pushln("public VertexData() {");
-        Body.pushln("// Default constructor needed for Giraph");
-        Body.pushln("}");
-        Body.NL();
-    }
+
     if (inputList.size() > 0) {
         Body.pushln("// Initalize with initData");
 
@@ -544,6 +714,7 @@ void gm_giraphlib::generate_vertex_prop_class_details(std::set<gm_symtab_entry*>
         } else {
             Body.push("public VertexData(");
         }
+
 
         int sz = inputList.size();
         int cnt = 0;
@@ -560,6 +731,10 @@ void gm_giraphlib::generate_vertex_prop_class_details(std::set<gm_symtab_entry*>
             }
         }
         Body.pushln(") {");
+
+        if (has_collection) 
+            Body.pushln("initCollections();");
+
         cnt = 0;
         for(J= inputList.begin(); J!=inputList.end(); J++, cnt++) {
             gm_symtab_entry* e = *J;
@@ -577,12 +752,17 @@ void gm_giraphlib::generate_vertex_prop_class_details(std::set<gm_symtab_entry*>
     Body.pushln("public void write(DataOutput out) throws IOException {");
     for (I = prop.begin(); I != prop.end(); I++) {
         gm_symtab_entry * sym = *I;
-        genPutIOB(sym->getId()->get_genname(), sym->getType()->getTargetTypeSummary(), Body, this);
+        if (sym->getType()->get_target_type()->is_collection()) {
+            genPutIOBCollection(sym->getId()->get_genname(), sym->getType()->get_target_type(), Body, this);
+        }
+        else {
+            genPutIOB(sym->getId()->get_genname(), sym->getType()->getTargetTypeSummary(), Body, this);
+        }
     }
     if (FE.get_current_proc_info()->find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
         sprintf(temp, "out.writeInt(%s.length);", GPS_REV_NODE_ID);
         Body.pushln(temp);
-        sprintf(temp, "for (%s node : %s) {", PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable", GPS_REV_NODE_ID);
+        sprintf(temp, "for (%s node : %s) {", get_main()->get_box_type_string(GMTYPE_NODE), GPS_REV_NODE_ID);
         Body.pushln(temp);
         Body.pushln("node.write(out);");
         Body.pushln("}");
@@ -593,11 +773,16 @@ void gm_giraphlib::generate_vertex_prop_class_details(std::set<gm_symtab_entry*>
     Body.pushln("public void readFields(DataInput in) throws IOException {");
     for (I = prop.begin(); I != prop.end(); I++) {
         gm_symtab_entry * sym = *I;
-        genGetIOB(sym->getId()->get_genname(), sym->getType()->getTargetTypeSummary(), Body, this);
+        if (sym->getType()->get_target_type()->is_collection()) {
+            genGetIOBCollection(sym->getId()->get_genname(), sym->getType()->get_target_type(), Body, this);
+        }
+        else {
+            genGetIOB(sym->getId()->get_genname(), sym->getType()->getTargetTypeSummary(), Body, this);
+        }
     }
     if (FE.get_current_proc_info()->find_info_bool(GPS_FLAG_USE_REVERSE_EDGE)) {
         Body.pushln("int _node_count = in.readInt();");
-        sprintf(temp, "%s = new %s[_node_count];", GPS_REV_NODE_ID, PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable");
+        sprintf(temp, "%s = new %s[_node_count];", GPS_REV_NODE_ID, get_main()->get_box_type_string(GMTYPE_NODE));
         Body.pushln(temp);
         Body.pushln("for (int i = 0; i < _node_count; i++) {");
         sprintf(temp, "%s[i].readFields(in);", GPS_REV_NODE_ID);
@@ -772,7 +957,7 @@ void gm_giraphlib::generate_message_class_details(gm_gps_beinfo* info, gm_code_w
 void gm_giraphlib::generate_message_send(ast_foreach* fe, gm_code_writer& Body) {
     char temp[1024];
 
-    const char* vertex_id = PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable";
+    const char* vertex_id = get_main()->get_box_type_string(GMTYPE_NODE);
     const char* edge_data = FE.get_current_proc()->find_info_bool(GPS_FLAG_USE_EDGE_PROP) ? "EdgeData" : "NullWritable";
 
     gm_gps_beinfo * info = (gm_gps_beinfo *) FE.get_current_backend_info();
@@ -787,6 +972,11 @@ void gm_giraphlib::generate_message_send(ast_foreach* fe, gm_code_writer& Body) 
 
     bool need_separate_message = (fe == NULL) ? false : fe->find_info_bool(GPS_FLAG_EDGE_DEFINING_INNER);
     bool is_in_neighbors = (fe != NULL) && (gm_is_in_nbr_node_iteration(fe->get_iter_type()));
+    bool early_filter = (fe!=NULL) && (fe->find_info_bool(GPS_FLAG_IS_EARLY_FILTER));
+
+    if (need_separate_message) {
+        assert(!early_filter); 
+    } // [xxx] temporary 
 
     if (!need_separate_message) {
         Body.pushln("// Sending messages to all neighbors (if there is a neighbor)");
@@ -871,15 +1061,70 @@ void gm_giraphlib::generate_message_send(ast_foreach* fe, gm_code_writer& Body) 
         Body.pushln(";");
     }
 
+    ast_if* iff = NULL;
+    if (early_filter) {
+        iff = (ast_if*) fe->find_info_ptr(GPS_FLAG_PTR_EARLY_FILTER);
+        assert(iff != NULL);
+    }
+
     if (!need_separate_message) {
         if (is_in_neighbors) {
-            sprintf(temp, "for (%s node : %s.%s) {", PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable", STATE_SHORT_CUT,
+            sprintf(temp, "for (%s _%s_node : %s.%s) {", 
+                    PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable", 
+                    fe->get_iterator()->get_genname(),
+                    STATE_SHORT_CUT,
                     GPS_REV_NODE_ID);
             Body.pushln(temp);
-            Body.pushln("sendMessage(node, _msg);");
+
+            if (early_filter) { 
+                sprintf(temp, "%s %s = _%s_node.get();", 
+                        PREGEL_BE->get_type_string(GMTYPE_NODE),  
+                        fe->get_iterator()->get_genname(),
+                        fe->get_iterator()->get_genname());
+                Body.pushln(temp);
+
+                // create early filter
+                Body.push("if (!(");
+                get_main()->generate_expr(iff->get_cond());
+                Body.pushln(")) continue;\n");
+            }
+
+            sprintf(temp, "sendMessage(_%s_node, _msg);", fe->get_iterator()->get_genname());
+            Body.pushln(temp);
             Body.pushln("}");
+
         } else {
-            Body.pushln("sendMessageToAllEdges(_msg);");
+
+            if (early_filter) { // early filter
+                sprintf(temp, "for (Edge<%s, %s> _%s_edge : getEdges()) {", vertex_id, edge_data,
+                        fe->get_iterator()->get_genname());
+                Body.pushln(temp);
+                sprintf(temp, "%s _%s_node = _%s_edge.getTargetVertexId();", 
+                        PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable",
+                        fe->get_iterator()->get_genname(),
+                        fe->get_iterator()->get_genname());
+                Body.pushln(temp);
+
+                sprintf(temp, "%s %s = _%s_node.get();", 
+                        PREGEL_BE->get_type_string(GMTYPE_NODE),  
+                        fe->get_iterator()->get_genname(),
+                        fe->get_iterator()->get_genname());
+                Body.pushln(temp);
+
+                // create early filter
+                Body.push("if (!(");
+                get_main()->generate_expr(iff->get_cond());
+                Body.pushln(")) continue;\n");
+
+                sprintf(temp, "sendMessage(_%s_node, _msg);", fe->get_iterator()->get_genname());
+                Body.pushln(temp);
+
+                Body.pushln("}");
+            }
+            else {
+                // send to all
+                Body.pushln("sendMessageToAllEdges(_msg);");
+            }
         }
         Body.pushln("}");
     } else {
@@ -965,25 +1210,99 @@ void gm_giraphlib::generate_message_receive_end(gm_code_writer& Body, bool is_on
     }
 }
 
+static int get_base_type_of_collection(ast_id* id)
+{
+    int base_type; // NODE or EDGE
+    if (id->getTypeInfo()->is_property()) {
+        if (id->getTypeInfo()->get_target_type()->is_node_collection())
+            base_type = GMTYPE_NODE;
+        else if (id->getTypeInfo()->get_target_type()->is_edge_collection())
+            base_type = GMTYPE_EDGE;
+        else
+            assert(false);
+    } else if (id->getTypeInfo()->is_node_collection()) {
+        base_type = GMTYPE_NODE;
+    } else if (id->getTypeInfo()->is_edge_collection()) {
+        base_type = GMTYPE_EDGE;
+    } else {
+        assert(false);
+    }
+
+    return base_type;
+}
+
+static void generate_collection_builtin(ast_id* driver_i, gm_builtin_def* def, gm_code_writer& Body, std::list<ast_expr*>& ARGS, gm_giraph_gen* main)
+{
+    int base_type = get_base_type_of_collection(driver_i);
+    if (driver_i->getTypeInfo()->is_property())
+        Body.push("_this.");
+    Body.push(driver_i->get_genname());
+    Body.push(".");
+    switch(def->get_method_id())
+    {
+        case GM_BLTIN_SET_ADD: Body.push("add"); break;
+        case GM_BLTIN_SET_HAS: Body.push("contains"); break;
+        case GM_BLTIN_SET_REMOVE: Body.push("remove"); break;
+        case GM_BLTIN_SET_SIZE: Body.push("size"); break;
+    }
+    Body.push("(");
+
+
+    std::list<ast_expr*>::iterator I; int i = 0;
+    for(I=ARGS.begin(); I!=ARGS.end(); ++I, i++)
+    {
+        if (i!=0) Body.push(",");
+        int base_type = def->get_arg_type(i);
+        if ((base_type == GMTYPE_NODE) || (base_type==GMTYPE_EDGE))
+        {
+            Body.push("new ");
+            Body.push(main->get_box_type_string(base_type));
+            Body.push("(");
+            main->generate_expr(*I);
+            Body.push(")");
+        }
+        else 
+        {
+            main->generate_expr(*I);
+        }
+    }
+    Body.push(")");
+
+}
+
+
 void gm_giraphlib::generate_expr_builtin(ast_expr_builtin* be, gm_code_writer& Body, bool is_master) {
     gm_builtin_def* def = be->get_builtin_def();
     std::list<ast_expr*>& ARGS = be->get_args();
-    assert(!PREGEL_BE->get_lib()->is_node_type_int());
+
+    assert(!PREGEL_BE->get_lib()->is_node_type_int()); // Assuming node is long type (why?)
+
+    ast_id* driver_i;
+    if (be->driver_is_field()) 
+    {
+        driver_i = ((ast_expr_builtin_field*) be)->get_field_driver()->get_second();
+    }
+    else {
+        driver_i = be->get_driver();
+    }
+    char temp[1024];
+
+    const char* vertex_id = get_main()->get_box_type_string(GMTYPE_NODE);
+    const char* edge_data = FE.get_current_proc()->find_info_bool(GPS_FLAG_USE_EDGE_PROP) ? "EdgeData" : "NullWritable";
 
     switch (def->get_method_id()) {
         case GM_BLTIN_TOP_DRAND:         // rand function
-            Body.push("(new Random()).nextDouble()");
+            Body.push("gmGetMyRandom().nextDouble()");
             break;
 
         case GM_BLTIN_TOP_IRAND:         // rand function
-            Body.push("(new Random()).nextInt(");
+            Body.push("gmGetMyRandom().nextInt(");
             get_main()->generate_expr(ARGS.front());
             Body.push(")");
             break;
 
         case GM_BLTIN_GRAPH_RAND_NODE:         // random node function
-            //Body.push("(new java.util.Random()).nextLong(");
-            Body.push("gmGetRandomVertex(getTotalNumVertices())");
+            Body.push("gmGetRandomLongInRange(getTotalNumVertices())");
             break;
 
         case GM_BLTIN_GRAPH_NUM_NODES:
@@ -992,12 +1311,53 @@ void gm_giraphlib::generate_expr_builtin(ast_expr_builtin* be, gm_code_writer& B
         case GM_BLTIN_NODE_DEGREE:
             Body.push("getNumEdges()");
             break;
+
         case GM_BLTIN_NODE_IN_DEGREE:
             Body.push(STATE_SHORT_CUT);
             Body.push(".");
             Body.push(GPS_REV_NODE_ID);
             Body.push(".length");
             break;
+
+        case GM_BLTIN_NODE_RAND_NBR:
+            sprintf(temp, "((ArrayList<Edge<%s,%s>>) getEdges()).get(", vertex_id, edge_data);
+            Body.pushln(temp);
+            sprintf(temp,"gmGetMyRandom().nextInt(getNumEdges())).getTargetVertexId().get();");
+            Body.pushln(temp);
+            break;
+
+        case GM_BLTIN_NODE_IS_NBR_FROM:
+            Body.push("(Arrays.binarySearch(");
+            Body.push(STATE_SHORT_CUT);
+            Body.push(".");
+            Body.push(GPS_REV_NODE_ID);
+            Body.push(", new ");
+            Body.push(get_main()->get_box_type_string(GMTYPE_NODE));
+            Body.push("(");
+            get_main()->generate_expr(ARGS.front());
+            Body.push(")");
+            Body.push(")");
+            Body.push(">=0)");
+            break;
+
+        case GM_BLTIN_NODE_HAS_EDGE_TO:
+            Body.push("hasEdge(");
+            Body.push("new ");
+            Body.push(get_main()->get_box_type_string(GMTYPE_NODE));
+            Body.push("(");
+            get_main()->generate_expr(ARGS.front());
+            Body.push(")");
+            Body.push(")");
+            break;
+
+        case GM_BLTIN_SET_ADD:
+        case GM_BLTIN_SET_HAS:
+        case GM_BLTIN_SET_REMOVE:
+        case GM_BLTIN_SET_SIZE:
+        {
+            generate_collection_builtin(driver_i, def, Body, ARGS, (gm_giraph_gen*)get_main());
+            break;
+        }
 
         default:
             assert(false);
@@ -1022,20 +1382,74 @@ void gm_giraphlib::generate_prepare_bb(gm_code_writer& Body, gm_gps_basic_block*
         Body.pushln("i++;");
         Body.pushln("}");
 
-        sprintf(temp, "%s.%s = new %s[i];", STATE_SHORT_CUT, GPS_REV_NODE_ID, PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable");
+        sprintf(temp, "%s.%s = new %s[i];", STATE_SHORT_CUT, GPS_REV_NODE_ID, get_main()->get_box_type_string(GMTYPE_NODE));
         Body.pushln(temp);
         Body.NL();
 
         Body.pushln("i=0;");
         Body.pushln("for (MessageData _msg : _msgs) {");
         generate_message_receive_begin(NULL, Body, bb, true);
-        sprintf(temp, "%s.%s[i] = new %s(%s);", STATE_SHORT_CUT, GPS_REV_NODE_ID, PREGEL_BE->get_lib()->is_node_type_int() ? "IntWritable" : "LongWritable",
-                GPS_DUMMY_ID);
+        sprintf(temp, "%s.%s[i] = new %s(%s);", STATE_SHORT_CUT, GPS_REV_NODE_ID, get_main()->get_box_type_string(GMTYPE_NODE), GPS_DUMMY_ID);
         Body.pushln(temp);
         generate_message_receive_end(Body, true);
         Body.pushln("i++;");
         Body.pushln("}");
+
+        if (FE.get_proc_info(FE.get_current_proc())->find_info_bool(GPS_FLAG_USE_HAS_EDGE))
+        {
+            sprintf(temp,"Arrays.sort(%s.%s);", STATE_SHORT_CUT, GPS_REV_NODE_ID);
+            Body.pushln(temp);
+        }
+
     } else {
+        assert(false);
+    }
+
+}
+
+void gm_giraphlib::generate_benign_feloop_header(ast_foreach* fe, bool& need_close_block, gm_code_writer& Body)
+{
+    need_close_block = true;
+    char temp[1024];
+
+    char iter_name[128];
+    sprintf(iter_name,"__%s_iter", fe->get_iterator()->get_genname());
+
+    if (fe->get_iter_type() == GMITER_NODE_IN_NBRS)
+    {
+        sprintf(temp, "for (%s %s : %s)", 
+            get_main()->get_box_type_string(GMTYPE_NODE),
+            iter_name, 
+            GPS_REV_NODE_ID
+            );
+        Body.pushln(temp);
+        Body.pushln("{");
+        sprintf(temp, "%s %s = %s.%s();", 
+            is_node_type_int() ? "int" : "long", 
+            fe->get_iterator()->get_genname(),
+            iter_name,
+            get_main()->get_unbox_method_string(GMTYPE_NODE));
+        Body.pushln(temp);
+    }
+    else if (fe->get_iter_type() == GMITER_NODE_NBRS)
+    {
+        const char* edge_data = FE.get_current_proc()->find_info_bool(GPS_FLAG_USE_EDGE_PROP) ? "EdgeData" : "NullWritable";
+
+        sprintf(temp, "for (Edge<%s, %s> _%s_edge : getEdges())", 
+            get_main()->get_box_type_string(GMTYPE_NODE),
+            edge_data,
+            fe->get_iterator()->get_genname());
+        Body.pushln(temp);
+        Body.pushln("{");
+        sprintf(temp, "%s %s = _%s_edge.getTargetVertexId().%s();", 
+            is_node_type_int() ? "int" : "long", 
+            fe->get_iterator()->get_genname(),
+            fe->get_iterator()->get_genname(),
+            get_main()->get_unbox_method_string(GMTYPE_NODE));
+        Body.pushln(temp);
+    }
+    else
+    {
         assert(false);
     }
 

@@ -288,20 +288,55 @@ void gm_cpp_gen::generate_lhs_id(ast_id* id) {
     Body.push(id->get_genname());
 }
 void gm_cpp_gen::generate_rhs_id(ast_id* id) {
-    generate_lhs_id(id);
+    if (id->getTypeInfo()->is_edge_compatible()) {
+        // reverse edge
+        if (id->find_info_bool(CPPBE_INFO_IS_REVERSE_EDGE)) {
+            Body.push(get_lib()->fw_edge_index(id));
+        }
+        //else if (id->getTypeInfo()->is_edge_iterator()) {
+                // original edge index if semi-sorted
+                //sprintf(temp, "%s.%s(%s)",
+                    //id->getTypeInfo()->get_target_graph_id()->get_genname(),
+                    //GET_ORG_IDX, 
+                    //id->get_genname()
+                //);
+                //Body.push(temp);
+        //}
+        else
+            generate_lhs_id(id);
+    }
+    else {
+        generate_lhs_id(id);
+    }
 }
 void gm_cpp_gen::generate_lhs_field(ast_field* f) {
     Body.push(f->get_second()->get_genname());
     Body.push('[');
-    if (f->is_rarrow()) {
-        const char* alias_name = f->get_first()->getSymInfo()->find_info_string(CPPBE_INFO_NEIGHBOR_ITERATOR);
-        assert(alias_name != NULL);
-        assert(strlen(alias_name) > 0);
-        Body.push(alias_name);
-    } else if (f->getTypeInfo()->is_node_property()) {
+    if (f->getTypeInfo()->is_node_property()) {
         Body.push(get_lib()->node_index(f->get_first()));
-    } else if (f->getTypeInfo()->is_edge_property())
-        Body.push(get_lib()->edge_index(f->get_first()));
+    } else if (f->getTypeInfo()->is_edge_property()) {
+
+        if (f->is_rarrow()) { // [XXX] this feature is still not finished, should be re-visited
+            const char* alias_name = f->get_first()->getSymInfo()->find_info_string(CPPBE_INFO_NEIGHBOR_ITERATOR);
+            assert(alias_name != NULL);
+            assert(strlen(alias_name) > 0);
+            Body.push(alias_name);
+        }
+        // check if the edge is a back-edge
+        else if (f->get_first()->find_info_bool(CPPBE_INFO_IS_REVERSE_EDGE)) {
+            Body.push(get_lib()->fw_edge_index(f->get_first()));
+        }
+        else {
+            // original edge index if semi-sorted
+            //sprintf(temp, "%s.%s(%s)",
+               //f->get_first()->getTypeInfo()->get_target_graph_id()->get_genname(),
+               //GET_ORG_IDX, 
+               //f->get_first()->get_genname()
+              //);
+              //Body.push(temp);
+              Body.push(get_lib()->edge_index(f->get_first()));
+        }
+    }
     else {
         assert(false);
     }
@@ -527,7 +562,19 @@ void gm_cpp_gen::generate_sent_vardecl(ast_vardecl* v) {
         return;
     }
 
-    Body.push_spc(get_type_string(t));
+    if (t->is_sequence_collection()) {
+        //for sequence-list-vector optimization
+        ast_id* id = v->get_idlist()->get_item(0);
+        const char* type_string;
+        if(get_lib()->has_optimized_type_name(id->getSymInfo())) {
+            type_string = get_lib()->get_optimized_type_name(id->getSymInfo());
+        } else {
+            type_string = get_type_string(t);
+        }
+        Body.push_spc(type_string);
+    } else {
+        Body.push_spc(get_type_string(t));
+    }
 
     if (t->is_property()) {
         ast_idlist* idl = v->get_idlist();
@@ -648,6 +695,7 @@ void gm_cpp_gen::generate_sent_block_enter(ast_sentblock* sb) {
                 }
                 if (e->find_info_bool(CPPBE_INFO_NEED_SEMI_SORT)) {
                     bool has_edge_prop = false;
+#if 0
                     // Semi-sorting must be done before edge-property creation
                     //std::vector<gm_symtab_entry*>& F = fields-> get_entries();
                     //for(int j=0;j<F.size();j++) {
@@ -658,6 +706,7 @@ void gm_cpp_gen::generate_sent_block_enter(ast_sentblock* sb) {
                         gm_symtab_entry* f = *J;
                         if ((f->getType()->get_target_graph_sym() == e) && (f->getType()->is_edge_property())) has_edge_prop = true;
                     }
+
                     if (has_edge_prop) {
                         Body.pushln("//[xxx] edge property must be created before semi-sorting");
                         sprintf(temp, "assert(%s.%s());", e->getId()->get_genname(), IS_SEMI_SORTED);
@@ -666,6 +715,10 @@ void gm_cpp_gen::generate_sent_block_enter(ast_sentblock* sb) {
                         sprintf(temp, "%s.%s();", e->getId()->get_genname(), SEMI_SORT);
                         Body.pushln(temp);
                     }
+#else
+                    sprintf(temp, "%s.%s();", e->getId()->get_genname(), SEMI_SORT);
+                    Body.pushln(temp);
+#endif
                 }
 
                 if (e->find_info_bool(CPPBE_INFO_NEED_FROM_INFO)) {

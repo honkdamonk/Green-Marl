@@ -55,17 +55,35 @@ long GM_Tokenizer::countNumberOfTokens() {
 /*
  * Method to create arrays based on a given value type and size.
  */
-void *getArrayType(VALUE_TYPE vt, int size) {
+void *gmutil_getArrayType(VALUE_TYPE vt, int size) {
     switch(vt) {
         case GMTYPE_BOOL: return (void *) new bool[size];
         case GMTYPE_INT: return (void *) new int[size];
         case GMTYPE_LONG: return (void *) new long[size];
         case GMTYPE_FLOAT: return (void *) new float[size];
         case GMTYPE_DOUBLE: return (void *) new double[size];
+        case GMTYPE_NODE: return (void *) new node_t[size];
+        case GMTYPE_EDGE: return (void *) new edge_t[size];
         case GMTYPE_END: 
         default: assert(false); return NULL; // Control should never reach this case.
     }
     return NULL;
+}
+
+int gmutil_getSizeOfType(VALUE_TYPE vt)
+{
+    switch(vt) {
+        case GMTYPE_BOOL: return 1; 
+        case GMTYPE_INT: return 4;
+        case GMTYPE_LONG: return 8;
+        case GMTYPE_FLOAT: return 4;
+        case GMTYPE_DOUBLE: return 8;
+        case GMTYPE_NODE: return sizeof(node_t);
+        case GMTYPE_EDGE: return sizeof(edge_t);
+        case GMTYPE_END: 
+        default: assert(false); return -1; // Control should never reach this case.
+    }
+    return -1;
 }
 
 void* gmutil_createVectorType(VALUE_TYPE vt) 
@@ -160,36 +178,41 @@ void gmutil_loadDummyValueIntoVector(void *vector, VALUE_TYPE vt)
     }
 }
 
-static void gmutil_copyVectorIntoArray(GM_BVECT& SRC, bool* dest) {
+static void gmutil_copyVectorIntoArray(GM_BVECT& SRC, bool* dest, edge_t* ind) {
     #pragma omp parallel for
-    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[i];
+    //for(size_t i = 0; i < SRC.size(); i++) dest[(ind==NULL)?i:ind[i]] = SRC[i];
+    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[(ind==NULL)?i:ind[i]];
 }
-static void gmutil_copyVectorIntoArray(GM_IVECT& SRC, int* dest) {
+static void gmutil_copyVectorIntoArray(GM_IVECT& SRC, int* dest, edge_t* ind) {
     #pragma omp parallel for
-    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[i];
+    //for(size_t i = 0; i < SRC.size(); i++) dest[(ind==NULL)?i:ind[i]] = SRC [i];
+    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[(ind==NULL)?i:ind[i]];
 }
-static void gmutil_copyVectorIntoArray(GM_LVECT& SRC, long* dest) {
+static void gmutil_copyVectorIntoArray(GM_LVECT& SRC, long* dest, edge_t* ind) {
     #pragma omp parallel for
-    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[i];
+    //for(size_t i = 0; i < SRC.size(); i++) dest[(ind==NULL)?i:ind[i]] = SRC [i];
+    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[(ind==NULL)?i:ind[i]];
 }
-static void gmutil_copyVectorIntoArray(GM_FVECT& SRC, float* dest) {
+static void gmutil_copyVectorIntoArray(GM_FVECT& SRC, float* dest, edge_t* ind) {
     #pragma omp parallel for
-    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[i];
+    //for(size_t i = 0; i < SRC.size(); i++) dest[(ind==NULL)?i:ind[i]] = SRC [i];
+    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[(ind==NULL)?i:ind[i]];
 }
-static void gmutil_copyVectorIntoArray(GM_DVECT& SRC, double* dest) {
+static void gmutil_copyVectorIntoArray(GM_DVECT& SRC, double* dest, edge_t* ind) {
     #pragma omp parallel for
-    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[i];
+    //for(size_t i = 0; i < SRC.size(); i++) dest[(ind==NULL)?i:ind[i]] = SRC [i];
+    for(size_t i = 0; i < SRC.size(); i++) dest[i] = SRC[(ind==NULL)?i:ind[i]];
 }
 
-void gmutil_copyVectorIntoArray(void* vector, void* array, VALUE_TYPE vt)
+void gmutil_copyVectorIntoArray(void* vector, void* array, VALUE_TYPE vt, edge_t* indirection)
 {
     // should test copy vs array pointer
     switch(vt) {
-        case GMTYPE_BOOL: gmutil_copyVectorIntoArray( *((GM_BVECT*)vector), (bool*) array);break;
-        case GMTYPE_INT:  gmutil_copyVectorIntoArray( *((GM_IVECT*)vector), (int*) array);break;
-        case GMTYPE_LONG:  gmutil_copyVectorIntoArray( *((GM_LVECT*)vector), (long*) array);break;
-        case GMTYPE_FLOAT:  gmutil_copyVectorIntoArray( *((GM_FVECT*)vector), (float*) array);break;
-        case GMTYPE_DOUBLE:  gmutil_copyVectorIntoArray( *((GM_DVECT*)vector), (double*) array);break;
+        case GMTYPE_BOOL: gmutil_copyVectorIntoArray( *((GM_BVECT*)vector), (bool*) array, indirection);break;
+        case GMTYPE_INT:  gmutil_copyVectorIntoArray( *((GM_IVECT*)vector), (int*) array, indirection);break;
+        case GMTYPE_LONG:  gmutil_copyVectorIntoArray( *((GM_LVECT*)vector), (long*) array, indirection);break;
+        case GMTYPE_FLOAT:  gmutil_copyVectorIntoArray( *((GM_FVECT*)vector), (float*) array, indirection);break;
+        case GMTYPE_DOUBLE:  gmutil_copyVectorIntoArray( *((GM_DVECT*)vector), (double*) array, indirection);break;
 
         case GMTYPE_END: 
         default:
@@ -257,6 +280,8 @@ void storeValueBasedOnType(void *arr, long pos, GM_Writer& writer, VALUE_TYPE vt
         case GMTYPE_LONG: writer.write(((long *)arr)[pos]); break;
         case GMTYPE_FLOAT: writer.write(((float *)arr)[pos]); break;
         case GMTYPE_DOUBLE: writer.write(((double *)arr)[pos]); break;
+        case GMTYPE_NODE:  writer.write(((node_t *)arr)[pos]); break;
+        case GMTYPE_EDGE: writer.write(((edge_t *)arr)[pos]); break;
         case GMTYPE_END: 
         default:
                             assert (false); return; // Control should never reach this case.

@@ -24,7 +24,8 @@ enum GM_FILE_FORMAT {
     GM_ADJ_LIST_AVRO,
     GM_EDGE_LIST,
     GM_NODE_PROP_LIST,  // dump node properties only
-    GM_NULL_FORMAT,    // dump nothing
+    GM_NULL_FORMAT,    // dump graph only in ADJ list
+    GM_EXTENDED_BINARY,  // binary graph + binary properties
 };
 
 struct gm_schema {
@@ -70,6 +71,13 @@ public:
     void begin_usermain();
     void end_usermain();
 
+    gm_useropt& get_options() {return  OPTIONS;}
+
+    // used for format converter only
+    void create_property_in_out_schema();
+    bool determine_formats();
+    void set_create_output_graph(bool b) {create_output_graph = b;}
+
 private:
     gm_useropt   OPTIONS;
     gm_graph     GRAPH;
@@ -85,7 +93,6 @@ private:
     bool create_output_graph;
     bool create_output_text;
 
-    void create_property_in_out_schema();
     void create_and_register_property_arrays();
     std::vector<VALUE_TYPE> vprop_in_schema;
     std::vector<VALUE_TYPE> eprop_in_schema;
@@ -111,7 +118,6 @@ private:
     } ret_val;
     //void set_path();
 
-    bool determine_formats();
 
     char input_path[1024*64];
     char output_path[1024*64];

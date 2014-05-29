@@ -71,8 +71,12 @@ public:
     virtual bool apply(gm_symtab_entry* e, int symtab_type) {
         int type_id = e->getType()->get_typeid();
         if (gm_is_collection_type(type_id)) {
-            gm_backend_error(GM_ERROR_GPS_UNSUPPORTED_COLLECTION, e->getId()->get_line(), e->getId()->get_col(), e->getId()->get_orgname());
+            
+            /*
+            gm_backend_error(GM_ERROR_GPS_UNSUPPORTED_COLLECTION, 
+                    e->getId()->get_line(), e->getId()->get_col(), e->getId()->get_orgname());
             _error = true;
+            */
         }
 
         else if (gm_is_edge_property_type(type_id)) {
@@ -132,6 +136,7 @@ public:
                 case GM_BLTIN_TOP_DRAND:         // rand function
                 case GM_BLTIN_TOP_IRAND:         // rand function
                 case GM_BLTIN_GRAPH_RAND_NODE:
+                case GM_BLTIN_NODE_RAND_NBR:
                     _rand_used = true;
                     break;
 
@@ -142,12 +147,22 @@ public:
                 case GM_BLTIN_NODE_DEGREE:
                 case GM_BLTIN_NODE_IN_DEGREE:
                 case GM_BLTIN_NODE_TO_EDGE:
+                case GM_BLTIN_NODE_HAS_EDGE_TO:
+                case GM_BLTIN_NODE_IS_NBR_FROM:
                     break;
 
                 case GM_BLTIN_TOP_LOG:           // log function
                 case GM_BLTIN_TOP_EXP:           // exp function
                 case GM_BLTIN_TOP_POW:           // pow function
                     break;
+
+                case GM_BLTIN_SET_ADD:
+                case GM_BLTIN_SET_REMOVE:
+                case GM_BLTIN_SET_HAS:
+                case GM_BLTIN_SET_SIZE:
+                case GM_BLTIN_SET_CLEAR:
+                    break;
+
                 default:
                     gm_backend_error(GM_ERROR_GPS_UNSUPPORTED_OP, e->get_line(), e->get_col(), "Builtin (function)");
                     _error = true;

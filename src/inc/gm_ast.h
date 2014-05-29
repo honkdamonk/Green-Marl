@@ -1731,6 +1731,8 @@ public:
         return clone;
     }
 
+    virtual void reproduce(int ind_level);
+
     bool is_mapaccess() {
         return true;
     }
@@ -1914,7 +1916,7 @@ public:
         return true;
     }
 
-    ast_field* get_field_driver() {
+    virtual ast_field* get_field_driver() {
         return field_driver;
     }
 
@@ -2354,11 +2356,15 @@ public:
 
     static ast_assign_mapentry* new_mapentry_assign(ast_mapaccess* lhs, ast_expr* rhs) {
         ast_assign_mapentry* newAssign = new ast_assign_mapentry(lhs, rhs);
+        lhs->set_parent(newAssign);
+        rhs->set_parent(newAssign);
         return newAssign;
     }
 
     static ast_assign_mapentry* new_mapentry_reduce_assign(ast_mapaccess* lhs, ast_expr* rhs, int reduceType) {
         ast_assign_mapentry* newAssign = new ast_assign_mapentry(lhs, rhs, reduceType);
+        lhs->set_parent(newAssign);
+        rhs->set_parent(newAssign);
         return newAssign;
     }
 
@@ -2583,6 +2589,11 @@ public:
 
     virtual ast_id* get_source2() {
         return source2;
+    }
+
+    void set_source(ast_id* i) {
+        source = i;
+        if (i != NULL) i->set_parent(this);
     }
 
     void set_source2(ast_id* i) {

@@ -10,27 +10,15 @@
 // A Back-End for GIRAPH generation
 //--------------------------------------------------------------
 
-void gm_giraph_gen::init_gen_steps() {
+void gm_giraph_gen::init_gen_steps() 
+{
+    // init_gen_steps of gps_gen has been already called.
+
+    // replace the last step
     std::list<gm_compile_step*>& L = get_gen_steps();
-    // no more change of AST at this point
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_check_reverse_edges));       // check if reverse edges are used
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_new_check_depth_two));           // check if max two-depth and apply scope analysis
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_new_check_pull_data));           // check if it contains data pulling
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_new_check_random_read));         // check if it contains random access
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_new_check_random_write));        // check if it contains random access
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_check_edge_value));          //
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_new_rewrite_rhs));               //
-
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_create_ebb));                // create (Extended) basic block
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_split_comm_ebb));            // split communicating every BB into two
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_merge_ebb_again));           // Merging Ebbs
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_merge_ebb_intra_loop));      // Merging Ebbs Inside Loops
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_analyze_symbol_usage));      // check how symbols are used
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_analyze_symbol_summary));    // make a summary of symbols per BB
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_find_reachable));            // make a list of reachable BB
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_gps_opt_find_congruent_message));    // Find congruent message
-
-    L.push_back(GM_COMPILE_STEP_FACTORY(gm_giraph_gen_class));                  // finally make classes
+    assert(L.size() >= 1);
+    L.pop_back(); 
+    L.push_back(GM_COMPILE_STEP_FACTORY(gm_giraph_gen_class));                     // finally make classes
 }
 
 //----------------------------------------------------
@@ -124,10 +112,11 @@ void gm_giraph_gen::close_output_files() {
 }
 
 void gm_giraph_gen::write_headers() {
-    get_lib()->generate_headers_vertex(Body);
-    get_lib()->generate_headers_main(Body_main);
-    get_lib()->generate_headers_input(Body_input);
-    get_lib()->generate_headers_output(Body_output);
+    printf("lib = %p\n", get_giraph_lib());
+    get_giraph_lib()->generate_headers_vertex(Body);
+    get_giraph_lib()->generate_headers_main(Body_main);
+    get_giraph_lib()->generate_headers_input(Body_input);
+    get_giraph_lib()->generate_headers_output(Body_output);
 }
 
 void gm_giraph_gen::do_generate_parsing_from_str(gm_code_writer& Body, char* str, int gm_prim_type) {
@@ -281,9 +270,9 @@ void gm_giraph_gen::do_generate_input_output_formats() {
         // Parse edge values
         //------------------------------------------------------------
         Body_input.pushln("@Override");
-        sprintf(temp, "protected Map<%s, %s> getEdges(String[] values) throws IOException {", vertex_id, edge_data);
+        sprintf(temp, "protected Map< %s, %s > getEdges(String[] values) throws IOException {", vertex_id, edge_data);
         Body_input.pushln(temp);
-        sprintf(temp, "Map<%s, %s> edges = Maps.newHashMap();", vertex_id, edge_data);
+        sprintf(temp, "Map< %s, %s > edges = new HashMap<%s, %s>();", vertex_id, edge_data, vertex_id, edge_data);
         Body_input.pushln(temp);
         int step ;
         //if ((L2.size() == 0) && (OPTIONS.get_arg_bool(GMARGFLAG_GIRAPH_DUMMY_VALUE))) 
@@ -295,13 +284,13 @@ void gm_giraph_gen::do_generate_input_output_formats() {
         Body_input.pushln(temp);
         // destination id
         if (PREGEL_BE->get_lib()->is_node_type_int()) {
-            Body_input.pushln("IntWritable edgeId = new IntWritable(Integer.parseInt(values[i]));");
+            Body_input.pushln("IntWritable destId = new IntWritable(Integer.parseInt(values[i]));");
         } else {
-            Body_input.pushln("LongWritable edgeId = new LongWritable(Long.parseLong(values[i]));");
+            Body_input.pushln("LongWritable destId = new LongWritable(Long.parseLong(values[i]));");
         }
         // edge properties
         if (proc->find_info_bool(GPS_FLAG_USE_EDGE_PROP)) {
-            sprintf(temp, "edges.put(edgeId, new %s(", edge_data);
+            sprintf(temp, "edges.put(destId, new %s(", edge_data);
             Body_input.push(temp);
             val = 1;
             if (L2.size() > 0) {
@@ -317,7 +306,8 @@ void gm_giraph_gen::do_generate_input_output_formats() {
         } else {
             //if ((L2.size() == 0) && (OPTIONS.get_arg_bool(GMARGFLAG_GIRAPH_DUMMY_VALUE))) 
             //    Body_input.pushln("// Ignoring dummy edge value");
-               Body_input.pushln("edges.put(edgeId, NullWritable.get());");
+            sprintf(temp, "edges.put(destId, NullWritable.get());", vertex_id, edge_data);
+            Body_input.pushln(temp);
         }
         Body_input.pushln("}");
         Body_input.pushln("return edges;");
@@ -574,16 +564,15 @@ void gm_giraph_gen::do_generate_job_configuration() {
     Body_main.NL();
     Body_main.pushln("GiraphJob job = new GiraphJob(getConf(), getClass().getName());");
     Body_main.pushln("job.getConfiguration().setInt(GiraphConfiguration.CHECKPOINT_FREQUENCY, 0);");
-    Body_main.pushln("job.getConfiguration().setBoolean(GiraphConfiguration.USE_NETTY, true);");
     sprintf(temp, "job.getConfiguration().setVertexClass(%sVertex.class);", proc_name);
     Body_main.pushln(temp);
-    sprintf(temp, "job.getConfiguration().setMasterComputeClass(%sVertex.MasterCompute.class);", proc_name);
+    sprintf(temp, "job.getConfiguration().setMasterComputeClass(%sVertex.Master.class);", proc_name);
     Body_main.pushln(temp);
-    sprintf(temp, "job.getConfiguration().setWorkerContextClass(%sVertex.WorkerContext.class);", proc_name);
+    sprintf(temp, "job.getConfiguration().setWorkerContextClass(%sVertex.Context.class);", proc_name);
     Body_main.pushln(temp);
     sprintf(temp, "job.getConfiguration().setVertexInputFormatClass(%sVertexInputFormat.class);", proc_name);
     Body_main.pushln(temp);
-    Body_main.pushln("FileInputFormat.addInputPath(job.getInternalJob(), new Path(cmd.getOptionValue('i')));");
+    Body_main.pushln("GiraphFileInputFormat.addVertexInputPath(job.getInternalJob(), new Path(cmd.getOptionValue('i')));");
     Body_main.pushln("if (cmd.hasOption('o')) {");
     sprintf(temp, "job.getConfiguration().setVertexOutputFormatClass(%sVertexOutputFormat.class);", proc_name);
     Body_main.pushln(temp);
@@ -678,4 +667,38 @@ void gm_giraph_gen::generate_proc(ast_procdef* proc) {
 
 void gm_giraph_gen_class::process(ast_procdef* proc) {
     PREGEL_BE->generate_proc(proc);
+}
+
+const char* gm_giraph_gen::get_box_type_string(int gm_type) {
+    switch(gm_type) {
+        case GMTYPE_NODE:
+            if (get_lib()->is_node_type_int())
+                return "IntWritable";
+            else
+                return "LongWritable";
+        case GMTYPE_EDGE:
+            if (get_lib()->is_edge_type_int())
+                return "IntWritable";
+            else
+                return "LongWritable";
+        default:
+            assert(false);
+    }
+}
+const char* gm_giraph_gen::get_unbox_method_string(int gm_type) {
+    return "get";
+}
+
+const char* gm_giraph_gen::get_collection_type_string(ast_typedecl* T)
+{
+    char* temp = get_temp_buffer_member();
+    int type_id = T->get_typeid();
+
+    const char* base = T->is_node_collection() ?
+        (get_lib()->is_node_type_int() ? "Int" : "Long") :
+        (get_lib()->is_edge_type_int() ? "Int" : "Long") ;
+
+    sprintf(temp, "%sSetWritable", base);
+
+    return temp;
 }

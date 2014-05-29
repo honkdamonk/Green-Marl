@@ -62,6 +62,8 @@ enum gm_method_id_t
     GM_BLTIN_SET_SIZE,
     GM_BLTIN_SET_CLEAR,
 
+    GM_BLTIN_SEQ_POP_FRONT,
+
     GM_BLTIN_MAP_SIZE,          // returns the number of mappings in the map
     GM_BLTIN_MAP_HAS_MAX_VALUE, // checks if the key is mapped to the biggest value
     GM_BLTIN_MAP_HAS_MIN_VALUE, // checks if the key is mapped to the smallest value
@@ -72,6 +74,9 @@ enum gm_method_id_t
     GM_BLTIN_MAP_GET_MIN_VALUE, // returns the smallest value in the map
     GM_BLTIN_MAP_CLEAR,         // clears the whole map
     GM_BLTIN_MAP_REMOVE,        // sets the value for the given key to the default value
+
+    GM_BLTIN_MAP_REMOVE_MIN,    // for optimization only - not to be used by programmers
+    GM_BLTIN_MAP_REMOVE_MAX,    // for optimization only - not to be used by programmers
 
     GM_BLTIN_END
 };
@@ -95,6 +100,7 @@ const gm_builtin_desc_t GM_builtins[] = {
         { "Node:NumInNbrs:Int:0", GM_BLTIN_NODE_IN_DEGREE, AUX_INFO(GM_BLTIN_INFO_USE_REVERSE,GM_BLTIN_FLAG_TRUE) },
         { "*InDegree", GM_BLTIN_NODE_IN_DEGREE, "" },
         { "Node:IsNbrFrom:Bool:1:Node", GM_BLTIN_NODE_IS_NBR_FROM, AUX_INFO(GM_BLTIN_INFO_CHECK_NBR,GM_BLTIN_FLAG_TRUE) },
+        { "*HasEdgeFrom", GM_BLTIN_NODE_IS_NBR_FROM, "" },
         { "Node:HasEdgeTo:Bool:1:Node", GM_BLTIN_NODE_HAS_EDGE_TO, AUX_INFO(GM_BLTIN_INFO_CHECK_NBR,GM_BLTIN_FLAG_TRUE)},
         { "Node:PickRandomNbr:Node",    GM_BLTIN_NODE_RAND_NBR, AUX_INFO(GM_BLTIN_INFO_CHECK_NBR,GM_BLTIN_FLAG_TRUE)},
 
@@ -121,7 +127,7 @@ const gm_builtin_desc_t GM_builtins[] = {
         { "*Push", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
         { "N_O:PushFront:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
         { "N_O:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-        { "N_O:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
+        { "N_O:PopFront:Node:0", GM_BLTIN_SEQ_POP_FRONT, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
         { "*Pop", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
         { "N_O:Has:Bool:1:Node", GM_BLTIN_SET_HAS, "" },
         { "N_O:Size:Int", GM_BLTIN_SET_SIZE, "" },
@@ -133,7 +139,7 @@ const gm_builtin_desc_t GM_builtins[] = {
         { "*Push", GM_BLTIN_SET_ADD_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
         { "N_Q:PushFront:Void:1:Node", GM_BLTIN_SET_ADD, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_GROW) },
         { "N_Q:PopBack:Node:0", GM_BLTIN_SET_REMOVE_BACK, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
-        { "N_Q:PopFront:Node:1:Node", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
+        { "N_Q:PopFront:Node:0", GM_BLTIN_SEQ_POP_FRONT, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
         { "*Pop", GM_BLTIN_SET_REMOVE, AUX_INFO(GM_BLTIN_INFO_MUTATING, GM_BLTIN_MUTATE_SHRINK) },
         { "N_Q:Size:Int", GM_BLTIN_SET_SIZE, "" },
         //{"NodeQ:Front:Node:0",         GM_BLTIN_SET_PEEK,        ""},
@@ -156,6 +162,9 @@ const gm_builtin_desc_t GM_builtins[] = {
         { "Map:GetMaxValue:Generic:0:",     GM_BLTIN_MAP_GET_MAX_VALUE, "" },
         { "Map:GetMinValue:Generic:0:",     GM_BLTIN_MAP_GET_MIN_VALUE, "" },
         { "Map:Remove:Void:1:Generic",      GM_BLTIN_MAP_REMOVE,        "" },
+
+        { "Map:MAP_REMOVE_MIN:Void:0",      GM_BLTIN_MAP_REMOVE_MIN,    "" },
+        { "Map:MAP_REMOVE_MAX:Void:0",      GM_BLTIN_MAP_REMOVE_MAX,    "" },
 
         };
 

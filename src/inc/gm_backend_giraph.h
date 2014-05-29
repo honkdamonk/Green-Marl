@@ -19,21 +19,16 @@
 //-----------------------------------------------------------------
 class gm_giraph_gen;
 
-// Nothing happens in this class
 class gm_giraphlib : public gm_gpslib
 {
 public:
     gm_giraphlib() {
-        main = NULL;
     }
-    gm_giraphlib(gm_giraph_gen* gen) {
-        set_main(gen);
+    gm_giraphlib(gm_giraph_gen* gen) : gm_gpslib( (gm_gps_gen*)gen) {
+        printf("lib this = %p\n", this);
     }
-    void set_main(gm_giraph_gen* gen) {
-        main = (gm_gps_gen*) gen;
-    }
-    gm_giraph_gen* get_main() {
-        return (gm_giraph_gen*) main;
+    virtual gm_giraph_gen* get_giraph_main() {
+        return (gm_giraph_gen*) get_main();
     }
 
     virtual void generate_prepare_bb(gm_code_writer& Body, gm_gps_basic_block* b);
@@ -92,6 +87,8 @@ public:
 
     virtual void generate_expr_builtin(ast_expr_builtin* e, gm_code_writer& Body, bool is_master);
 
+    virtual void generate_benign_feloop_header(ast_foreach* fe, bool& need_close_block, gm_code_writer& Body); 
+
     virtual bool is_node_type_int() {
         return false;  // Node ID is long type
     }
@@ -111,16 +108,24 @@ public:
 class gm_giraph_gen : public gm_gps_gen
 {
 public:
-    gm_giraph_gen() :
-            gm_gps_gen() {
-        glib = new gm_giraphlib(this);
+    gm_giraph_gen() : gm_gps_gen() 
+    {
+        set_lib(new gm_giraphlib(this));
         f_body_main = NULL;
         f_body_input = NULL;
         f_body_output = NULL;
+        init_gen_steps();  // change generation steps
     }
+    /*
     virtual gm_giraphlib* get_lib() {
         return glib;
     }
+    */
+    virtual gm_giraphlib* get_giraph_lib() {
+        return (gm_giraphlib*) get_lib();
+    }
+    virtual const char* get_box_type_string(int gm_type); 
+    virtual const char* get_unbox_method_string(int gm_type); 
 
 protected:
     virtual void init_gen_steps();
@@ -157,15 +162,14 @@ protected:
     virtual void do_generate_input_output_formats();
     virtual void do_generate_job_configuration();
 
+public:
+    virtual const char* get_collection_type_string(ast_typedecl* T);
 private:
     void do_generate_parsing_from_str(gm_code_writer& body, char* input_str, int gm_prim_type);
 
 protected:
     gm_code_writer Body_main, Body_input, Body_output;
     FILE *f_body_main, *f_body_input, *f_body_output;
-
-private:
-    gm_giraphlib* glib; // graph library
 
 public:
     // from code generator interface

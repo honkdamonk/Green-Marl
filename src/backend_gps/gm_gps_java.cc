@@ -28,16 +28,77 @@ const char* gm_gps_gen::get_type_string(int gm_type) {
     }
 }
 
+const char* gm_gps_gen::get_box_type_string(int gm_type) {
+    switch(gm_type) {
+        case GMTYPE_NODE:
+            if (get_lib()->is_node_type_int())
+                return "Integer";
+            else
+                return "Long";
+        case GMTYPE_EDGE:
+            if (get_lib()->is_edge_type_int())
+                return "Integer";
+            else
+                return "Long";
+        default:
+            assert(false);
+    }
+}
+const char* gm_gps_gen::get_unbox_method_string(int gm_type) {
+    switch(gm_type) {
+        case GMTYPE_NODE:
+            if (get_lib()->is_node_type_int())
+                return "getInt";
+            else
+                return "getLong";
+        case GMTYPE_EDGE:
+            if (get_lib()->is_edge_type_int())
+                return "getInt";
+            else
+                return "getLong";
+        default:
+            assert(false);
+    }
+}
+
+const char* gm_gps_gen::get_collection_type_string(ast_typedecl* T) {
+
+    const char* t ="";
+    if (T->is_set_collection())
+    {
+        t = "HashSet";
+    }
+    else if (T->is_sequence_collection()) 
+    {
+        t = "ArrayList";
+    }
+    else {
+        assert(false);
+    }
+
+    sprintf(temp, "%s<%s>", t, get_box_type_string(T->is_node_collection() ? GMTYPE_NODE : GMTYPE_EDGE));
+    return temp;
+}
+
 const char* gm_gps_gen::get_type_string(ast_typedecl* T, bool is_master) {
     if (T->is_primitive() || T->is_node()) {
         return (get_type_string(T->get_typeid()));
     } else if (T->is_node_compatible()) {
         return (get_type_string(GMTYPE_NODE));
+    } else if (T->is_collection()) {
+        return get_collection_type_string(T);
     } else {
         assert(false);
         // to be done
     }
     return "???";
+}
+
+void gm_gps_gen::generate_sent_call(ast_call *c)
+{
+    ast_expr_builtin *b = c->get_builtin();
+    get_lib()->generate_expr_builtin(b, Body, false);
+    Body.pushln(";");
 }
 
 void gm_gps_gen::generate_sent_block(ast_sentblock* sb, bool need_brace) {
@@ -134,17 +195,38 @@ void gm_gps_gen::generate_lhs_field(ast_field* f) {
 
 void gm_gps_gen::generate_rhs_id(ast_id* i) {
     if (i->getSymInfo()->getType()->is_node_iterator()) {
-        if (i->getSymInfo()->find_info_bool(GPS_FLAG_COMM_SYMBOL)) {
-            if (!this->is_receiver_generate()) {
-                get_lib()->generate_node_iterator_rhs(i, Body);
+        /*
+        if (i->getSymInfo()->find_info_bool(GPS_FLAG_COMM_SYMBOL)) { // transmitted information
+            if (!this->is_receiver_generate()) { // master generate
+                get_lib()->generate_node_iterator_rhs(i, Body);  // this.getId()
             } else {
-                generate_lhs_id(i);
+                generate_lhs_id(i); // normal symbol name
             }
         } else {
-            //generate_lhs_id(i);
-            get_lib()->generate_node_iterator_rhs(i, Body);
+            get_lib()->generate_node_iterator_rhs(i, Body);     // this.getId()
         }
+        */
+        if (i->getSymInfo()->find_info_bool(GPS_FLAG_IS_OUTER_LOOP)) {
+            if (this->is_receiver_generate()) { 
+                generate_lhs_id(i); // normal symbol name. 
+            }
+            else {
+                get_lib()->generate_node_iterator_rhs(i, Body);     // this.getId()
+            }
+        } else if (i->getSymInfo()->find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
+            if (this->is_receiver_generate()) { 
+                get_lib()->generate_node_iterator_rhs(i, Body);     // this.getId()
+            }
+            else {
+                generate_lhs_id(i); // normal symbol name. 
+            }
+        } else {
+            generate_lhs_id(i); // normal symbol name
+        }
+
+
     } else {
+        // normal symbol name
         generate_lhs_id(i);
     }
 }
@@ -341,12 +423,65 @@ void gm_gps_gen::generate_sent_return(ast_return *r) {
     }
 }
 
+void gm_gps_gen::generate_sent_if(ast_if* iff)
+{
+    if (iff->find_info_bool(GPS_FLAG_IS_EARLY_FILTER))
+    {
+        assert(iff->get_else() == NULL);
+        generate_sent(iff->get_then());
+    }
+    else {
+        gm_code_generator::generate_sent_if(iff);
+    }
+}
+
 void gm_gps_gen::generate_sent_foreach(ast_foreach* fe) {
     // must be a sending foreach
-    assert(gm_is_out_nbr_node_iteration(fe->get_iter_type()) || 
-           gm_is_in_nbr_node_iteration(fe->get_iter_type())); 
+    if (fe->find_info_bool(GPS_FLAG_IS_INNER_LOOP)) {
+    
+        assert(gm_is_out_nbr_node_iteration(fe->get_iter_type()) || 
+               gm_is_in_nbr_node_iteration(fe->get_iter_type())); 
+        get_lib()->generate_message_send(fe, Body);
+    }
+    else {
+        assert (!fe->find_info_bool(GPS_FLAG_IS_OUTER_LOOP));
+        if (fe->is_source_field())
+        {
+            ast_field * f = fe->get_source_field();
 
-    get_lib()->generate_message_send(fe, Body);
+            char iterator_name[256];
+            char temp[2048];
+            sprintf(iterator_name, "__%s_iter", fe->get_iterator()->get_genname());
+            int base_type = f->get_second()->getTypeInfo()->get_target_type()->is_node_collection() ? GMTYPE_NODE : GMTYPE_EDGE;
+            const char* unbox_name = get_unbox_method_string(base_type);
+        
+            sprintf(temp, "for (%s %s : _this.%s) {",
+                get_box_type_string(base_type),
+                iterator_name, 
+                f->get_second()->get_genname());
+            Body.pushln(temp);
+
+            sprintf(temp,"%s %s = %s.%s();",
+                get_type_string(base_type), 
+                fe->get_iterator()->get_genname(), 
+                iterator_name, 
+                unbox_name);
+            Body.pushln(temp);
+
+            generate_sent(fe->get_body());
+            Body.pushln("}");
+        }
+        else 
+        {
+            bool need_close_block;
+            get_lib()->generate_benign_feloop_header(fe, need_close_block, Body);
+
+            generate_sent(fe->get_body());
+            if (need_close_block)
+                Body.pushln("}");
+
+        }
+    }
 }
 
 void gm_gps_gen::generate_expr_builtin(ast_expr *e) {
@@ -361,6 +496,9 @@ void gm_gps_gen::generate_expr_builtin(ast_expr *e) {
         case GM_BLTIN_GRAPH_RAND_NODE:
         case GM_BLTIN_NODE_DEGREE:
         case GM_BLTIN_NODE_IN_DEGREE:
+        case GM_BLTIN_NODE_HAS_EDGE_TO:
+        case GM_BLTIN_NODE_IS_NBR_FROM:
+        case GM_BLTIN_NODE_RAND_NBR:
             get_lib()->generate_expr_builtin(be, Body, is_master_generate());
             break;
 
@@ -385,8 +523,9 @@ void gm_gps_gen::generate_expr_builtin(ast_expr *e) {
             generate_expr(ARGS.back());
             Body.push(")");
             break;
+
         default:
-            assert(false);
+            get_lib()->generate_expr_builtin(be, Body, is_master_generate());
             break;
     }
 }

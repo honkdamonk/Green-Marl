@@ -25,7 +25,8 @@ public:
         if ((f->get_opclass() == GMEXPR_FIELD) || (f->get_opclass() == GMEXPR_BUILTIN)) {
             if (f->find_info_int(GPS_INT_EXPR_SCOPE) == GPS_NEW_SCOPE_RANDOM) {
                 gm_symtab_entry *driver =
-                        (f->get_opclass() == GMEXPR_FIELD) ? f->get_field()->get_first()->getSymInfo() : ((ast_expr_builtin*) f)->get_driver()->getSymInfo();
+                        (f->get_opclass() == GMEXPR_FIELD) ? f->get_field()->get_first()->getSymInfo() : 
+                            ((ast_expr_builtin*) f)->get_driver()->getSymInfo();
 
                 if (driver->getType()->is_graph()) return true;
 
@@ -34,6 +35,7 @@ public:
                     printf("%s.%s\n", f->get_field()->get_first()->get_genname(), f->get_field()->get_second()->get_genname());
                 else
                     printf("%s->..()\n", ((ast_expr_builtin*) f)->get_driver()->get_genname());
+
                 gm_backend_error(GM_ERROR_GPS_RANDOM_NODE_READ, f->get_line(), f->get_col(), "");
                 _error = true;
             }

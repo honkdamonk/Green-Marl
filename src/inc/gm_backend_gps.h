@@ -30,10 +30,10 @@ public:
     gm_gpslib(gm_gps_gen* gen) {
         set_main(gen);
     }
-    void set_main(gm_gps_gen* gen) {
+    virtual void set_main(gm_gps_gen* gen) {
         main = gen;
     }
-    gm_gps_gen* get_main() {
+    virtual gm_gps_gen* get_main() {
         return main;
     }
 
@@ -107,6 +107,8 @@ public:
         return str_buf;
     }
 
+    virtual void generate_benign_feloop_header(ast_foreach* fe, bool& need_close_block, gm_code_writer& Body) {assert(false);} 
+
     // true if node == int false, if node == long
     virtual bool is_node_type_int() {
         return true;
@@ -136,7 +138,7 @@ class gm_gps_gen : public gm_backend, public gm_code_generator
 public:
     gm_gps_gen() :
             gm_code_generator(Body), dname(NULL), fname(NULL), f_body(NULL) {
-        glib = new gm_gpslib(this);
+        set_lib(new gm_gpslib(this));
         init_opt_steps();
         init_gen_steps();
     }
@@ -160,12 +162,15 @@ public:
     virtual gm_gpslib* get_lib() {
         return glib;
     }
+    virtual void set_lib(gm_gpslib* g)  {
+        glib = g;
+    }
 
     void print_basicblock();
 
 protected:
-    void init_opt_steps();
-    void init_gen_steps();
+    virtual void init_opt_steps();
+    virtual void init_gen_steps();
     std::list<gm_compile_step*>& get_opt_steps() {
         return opt_steps;
     }
@@ -219,6 +224,12 @@ protected:
     char* fname;
     gm_code_writer Body;
     FILE* f_body;
+    char temp [1024];
+    char* get_temp_buffer_member() {return temp;}
+
+public:
+    virtual const char* get_box_type_string(int prim_type);
+    virtual const char* get_unbox_method_string(int prim_type);
 
 private:
     gm_gpslib* glib; // graph library
@@ -227,6 +238,7 @@ public:
     // from code generator interface
     virtual const char* get_type_string(ast_typedecl* T, bool is_master);
     virtual const char* get_type_string(int prim_type);
+    virtual const char* get_collection_type_string(ast_typedecl* T);
 
     virtual void generate_proc(ast_procdef* p);
 
@@ -253,10 +265,13 @@ public:
     virtual void generate_sent_bfs(ast_bfs *a) {
         assert(false);
     }
+    virtual void generate_sent_call(ast_call *c); 
+
     virtual void generate_sent_foreach(ast_foreach *f);
     virtual void generate_sent_return(ast_return *r);
     virtual void generate_sent_assign(ast_assign *a);
     virtual void generate_sent_block(ast_sentblock* sb, bool need_brace = true);
+    virtual void generate_sent_if(ast_if *iff);
 
     void set_master_generate(bool b) {
         _is_master_gen = b;
@@ -278,6 +293,7 @@ public:
 extern gm_gps_gen* PREGEL_BE;
 
 // string used in code generator
+DEF_STRING(GPS_FLAG_USE_HAS_EDGE);
 DEF_STRING(GPS_FLAG_USE_REVERSE_EDGE);
 DEF_STRING(GPS_FLAG_USE_IN_DEGREE);
 DEF_STRING(GPS_FLAG_COMM_SYMBOL);
@@ -317,6 +333,10 @@ DEF_STRING(GPS_FLAG_COMM_DEF_ASSIGN);
 
 // target: ast_bfs, gps_opt_tranform.bfs
 DEF_STRING(GPS_FLAG_HAS_DOWN_NBRS);
+
+// see gm_gps_opt_early_filter.cc
+DEF_STRING(GPS_FLAG_IS_EARLY_FILTER);
+DEF_STRING(GPS_FLAG_PTR_EARLY_FILTER);
 
 static const int GPS_PREPARE_STEP1 = 100000;
 static const int GPS_PREPARE_STEP2 = 100001;

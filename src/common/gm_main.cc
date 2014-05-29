@@ -22,6 +22,9 @@
 #include "gm_backend_cpp.h"
 #include "gm_backend_gps.h"
 #include "gm_backend_giraph.h"
+#ifdef COMPILE_JAVA_BACKEND
+#include "gm_backend_java.h"
+#endif
 #include "gm_argopts.h"
 #include "gm_ind_opt.h"
 
@@ -29,7 +32,10 @@ gm_frontend FE;
 gm_cpp_gen CPP_BE;  // CPP Backend
 gm_gps_gen GPS_BE;  // GPS Backend
 gm_giraph_gen GIRAPH_BE;  // Giraph Backend
-gm_gps_gen* PREGEL_BE; //TODO
+gm_gps_gen* PREGEL_BE; // for debug
+#ifdef COMPILE_JAVA_BACKEND
+gm_java_gen JAVA_BE; // Java Backend
+#endif
 gm_backend* BACK_END;
 gm_userargs OPTIONS;
 gm_independent_optimize IND_OPT; // extern defined in gm_ind_opt.h
@@ -179,6 +185,13 @@ int main(int argc, char** argv) {
         BACK_END = &GIRAPH_BE;
         PREGEL_BE = &GIRAPH_BE;
         OPTIONS.set_arg_bool(GMARGFLAG_FLIP_PULL, true);
+#ifdef COMPILE_JAVA_BACKEND
+    } else if (gm_is_same_string(name, "java_seq") || gm_is_same_string(name, "java_par")) {
+    	bool is_ndm = gm_is_same_string(OPTIONS.get_arg_string(GMARGFLAG_JAVA_GRAPH_REPRESENTATION), "ndm");
+		JAVA_BE.set_target_ndm(is_ndm);
+		JAVA_BE.set_target_par(gm_is_same_string(name, "java_par"));
+		BACK_END = &JAVA_BE;
+#endif
     } else {
         printf("Unsupported target = %s\n", name);
         return 0;

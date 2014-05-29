@@ -290,6 +290,14 @@ void traverse_expr_for_readset_adding_builtin(ast_expr_builtin* builtin, gm_rwin
         ast_expr* a = *I;
         traverse_expr_for_readset_adding(a, rset, DrvMap);
     }
+
+    // add driver (if exist) into readset
+    if (!builtin->driver_is_field() && builtin->get_driver()!=NULL) {
+        ast_id* id = builtin->get_driver();
+        gm_rwinfo* new_entry = gm_rwinfo::new_scala_inst(id);
+        gm_symtab_entry* sym = id->getSymInfo();
+        gm_add_rwinfo_to_set(rset, sym, new_entry, false);
+    }
 }
 
 void traverse_expr_for_readset_adding_foreign(ast_expr_foreign* f, gm_rwinfo_map& rset, temp_map_t& DrvMap) {
@@ -1076,6 +1084,11 @@ bool gm_rw_analysis::apply_foreach(ast_foreach* a) {
     }
     else {
         // [todo]
+        ast_field* source_f = a->get_source_field();
+        gm_rwinfo* new_entry = gm_rwinfo::new_field_inst(
+                source_f->get_first()->getSymInfo(), source_f->get_first() );
+        gm_symtab_entry *sym = source_f->get_second()->getSymInfo();
+        gm_add_rwinfo_to_set(R_temp, sym, new_entry, false);
 
     }
 

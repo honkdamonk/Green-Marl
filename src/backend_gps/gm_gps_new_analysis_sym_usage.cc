@@ -7,12 +7,14 @@
 #include "gm_transform_helper.h"
 #include "gm_typecheck.h"
 #include "gps_syminfo.h"
+#include "gm_builtin.h"
 
 //---------------------------------------------------------------------
 // Traverse AST per each BB
 //  - figure out how each symbol is used.
 //     (as LHS, as RHS, as REDUCE targe)
 //     (in MASTER, in RECEIVER, in VERTEX)
+// todo: use apply_lhs and apply_rhs instead
 //---------------------------------------------------------------------
 class gps_merge_symbol_usage_t : public gps_apply_bb_ast
 {
@@ -55,18 +57,13 @@ public:
 
             is_message_write_target = s->find_info_bool(GPS_FLAG_COMM_DEF_ASSIGN);
 
-            /* what?
-             if (foreach_depth > 1) {
-             if (context == GPS_CONTEXT_MASTER) // inner loop
-             return true;
-             }
-             */
             ast_id* target = (a->is_target_scalar()) ? a->get_lhs_scala() : a->get_lhs_field()->get_second();
             int is_scalar = (a->is_target_scalar()) ? IS_SCALAR : IS_FIELD;
             int lhs_reduce = a->is_reduce_assign() ? GPS_SYM_USED_AS_REDUCE : GPS_SYM_USED_AS_LHS;
             int r_type = a->is_reduce_assign() ? a->get_reduce_type() : GMREDUCE_NULL;
 
-            if (!is_scalar && a->get_lhs_field()->get_first()->getSymInfo()->find_info_bool(GPS_FLAG_EDGE_DEFINED_INNER)) is_edge_prop_write_target = true;
+            if (!is_scalar && a->get_lhs_field()->get_first()->getSymInfo()->find_info_bool(GPS_FLAG_EDGE_DEFINED_INNER)) 
+                is_edge_prop_write_target = true;
 
             if (context == GPS_CONTEXT_RECEIVER) {
                 if (is_message_write_target || is_edge_prop_write_target || is_random_write_target) return true;
@@ -96,7 +93,40 @@ public:
         return true;
     }
 
+    bool apply_builtin(ast_expr_builtin* b)
+    {
+        // only look at driver side.
+        if (!b->driver_is_field() && (b->get_driver() == NULL)) return true;
+
+        int expr_scope = b->find_info_int(GPS_INT_EXPR_SCOPE);
+        int context = get_current_context();
+        bool is_id = !b->driver_is_field();
+        int sc_type = is_id ? IS_SCALAR : IS_FIELD;
+        ast_id* tg = is_id ? b->get_driver() : ((ast_expr_builtin_field*)b)->get_field_driver()->get_second();
+
+        if (!is_id) return true; // [XXX] temporary
+
+        if (b->get_driver()->getTypeInfo()->is_graph()) return true;
+        if (b->get_driver()->getTypeInfo()->is_iterator()) return true;
+
+        if (context == GPS_CONTEXT_RECEIVER) {
+            // sender context only
+            if (is_message_write_target || is_edge_prop_write_target || is_random_write_target) return true;
+        }
+
+        int used_type = b->get_builtin_def()->find_info_bool(GM_BLTIN_INFO_MUTATING)? GPS_SYM_USED_AS_LHS: GPS_SYM_USED_AS_RHS;
+
+        update_access_information(tg, sc_type, used_type, context);
+
+
+        return true;
+    }
+
+    // todo change this into apply lhs and apply rhs
     virtual bool apply(ast_expr* e) {
+
+        if (e->is_builtin()) return apply_builtin( (ast_expr_builtin*) e); 
+
         if (!e->is_id() && !e->is_field()) return true;
 
         //int syntax_scope = get_current_sent()->find_info_int(GPS_INT_SYNTAX_CONTEXT);
@@ -117,6 +147,7 @@ public:
 
         if (is_random_write_target) {
             if ((expr_scope != GPS_NEW_SCOPE_RANDOM) && (expr_scope != GPS_NEW_SCOPE_GLOBAL)) comm_symbol = true;
+
             /*
              if (is_id) {
              gps_syminfo* syminfo = gps_get_global_syminfo(tg);
@@ -178,14 +209,12 @@ protected:
 
         syminfo->add_usage_in_BB(get_curr_BB()->get_id(), usage, context, r_type);
 
-        /*
          printf("Add usage : %s for BB : %d, context: %s\n",
-         i->get_genname(),
-         get_curr_BB()->get_id(),
-         (context == GPS_CONTEXT_MASTER) ? "master" :
-         (context == GPS_CONTEXT_RECEIVER) ? "receiver" : "vertex"
+            i->get_genname(),
+            get_curr_BB()->get_id(),
+            (context == GPS_CONTEXT_MASTER) ? "master" :
+            (context == GPS_CONTEXT_RECEIVER) ? "receiver" : "vertex"
          );
-         */
     }
 
     gps_syminfo* get_or_create_global_syminfo(ast_id *i, bool is_scalar) {

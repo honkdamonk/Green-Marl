@@ -100,15 +100,22 @@ void gm_code_generator::generate_expr_val(ast_expr *e) {
     char* temp = temp_str;
     switch (e->get_opclass()) {
         case GMEXPR_IVAL:
-            sprintf(temp, "%ld", e->get_ival()); // to be changed
+            if (e->get_ival() < 0)
+                sprintf(temp, "(%ld)", e->get_ival()); // to be changed
+            else
+                sprintf(temp, "%ld", e->get_ival()); // to be changed
             _Body.push(temp);
             return;
         case GMEXPR_FVAL:
             if (e->get_type_summary() == GMTYPE_FLOAT) {
-                sprintf(temp, "(float)(%lf)", e->get_fval()); // to be changed
+                sprintf(temp, "((float)(%lf))", e->get_fval()); // to be changed
                 _Body.push(temp);
             } else {
-                sprintf(temp, "%lf", e->get_fval()); // to be changed
+                if (e->get_fval() < 0) {
+                    sprintf(temp, "(%lf)", e->get_fval()); // to be changed
+                } else {
+                    sprintf(temp, "%lf", e->get_fval()); // to be changed
+                }
                 _Body.push(temp);
             }
             return;
@@ -308,7 +315,7 @@ void gm_code_generator::generate_sent_assign(ast_assign* a) {
 
     generate_expr(a->get_rhs());
 
-    _Body.pushln(" ;");
+    _Body.pushln(";");
 }
 
 void gm_code_generator::generate_sent_if(ast_if *i) {
@@ -330,17 +337,19 @@ void gm_code_generator::generate_sent_if(ast_if *i) {
     s = i->get_else();
     if (s == NULL) return;
 
-    _Body.pushln("else");
-    if (s->get_nodetype() != AST_SENTBLOCK) {
+    _Body.push("else ");
+    if (s->get_nodetype() != AST_IF) {
+        _Body.NL();
+    }
+    if ((s->get_nodetype() != AST_SENTBLOCK) && (s->get_nodetype() != AST_IF)) {
         _Body.push_indent();
     }
 
     generate_sent(s);
 
-    if (s->get_nodetype() != AST_SENTBLOCK) {
+    if ((s->get_nodetype() != AST_SENTBLOCK) && (s->get_nodetype() != AST_IF)) {
         _Body.pop_indent();
     }
-
 }
 
 void gm_code_generator::generate_sent_return(ast_return *r) {
@@ -364,6 +373,7 @@ void gm_code_generator::generate_sent_while(ast_while *w) {
         _Body.push("while (");
         generate_expr(w->get_cond());
         _Body.pushln(");");
+        _Body.NL();
     } else {
         _Body.push("while (");
         generate_expr(w->get_cond());

@@ -132,6 +132,7 @@ ALPHANUM    [a-zA-Z][a-zA-Z0-9_]*
 "Do"      {MarkToken(); return T_DO;}
 "+="      {MarkToken(); return T_PLUSEQ;}
 "++"      {MarkToken(); return T_PLUSPLUS;}
+"--"      {MarkToken(); return T_MINUSMINUS;}
 "*="      {MarkToken(); return T_MULTEQ;}
 "&="      {MarkToken(); return T_ANDEQ;}
 "|="      {MarkToken(); return T_OREQ;}
@@ -159,8 +160,8 @@ ALPHANUM    [a-zA-Z][a-zA-Z0-9_]*
 {DIGIT}{DIGIT}*     {MarkToken(); yylval.ival = atoi(yytext); return INT_NUM;}
 
     /* Spaces and other characters */
-^[ \t]*\n {find_empty_lines(); lex_lines ++;}
-[ \t]+  /* eat up white space */
+^[ \t\r]*\n {find_empty_lines(); lex_lines ++;}
+[ \t\r]+  /* eat up white space */
 \n      {reset_empty_lines(); lex_lines ++;}
 
     /* Any other misc character */

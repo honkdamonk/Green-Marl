@@ -575,7 +575,9 @@ void ast_foreign::traverse_sent(gm_apply* a, bool is_post, bool is_pre) {
     bool for_id = a->is_for_id();
     bool for_expr = a->is_for_expr();
     bool for_lhs = a->is_for_lhs();
+    bool for_rhs = a->is_for_rhs();
     bool b = a->has_separate_post_apply();
+
     if (is_pre) {
         if (for_id) {
             std::list<ast_node*>::iterator I;
@@ -596,9 +598,11 @@ void ast_foreign::traverse_sent(gm_apply* a, bool is_post, bool is_pre) {
             for (I = modified.begin(); I != modified.end(); I++) {
                 if ((*I)->get_nodetype() == AST_ID) {
                     ast_id* id = (ast_id*) (*I);
+                    a->set_matching_rhs_top(expr);
                     a->apply_lhs(id);
                 } else if ((*I)->get_nodetype() == AST_FIELD) {
                     ast_field* f = ((ast_field*) (*I));
+                    a->set_matching_rhs_top(expr);
                     a->apply_lhs(f);
                 }
             }
@@ -606,7 +610,7 @@ void ast_foreign::traverse_sent(gm_apply* a, bool is_post, bool is_pre) {
         if (for_expr) a->apply(expr);
     }
 
-    if (for_expr || for_id) expr->traverse(a, is_post, is_pre);
+    if (for_expr || for_id || for_rhs) { expr->traverse(a, is_post, is_pre);}
 
     if (is_post) {
         if (for_id) {
@@ -634,6 +638,7 @@ void ast_foreign::traverse_sent(gm_apply* a, bool is_post, bool is_pre) {
         if (for_lhs) {
             std::list<ast_node*>::iterator I;
             for (I = modified.begin(); I != modified.end(); I++) {
+                a->set_matching_rhs_top(expr);
                 if ((*I)->get_nodetype() == AST_ID) {
                     ast_id* id = (ast_id*) (*I);
                     if (b)
@@ -656,7 +661,6 @@ void ast_foreign::traverse_sent(gm_apply* a, bool is_post, bool is_pre) {
                 a->apply(expr);
         }
     }
-
 }
 
 void ast_expr_reduce::traverse(gm_apply*a, bool is_post, bool is_pre) {
@@ -762,7 +766,7 @@ void ast_expr_builtin::traverse(gm_apply* a, bool is_post, bool is_pre) {
     if (is_pre) {
         if (for_id && (driver != NULL)) a->apply(driver);
         if (for_rhs && (driver != NULL)) a->apply_rhs(driver);
-        if (for_builtin) a->apply(this);
+        if (for_builtin) a->apply_builtin(this);
         if (for_expr) a->apply(this);
     }
 
@@ -879,8 +883,9 @@ void ast_expr::traverse(gm_apply*a, bool is_post, bool is_pre) {
     bool for_expr = a->is_for_expr();
     bool for_symtab = a->is_for_symtab();
     bool for_rhs = a->is_for_rhs();
+    bool for_builtin = a->is_for_builtin();
 
-    if (!(for_id || for_expr || for_symtab || for_rhs)) return; // no more sentence behind this
+    if (!(for_id || for_expr || for_symtab || for_rhs || for_builtin)) return; // no more sentence behind this
 
     if (for_expr && is_pre) a->apply(this);
 

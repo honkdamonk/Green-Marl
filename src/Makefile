@@ -5,13 +5,14 @@ PARSE = ./parse
 INC = ./inc
 OBJ = ../obj
 BIN = ../bin
-CFLAGS += -g -O1 -I$(INC) -I. -W -Wno-unused-parameter
+EXTLIBS = ext-lib
+CFLAGS += -g -O0 -I$(INC) -I. -W -Wno-unused-parameter
 # Mac OS does not have librt
 UNAME := $(shell uname -s)
 ifneq ($(UNAME),Darwin)
     LDFLAGS += -lrt
 endif
-
+ 
 include ../setup.mk
 CFLAGS += -DDEFAULT_GM_TOP="\"${GM_TOP}\""
 
@@ -20,14 +21,6 @@ ifeq ($(CODE_COVERAGE),1)
 	CFLAGS  += --coverage
 	LDFLAGS += --coverage
 endif
-
-
-# where to find source codes
-vpath %.h  inc
-vpath %.c parse
-vpath %.l parse
-vpath %.y parse
-vpath %.cc common parse backend_cpp backend_gps backend_giraph frontend opt
 
 HEADERS =  \
     gm_frontend_api.h \
@@ -50,7 +43,8 @@ SRCS2 =\
        gm_parse_foreign_syntax.cc \
        gm_reproduce.cc gm_dumptree.cc gm_misc.cc \
        gm_main.cc gm_argopts.cc gm_copy.cc \
-       gm_code_generator.cc gm_read_setup.cc \
+       gm_code_generator.cc \
+       gm_read_setup.cc \
        gm_error.cc gm_builtin.cc \
        gm_node_info.cc\
        gm_version_string.cc\
@@ -81,14 +75,21 @@ SRCS2 =\
        gm_ind_opt.cc gm_hoist_assign.cc gm_hoist_foreach.cc\
        gm_merge_loops.cc gm_moveup_propdecl.cc\
        gm_check_property_argument_usage.cc\
+	   gm_reaching_def_analysis.cc\
+	   gm_used_symbol_analysis.cc\
+	   gm_def_symbol_analysis.cc\
        gm_opt_nonconf_reduce.cc\
        gm_opt_remove_unused_scalar.cc\
        gm_opt_propagate_trivial_writes.cc\
        gm_flip_edges.cc\
        gm_cpp_opt.cc\
+	   gm_cpp_opt_debug.cc\
        gm_cpp_opt_select_par.cc\
        gm_cpp_opt_defer.cc \
-       gm_cpp_opt_reduce_scalar.cc gm_cpp_opt_reduce_field.cc\
+       gm_cpp_opt_reduce_scalar.cc \
+       gm_cpp_opt_reduce_field.cc\
+       gm_cpp_opt_select_seq_implementation.cc\
+       gm_cpp_opt_select_map_implementation.cc\
        gm_cpp_opt_check_feasible.cc \
        gm_cpp_opt_save_bfs.cc\
        gm_cpp_opt_common_nbr.cc\
@@ -105,9 +106,11 @@ SRCS2 =\
        gm_cpp_gen_check_bfs.cc\
        gm_cpp_gen_regular.cc\
        gm_cpp_gen_check_usermain.cc\
+       gm_cpp_gen_check_rev_edge.cc\
        gm_cpplib_gen.cc \
        gm_cpplib_opt.cc\
        gm_gps_opt_remove_master_random_write.cc\
+       gm_gps_opt_remove_master_set_iteration.cc\
        gm_gps_opt_check_reverse_edges.cc\
        gm_gps_opt_find_nested_foreach_loops.cc\
        gm_gps_opt_insert_temp_property.cc\
@@ -115,6 +118,7 @@ SRCS2 =\
        gm_gps_opt_split_loops_for_flipping.cc\
        gm_gps_opt_transform_bfs.cc\
        gm_gps_opt_edge_iteration.cc\
+       gm_gps_opt_early_filter.cc\
        gm_gps_create_stages.cc \
        gm_gps_check_synthesizable.cc\
        gm_gps_bb_split.cc\
@@ -142,6 +146,7 @@ SRCS2 =\
        gm_gps_new_check_edge_value.cc\
        gm_gps_new_check_random_write.cc\
        gm_gps_new_check_random_read.cc\
+       gm_gps_new_check_nested_loops.cc\
        gm_gps_new_rewrite_rhs.cc\
        gm_giraph_gen.cc\
        gm_giraph_gen_master.cc\
@@ -149,15 +154,49 @@ SRCS2 =\
        gm_giraph_lib.cc\
        gm_giraph_lib_random_write.cc\
 
+# where to find source codes
+SRC_DIRS = common parse backend_cpp backend_gps backend_giraph frontend opt
+
+ifeq ($(COMPILE_JAVA_BACKEND),1)
+	CFLAGS += -DCOMPILE_JAVA_BACKEND
+	ifeq (${EDGE_SIZE},64)
+		ifeq (${NODE_SIZE},32)
+	   		CFLAGS += -DGM_RUNTIME_MODE48
+		else 
+		    ifeq (${NODE_SIZE},64)
+		   		CFLAGS += -DGM_RUNTIME_MODE64
+		    endif
+		endif
+	endif
+	HEADERS += $(JAVA_BACKEND_HDRS)
+	SRCS2 += $(JAVA_BACKEND_SRCS)
+	SRC_DIRS += $(JAVA_BACKEND_SRC_DIR)
+	CTEMPLATE = $(shell pwd)/$(EXTLIBS)/ctemplate-2.2
+	CFLAGS += -I"$(CTEMPLATE)/src" 
+	LDFLAGS += -L"$(CTEMPLATE)/.libs" -Wl,-rpath,"$(CTEMPLATE)/.libs" -lctemplate_nothreads
+endif
+
+vpath %.h  inc
+vpath %.c parse
+vpath %.l parse
+vpath %.y parse
+vpath %.cc $(SRC_DIRS)
 
 # Object names: change .cc -> .o and add ./obj/ in front of it.
 OBJS = $(addprefix $(OBJ)/, $(SRCS1:.c=.o)) $(addprefix $(OBJ)/, $(SRCS2:.cc=.o))
 HEADS = $(addprefix $(INC)/, $(HEADERS))
 
+ifeq ($(COMPILE_JAVA_BACKEND),1)
+all: libs $(BIN)/gm_comp
+else
 all: $(BIN)/gm_comp
+endif
 
 $(BIN)/gm_comp: $(SRCS1) $(OBJS) $(HEADS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $@ 
+	$(CC) $(CFLAGS) $(OBJS) -o $@ $(LDFLAGS)
+
+libs:
+	@cd $(EXTLIBS); make
 
 $(OBJ)/%.o : %.c 
 	$(CC) $(CFLAGS) -c $< -o $@

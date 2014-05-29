@@ -3,6 +3,7 @@
 
 #include <stdio.h>
 #include <list>
+#include "gm_lock.h"
 
 #include "gm_lock.h"
 
@@ -15,7 +16,7 @@ private:
     list<T> data;
     gm_spinlock_t lock;
 
-  public:
+public:
     gm_collection(int maxNumberThreads = 16) : lock(0) {
     }
 
@@ -69,12 +70,12 @@ private:
 
     class seq_iter
     {
-      private:
+    private:
         typedef typename list<T>::iterator Iterator;
         Iterator iter;
         const Iterator end;
 
-      public:
+    public:
         bool has_next() {
             return iter != end;
         }
@@ -83,7 +84,8 @@ private:
             return *(iter++);
         }
 
-        seq_iter(Iterator iter_, const Iterator end_iter) : iter(iter_), end(end_iter) {
+        seq_iter(Iterator iter_, const Iterator end_iter) :
+                iter(iter_), end(end_iter) {
         }
 
     };
@@ -91,7 +93,6 @@ private:
     seq_iter prepare_seq_iteration() {
         return seq_iter(data.begin(), data.end());
     }
-
 };
 
 #endif /* GM_COLLECTION_H_ */
